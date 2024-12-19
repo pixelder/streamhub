@@ -2,7 +2,7 @@
     "name": "streamhub",
     "version": "1.0.0",
     "description": "A streaming site",
-    "main": "index.html",
+    "main": "server.js",
     "scripts": {
         "start": "serve"
     },
