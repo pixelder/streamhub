@@ -288,7 +288,9 @@ async function openModal(event) {
 
 // Display modal with fetched data
 function displayModal(mediaType, data) {
+  const isMobile = window.innerWidth <= 767;
   const modal = document.getElementById('info-modal');
+  const modalContent = document.querySelector(".modal-content");
   const details = document.getElementById('modal-details');
   const id = data.id;
   const name = data.name || data.title || data.original_title;
@@ -331,10 +333,12 @@ function displayModal(mediaType, data) {
           Watch
         </button>
       </div>
-      `);
+    `);
+    isMobile ? modalContent.style.height = "fit-content" : modalContent.style.height = '30rem';
   } else 
   if (mediaType === "tv") {
     tvContent(data, sno = null, eno = null, ref = "modal");
+    isMobile ? modalContent.style.height = '70%' : modalContent.style.height = '30rem' ;
   }
   modal.style.display = 'block';
 }

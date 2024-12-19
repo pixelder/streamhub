@@ -198,13 +198,15 @@
 
 
 
-
     .modal-content {
         width: 92%;
         height: 70%;
-        max-height: fit-content;
         padding: 0.8rem;
         backdrop-filter: blur(5px);
+    }
+
+    #modal-details {
+        scrollbar-width: none;
     }
 
     .close-btn {
@@ -221,6 +223,15 @@
         min-height: fit-content;
     }
     
+    .modal-actions {
+        padding: 1rem 0 0;
+    }
+
+    .watch-btn {
+        width: 100%;
+        padding: 0.6rem;
+        font-size: 0.875rem;
+    }
     
     .modal-cover {
         display: none;
@@ -267,6 +278,7 @@
         font-size: 0.875rem;
         margin-right: 0rem;
         padding: 0.2rem 0.4rem 0.2rem 0;
+        border-right-width: 1px;
     }
 
     .modal-genre {
@@ -300,7 +312,9 @@
         padding: 0.4rem;
     }
 
-    
+    .episode-container::after {
+        display: none;
+    }
 
     .episode-width {
         min-width: 100%;
