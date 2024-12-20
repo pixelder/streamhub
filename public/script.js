@@ -303,6 +303,7 @@ function displayModal(mediaType, data) {
           </div>
           <div class="modal-info">`
     : `<span>
+          <div class="modal-info-backdrop" style="background-image : url(${IMAGE_URL}${data.backdrop_path})"></div>
           <div class="modal-info">
             <h1>${name}</h1>`;
   //window.history.pushState({}, '', `/${mediaType}/${name}`);
@@ -340,7 +341,9 @@ function displayModal(mediaType, data) {
     tvContent(data, sno = null, eno = null, ref = "modal");
     isMobile ? modalContent.style.height = '70%' : modalContent.style.height = '30rem' ;
   }
-  modal.style.display = 'block';
+
+
+  modal.classList.add('active');// = 'top: 0;left: 0;width: 100dvw;height: 100dvh; opacity: 1;';
 }
 
 async function tvContent(data, sno, eno, ref) {
@@ -509,6 +512,7 @@ function loadWatchPage(mediaType, name = null, id, season = null, episode = null
                 <p data-source="2">Embed.su</p>
                 <p data-source="3">Vidsrc</p>
                 <p data-source="4">Multiembed</p>
+                <p data-source="5">Superstream</p>
               </div>
             </div>
             <div class="media-download">
@@ -569,7 +573,10 @@ function loadSources(source, mediaType, id, season = null, episode = null) {
       src = `https://vidsrc.icu/embed/${mediaType}/${id}${season && episode ? `/${season}/${episode}` : ''}`;
       break;
     case 4:
-      src = `https://multiembed.mov/directstream.php?video_id=${id}&tmdb=1${season && episode ? `&s=${season}&p=${episode}` : ''}`;
+      src = `https://multiembed.mov/?video_id=${id}&tmdb=1${season && episode ? `&s=${season}&p=${episode}` : ''}`;
+      break;
+    case 5:
+      src = `https://vidbinge.dev/embed/${mediaType}/${id}${season && episode ? `/${season}/${episode}` : ''}`;
       break;
     default:
       console.error("Invalid source selected");
@@ -642,16 +649,33 @@ window.addEventListener('scroll', () => {
 });
 
 // Close modal on click
-function closeModal() {
-  document.getElementById('info-modal').style.display = 'none';
+ function closeModal() {
+  document.getElementById('info-modal').classList.remove('active');
+  //.style.display = 'none';
   //window.history.pushState({}, '', `/`);
   //window.history.back();
 }
 
-document.addEventListener('click', (event) => {
-    if (event.target.closest('.grid-item')) {
-        openModal(event);
+document.addEventListener('click', modalEvent);
+document.addEventListener('keydown', modalEvent);
+
+function modalEvent(event) {
+    const modal = document.getElementById('info-modal');
+    const modalContent = document.querySelector('.modal-content');
+
+    if (event.type === 'click') {
+        if (event.target.closest('.grid-item')) {
+            openModal(event); 
+        } else if (modal.contains(event.target) && !modalContent.contains(event.target)) {
+            modal.classList.remove('active');
+        }
+    } else if (event.type === 'keydown') {
+        if (event.key === 'Escape') {
+            modal.classList.remove('active');
+        } else if (event.key === 'Enter' && !modal.classList.contains('active')) {
+            openModal(event);
+        }
     }
-});
+}
 
 console.clear = () => {};
