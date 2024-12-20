@@ -649,12 +649,12 @@ window.addEventListener('scroll', () => {
 });
 
 // Close modal on click
- function closeModal() {
+/*  function closeModal() {
   document.getElementById('info-modal').classList.remove('active');
   //.style.display = 'none';
   //window.history.pushState({}, '', `/`);
   //window.history.back();
-}
+} */
 
 document.addEventListener('click', modalEvent);
 document.addEventListener('keydown', modalEvent);
