@@ -205,7 +205,7 @@ section h2 {
     border-radius: var(--border-radius1);
     background-color: #161629;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-    transition: all 0.25s ease-in-out;
+    transition: transform 0.25s, border 0.25s, box-shadow 0.25s ease-in-out;
     /* box-shadow: 0 10px 24px rgba(0, 0, 0, 0.7); */
 }
 
@@ -437,6 +437,7 @@ section h2 {
     display: flex;
     width: 100dvw;
     height: 100dvh;
+    overflow: hidden;
     position: fixed;
     top: 0;
     left: 0;
@@ -461,7 +462,7 @@ main:has(.modal.active) .modal-overlay {
     height: 100%;
     top: 0;
     opacity: 1;
-    transition: opacity 0.2s ease-in-out;
+    transition: opacity 0.1s ease-in-out;
 }
 
 .modal {/* 
@@ -472,7 +473,7 @@ main:has(.modal.active) .modal-overlay {
     opacity: 0;
     overflow: hidden;
     background: transparent; /* Semi-transparent background */
-    transition: opacity 0.2s ease-in-out;
+    transition: opacity 0.1s ease-in-out;
 }
 
 .modal-content {
@@ -572,9 +573,11 @@ main:has(.modal.active) .modal-overlay {
 
 
 .modal-info {
+    display: flex;
+    flex-direction: column;
     width: 100%;
     height: fit-content;
-    align-items: flex-end;
+    gap: 0.4rem;
 }
 
 .modal-info-backdrop {
@@ -586,7 +589,7 @@ main:has(.modal.active) .modal-overlay {
 }
 
 .modal-info > p {
-    padding: 0.6rem 5% 0rem 0;
+    padding: 0rem 5% 0rem 0;
     font-size: 0.875rem;
     line-height: 0.96rem;
 }
@@ -606,7 +609,24 @@ main:has(.modal.active) .modal-overlay {
     font-size: 1rem;
     font-weight: 700;
     padding-right: 0.4rem;
-    border-right: 2px solid var(--color2);
+    border-right: 1px solid var(--color2);
+}
+
+[data-title]:hover:after {
+    content: attr(data-title);
+    min-width: 4rem;
+    position: absolute;
+    top: -150%;
+    left: -30%;
+    z-index: 1000;
+    padding: 0.4rem;
+    border-radius: var(--border-radius2);
+    font-size: 0.75rem;
+    font-weight: normal;
+    white-space: nowrap;
+    filter: opacity(0.85);
+    color: var(--font-color2);
+    background-color: var(--color3);
 }
 
 .modal-genre {
@@ -629,7 +649,11 @@ main:has(.modal.active) .modal-overlay {
     border-radius: var(--border-radius2);
 }
 
-
+p.tags {
+    padding: 0rem 0 0rem 0;
+    color: var(--font-color3);
+    font-size: 0.8rem;
+}
 
 .watch-btn:hover {
     transition: background-color 1s ease;
@@ -644,14 +668,13 @@ select {
     background-color: #222233;
     color: var(--font-color1);
     font-size: 1rem;
-    padding: 0.6rem;
+    padding: 0.48rem;
     border-radius: var(--border-radius2);
     outline: 0px;
     border: 1px solid #38385285;
     box-shadow: 0 0 4px rgba(0, 0, 0, 0.3);
 }
 option {
-    padding: 5px;
     background-color:#30303d;
     width: fit-content;
 }
@@ -690,7 +713,7 @@ option {
     padding: 0.8rem;
     background-color: #30303d77;
     border-radius: var(--border-radius2);
-    border: 1px solid #38385285;
+    border: 1px solid var(--color1);
     box-shadow: 0 0 4px rgba(0, 0, 0, 0.3);
 }
 
@@ -744,6 +767,11 @@ option {
 .player-styling{
     padding-bottom: 0.24rem;
     height: 100%;
+    scrollbar-width: none;
+    mask-image: linear-gradient(to right,
+    black, black 2%,
+    black 98%, transparent);
+    transition: mask-image 0.3s ease-in-out;
 }
 
 .player-styling::after {
@@ -759,6 +787,13 @@ option {
 .player-styling .episode {
     all: unset;
     height: 100%;
+    scale: 1;
+    transition: scale 0.2s ease-in-out;
+
+}
+
+.player-styling .episode:hover {
+    scale: 0.97;
 }
 
 .player-styling .episode-items img {
@@ -898,7 +933,7 @@ iframe {
     position: absolute;
     bottom: 100%; /* Drop up instead of down */
     left: 2px;
-    width: 6rem;
+    width: fit-content;
     max-height: 0dvh; /* Responsive height */
     overflow: hidden;
     border-radius: var(--border-radius2);
@@ -916,7 +951,7 @@ iframe {
     display: block;
     color: var(--font-color1);
     font-size: 12px;
-    padding: 8px;
+    padding: 0.36rem 0.4rem;
     display: block;
     cursor: pointer;
 }

@@ -1,9 +1,11 @@
 const express = require('express');
 const app = express();
-const PORT = 8443;
 
-app.use(express.static('pubic')); // Serve files from the 'public' folder
+const PORT = 8443; // Port to listen on
+//const HOST = '0.0.0.0'; // Listen on all interfaces to serve on LAN
+
+app.use(express.static('public'));
 
 app.listen(PORT, () => {
-  console.log(`Server is running at http://localhost:${PORT}`);
+    console.log(`Server running at http://localhost:${PORT}/`);
 });

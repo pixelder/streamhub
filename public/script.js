@@ -100,7 +100,7 @@ function renderGridItems(items) {
       return `
         <div tabindex="0" role="button" aria-pressed="false" class="grid-item" id="grid-item" data-id="${item.id}" data-media-type="${item.media_type}">
           <div>
-            <img loading="lazy" src="${image}" alt="${title}">
+            <img src="${image}" alt="${title}">
           </div>
           <div class="grid-item-info">
             <p>${capString(title, 45)}</p>
@@ -162,7 +162,7 @@ async function handleSearch(event) {
   
   const query = document.getElementById('search-input').value.trim();
   if (!query) return;
-
+  
   const movieUrl = `${BASE_URL}/search/movie?api_key=${API_KEY}&query=${encodeURIComponent(query)}`;
   const tvUrl = `${BASE_URL}/search/tv?api_key=${API_KEY}&query=${encodeURIComponent(query)}`;
   const peopleUrl = `${BASE_URL}/search/person?api_key=${API_KEY}&query=${encodeURIComponent(query)}`;
@@ -174,9 +174,11 @@ async function handleSearch(event) {
       fetch(peopleUrl).then(res => res.json())
     ]);
 
-    const movieResults = movie.results.slice(0, 7).map(item => ({ ...item, media_type: 'movie' }));
-    const tvResults = tv.results.slice(0, 7).map(item => ({ ...item, media_type: 'tv' }));
-    const peopleResults = people.results.slice(0, 7).map(item => ({ ...item, media_type: 'person' }));
+
+    const isMobile = window.innerWidth <= 767;
+    const movieResults = isMobile ? movie.results.slice(0, 20) : movie.results.slice(0, 7).map(item => ({ ...item, media_type: 'movie' }));
+    const tvResults = isMobile ? tv.results.slice(0, 20) : tv.results.slice(0, 7).map(item => ({ ...item, media_type: 'tv' }));
+    const peopleResults = isMobile ? people.results.slice(0, 20) : people.results.slice(0, 7).map(item => ({ ...item, media_type: 'person' }));
 
     displaySearchResults({ movie: movieResults, tv: tvResults, people: peopleResults }, query);
   } catch (error) {
@@ -190,31 +192,33 @@ function displaySearchResults({ movie, tv, people }, query) {
   const mainContent = document.querySelector('main');
   mainContent.innerHTML = `
     <div id=search-results>
-    <h1>Search Results for "${query}"</h1>
-    <section id="movie-results" data-type="movie">
-      <h3>Movies</h3>
-      <div class="grid-container">
-        ${renderGridItems(movie)}        
-      </div>
-    </section>
-    <section id="tv-results" data-type="tv">
-      <h3>TV Shows</h3>
-      <div class="grid-container">
-        ${renderGridItems(tv)}
-      </div>
-    </section>
-    <section id="people-results" data-type="people">
-    <h3>People</h3>
-      <div class="grid-container">
-      ${renderProfile(people)}  
-      </div>
-    </section>
-    <div id="info-modal" class="modal">
-      <div class="modal-content">
-        <span class="close-btn" onclick="closeModal()">&times;</span>
-        <div id="modal-details"></div>
-      </div>
-    </div>
+      <h1>Search Results for "${query}"</h1>
+      <section id="movie-results" data-type="movie">
+        <h3>Movies</h3>
+        <div class="grid-container">
+          ${renderGridItems(movie)}        
+        </div>
+      </section>
+      <section id="tv-results" data-type="tv">
+        <h3>TV Shows</h3>
+        <div class="grid-container">
+          ${renderGridItems(tv)}
+        </div>
+      </section>
+      <section id="people-results" data-type="people">
+      <h3>People</h3>
+        <div class="grid-container">
+        ${renderProfile(people)}  
+        </div>
+      </section>
+      <div class="modal-overlay"></div>
+      <div id="info-modal" class="modal">
+          <div class="modal-content">
+            <div id="modal-details">
+              <!-- Dynamic content will be injected here -->
+            </div>
+          </div>
+      </div> 
     </div>
   `;
 }
@@ -231,7 +235,7 @@ function renderProfile(items) {
       return `
         <div tabindex="0" class="profile-item" data-id="${item.id}" data-media-type="${item.media_type}">
           <span>
-            <img loading="lazy" src="${image}" alt="${name}">
+            <img src="${image}" alt="${name}">
           </span>
           <div class="profile-item-info">
             <p>${capString(name, 30)}</p>
@@ -248,9 +252,9 @@ async function fetchMetaData(mediaType, id) {
     let url;
 
     if (mediaType === "movie") {
-      url = `${BASE_URL}/movie/${id}?api_key=${API_KEY}&language=en-US&append_to_response=videos,credits,images&include_image_language=en`;
+      url = `${BASE_URL}/movie/${id}?api_key=${API_KEY}&language=en-US&append_to_response=videos,release_dates,credits,images&include_image_language=en`;
     } else if (mediaType === "tv") {
-      url = `${BASE_URL}/tv/${id}?api_key=${API_KEY}&language=en-US&append_to_response=credits,images&include_image_language=en`;
+      url = `${BASE_URL}/tv/${id}?api_key=${API_KEY}&language=en-US&append_to_response=content_ratings,credits,images&include_image_language=en`;
       }
       const response = await fetch(url);
       const data = await response.json();
@@ -265,6 +269,12 @@ function convertDate(dateString) {
   const options = { month: 'long', day: 'numeric', year: 'numeric' };
   const formatter = new Intl.DateTimeFormat('en-US', options);
   return formatter.format(new Date(dateString));
+}
+
+function runtime(min) {
+	const hour =  Math.floor(min / 60.0);
+  min = min - hour * 60.0;
+  return `${hour}h${min}m`;
 }
 
 async function openModal(event) {
@@ -285,7 +295,6 @@ async function openModal(event) {
   });
 }
 
-
 // Display modal with fetched data
 function displayModal(mediaType, data) {
   const isMobile = window.innerWidth <= 767;
@@ -295,11 +304,14 @@ function displayModal(mediaType, data) {
   const id = data.id;
   const name = data.name || data.title || data.original_title;
   const cast = data.credits.cast.map(cast => cast.name).slice(0, 5).join(", ");
-  const date = convertDate(  data.release_date || data.first_air_date || data.air_date);  
+  const date = convertDate(  data.release_date || data.first_air_date || data.air_date); 
+  const rated = mediaType === "movie" 
+    ? data.release_dates.results.find((item) => item.iso_3166_1 === "US").release_dates[0].certification
+    : data.content_ratings.results.find((item) => item.iso_3166_1 === "US").rating;
   const logo = data.images?.logos?.[0]?.file_path
     ? `<span>
           <div class="modal-info-logo">
-            <img loading="lazy" src="${IMAGE_URL}${data.images.logos[0].file_path}" alt="Logo">
+            <img src="${IMAGE_URL}${data.images.logos[0].file_path}" alt="Logo">
           </div>
           <div class="modal-info">`
     : `<span>
@@ -310,16 +322,17 @@ function displayModal(mediaType, data) {
   details.innerHTML = `
   <div class="modal-media">
     <div class="modal-cover">
-      <img loading="lazy" src="${IMAGE_URL}${data.poster_path}" alt="${name}"></img>
+      <img src="${IMAGE_URL}${data.poster_path}" alt="${name}"></img>
     </div>
     ${logo}
-        <span class="ratings-genre"><i class="fa-solid fa-star"></i> <p>${truncate(data.vote_average, 1)}</p><span class="modal-genre">${data.genres
+        <span class="ratings-genre"><i class="fa-solid fa-star"></i> <p data-title="${data.vote_count} votes">${truncate(data.vote_average, 1)}</p><span class="modal-genre">${data.genres
           .map(genre => `<a href="#">${genre.name}</a>` ).slice(0, 3).join(" ")}
           </span>
         </span>
         <p>${data.overview || 'No description available.'}</p>
         <p>Cast : ${cast}</p>
-        <p>Date : ${date}</p>
+        <p class="tags">${extractYear(date)} • ${rated !== "" ? `${rated} • `:""} ${data.original_language.toUpperCase()} ${mediaType === "movie" ? `• ${runtime(data.runtime)}</p>` : "</p>"}
+        </span>
     </div>
     </span>
   </div>`;
@@ -385,7 +398,7 @@ async function tvContent(data, sno, eno, ref) {
         .map(episode => `
           <div id="${episode.episode_number}" class="episode episode-width" data-name="${data.name}" data-id="${data.id}" data-season="${selectedSeason}" data-episode="${episode.episode_number}">
             <div class="episode-items">
-              <img loading="lazy" src="${episode.still_path ? IMAGE_URL + episode.still_path : 'https://placehold.co/500x281?text=No+Image+Available'}" alt="Episode ${episode.episode_number}">
+              <img src="${episode.still_path ? IMAGE_URL + episode.still_path : 'https://placehold.co/500x281?text=No+Image+Available'}" alt="Episode ${episode.episode_number}">
               <div class="episode-info">
                 <h3>${episode.episode_number}. ${episode.name}</h3>
                 <p>Rated: ${episode.vote_average.toFixed(1)}</p>
@@ -454,6 +467,27 @@ function scrollEpisodeIntoView(eno) {
     left: targetScrollLeft,
     behavior: 'smooth',
   });
+  
+  //
+  // mask logic
+  const scrollContainer = document.querySelector('.player-styling');
+
+  scrollContainer.addEventListener('scroll', () => {
+    const maxScroll = scrollContainer.scrollWidth - scrollContainer.clientWidth;
+    const scrollLeft = scrollContainer.scrollLeft;
+    const buffer = 20;
+    
+    let maskGradient = scrollLeft <= buffer
+      ? 'linear-gradient(to right, black, black 98%, transparent)'
+      : scrollLeft >= maxScroll - buffer
+      ? 'linear-gradient(to right, transparent, black 2%, black)'
+      : 'linear-gradient(to right, transparent, black 2%, black 98%, transparent)';
+    
+    scrollContainer.style.maskImage = maskGradient;
+    scrollContainer.style.webkitMaskImage = maskGradient;
+  });
+
+
 }
 
 
@@ -511,8 +545,9 @@ function loadWatchPage(mediaType, name = null, id, season = null, episode = null
                 <p data-source="1">Vidlink</p>
                 <p data-source="2">Embed.su</p>
                 <p data-source="3">Vidsrc</p>
-                <p data-source="4">Multiembed</p>
-                <p data-source="5">Superstream</p>
+                <p data-source="4">Superstream</p>
+                <p data-source="5">Multiembed</p>
+                <p data-source="6">Moviesapi</p>
               </div>
             </div>
             <div class="media-download">
@@ -573,15 +608,20 @@ function loadSources(source, mediaType, id, season = null, episode = null) {
       src = `https://vidsrc.icu/embed/${mediaType}/${id}${season && episode ? `/${season}/${episode}` : ''}`;
       break;
     case 4:
-      src = `https://multiembed.mov/?video_id=${id}&tmdb=1${season && episode ? `&s=${season}&p=${episode}` : ''}`;
+      src = `https://vidbinge.dev/embed/${mediaType}/${id}${season && episode ? `/${season}/${episode}` : ''}`;
       break;
     case 5:
-      src = `https://vidbinge.dev/embed/${mediaType}/${id}${season && episode ? `/${season}/${episode}` : ''}`;
+      src = `https://multiembed.mov/?video_id=${id}&tmdb=1${season && episode ? `&s=${season}&p=${episode}` : ''}`;
+      break;
+    case 6:
+      src = `https://moviesapi.club/${mediaType}/${id}${season && episode ? `-${season}-${episode}` : ''}`;
       break;
     default:
       console.error("Invalid source selected");
       return;
   }
+  // indicicate loading...
+  document.querySelector(".loading").style.display = "flex";
 
   const loadIframe = `
           <iframe
@@ -656,26 +696,28 @@ window.addEventListener('scroll', () => {
   //window.history.back();
 } */
 
-document.addEventListener('click', modalEvent);
-document.addEventListener('keydown', modalEvent);
+document.addEventListener('click', event => {
+  const modal = document.getElementById('info-modal');
+  const modalContent = document.querySelector('.modal-content');
 
-function modalEvent(event) {
-    const modal = document.getElementById('info-modal');
-    const modalContent = document.querySelector('.modal-content');
+  if (event.target.closest('.grid-item')) {
+      openModal(event); 
+  } else if (modal.contains(event.target) && !modalContent.contains(event.target)) {
+      modal.classList.remove('active');
+  }
+});
+document.addEventListener('keydown', event => {
+  const modal = document.getElementById('info-modal');
 
-    if (event.type === 'click') {
-        if (event.target.closest('.grid-item')) {
-            openModal(event); 
-        } else if (modal.contains(event.target) && !modalContent.contains(event.target)) {
-            modal.classList.remove('active');
-        }
-    } else if (event.type === 'keydown') {
-        if (event.key === 'Escape') {
-            modal.classList.remove('active');
-        } else if (event.key === 'Enter' && !modal.classList.contains('active')) {
-            openModal(event);
-        }
+  if (event.type === 'keydown') {
+    if (event.key === 'Escape') {
+        modal.classList.remove('active');
+    } else if (event.key === 'Enter' && !modal.classList.contains('active')) {
+        openModal(event);
     }
-}
+  }
+});
+
+
 
 console.clear = () => {};
