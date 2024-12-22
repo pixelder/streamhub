@@ -393,7 +393,7 @@ section h2 {
     overflow: hidden;
     /*     padding: 0.4rem 0.4rem 0.2rem; */
     text-align: center;
-    border: 1px solid #383852a6;
+    border: 1px solid #383852;
     border-radius: var(--border-radius1);
     transition: transform 0.3s, box-shadow 0.3s, border 0.3s;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
@@ -437,7 +437,6 @@ section h2 {
     display: flex;
     width: 100dvw;
     height: 100dvh;
-    overflow: hidden;
     position: fixed;
     top: 0;
     left: 0;
@@ -455,6 +454,10 @@ main:has(.modal.active) .modal-overlay {
     visibility: visible;
     transition: opacity 0.1s, backdrop-filter 0.1s ease-in-out;
     background-color: rgba(8, 8, 46, 0.151); /* Semi-transparent background */
+}
+
+body:has(.modal.active) {
+    overflow: hidden;
 }
 
 .modal.active {
@@ -873,7 +876,7 @@ option {
 
 .iframe-container {
     width: 100%;
-    height: calc(100% - 2.4rem);
+    height: calc(100% - 2rem);
     z-index: 0;
     overflow: hidden;
 }
@@ -882,10 +885,8 @@ iframe {
     position: relative;
     width: calc(100% * 1.114);
     height: calc(100% * 1.114);
-    zoom: 0.9;
     transform: scale(0.9);
     transform-origin: 0 0;
-    -ms-zoom: 0.9;
     -moz-transform: scale(0.9);
     -o-transform: scale(0.9);
     -webkit-transform: scale(0.9);
@@ -920,7 +921,7 @@ iframe {
 .provider-change {
     width: 4.8rem;
     height: 100%;
-    font-size: 12px;
+    font-size: 0.7rem;
     color: var(--font-color1);
     background-color: transparent;
     cursor: pointer;
@@ -951,7 +952,7 @@ iframe {
     display: block;
     color: var(--font-color1);
     font-size: 12px;
-    padding: 0.36rem 0.4rem;
+    padding: 0.32rem 0.4rem;
     display: block;
     cursor: pointer;
 }

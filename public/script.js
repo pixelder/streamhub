@@ -57,9 +57,15 @@ document.querySelectorAll(".media-tab").forEach(button => {
   });
 });
 
-
+{
 //
 // Misc. functions 
+function isMobile() {
+  const screenWidth = window.innerWidth <= 768;
+  return screenWidth;
+}
+
+
 function truncate(num, precision) {
   return Math.floor(num * Math.pow(10, precision)) / Math.pow(10, precision);
 }
@@ -69,23 +75,14 @@ function extractYear(dateString) {
   return date.getFullYear();
 }
 
-function capString(str, containerWidth) {
-  const lines = str.split('\n'); // split the string into lines
-  const wrappedLines = [];
-
-  for (let i = 0; i < lines.length; i++) {
-    const line = lines[i];
-    if (wrappedLines.join('\n').length + line.length + 3 > containerWidth) { // 3 is for the ellipsis
-      wrappedLines.push(line.substring(0, containerWidth - 3) + '..');
-      break;
-    }
-    wrappedLines.push(line);
+function capString(str, maxLength) {
+  if (str.length > maxLength) {
+    return str.substring(0, maxLength - 3) + '...';
   }
-
-  return wrappedLines.join('\n');
+  return str;
 }
 
-
+}
 // Function to render grid items
 function renderGridItems(items) {
  //const mediaType = document.querySelector("section").dataset.type? type : null;
@@ -103,7 +100,7 @@ function renderGridItems(items) {
             <img src="${image}" alt="${title}">
           </div>
           <div class="grid-item-info">
-            <p>${capString(title, 45)}</p>
+            <p>${capString(title, 40)}</p>
             <p>${rating}</p>
             <p>${year}</p>
           </div>
@@ -114,7 +111,8 @@ function renderGridItems(items) {
 }
 
 // Fetch and display data with a customizable limit
-async function fetchContent(sectionId, url, limit = 14) {
+async function fetchContent(sectionId, url, limit) {
+  isMobile ? limit = 20 : limit = 14;
   try {
     const response = await fetch(url);
     const data = await response.json();
@@ -175,10 +173,9 @@ async function handleSearch(event) {
     ]);
 
 
-    const isMobile = window.innerWidth <= 767;
-    const movieResults = isMobile ? movie.results.slice(0, 20) : movie.results.slice(0, 7).map(item => ({ ...item, media_type: 'movie' }));
-    const tvResults = isMobile ? tv.results.slice(0, 20) : tv.results.slice(0, 7).map(item => ({ ...item, media_type: 'tv' }));
-    const peopleResults = isMobile ? people.results.slice(0, 20) : people.results.slice(0, 7).map(item => ({ ...item, media_type: 'person' }));
+    const movieResults = isMobile() ? movie.results.slice(0, 20) : movie.results.slice(0, 7).map(item => ({ ...item, media_type: 'movie' }));
+    const tvResults = isMobile() ? tv.results.slice(0, 20) : tv.results.slice(0, 7).map(item => ({ ...item, media_type: 'tv' }));
+    const peopleResults = isMobile() ? people.results.slice(0, 20) : people.results.slice(0, 7).map(item => ({ ...item, media_type: 'person' }));
 
     displaySearchResults({ movie: movieResults, tv: tvResults, people: peopleResults }, query);
   } catch (error) {
@@ -231,7 +228,7 @@ function renderProfile(items) {
 //    const year = extractYear(item.release_date || item.first_air_date);
       const image = item.profile_path
         ? `${IMAGE_URL}${item.profile_path}`
-        : 'https://placehold.co/440x551/383852/ccc?text=No+Image';
+        : 'https://placehold.co/480x551/383852/ccc?text=No+Image';
       return `
         <div tabindex="0" class="profile-item" data-id="${item.id}" data-media-type="${item.media_type}">
           <span>
@@ -297,7 +294,6 @@ async function openModal(event) {
 
 // Display modal with fetched data
 function displayModal(mediaType, data) {
-  const isMobile = window.innerWidth <= 767;
   const modal = document.getElementById('info-modal');
   const modalContent = document.querySelector(".modal-content");
   const details = document.getElementById('modal-details');
@@ -306,8 +302,8 @@ function displayModal(mediaType, data) {
   const cast = data.credits.cast.map(cast => cast.name).slice(0, 5).join(", ");
   const date = convertDate(  data.release_date || data.first_air_date || data.air_date); 
   const rated = mediaType === "movie" 
-    ? data.release_dates.results.find((item) => item.iso_3166_1 === "US").release_dates[0].certification
-    : data.content_ratings.results.find((item) => item.iso_3166_1 === "US").rating;
+    ? data.release_dates.results.find((item) => item.iso_3166_1 === "US" || "IN").release_dates[0].certification
+    : data.content_ratings.results.find((item) => item.iso_3166_1 === "US" || "IN").rating;
   const logo = data.images?.logos?.[0]?.file_path
     ? `<span>
           <div class="modal-info-logo">
@@ -348,11 +344,11 @@ function displayModal(mediaType, data) {
         </button>
       </div>
     `);
-    isMobile ? modalContent.style.height = "fit-content" : modalContent.style.height = '30rem';
+    isMobile() ? modalContent.style.height = "fit-content" : modalContent.style.height = '30rem';
   } else 
   if (mediaType === "tv") {
     tvContent(data, sno = null, eno = null, ref = "modal");
-    isMobile ? modalContent.style.height = '70%' : modalContent.style.height = '30rem' ;
+    isMobile() ? modalContent.style.height = '70%' : modalContent.style.height = '30rem' ;
   }
 
 
@@ -445,8 +441,7 @@ function scrollEpisodeIntoView(eno) {
   }
 
   // Responsive measurements based on screen size
-  const isMobile = window.innerWidth <= 768; // Define your breakpoint
-  const episodeWidth = isMobile ? 9.6 * 16 : 15 * 16; // Mobile: 9.6rem, PC: 15rem
+  const episodeWidth = isMobile() ? 9.6 * 16 : 15 * 16; // Mobile: 9.6rem, PC: 15rem
   const gapWidth = 0.8 * 16;   // Mobile: 0.6rem, PC: 0.8rem
   const totalEpisodeWidth = episodeWidth + gapWidth;
 

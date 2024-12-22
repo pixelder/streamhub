@@ -55,7 +55,7 @@
     .grid-item {
         aspect-ratio: 1 / 1.65;
         min-width: auto;
-        height: 15rem;
+        height: 13.6rem;
         padding: 0.4rem;
         border-radius: var(--border-radius1);
         /* box-shadow: 0 10px 24px rgba(0, 0, 0, 0.7); */
@@ -74,20 +74,24 @@
     }
 
     .grid-item-info p {
-        font-size: 0.7rem;
-        line-height: 0.78rem;
+        font-size: 0.68rem;
+        line-height: 0.72rem;
+        display: -webkit-box;
+        line-clamp: 2;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
 
     .grid-item-info p:nth-child(1) {
         max-width: 87%;
-        overflow: hidden;   
-        text-overflow: ellipsis;
-        height: 65%;
         margin-bottom: auto;
     }
 
     .grid-item-info p:nth-child(2) {
         max-width: 12%;
+        overflow: visible;
     }
     
     .grid-item-info p:nth-last-child(1) {
@@ -158,7 +162,7 @@
     .tab {
         width: 100%;
         align-content: center;
-        padding: 0.42rem;
+        padding: 0.36rem;
         border-radius: var(--border-radius1) var(--border-radius1) 0 0;
         font-size: 0.7rem;
         line-height: 0.8rem;
@@ -166,7 +170,7 @@
     }
       
     .tab.active {
-        padding: 0.42rem;
+        padding: 0.36rem;
         border-radius: var(--border-radius1) var(--border-radius1) 0 0;
     }
       
@@ -373,8 +377,11 @@
 
     /* Style inside player */
 
+    .player-styling {
+        gap: 0.6rem;
+    }
     .player-styling .episode-items img {
-        width: 9.6rem;
+        width: 8.6rem;
     }
 
     .player-styling .episode-items h3 {
@@ -418,17 +425,15 @@
     iframe {
         width: calc(100% * 1.25);
         height: calc(100% * 1.25);
-        zoom: 0.8;
         transform: scale(0.8);
         transform-origin: 0 0;
-        -ms-zoom: 0.8;
         -moz-transform: scale(0.8);
         -o-transform: scale(0.8);
         -webkit-transform: scale(0.8);
     }
     
     .loading {
-        height: calc(100% - 2.4rem);
+        height: calc(100% - 2rem);
         font-size: 1.2rem;
     }
 
@@ -436,11 +441,11 @@
         width: 4rem;
     }
     .providers {
-        zoom: 0.86;
+        zoom: 0.9;
     }
     .player-toolbar {
         width: 100%;
-        height: 2.4rem;
+        height: 2rem;
         background-color: #222233;
         border-radius: 0;
         align-content: center;
@@ -449,7 +454,10 @@
     .player-episodes {
         height: auto;
         max-width: 100%;
-        padding: 0 0.6rem;
-        margin-top: -1rem;
+        padding: 0.6rem;
+    }
+
+    .player-episodes .seasons-menu {
+        padding: 0 0 0.6rem;  
     }
   }
