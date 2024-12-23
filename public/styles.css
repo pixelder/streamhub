@@ -300,7 +300,6 @@ section h2 {
     color: var(--font-color1);
     border: 1px solid #383852a6;
     border-bottom: none;
-    border-radius: var(--border-radius1) var(--border-radius1) 0 0;
     box-shadow: 0 0px 10px rgba(0, 0, 0, 0.2);
 }
   
@@ -576,6 +575,7 @@ body:has(.modal.active) {
 
 
 .modal-info {
+    position: relative;
     display: flex;
     flex-direction: column;
     width: 100%;
@@ -771,9 +771,9 @@ option {
     padding-bottom: 0.24rem;
     height: 100%;
     scrollbar-width: none;
+    border-radius: 0.2rem;
     mask-image: linear-gradient(to right,
-    black, black 2%,
-    black 98%, transparent);
+    black,black 98%, transparent);
     transition: mask-image 0.3s ease-in-out;
 }
 

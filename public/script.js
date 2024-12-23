@@ -112,7 +112,7 @@ function renderGridItems(items) {
 
 // Fetch and display data with a customizable limit
 async function fetchContent(sectionId, url, limit) {
-  isMobile ? limit = 20 : limit = 14;
+  limit = isMobile() ? 20 : 14;
   try {
     const response = await fetch(url);
     const data = await response.json();
@@ -325,7 +325,7 @@ function displayModal(mediaType, data) {
           .map(genre => `<a href="#">${genre.name}</a>` ).slice(0, 3).join(" ")}
           </span>
         </span>
-        <p>${data.overview || 'No description available.'}</p>
+        <p class="synopsis">${data.overview || 'No description available.'}</p>
         <p>Cast : ${cast}</p>
         <p class="tags">${extractYear(date)} • ${rated !== "" ? `${rated} • `:""} ${data.original_language.toUpperCase()} ${mediaType === "movie" ? `• ${runtime(data.runtime)}</p>` : "</p>"}
         </span>
@@ -353,6 +353,7 @@ function displayModal(mediaType, data) {
 
 
   modal.classList.add('active');// = 'top: 0;left: 0;width: 100dvw;height: 100dvh; opacity: 1;';
+
 }
 
 async function tvContent(data, sno, eno, ref) {
@@ -475,8 +476,8 @@ function scrollEpisodeIntoView(eno) {
     let maskGradient = scrollLeft <= buffer
       ? 'linear-gradient(to right, black, black 98%, transparent)'
       : scrollLeft >= maxScroll - buffer
-      ? 'linear-gradient(to right, transparent, black 2%, black)'
-      : 'linear-gradient(to right, transparent, black 2%, black 98%, transparent)';
+      ? 'linear-gradient(to right, black, black 2%, black)'
+      : 'linear-gradient(to right, black, black 98%, transparent)';
     
     scrollContainer.style.maskImage = maskGradient;
     scrollContainer.style.webkitMaskImage = maskGradient;
@@ -550,6 +551,11 @@ function loadWatchPage(mediaType, name = null, id, season = null, episode = null
               <div class="get-dwnload">
               </div>
             </div>
+           <--!  <div class="go-fullscreen">
+              <button class="iframefullscreen">
+                <i class="fa-solid fa-expand"></i>
+              </button>
+            </div> -->
           </div>
         </div>
       </div>
@@ -713,6 +719,8 @@ document.addEventListener('keydown', event => {
   }
 });
 
-
+const fullscreenIframeButton = document.getElementById('fullscreenIframeButton');
+const exitIframeButton = document.getElementById('exitIframeButton');
+const iframeElement = document.getElementById('iframeElement');
 
 console.clear = () => {};

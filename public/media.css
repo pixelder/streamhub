@@ -48,14 +48,15 @@
         display: flex;
         flex-direction: row;
         overflow: scroll;
+        scrollbar-width: none;
         justify-content: space-between;
-        padding: 0 0 0.2rem 0rem;
+        padding: 0 0 0rem 0rem;
     }
     
     .grid-item {
         aspect-ratio: 1 / 1.65;
         min-width: auto;
-        height: 13.6rem;
+        height: 13.4rem;
         padding: 0.4rem;
         border-radius: var(--border-radius1);
         /* box-shadow: 0 10px 24px rgba(0, 0, 0, 0.7); */
@@ -164,22 +165,18 @@
         align-content: center;
         padding: 0.36rem;
         border-radius: var(--border-radius1) var(--border-radius1) 0 0;
-        font-size: 0.7rem;
-        line-height: 0.8rem;
+        font-size: 0.68rem;
+        line-height: 0.74rem;
         transition: all 0.3s;
     }
       
     .tab.active {
         padding: 0.36rem;
-        border-radius: var(--border-radius1) var(--border-radius1) 0 0;
     }
       
     .tab:hover {
         color: var(--font-color1);
-        background-color: #4a4a69;
-        border: 1px solid #383852c4;
-        border-bottom: none;
-        border-radius: var(--border-radius1) var(--border-radius1) 0 0;
+        background-color: transparent;
     }
     
     .tab-items {
@@ -200,8 +197,10 @@
         font-size: 0.7rem;
     }
 
-
-
+    .media-tab:hover {
+        background-color: #3838528c;
+    }
+    
     .modal-content {
         width: 92%;
         height: 70%;
@@ -295,6 +294,10 @@
         line-height: 0.8rem;
     }
 
+    .synopsis {
+        display: -webkit-box;
+    }
+    
     .ratings-genre {
         position: relative;
         gap: 0rem;
@@ -412,7 +415,7 @@
     .player {
         width: 100%;
         aspect-ratio: 16/8;
-        min-height: 18rem;
+        min-height: 16rem;
         max-height: 24rem;
         border-radius: 0;
         box-shadow: none;
@@ -441,7 +444,7 @@
         width: 4rem;
     }
     .providers {
-        zoom: 0.9;
+        zoom: 0.96;
     }
     .player-toolbar {
         width: 100%;
