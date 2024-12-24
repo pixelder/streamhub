@@ -189,7 +189,7 @@ function displaySearchResults({ movie, tv, people }, query) {
   const mainContent = document.querySelector('main');
   mainContent.innerHTML = `
     <div id=search-results>
-      <h1>Search Results for "${query}"</h1>
+      <h1>Search Results for “${query}”</h1>
       <section id="movie-results" data-type="movie">
         <h3>Movies</h3>
         <div class="grid-container">
@@ -401,18 +401,26 @@ async function tvContent(data, sno, eno, ref) {
                 <p>Rated: ${episode.vote_average.toFixed(1)}</p>
                 <p>${convertDate(episode.air_date)}</p>
               </div>
-              <p>${episode.overview || "No overview available"}</p>
+              <div class="episode-overview">
+                <p class="overview">${episode.overview || "No overview available"}</p>
+                <span class="read-more" style="display: none;">
+                  <i class="fa-solid fa-angles-down"></i>
+                  <i class="fa-solid fa-angles-up"></i>
+                </span>
+              </div>
             </div>
           </div>
         `)
         .join("");
+
+    cappedOverview();
 
     } catch (error) {
       console.error('Error fetching season details:', error);
     }
     ref != "modal"
     ? document.getElementById('episode-container').classList.add('player-styling')
-    : console.log(" noice ");
+    : "";
 
     scrollEpisodeIntoView(eno);
   };
@@ -421,13 +429,39 @@ async function tvContent(data, sno, eno, ref) {
   seasonDropdown.removeEventListener('change', displaySeasonInfo);
   seasonDropdown.addEventListener('change', displaySeasonInfo);
   seasonDropdown.dispatchEvent(new Event('change'));
+
+}
+
+async function cappedOverview() {
+  document.querySelectorAll('.episode-overview').forEach(container => {
+    const text = container.querySelector('.overview');
+    const readMore = container.querySelector('.read-more');
+    console.log("hi");
+
+    // Check if the text content overflows
+    const isOverflowing = text.scrollHeight > text.offsetHeight;
+    if (isOverflowing) {
+        readMore.style.display = 'inline';
+    } else {
+        readMore.style.display = 'none'; // Hide for short text
+    }
+
+    // Toggle expansion and collapse
+    readMore.addEventListener('click', () => {
+        if (container.classList.contains('expanded')) {
+            container.classList.remove('expanded');
+        } else {
+            container.classList.add('expanded');
+        }
+    });
+  });
 }
 
 function scrollEpisodeIntoView(eno) {
   const episode = document.getElementById(eno);
 
   if (!episode) {
-    console.error(`Element with id "${eno}" not found.`);
+    //console.error(`Element with id "${eno}" not found.`);
     return;
   }
 
@@ -442,8 +476,8 @@ function scrollEpisodeIntoView(eno) {
   }
 
   // Responsive measurements based on screen size
-  const episodeWidth = isMobile() ? 9.6 * 16 : 15 * 16; // Mobile: 9.6rem, PC: 15rem
-  const gapWidth = 0.8 * 16;   // Mobile: 0.6rem, PC: 0.8rem
+  const episodeWidth = isMobile() ? 8.6 * 16 : 15 * 16; // Mobile: 9.6rem, PC: 15rem
+  const gapWidth = 0.6 * 16;   // Mobile: 0.6rem, PC: 0.8rem
   const totalEpisodeWidth = episodeWidth + gapWidth;
 
   // Calculate the index of the episode
@@ -521,10 +555,14 @@ document.addEventListener("click", (event) => {
   }
 });
 
+
+
 function loadWatchPage(mediaType, name = null, id, season = null, episode = null) {
   const info = `${mediaType === "movie" ? name : `S${season}:E${episode} ${name}`}`;
   const watchPage = document.querySelector("main");
   let source = 1;
+
+
 
   watchPage.innerHTML = `
     <div class="watch-page">
@@ -536,7 +574,9 @@ function loadWatchPage(mediaType, name = null, id, season = null, episode = null
           </div>
           <div class="player-toolbar">
             <div class="provider-menu">
-              <button class="provider-change">Provider</button>
+              <button class="provider-change">
+                <i class="fa-solid fa-server"></i>
+              </button>
               <div class="providers">
                 <p data-source="1">Vidlink</p>
                 <p data-source="2">Embed.su</p>
@@ -551,11 +591,11 @@ function loadWatchPage(mediaType, name = null, id, season = null, episode = null
               <div class="get-dwnload">
               </div>
             </div>
-           <--!  <div class="go-fullscreen">
-              <button class="iframefullscreen">
-                <i class="fa-solid fa-expand"></i>
+            <div class="go-fullscreen">
+              <button class="iframefullscreen" title="Go fullscreen">
+                <i class="fa-solid fa-up-right-and-down-left-from-center"></i>
               </button>
-            </div> -->
+            </div>
           </div>
         </div>
       </div>
@@ -592,6 +632,70 @@ function loadWatchPage(mediaType, name = null, id, season = null, episode = null
   });
   
   //window.history.pushState({}, '', `/watch/${mediaType}/${id}/${name}${season && episode ? `/${season}/${episode}` : ''}`);
+
+  const iframeFullscreen = document.querySelector(".iframefullscreen");
+  const iframeExit = document.querySelector(".iframe-exit");
+  const iframeElement = document.querySelector(".iframe-container");
+
+
+  iframeFullscreen.addEventListener('click', () => {
+    if (!document.fullscreenElement) {
+        if (iframeElement.requestFullscreen) {
+            iframeElement.requestFullscreen();
+        } else if (iframeElement.webkitRequestFullscreen) { // Safari
+            iframeElement.webkitRequestFullscreen();
+        } else if (iframeElement.msRequestFullscreen) { // Older Microsoft browsers
+            iframeElement.msRequestFullscreen();
+        }
+        iframeExit.style.display = "block";
+    }
+  });
+
+    // Exit fullscreen for the iframe
+  iframeExit.addEventListener('click', () => {
+      if (document.exitFullscreen) {
+          document.exitFullscreen();
+      } else if (document.webkitExitFullscreen) { // Safari
+          document.webkitExitFullscreen();
+      } else if (document.msExitFullscreen) { // Older Microsoft browsers
+          document.msExitFullscreen();
+      }
+      iframeExit.style.display = "none"; // Hide exit button
+  });
+
+  // Handle fullscreen change events
+  document.addEventListener('fullscreenchange', () => {
+      // Check if iframe is no longer in fullscreen
+      if (!document.fullscreenElement) {
+          iframeExit.style.display = "none";
+          setTimeout(() => {
+            iframeExit.classList.remove('hidden');
+          }, 3000);
+      }
+      else {
+        setTimeout(() => {
+          iframeExit.classList.add('hidden');
+        }, 3000);
+
+        // Assuming same-origin iframe
+        const iframe = document.querySelector('iframe');
+
+        // Detect fullscreen changes on the iframe
+        iframe.addEventListener('fullscreenchange', () => {
+            console.log('Iframe fullscreen state changed');
+        });
+
+        // Add event listeners to the iframe's content (same-origin only)
+        iframe.contentWindow.addEventListener('keydown', (event) => {
+            console.log(`Key pressed in iframe: ${event.key}`);
+        });
+
+        iframe.contentDocument.addEventListener('mousemove', () => {
+            console.log('Mouse moved inside iframe');
+        });
+      }
+  });
+
 }
 
 // Sources
@@ -625,6 +729,9 @@ function loadSources(source, mediaType, id, season = null, episode = null) {
   document.querySelector(".loading").style.display = "flex";
 
   const loadIframe = `
+          <button class="iframe-exit">
+            <i class="fa-solid fa-compress"></i>
+          </button>
           <iframe
           src="${src}"
           referrerpolicy="origin"
@@ -633,6 +740,7 @@ function loadSources(source, mediaType, id, season = null, episode = null) {
           allowfullscreen
           style="display: none;"
           onload="showIframe(this)"
+          class="iframe"
         ></iframe>
         `;
   document.querySelector(".iframe-container").innerHTML = loadIframe;
@@ -642,6 +750,7 @@ function loadSources(source, mediaType, id, season = null, episode = null) {
 function showIframe(iframe) {
   iframe.style.display = "block";
   document.querySelector(".loading").style.display = "none";
+
 }
 
 function goBack() {
@@ -703,8 +812,10 @@ document.addEventListener('click', event => {
 
   if (event.target.closest('.grid-item')) {
       openModal(event); 
-  } else if (modal.contains(event.target) && !modalContent.contains(event.target)) {
-      modal.classList.remove('active');
+  } else if (!event.target.closest('.grid-item') && modal !== null) {
+      if (modal.contains(event.target) && !modalContent.contains(event.target)) {
+            modal.classList.remove('active');
+      }
   }
 });
 document.addEventListener('keydown', event => {
@@ -719,8 +830,5 @@ document.addEventListener('keydown', event => {
   }
 });
 
-const fullscreenIframeButton = document.getElementById('fullscreenIframeButton');
-const exitIframeButton = document.getElementById('exitIframeButton');
-const iframeElement = document.getElementById('iframeElement');
 
 console.clear = () => {};
