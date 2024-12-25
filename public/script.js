@@ -101,7 +101,10 @@ function renderGridItems(items) {
           </div>
           <div class="grid-item-info">
             <p>${capString(title, 40)}</p>
-            <p>${rating}</p>
+            <span class="grid-rating">
+              <i class="fa-solid fa-star"></i>
+              <p class="rating">${rating}</p>
+            </span>
             <p>${year}</p>
           </div>
         </div>
@@ -469,7 +472,7 @@ function scrollEpisodeIntoView(eno) {
 
   // Responsive measurements based on screen size
   const episodeWidth = isMobile() ? 8.6 * 16 : 15 * 16; // Mobile: 9.6rem, PC: 15rem
-  const gapWidth = 0.6 * 16;   // Mobile: 0.6rem, PC: 0.8rem
+  const gapWidth = isMobile() ? 0.6 * 16 : 0.8 * 16;   // Mobile: 0.6rem, PC: 0.8rem
   const totalEpisodeWidth = episodeWidth + gapWidth;
 
   // Calculate the index of the episode

@@ -200,7 +200,7 @@ section h2 {
     display: flex;
     flex-direction: column;
     max-width: 100%;
-    aspect-ratio: 1 / 1.44;
+    aspect-ratio: 1 / 1.6;
     text-align: center;
     padding: var(--padding1);
     border: 1px solid var(--color3);
@@ -220,10 +220,11 @@ section h2 {
 }
 
 .grid-item img {
-    border-radius: var(--border-radius1);
-    aspect-ratio: 1 / 1.5;
+    border-radius: var(--border-radius2);
+    aspect-ratio: 1 / 1.4;
     object-fit: cover;
     width: 100%;
+    height: 100%;
 }
 
 .grid-item-info {
@@ -231,25 +232,43 @@ section h2 {
     flex-wrap: wrap;
     justify-content: space-between;
     text-align: left;
-    padding-top: 0.1rem ;
-    height: 2.6rem;
+    padding-top: 0.4rem ;
+    height: 3rem;
 }
 
 .grid-item-info p {
     font-size: 12.4px;
-    max-width: 87%;
-    line-height: 14.2px;
+    line-height: 14px;
     max-height: calc(15px * 2);
 }
   
 
 .grid-item-info p:nth-child(1) {
+    flex: 1;
     overflow: hidden;   
     text-overflow: ellipsis;
-    height: 74%;
+    height: fit-content;
+    max-width: 80%;
+}
+
+.grid-rating {
+    display: flex;
+    padding-top: 0.1rem;
+    gap: 0.1rem;
+    color: goldenrod;
+    font-size: 10px !important;
+    font-weight: bold;
+    line-height: 14px;
+    width: fit-content;
+    height: fit-content;
+}
+
+.grid-rating > .rating {
+    font-size: 12px !important;
 }
 
 .grid-item-info p:nth-last-child(1) {
+    align-self: flex-end;
     font-size: calc(12px / 1.12);
     width: 100%;
     line-height: 12px;
