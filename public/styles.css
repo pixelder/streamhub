@@ -541,7 +541,7 @@ body:has(.modal.active) {
 
 .watch-btn:hover {
     transition: background-color 0.3s ease-in-out;
-    background-color: #222233;
+    background-color: #4a4a69;
 }
 
 .modal-cover {
@@ -607,6 +607,7 @@ body:has(.modal.active) {
 }
 
 .ratings-genre {
+    position: relative;
     display: flex;
     gap: 0.3rem;
     align-items: center;
@@ -891,7 +892,7 @@ option {
     display: flex;
     position: relative;
     flex-direction: column;
-    aspect-ratio: 16 / 7.4;
+    aspect-ratio: 16 / 8;
     width: 84%;
     margin: auto;
     border-radius: var(--border-radius1);

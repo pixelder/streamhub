@@ -306,7 +306,7 @@
     .ratings-genre i {
         aspect-ratio: 1 /1;
         font-size: 0.68rem;
-        line-height: normal;
+        line-height: 0.9rem;
         padding-right: 0.2rem;
     }
 
