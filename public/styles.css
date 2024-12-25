@@ -532,11 +532,16 @@ body:has(.modal.active) {
     margin: auto;
     padding: 0.6rem 1.2rem;
     font-size: 1rem;
-    background-color: #4a4a69;
+    background-color: #383852;
     color: var(--font-color1);
     border: none;
     border-radius: var(--border-radius2);
     cursor: pointer;
+}
+
+.watch-btn:hover {
+    transition: background-color 0.3s ease-in-out;
+    background-color: #222233;
 }
 
 .modal-cover {
@@ -590,7 +595,8 @@ body:has(.modal.active) {
 }
 
 .modal-info > h1 {
-    font-size: 2.4rem;
+    margin: unset !important;
+    font-size: 2.4rem !important;
     
 }
 
@@ -602,13 +608,14 @@ body:has(.modal.active) {
 
 .ratings-genre {
     display: flex;
-    gap: 0.4rem;
+    gap: 0.3rem;
     align-items: center;
     color: goldenrod;
 }
 
 .ratings-genre i {
     font-size: 0.8rem;
+    line-height: normal;
 }
 
 .ratings-genre p {
@@ -618,19 +625,19 @@ body:has(.modal.active) {
     border-right: 1px solid var(--color2);
 }
 
-[data-title]:hover:after {
+.ratings-genre p[data-title]:hover:after {
     content: attr(data-title);
     min-width: 4rem;
     position: absolute;
-    top: -150%;
-    left: -30%;
+    top: -2rem;
+    left: 1rem;
     z-index: 1000;
     padding: 0.4rem;
     border-radius: var(--border-radius2);
     font-size: 0.75rem;
-    font-weight: normal;
+    font-weight: 600;
     white-space: nowrap;
-    filter: opacity(0.85);
+    filter: opacity(0.9);
     color: var(--font-color2);
     background-color: var(--color3);
 }
@@ -659,11 +666,6 @@ p.tags {
     padding: 0rem 0 0rem 0;
     color: var(--font-color3);
     font-size: 0.8rem;
-}
-
-.watch-btn:hover {
-    transition: background-color 1s ease;
-    background-color: var(--color1);
 }
 
 .seasons-menu{
@@ -770,19 +772,21 @@ option {
 }
 
 .episode-overview {
-    all: unset !important;
+    display: flex;
+    flex-direction: column;
     position: relative !important;
     width: 100%;
 }
 
 .overview {
     all: unset;
+    width: 100%;
     display: -webkit-box;
     line-clamp: 3;
     -webkit-line-clamp: 3; /* Limits to 3 lines */
     -webkit-box-orient: vertical;
     overflow: hidden;
-    max-height: calc(1rem * 3); /* Ensure height matches 3 lines */
+    max-height: fit-content; /* Ensure height matches 3 lines */
     margin: 0;
     transition: max-height 0.3s ease;
 }
@@ -794,17 +798,7 @@ option {
     -webkit-box-orient: unset;
     overflow: visible;
     max-height: none; /* Allow full content to display */
-}
-
-.read-more {
-    position: absolute;
-    bottom: 0;
-    right: 0;
-    font-size: 0.86rem;
-    background: #212131; /* Match background color */
-    cursor: pointer;
-    padding-left: 5px;
-    font-weight: bold;
+    mask-image: none !important;
 }
 
 
@@ -861,6 +855,9 @@ option {
     display: none;
 }
   
+.player-styling .episode-overview {
+    display: none;
+}
 
 
 
@@ -894,7 +891,7 @@ option {
     display: flex;
     position: relative;
     flex-direction: column;
-    aspect-ratio: 16 / 8;
+    aspect-ratio: 16 / 7.4;
     width: 84%;
     margin: auto;
     border-radius: var(--border-radius1);
@@ -1018,7 +1015,7 @@ iframe {
     display: block;
     color: var(--font-color1);
     font-size: 0.8rem;
-    padding: 0.4rem 0.4rem;
+    padding: 0.4rem;
     display: block;
     cursor: pointer;
 }

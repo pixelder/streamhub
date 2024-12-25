@@ -403,10 +403,6 @@ async function tvContent(data, sno, eno, ref) {
               </div>
               <div class="episode-overview">
                 <p class="overview">${episode.overview || "No overview available"}</p>
-                <span class="read-more" style="display: none;">
-                  <i class="fa-solid fa-angles-down"></i>
-                  <i class="fa-solid fa-angles-up"></i>
-                </span>
               </div>
             </div>
           </div>
@@ -435,19 +431,15 @@ async function tvContent(data, sno, eno, ref) {
 async function cappedOverview() {
   document.querySelectorAll('.episode-overview').forEach(container => {
     const text = container.querySelector('.overview');
-    const readMore = container.querySelector('.read-more');
-    console.log("hi");
 
     // Check if the text content overflows
-    const isOverflowing = text.scrollHeight > text.offsetHeight;
+    const isOverflowing = text.scrollHeight -10 > text.offsetHeight;
     if (isOverflowing) {
-        readMore.style.display = 'inline';
-    } else {
-        readMore.style.display = 'none'; // Hide for short text
+        text.style.maskImage = "linear-gradient(to bottom, black, black 60%, transparent 98%)";
     }
 
     // Toggle expansion and collapse
-    readMore.addEventListener('click', () => {
+    text.addEventListener('click', () => {
         if (container.classList.contains('expanded')) {
             container.classList.remove('expanded');
         } else {
