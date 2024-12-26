@@ -515,8 +515,6 @@ function scrollEpisodeIntoView(eno) {
 
 }
 
-
-
 document.addEventListener("click", (event) => {
   if (event.target.classList.contains("watch-btn")) {
     const id = event.target.dataset.id;
@@ -539,7 +537,10 @@ document.addEventListener("click", (event) => {
 
     //window.location.href = `watch/${mediaType}/${id}/${name}${season && episode ? `/${season}/${episode}` : ''}`;
     if (document.getElementById('episode-container').classList.contains('player-styling')) {    
-      loadSources(source = 1, mediaType, id, season, episode);
+      currentSeason = season;
+      currentEpisode = episode;
+      loadSources(source = 1, mediaType, id, currentSeason, currentEpisode);
+      console.log("log2",source, season, episode);
       document.querySelector("title").innerHTML = info;
       info !== null ? document.querySelector(".now-playing").innerHTML = info : null;
     }
@@ -550,14 +551,15 @@ document.addEventListener("click", (event) => {
   }
 });
 
-
+let currentSeason = null;
+let currentEpisode = null;
 
 function loadWatchPage(mediaType, name = null, id, season = null, episode = null) {
+  currentSeason = season;
+  currentEpisode = episode;
   const info = `${mediaType === "movie" ? name : `S${season}:E${episode} ${name}`}`;
   const watchPage = document.querySelector("main");
   let source = 1;
-
-
 
   watchPage.innerHTML = `
     <div class="watch-page">
@@ -613,6 +615,9 @@ function loadWatchPage(mediaType, name = null, id, season = null, episode = null
 
   // Initialize default source
   loadSources(source, mediaType, id, season, episode);
+  console.log( "log1",source, season, episode);
+
+
 
   // Add event listeners to dropdown items
   const sourceItems = document.querySelectorAll('.providers p');
@@ -621,7 +626,8 @@ function loadWatchPage(mediaType, name = null, id, season = null, episode = null
       const selectedSource = parseInt(item.getAttribute('data-source'), 10); // Ensure source is an integer
       if (selectedSource && selectedSource !== source) {
         source = selectedSource; // Update the source
-        loadSources(source, mediaType, id, season, episode);
+        loadSources(source, mediaType, id, currentSeason, currentEpisode);
+        console.log( "log3",source, season, episode);
       }
     });
   });
