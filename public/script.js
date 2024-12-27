@@ -396,7 +396,7 @@ async function tvContent(data, sno, eno, ref) {
       const seasonData = await response.json();
       episodeContainer.innerHTML = seasonData.episodes
         .map(episode => `
-          <div id="${episode.episode_number}" class="episode episode-width" data-name="${data.name}" data-id="${data.id}" data-season="${selectedSeason}" data-episode="${episode.episode_number}">
+          <div id="${episode.episode_number}" class="episode episode-width" data-name="${data.name}" data-id="${data.id}" data-season="${selectedSeason}" data-episode="${episode.episode_number}" data-epname="${episode.name}">
             <div class="episode-items">
               <img src="${episode.still_path ? IMAGE_URL + episode.still_path : 'https://placehold.co/500x281?text=No+Image+Available'}" alt="Episode ${episode.episode_number}">
               <div class="episode-info">
@@ -532,8 +532,12 @@ document.addEventListener("click", (event) => {
     const id = episodeElement.dataset.id;
     const season = episodeElement.dataset.season;
     const episode = episodeElement.dataset.episode;
+    const epname = episodeElement.dataset.epname;
     const mediaType = "tv";
-    const info = `${mediaType === "movie" ? name : `S${season}:E${episode} ${name}`}`;
+    const title = `${mediaType === "movie" ? name : `S${season}:E${episode} ${name}`}`;
+    const info = `<h2>${name}</h2>
+                  <h4>S${season}:E${episode} ${epname}</h4>`;
+    const tvData = { season, episode, epname};
 
     //window.location.href = `watch/${mediaType}/${id}/${name}${season && episode ? `/${season}/${episode}` : ''}`;
     if (document.getElementById('episode-container').classList.contains('player-styling')) {    
@@ -541,11 +545,11 @@ document.addEventListener("click", (event) => {
       currentEpisode = episode;
       loadSources(source = 1, mediaType, id, currentSeason, currentEpisode);
       console.log("log2",source, season, episode);
-      document.querySelector("title").innerHTML = info;
-      info !== null ? document.querySelector(".now-playing").innerHTML = info : null;
+      document.querySelector("title").innerHTML = title;
+      if (info) {document.querySelector(".now-playing").innerHTML = info};
     }
     else {
-      loadWatchPage(mediaType, name, id, season, episode);
+      loadWatchPage(mediaType, name, id, tvData);
     }
 
   }
@@ -554,10 +558,16 @@ document.addEventListener("click", (event) => {
 let currentSeason = null;
 let currentEpisode = null;
 
-function loadWatchPage(mediaType, name = null, id, season = null, episode = null) {
+function loadWatchPage(mediaType, name = null, id, tvData = null) {
+  season = tvData.season;
+  episode = tvData.episode;
   currentSeason = season;
   currentEpisode = episode;
-  const info = `${mediaType === "movie" ? name : `S${season}:E${episode} ${name}`}`;
+  const title = `${mediaType === "movie" ? name : `S${season}:E${episode} ${name}`}`;
+  const info = `<h2>${name}</h2> ${mediaType === "movie" ? ""
+             : `<h4>S${season}:E${episode} ${tvData.epname}</h4>`
+              }`;
+
   const watchPage = document.querySelector("main");
   let source = 1;
 
@@ -596,12 +606,13 @@ function loadWatchPage(mediaType, name = null, id, season = null, episode = null
           </div>
         </div>
       </div>
-      <h2 class="now-playing"></h2>
+      <div class="now-playing">
+      </div>
       <div class="player-episodes">
       </div>
     </div>
   `;
-  document.querySelector("title").innerHTML = info;
+  document.querySelector("title").innerHTML = title;
   document.querySelector(".now-playing").innerHTML = info;
 
   //display metadata on watch page

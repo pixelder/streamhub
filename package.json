@@ -16,6 +16,16 @@
         "serve": "14.2.4"
     },
     "dependencies": {
+        "ejs": "^3.1.10",
         "express": "^4.21.2"
-    }
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/pixelder/streamhub.git"
+    },
+    "type": "commonjs",
+    "bugs": {
+        "url": "https://github.com/pixelder/streamhub/issues"
+    },
+    "homepage": "https://github.com/pixelder/streamhub#readme"
 }
