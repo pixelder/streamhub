@@ -520,10 +520,9 @@ document.addEventListener("click", (event) => {
     const id = event.target.dataset.id;
     const name = event.target.dataset.name;
     const mediaType = "movie";
-    const season = episode = null;
 
     //window.location.href = `watch/${mediaType}/${id}/${name}`;
-    loadWatchPage(mediaType, name, id, season, episode);
+    loadWatchPage(mediaType, name, id);
   }
 
   if (event.target.closest(".episode img")) {
@@ -559,8 +558,8 @@ let currentSeason = null;
 let currentEpisode = null;
 
 function loadWatchPage(mediaType, name = null, id, tvData = null) {
-  season = tvData.season;
-  episode = tvData.episode;
+  season = tvData?.season;
+  episode = tvData?.episode;
   currentSeason = season;
   currentEpisode = episode;
   const title = `${mediaType === "movie" ? name : `S${season}:E${episode} ${name}`}`;
