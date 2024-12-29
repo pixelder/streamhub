@@ -89,7 +89,7 @@
         line-clamp: 2;
         -webkit-line-clamp: 2;
         -webkit-box-orient: vertical;
-        overflow: hidden;
+        overflow: visible !important;
         text-overflow: ellipsis;
     }
 
@@ -412,11 +412,22 @@
         justify-content: flex-start;
         gap: 0rem;
     }
+
+    .watch-page .now-playing {
+        line-height: normal;
+        height: fit-content;
+        margin-left: 0;
+        padding: 0.6rem 0 0 0.6rem;
+    }
     
-    .watch-page h2 {
+    .now-playing h2 {
         font-size: 1.375rem;
-        margin: 1rem auto 1rem 0.6rem;
+        margin: 0;
         align-content: flex-start;
+    }
+
+    .now-playing h4 {
+        font-size: 0.875rem;
     }
 
     .player-container {
@@ -450,7 +461,7 @@
     }
     
     .loading {
-        height: calc(100% - 1.96em);
+        height: calc(100% - 1.94em);
         font-size: 1.2rem;
     }
 
@@ -469,9 +480,20 @@
         height: auto;
         max-width: 100%;
         padding: 0.6rem;
+        margin-top: unset;
     }
 
-    .player-episodes .seasons-menu {
+    .player-episodes .seasons-menu { 
         padding: 0 0 0.6rem;  
+    }
+
+    .player-episodes .seasons-menu select {
+        all: unset;
+        font-weight: 600;
+        font-size: 0.875rem;
+        padding: 0.24rem 1.2rem 0rem 0rem;
+        background-image: url(icons/go-down-symbolic.svg);
+        background-repeat:  no-repeat;
+        background-position: 100% 90%;
     }
   }
