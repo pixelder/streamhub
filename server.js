@@ -6,9 +6,9 @@ app.set('view engine', 'ejs')
 // Serve static files like CSS, JS
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.get("/hi", (req,res) => {
+/* app.get("/hi", (req,res) => {
   res.sendStatus(500);
-})
+}) */
 // Dynamic route for the watch page
 app.get('/watch/:mediaType/:id/:name', (req, res) => {
   const { mediaType, id, name } = req.params;
