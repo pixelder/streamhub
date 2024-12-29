@@ -559,8 +559,8 @@ let currentSeason = null;
 let currentEpisode = null;
 
 function loadWatchPage(mediaType, name = null, id, tvData = null) {
-  season = tvData.season;
-  episode = tvData.episode;
+  season = tvData?.season;
+  episode = tvData?.episode;
   currentSeason = season;
   currentEpisode = episode;
   const title = `${mediaType === "movie" ? name : `S${season}:E${episode} ${name}`}`;
@@ -626,7 +626,7 @@ function loadWatchPage(mediaType, name = null, id, tvData = null) {
 
   // Initialize default source
   loadSources(source, mediaType, id, season, episode);
-  console.log( "log1",source, season, episode);
+  console.log( "log1",mediaType, id, source, season, episode);
 
 
 
@@ -643,7 +643,7 @@ function loadWatchPage(mediaType, name = null, id, tvData = null) {
     });
   });
   
-  //window.history.pushState({}, '', `/watch/${mediaType}/${id}/${name}${season && episode ? `/${season}/${episode}` : ''}`);
+  window.history.pushState({}, '', `/watch/${mediaType}/${id}/${name}${season && episode ? `/${season}/${episode}` : ''}`);
 
   const iframeFullscreen = document.querySelector(".iframefullscreen");
   const iframeExit = document.querySelector(".iframe-exit");

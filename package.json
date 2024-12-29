@@ -4,7 +4,7 @@
     "description": "A streaming site",
     "main": "server.js",
     "scripts": {
-        "start": "serve"
+        "start": "nodemon server.js"
     },
     "keywords": [
         "html",
@@ -17,7 +17,8 @@
     },
     "dependencies": {
         "ejs": "^3.1.10",
-        "express": "^4.21.2"
+        "express": "^4.21.2",
+        "nodemon": "^3.1.9"
     },
     "repository": {
         "type": "git",

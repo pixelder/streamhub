@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Streaming Hub</title>
+    <script src="https://kit.fontawesome.com/60a2eca232.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" type="text/css" href="/styles.css">
+    <link rel="stylesheet"  type="text/css" href="/media.css">
+</head>
+<body>
+    <!-- Top Navbar -->
+    <header id="header">
+        <nav>
+            <ul>
+                <li><a href="/index.html">Home</a></li><!-- 
+                <li><a href="movies.html">Movies</a></li>
+                <li><a href="tv-shows.html">TV Shows</a></li> -->
+                <form class="search-bar" onsubmit="return handleSearch(event)">
+                    <input type="tezt" id="search-input" onsubmit="return handleSearch(event)" placeholder="Search" />
+                    <i class="search-icon fa-solid fa-magnifying-glass"></i>
+                    <button type="reset" class="x-icon" id="search-button" ><!-- onclick="handleSearch(event)" -->
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </form>
+                  
+            </ul>
+        </nav>
+    </header>
+
+
+    <main id="main-content">  
+    </main>
+    <script>
+        // Pass the variable to the JavaScript context
+        
+        document.addEventListener("DOMContentLoaded", () => {
+            loadWatchPage(`<%= mediaType %>`, `<%= name %>`, `<%= id %>`, tvData = null); // Netflix and Movies as default
+        });
+        
+    </script>
+    <script src="/script.js"></script>
+</body>
+</html>
