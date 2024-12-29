@@ -393,7 +393,7 @@ async function tvContent(data, sno, eno, ref) {
     const selectedSeason = event.target.value;
     try {
       const response = await fetch(`${BASE_URL}/tv/${data.id}/season/${selectedSeason}?api_key=${API_KEY}`);
-      const seasonData = await response.json();
+      seasonData = await response.json();
       episodeContainer.innerHTML = seasonData.episodes
         .map(episode => `
           <div id="${episode.episode_number}" class="episode episode-width" data-name="${data.name}" data-id="${data.id}" data-season="${selectedSeason}" data-episode="${episode.episode_number}" data-epname="${episode.name}">
@@ -417,9 +417,10 @@ async function tvContent(data, sno, eno, ref) {
     } catch (error) {
       console.error('Error fetching season details:', error);
     }
-    ref != "modal"
-    ? document.getElementById('episode-container').classList.add('player-styling')
-    : "";
+    if (ref != "modal") {
+      document.getElementById('episode-container').classList.add('player-styling');
+      document.querySelector('.now-playing > h4').innerHTML = `S${sno}:E${eno} ${seasonData.episodes.map(episode => episode.name)[eno - 1]}`;
+    };
 
     scrollEpisodeIntoView(eno);
   };
@@ -521,7 +522,6 @@ document.addEventListener("click", (event) => {
     const name = event.target.dataset.name;
     const mediaType = "movie";
 
-    //window.location.href = `watch/${mediaType}/${id}/${name}`;
     loadWatchPage(mediaType, name, id);
   }
 
@@ -536,16 +536,16 @@ document.addEventListener("click", (event) => {
     const title = `${mediaType === "movie" ? name : `S${season}:E${episode} ${name}`}`;
     const info = `<h2>${name}</h2>
                   <h4>S${season}:E${episode} ${epname}</h4>`;
-    const tvData = { season, episode, epname};
+    const tvData = { season, episode, epname };
 
-    //window.location.href = `watch/${mediaType}/${id}/${name}${season && episode ? `/${season}/${episode}` : ''}`;
     if (document.getElementById('episode-container').classList.contains('player-styling')) {    
       currentSeason = season;
       currentEpisode = episode;
-      loadSources(source = 1, mediaType, id, currentSeason, currentEpisode);
+      loadSources(source = 1, mediaType, id, season, episode);
       console.log("log2",source, season, episode);
       document.querySelector("title").innerHTML = title;
       if (info) {document.querySelector(".now-playing").innerHTML = info};
+      window.history.pushState({}, '', `/watch/${mediaType}/${id}/${name}${season && episode ? `/${season}/${episode}` : ''}`);
     }
     else {
       loadWatchPage(mediaType, name, id, tvData);
@@ -564,7 +564,7 @@ function loadWatchPage(mediaType, name = null, id, tvData = null) {
   currentEpisode = episode;
   const title = `${mediaType === "movie" ? name : `S${season}:E${episode} ${name}`}`;
   const info = `<h2>${name}</h2> ${mediaType === "movie" ? ""
-             : `<h4>S${season}:E${episode} ${tvData.epname}</h4>`
+             : `<h4>S${season}:E${episode} ${tvData?.epname}</h4>`
               }`;
 
   const watchPage = document.querySelector("main");
@@ -642,7 +642,7 @@ function loadWatchPage(mediaType, name = null, id, tvData = null) {
     });
   });
   
-  //window.history.pushState({}, '', `/watch/${mediaType}/${id}/${name}${season && episode ? `/${season}/${episode}` : ''}`);
+  window.history.pushState({}, '', `/watch/${mediaType}/${id}/${name}${season && episode ? `/${season}/${episode}` : ''}`);
 
   const iframeFullscreen = document.querySelector(".iframefullscreen");
   const iframeExit = document.querySelector(".iframe-exit");

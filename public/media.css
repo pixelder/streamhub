@@ -492,7 +492,7 @@
         font-weight: 600;
         font-size: 0.875rem;
         padding: 0.24rem 1.2rem 0rem 0rem;
-        background-image: url(icons/go-down-symbolic.svg);
+        background-image: url(/icons/go-down-symbolic.svg);
         background-repeat:  no-repeat;
         background-position: 100% 90%;
     }
