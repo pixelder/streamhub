@@ -27,18 +27,16 @@
             </ul>
         </nav>
     </header>
-
-
+    
     <main id="main-content">  
     </main>
+    <script src="/script.js"></script>
     <script>
-        // Pass the variable to the JavaScript context
         
         document.addEventListener("DOMContentLoaded", () => {
-            loadWatchPage(`<%= mediaType %>`, `<%= name %>`, `<%= id %>`, tvData = null); // Netflix and Movies as default
+            loadWatchPage(`<%= mediaType %>`, `<%= name %>`, `<%= id %>`, tvData = null);
         });
         
     </script>
-    <script src="/script.js"></script>
 </body>
 </html>
