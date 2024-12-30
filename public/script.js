@@ -9,6 +9,55 @@ const sections = {
   'trending-series': `${BASE_URL}/trending/tv/week?api_key=${API_KEY}`,
 };
 
+// Load content for each section
+Object.entries(sections).forEach(([sectionId, url]) => {
+  fetchContent(sectionId, url);
+});
+
+function isMobile() {
+  const screenWidth = window.innerWidth <= 768;
+  return screenWidth;
+}
+
+// Fetch and display data with a customizable limit
+async function fetchContent(sectionId, url, limit) {
+  limit = isMobile() ? 20 : 14;
+  try {
+    const response = await fetch(url);
+    const data = await response.json();
+    populateSection(sectionId, data.results.slice(0, limit));
+  } catch (error) {
+    console.error(`Error fetching data for ${sectionId}:`, error);
+  }
+}
+
+// Populate a section with content
+function populateSection(sectionId, items) {
+  const container = document.querySelector(`#${sectionId} .grid-container`);
+  container.innerHTML = renderGridItems(items);
+}
+
+// Handle "show more" and "collapse" for sections
+function expandSection(sectionId) {
+  const sectionUrl = sections[sectionId];
+  fetchContent(sectionId, sectionUrl, 24);
+
+  document.querySelector(`#${sectionId} .show-more`).style.display = 'none';
+  document.querySelector(`#${sectionId} .collapse`).style.display = 'block';
+}
+
+function collapseSection(sectionId) {
+  const sectionUrl = sections[sectionId];
+  fetchContent(sectionId, sectionUrl, 12);
+
+  document.querySelector(`#${sectionId} .collapse`).style.display = 'none';
+  document.querySelector(`#${sectionId} .show-more`).style.display = 'block';
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  loadDiscoverContent(213, 8, 'movie'); // Netflix and Movies as default
+});
+
 function loadDiscoverContent(networkId = 213, providerId = 8, mediaType = 'movie') {
   const url = `${BASE_URL}/discover/${mediaType}?api_key=${API_KEY}&with_networks=${networkId}&with_watch_providers=${providerId}&watch_region=US&${OPTIONS}`;
   const sectionId = 'discover-streaming';
@@ -60,10 +109,7 @@ document.querySelectorAll(".media-tab").forEach(button => {
 {
 //
 // Misc. functions 
-function isMobile() {
-  const screenWidth = window.innerWidth <= 768;
-  return screenWidth;
-}
+
 
 
 function truncate(num, precision) {
@@ -112,50 +158,6 @@ function renderGridItems(items) {
     })
     .join('');
 }
-
-// Fetch and display data with a customizable limit
-async function fetchContent(sectionId, url, limit) {
-  limit = isMobile() ? 20 : 14;
-  try {
-    const response = await fetch(url);
-    const data = await response.json();
-    populateSection(sectionId, data.results.slice(0, limit));
-  } catch (error) {
-    console.error(`Error fetching data for ${sectionId}:`, error);
-  }
-}
-
-// Populate a section with content
-function populateSection(sectionId, items) {
-  const container = document.querySelector(`#${sectionId} .grid-container`);
-  container.innerHTML = renderGridItems(items);
-}
-
-// Load content for each section
-Object.entries(sections).forEach(([sectionId, url]) => {
-  fetchContent(sectionId, url);
-});
-
-// Handle "show more" and "collapse" for sections
-function expandSection(sectionId) {
-  const sectionUrl = sections[sectionId];
-  fetchContent(sectionId, sectionUrl, 24);
-
-  document.querySelector(`#${sectionId} .show-more`).style.display = 'none';
-  document.querySelector(`#${sectionId} .collapse`).style.display = 'block';
-}
-
-function collapseSection(sectionId) {
-  const sectionUrl = sections[sectionId];
-  fetchContent(sectionId, sectionUrl, 12);
-
-  document.querySelector(`#${sectionId} .collapse`).style.display = 'none';
-  document.querySelector(`#${sectionId} .show-more`).style.display = 'block';
-}
-
-document.addEventListener("DOMContentLoaded", () => {
-  loadDiscoverContent(213, 8, 'movie'); // Netflix and Movies as default
-});
 
 // Handle Search
 async function handleSearch(event) {
@@ -345,6 +347,9 @@ function displayModal(mediaType, data) {
         data-id="${id}">
           Watch
         </button>
+        <button class="share">
+          <i class="fa-solid fa-paper-plane"></i>
+        </button>
       </div>
     `);
     isMobile() ? modalContent.style.height = "fit-content" : modalContent.style.height = '30rem';
@@ -354,8 +359,25 @@ function displayModal(mediaType, data) {
     isMobile() ? modalContent.style.height = '70%' : modalContent.style.height = '30rem' ;
   }
 
+  const shareData = {
+    title: "MDN",
+    text: "Learn web development on MDN!",
+    url: "https://developer.mozilla.org",
+  };
+  
+  const btn = document.querySelector(".share");
+  
+  // Share must be triggered by "user activation"
+  btn?.addEventListener("click", async () => {
+    try {
+      await navigator.share(shareData);
+    } catch (err) {
+      console.log(`Error: ${err}`);
+    }
+  });
+  
 
-  modal.classList.add('active');// = 'top: 0;left: 0;width: 100dvw;height: 100dvh; opacity: 1;';
+  modal.classList.add('active');
 
 }
 
@@ -522,7 +544,8 @@ document.addEventListener("click", (event) => {
     const name = event.target.dataset.name;
     const mediaType = "movie";
 
-    loadWatchPage(mediaType, name, id);
+   // loadWatchPage(mediaType, name, id);
+    window.location.href = `/watch/${mediaType}/${id}/${name}`;
   }
 
   if (event.target.closest(".episode img")) {
@@ -536,7 +559,7 @@ document.addEventListener("click", (event) => {
     const title = `${mediaType === "movie" ? name : `S${season}:E${episode} ${name}`}`;
     const info = `<h2>${name}</h2>
                   <h4>S${season}:E${episode} ${epname}</h4>`;
-    const tvData = { season, episode, epname };
+    //const tvData = { season, episode, epname };
 
     if (document.getElementById('episode-container').classList.contains('player-styling')) {    
       currentSeason = season;
@@ -548,7 +571,8 @@ document.addEventListener("click", (event) => {
       window.history.pushState({}, '', `/watch/${mediaType}/${id}/${name}${season && episode ? `/${season}/${episode}` : ''}`);
     }
     else {
-      loadWatchPage(mediaType, name, id, tvData);
+      window.location.href = `/watch/${mediaType}/${id}/${name}${season && episode ? `/${season}/${episode}` : ''}`;
+      //loadWatchPage(mediaType, name, id, tvData);
     }
 
   }
@@ -642,7 +666,6 @@ function loadWatchPage(mediaType, name = null, id, tvData = null) {
     });
   });
   
-  window.history.pushState({}, '', `/watch/${mediaType}/${id}/${name}${season && episode ? `/${season}/${episode}` : ''}`);
 
   const iframeFullscreen = document.querySelector(".iframefullscreen");
   const iframeExit = document.querySelector(".iframe-exit");
@@ -770,13 +793,7 @@ function goBack() {
 
 
 // Listen to popstate events for navigation
-window.addEventListener("popstate", (event) => {
-  if (event.state?.page === "watch") {
-    loadWatchPage(event.state.id);
-  } else {
-    loadHomePage(); // Custom function to load home page
-  }
-});
+
 
 
 // header animation
