@@ -360,9 +360,8 @@ function displayModal(mediaType, data) {
   }
 
   const shareData = {
-    title: "MDN",
-    text: "Learn web development on MDN!",
-    url: "https://developer.mozilla.org",
+    text: `${name}`,
+    url: `https://pixelstream.vercel.app/watch/${mediaType}/${id}/${name}`,
   };
   
   const btn = document.querySelector(".share");
