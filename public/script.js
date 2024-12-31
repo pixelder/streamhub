@@ -5,54 +5,103 @@ const OPTIONS = 'include_null_first_air_dates=false&language=en-US&page=1&sort_b
 
 // Sections to populate
 const sections = {
-  'trending-movies': `${BASE_URL}/trending/movie/week?api_key=${API_KEY}&with_release_type=4&page=1`,
+  'trending-movies': `${BASE_URL}/trending/movie/week?api_key=${API_KEY}&with_release_type=4`,
   'trending-series': `${BASE_URL}/trending/tv/week?api_key=${API_KEY}`,
 };
-
-// Load content for each section
-Object.entries(sections).forEach(([sectionId, url]) => {
-  fetchContent(sectionId, url);
-});
 
 function isMobile() {
   const screenWidth = window.innerWidth <= 768;
   return screenWidth;
 }
 
-// Fetch and display data with a customizable limit
+// Global variables for pagination tracking
+let pageNumbers = {}; // Track the current page number for each section
+let storedData = {}; // Store data for each section for persistent pagination
+let isFetching = {}; // Track fetching state per section to avoid multiple fetches
+
 async function fetchContent(sectionId, url, limit) {
-  limit = isMobile() ? 20 : 14;
+  limit = isMobile() ? 20 : 14; // Set limit based on device size
+  
+  if (!pageNumbers[sectionId]) pageNumbers[sectionId] = 1; // Initialize page number if not set
+  if (!isFetching[sectionId]) isFetching[sectionId] = false; // Initialize fetching state
+
+  // Prevent multiple fetch requests while one is ongoing
+  if (isFetching[sectionId]) return;
+
   try {
-    const response = await fetch(url);
+    isFetching[sectionId] = true; // Set fetching flag to true
+
+    // Modify the URL to include the correct page number
+    const pageUrl = `${url}&page=${pageNumbers[sectionId]}`;
+    const response = await fetch(pageUrl);
     const data = await response.json();
-    populateSection(sectionId, data.results.slice(0, limit));
+
+    // Reset stored data for a new page
+    storedData[sectionId] = data.results;
+
+    // Determine the results to show based on the limit
+    const accumulatedResults = storedData[sectionId].slice(0, limit);
+
+    // Populate the section with the fetched results
+    populateSection(sectionId, accumulatedResults);
+    setupPagination(sectionId, url, limit);
   } catch (error) {
     console.error(`Error fetching data for ${sectionId}:`, error);
+  } finally {
+    isFetching[sectionId] = false;
   }
 }
 
+// Set up pagination buttons for the section
+function setupPagination(sectionId, url, limit) {
+  const prevButton = document.querySelector(`#${sectionId} .prev-page`);
+  const nextButton = document.querySelector(`#${sectionId} .next-page`);
+
+  // Remove previous event listeners to avoid duplication
+  prevButton.replaceWith(prevButton.cloneNode(true)); // Reset the "previous" button
+  nextButton.replaceWith(nextButton.cloneNode(true)); // Reset the "next" button
+
+  const updatedPrevButton = document.querySelector(`#${sectionId} .prev-page`);
+  const updatedNextButton = document.querySelector(`#${sectionId} .next-page`);
+
+  // Previous page button functionality
+  updatedPrevButton.addEventListener('click', () => {
+    if (pageNumbers[sectionId] > 1) {
+      pageNumbers[sectionId]--; // Decrement the page number
+      fetchContent(sectionId, url, limit); // Fetch the previous page
+    }
+  });
+
+  // Next page button functionality
+  updatedNextButton.addEventListener('click', () => {
+    pageNumbers[sectionId]++; // Increment the page number
+    fetchContent(sectionId, url, limit); // Fetch the next page
+  });
+}
+
+// Load content for each section
+Object.entries(sections).forEach(([sectionId, url]) => {
+    let limit = isMobile() ? 20 : 14;
+    fetchContent(sectionId, url, limit);
+});
+
 // Populate a section with content
 function populateSection(sectionId, items) {
-  const container = document.querySelector(`#${sectionId} .grid-container`);
-  container.innerHTML = renderGridItems(items);
+    const container = document.querySelector(`#${sectionId} .grid-container`);
+    container.innerHTML = renderGridItems(items);
 }
 
-// Handle "show more" and "collapse" for sections
-function expandSection(sectionId) {
-  const sectionUrl = sections[sectionId];
-  fetchContent(sectionId, sectionUrl, 24);
 
-  document.querySelector(`#${sectionId} .show-more`).style.display = 'none';
-  document.querySelector(`#${sectionId} .collapse`).style.display = 'block';
-}
+// Attach event listeners to each section's pagination buttons
+/* document.querySelectorAll('.pagination-buttons').forEach((buttonsContainer) => {
+  console.log('hi');
+    const sectionId = buttonsContainer.closest('section').id;
+    console.log(sectionId);
+    buttonsContainer.querySelector('.prev-page').addEventListener('click', () => showPreviousPage(sectionId));
+    buttonsContainer.querySelector('.next-page').addEventListener('click', () => showNextPage(sectionId));
+}); */
 
-function collapseSection(sectionId) {
-  const sectionUrl = sections[sectionId];
-  fetchContent(sectionId, sectionUrl, 12);
 
-  document.querySelector(`#${sectionId} .collapse`).style.display = 'none';
-  document.querySelector(`#${sectionId} .show-more`).style.display = 'block';
-}
 
 document.addEventListener("DOMContentLoaded", () => {
   loadDiscoverContent(213, 8, 'movie'); // Netflix and Movies as default
@@ -61,7 +110,10 @@ document.addEventListener("DOMContentLoaded", () => {
 function loadDiscoverContent(networkId = 213, providerId = 8, mediaType = 'movie') {
   const url = `${BASE_URL}/discover/${mediaType}?api_key=${API_KEY}&with_networks=${networkId}&with_watch_providers=${providerId}&watch_region=US&${OPTIONS}`;
   const sectionId = 'discover-streaming';
-  let limit = 14;
+  let limit;
+  storedData[sectionId] = [];
+  pageNumbers['discover-streaming'] = 1;
+  console.log(mediaType, url);
   fetchContent(sectionId, url, limit);
 }
 
@@ -106,11 +158,9 @@ document.querySelectorAll(".media-tab").forEach(button => {
   });
 });
 
-{
+
 //
 // Misc. functions 
-
-
 
 function truncate(num, precision) {
   return Math.floor(num * Math.pow(10, precision)) / Math.pow(10, precision);
@@ -128,7 +178,7 @@ function capString(str, maxLength) {
   return str;
 }
 
-}
+
 // Function to render grid items
 function renderGridItems(items) {
  //const mediaType = document.querySelector("section").dataset.type? type : null;
