@@ -16,6 +16,7 @@
     --color2: #4a4a69;
     --color3: #222233;
     --color4: #121225;
+    --color5: #181825;
     --font-color1: #E2E1E8;
     --font-color2: #aaa;
     --font-color3: #888;
@@ -39,7 +40,7 @@ body {
     font-weight: 500;
     font-size: 1rem;
     background-color: var(--bg-color); /* 151527 */
-    color: #ccc;
+    color: lavender;
     scrollbar-color: var(--color1) #222233 ;
     height: 100%;
     overflow: scroll;
@@ -197,6 +198,7 @@ section .pagination-buttons {
 
 section .pagination-buttons > button {
     border: 1px solid #3838528c;
+    background-color: var(--color5);
     border-radius: var(--border-radius2);
     aspect-ratio: 1 / 1;
     height: 1.8rem;
@@ -225,7 +227,7 @@ section .pagination-buttons > button {
     padding: var(--padding1);
     border: 1px solid var(--color3);
     border-radius: var(--border-radius1);
-    background-color: #161629;
+    background-color: var(--color5);
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
     transition: transform 0.25s, border 0.25s, box-shadow 0.25s ease-in-out;
     /* box-shadow: 0 10px 24px rgba(0, 0, 0, 0.7); */
@@ -362,7 +364,7 @@ section .pagination-buttons > button {
 .media-switch {
     display: flex;
     width: 10rem;
-    height: 2rem;
+    height: 1.96rem;
     text-wrap: nowrap;
     border-radius: var(--border-radius2);
     overflow: hidden;
@@ -638,11 +640,12 @@ body:has(.modal.active) {
 
 .modal-info > h1 {
     margin: unset !important;
+    font-weight: 700;
     font-size: 2.4rem !important;
     
 }
 
-.modal-info > p {
+.modal-info p {
     padding: 0rem 5% 0rem 0;
     font-size: 0.875rem;
     line-height: 0.96rem;
@@ -817,7 +820,7 @@ option {
     margin: 0rem 0;
 }
 
-.episode-overview {
+.synopsis {
     display: flex;
     flex-direction: column;
     position: relative !important;
@@ -826,25 +829,28 @@ option {
 
 .overview {
     all: unset;
-    width: 100%;
+    max-width: 100%;
     display: -webkit-box;
+    font-size: inherit;
     line-clamp: 3;
     -webkit-line-clamp: 3; /* Limits to 3 lines */
     -webkit-box-orient: vertical;
     overflow: hidden;
-    max-height: fit-content; /* Ensure height matches 3 lines */
+    height: fit-content; /* Ensure height matches 3 lines */
     margin: 0;
-    transition: max-height 0.3s ease;
+    padding: 0;
 }
 
-.episode-overview.expanded .overview {
+.synopsis.expanded .overview {
     display: block;
     line-clamp: unset;
     -webkit-line-clamp: unset;
     -webkit-box-orient: unset;
     overflow: visible;
-    max-height: none; /* Allow full content to display */
+    height: none; /* Allow full content to display */
     mask-image: none !important;
+    padding-bottom: 0 !important;
+
 }
 
 

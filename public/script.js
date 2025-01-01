@@ -357,8 +357,8 @@ function displayModal(mediaType, data) {
   const cast = data.credits.cast.map(cast => cast.name).slice(0, 5).join(", ");
   const date = convertDate(  data.release_date || data.first_air_date || data.air_date); 
   const rated = mediaType === "movie" 
-    ? data.release_dates.results.find((item) => item.iso_3166_1 === "US" || "IN").release_dates[0].certification
-    : data.content_ratings.results.find((item) => item.iso_3166_1 === "US" || "IN").rating;
+    ? data.release_dates?.results?.find((item) => item.iso_3166_1 === "US" || "IN")?.release_dates[0]?.certification
+    : data.content_ratings?.results?.find((item) => item.iso_3166_1 === "US" || "IN")?.rating;
   const logo = data.images?.logos?.[0]?.file_path
     ? `<span>
           <div class="modal-info-logo">
@@ -380,7 +380,7 @@ function displayModal(mediaType, data) {
           .map(genre => `<a href="#">${genre.name}</a>` ).slice(0, 3).join(" ")}
           </span>
         </span>
-        <p class="synopsis">${data.overview || 'No description available.'}</p>
+        <div class="synopsis"><p class="overview">${data.overview || 'No description available.'}</p></div>
         <p>Cast : ${cast}</p>
         <p class="tags">${extractYear(date)} • ${rated !== "" ? `${rated} • `:""} ${data.original_language.toUpperCase()} ${mediaType === "movie" ? `• ${runtime(data.runtime)}</p>` : "</p>"}
         </span>
@@ -475,7 +475,7 @@ async function tvContent(data, sno, eno, ref) {
                 <p>Rated: ${episode.vote_average.toFixed(1)}</p>
                 <p>${convertDate(episode.air_date)}</p>
               </div>
-              <div class="episode-overview">
+              <div class="synopsis">
                 <p class="overview">${episode.overview || "No overview available"}</p>
               </div>
             </div>
@@ -504,13 +504,15 @@ async function tvContent(data, sno, eno, ref) {
 }
 
 async function cappedOverview() {
-  document.querySelectorAll('.episode-overview').forEach(container => {
+  const container = document.querySelectorAll('.synopsis');
+  container.forEach(container => {
     const text = container.querySelector('.overview');
 
     // Check if the text content overflows
     const isOverflowing = text.scrollHeight -10 > text.offsetHeight;
     if (isOverflowing) {
-        text.style.maskImage = "linear-gradient(to bottom, black, black 60%, transparent 98%)";
+        text.style.maskImage = "linear-gradient(to bottom, black, black 70%, transparent 98%)";
+        text.style.paddingBottom = "0.2rem";
     }
 
     // Toggle expansion and collapse
