@@ -240,7 +240,7 @@
     
     .modal-content {
         width: 92%;
-        height: 70%;
+        height: fit-content;
         overflow: scroll;
         max-height: 70% !important;
         padding: 0.8rem;
@@ -265,30 +265,27 @@
         flex-direction: column;
         justify-content: space-between;
         gap: 0.8rem;
-        min-height: fit-content;
+        height: fit-content;
     }
     
     .modal-actions {
-        padding: 0.6rem 0 0;
+        margin: 0.4rem 0 0;
         gap: 0.6rem;
     }
 
     .watch-btn {
         width: 100%;
-        padding: 0.6rem;
-        font-size: 0.875rem;
+        padding: 0.4rem;
+        font-size: 0.8rem;
     }
 
     .modal-actions .share {
         all:unset;
-        display: none;
+        display: flex;
         place-content: center;
         height: 100%;
-        font-size: 1rem;
-        border: 1px solid var(--color2);
+        font-size: 1.2rem;
         border-radius: var(--border-radius2);
-        background: #3838522f;
-        backdrop-filter: blur(10px);
         aspect-ratio: 1 / 1;
         padding: 0.6rem;
     }
@@ -301,26 +298,30 @@
     }
 
     .modal-media > span {
-        max-width: 100%;
         width: 100%;
         max-height: fit-content;
-        height: fit-content;
         min-height: fit-content;
         justify-content: normal;
         z-index: 1000;
     }
 
     .modal-info-logo {
-        max-width: 100%;
+        width: unset;
         max-height: unset;
         height: 8.6rem;
         margin: 1rem 1.4rem 0;
         padding-top: 1rem;
         place-content: center;
+        align-items: center;
+    }
+
+    .modal-info-logo img {
+        max-width: 75%;
     }
 
     .modal-info {
         display: unset;
+        max-height: 60%;
     }
 
     .modal-info > h1 {

@@ -5,7 +5,7 @@ const OPTIONS = 'include_null_first_air_dates=false&language=en-US&page=1&sort_b
 
 // Sections to populate
 const sections = {
-  'trending-movies': `${BASE_URL}/trending/movie/week?api_key=${API_KEY}&with_release_type=4`,
+  'trending-movies': `${BASE_URL}/trending/movie/week?api_key=${API_KEY}`,
   'trending-series': `${BASE_URL}/trending/tv/week?api_key=${API_KEY}`,
 };
 
@@ -13,6 +13,7 @@ function isMobile() {
   const screenWidth = window.innerWidth <= 768;
   return screenWidth;
 }
+
 
 // Global variables for pagination tracking
 let pageNumbers = {}; // Track the current page number for each section
@@ -81,8 +82,10 @@ function setupPagination(sectionId, url, limit) {
 
 // Load content for each section
 Object.entries(sections).forEach(([sectionId, url]) => {
+  if (document.getElementById([sectionId])) {
     let limit = isMobile() ? 20 : 14;
     fetchContent(sectionId, url, limit);
+  }
 });
 
 // Populate a section with content
@@ -108,13 +111,15 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 function loadDiscoverContent(networkId = 213, providerId = 8, mediaType = 'movie') {
-  const url = `${BASE_URL}/discover/${mediaType}?api_key=${API_KEY}&with_networks=${networkId}&with_watch_providers=${providerId}&watch_region=US&${OPTIONS}`;
   const sectionId = 'discover-streaming';
-  let limit;
-  storedData[sectionId] = [];
-  pageNumbers['discover-streaming'] = 1;
-  console.log(mediaType, url);
-  fetchContent(sectionId, url, limit);
+    if (document.getElementById(sectionId)) {
+    const url = `${BASE_URL}/discover/${mediaType}?api_key=${API_KEY}&with_networks=${networkId}&with_watch_providers=${providerId}&watch_region=US&${OPTIONS}`;
+    let limit;
+    storedData[sectionId] = [];
+    pageNumbers['discover-streaming'] = 1;
+    console.log(mediaType, url);
+    fetchContent(sectionId, url, limit);
+  }
 }
 
 function sectionMediaType(sectionId) {
@@ -357,8 +362,8 @@ function displayModal(mediaType, data) {
   const cast = data.credits.cast.map(cast => cast.name).slice(0, 5).join(", ");
   const date = convertDate(  data.release_date || data.first_air_date || data.air_date); 
   const rated = mediaType === "movie" 
-    ? data.release_dates?.results?.find((item) => item.iso_3166_1 === "US" || "IN")?.release_dates[0]?.certification
-    : data.content_ratings?.results?.find((item) => item.iso_3166_1 === "US" || "IN")?.rating;
+    ? data.release_dates?.results?.find((item) => item.iso_3166_1 === "US")?.release_dates[0].certification
+    : data.content_ratings?.results?.find((item) => item.iso_3166_1 === "US")?.rating || "";
   const logo = data.images?.logos?.[0]?.file_path
     ? `<span>
           <div class="modal-info-logo">
@@ -382,7 +387,7 @@ function displayModal(mediaType, data) {
         </span>
         <div class="synopsis"><p class="overview">${data.overview || 'No description available.'}</p></div>
         <p>Cast : ${cast}</p>
-        <p class="tags">${extractYear(date)} • ${rated !== "" ? `${rated} • `:""} ${data.original_language.toUpperCase()} ${mediaType === "movie" ? `• ${runtime(data.runtime)}</p>` : "</p>"}
+        <p class="tags">${extractYear(date)} • ${rated !== "" ? `${rated} • `: ""} ${data.original_language.toUpperCase()} ${mediaType === "movie" ? `• ${runtime(data.runtime)}</p>` : "</p>"}
         </span>
     </div>
     </span>
@@ -402,12 +407,14 @@ function displayModal(mediaType, data) {
         </button>
       </div>
     `);
-    isMobile() ? modalContent.style.height = "fit-content" : modalContent.style.height = '30rem';
+    modalContent.style.height = "fit-content";
   } else 
   if (mediaType === "tv") {
     tvContent(data, sno = null, eno = null, ref = "modal");
-    isMobile() ? modalContent.style.height = '70%' : modalContent.style.height = '30rem' ;
+    isMobile() ? modalContent.style.height = '70%' : modalContent.style.height = '32rem' ;
   }
+
+  cappedOverview();
 
   const shareData = {
     text: `${name}`,
@@ -483,8 +490,6 @@ async function tvContent(data, sno, eno, ref) {
         `)
         .join("");
 
-    cappedOverview();
-
     } catch (error) {
       console.error('Error fetching season details:', error);
     }
@@ -512,7 +517,6 @@ async function cappedOverview() {
     const isOverflowing = text.scrollHeight -10 > text.offsetHeight;
     if (isOverflowing) {
         text.style.maskImage = "linear-gradient(to bottom, black, black 70%, transparent 98%)";
-        text.style.paddingBottom = "0.2rem";
     }
 
     // Toggle expansion and collapse
@@ -595,8 +599,8 @@ document.addEventListener("click", (event) => {
     const name = event.target.dataset.name;
     const mediaType = "movie";
 
-   // loadWatchPage(mediaType, name, id);
-    window.location.href = `/watch/${mediaType}/${id}/${name}`;
+    loadWatchPage(mediaType, name, id);
+    //window.location.href = `/watch/${mediaType}/${id}/${name}`;
   }
 
   if (event.target.closest(".episode img")) {
@@ -610,7 +614,7 @@ document.addEventListener("click", (event) => {
     const title = `${mediaType === "movie" ? name : `S${season}:E${episode} ${name}`}`;
     const info = `<h2>${name}</h2>
                   <h4>S${season}:E${episode} ${epname}</h4>`;
-    //const tvData = { season, episode, epname };
+    const tvData = { season, episode, epname };
 
     if (document.getElementById('episode-container').classList.contains('player-styling')) {    
       currentSeason = season;
@@ -622,8 +626,8 @@ document.addEventListener("click", (event) => {
       window.history.pushState({}, '', `/watch/${mediaType}/${id}/${name}${season && episode ? `/${season}/${episode}` : ''}`);
     }
     else {
-      window.location.href = `/watch/${mediaType}/${id}/${name}${season && episode ? `/${season}/${episode}` : ''}`;
-      //loadWatchPage(mediaType, name, id, tvData);
+      //window.location.href = `/watch/${mediaType}/${id}/${name}${season && episode ? `/${season}/${episode}` : ''}`;
+      loadWatchPage(mediaType, name, id, tvData);
     }
 
   }
