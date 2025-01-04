@@ -235,7 +235,7 @@ async function handleSearch(event) {
 
     const movieResults = isMobile() ? movie.results.slice(0, 20) : movie.results.slice(0, 7).map(item => ({ ...item, media_type: 'movie' }));
     const tvResults = isMobile() ? tv.results.slice(0, 20) : tv.results.slice(0, 7).map(item => ({ ...item, media_type: 'tv' }));
-    const peopleResults = isMobile() ? people.results.slice(0, 20) : people.results.slice(0, 7).map(item => ({ ...item, media_type: 'person' }));
+    const peopleResults = isMobile() ? people.results.slice(0, 20) : people.results.slice(0, 10).map(item => ({ ...item, media_type: 'person' }));
 
     displaySearchResults({ movie: movieResults, tv: tvResults, people: peopleResults }, query);
   } catch (error) {
@@ -264,7 +264,7 @@ function displaySearchResults({ movie, tv, people }, query) {
       </section>
       <section id="people-results" data-type="people">
       <h3>People</h3>
-        <div class="grid-container">
+        <div class="grid-container profiles">
         ${renderProfile(people)}  
         </div>
       </section>
@@ -373,7 +373,7 @@ function displayModal(mediaType, data) {
     : `<span>
           <div class="modal-info-backdrop" style="background-image : url(${IMAGE_URL}${data.backdrop_path})"></div>
           <div class="modal-info">
-            <h1>${name}</h1>`;
+            <h1>${name.toUpperCase()}</h1>`;
   //window.history.pushState({}, '', `/${mediaType}/${name}`);
   details.innerHTML = `
   <div class="modal-media">
@@ -522,8 +522,10 @@ async function cappedOverview() {
     // Toggle expansion and collapse
     text.addEventListener('click', () => {
         if (container.classList.contains('expanded')) {
+            console.log('hi');
             container.classList.remove('expanded');
         } else {
+            console.log('hello');
             container.classList.add('expanded');
         }
     });
@@ -599,8 +601,8 @@ document.addEventListener("click", (event) => {
     const name = event.target.dataset.name;
     const mediaType = "movie";
 
-    loadWatchPage(mediaType, name, id);
-    //window.location.href = `/watch/${mediaType}/${id}/${name}`;
+    //loadWatchPage(mediaType, name, id);
+    window.location.href = `/watch/${mediaType}/${id}/${name}`;
   }
 
   if (event.target.closest(".episode img")) {
@@ -626,8 +628,8 @@ document.addEventListener("click", (event) => {
       window.history.pushState({}, '', `/watch/${mediaType}/${id}/${name}${season && episode ? `/${season}/${episode}` : ''}`);
     }
     else {
-      //window.location.href = `/watch/${mediaType}/${id}/${name}${season && episode ? `/${season}/${episode}` : ''}`;
-      loadWatchPage(mediaType, name, id, tvData);
+      window.location.href = `/watch/${mediaType}/${id}/${name}${season && episode ? `/${season}/${episode}` : ''}`;
+      //loadWatchPage(mediaType, name, id, tvData);
     }
 
   }
@@ -914,4 +916,4 @@ document.addEventListener('keydown', event => {
 });
 
 
-console.clear = () => {};
+console.clear() = () => {};

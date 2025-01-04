@@ -269,7 +269,7 @@
     }
     
     .modal-actions {
-        margin: 0.4rem 0 0;
+        margin: 0.6rem 0 0;
         gap: 0.6rem;
     }
 
@@ -299,6 +299,7 @@
 
     .modal-media > span {
         width: 100%;
+        height: unset;
         max-height: fit-content;
         min-height: fit-content;
         justify-content: normal;
@@ -344,7 +345,7 @@
     }
     .modal-info p {
         position: relative;
-        padding: 0.4rem 0.2rem 0rem 0;
+        padding: 0.36rem 0.2rem 0rem 0;
         font-size: 0.7rem;
         line-height: 0.8rem;
     }
