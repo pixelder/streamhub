@@ -83,6 +83,7 @@
         box-shadow: 0 2px 5px rgb(8, 8, 22);
     }
 
+    
     .grid-item img {
         border-radius: var(--border-radius2);
         aspect-ratio: 1 / 1.34;

@@ -217,9 +217,15 @@ function renderGridItems(items) {
 // Handle Search
 async function handleSearch(event) {
   if (event) event.preventDefault(); // Prevent form submission
-  
+
   const query = document.getElementById('search-input').value.trim();
   if (!query) return;
+
+  window.location.href = `/search?q=${encodeURIComponent(query)}`;
+}
+
+async function getSearchResults(query) {
+  document.getElementById('search-input').value = query;
   
   const movieUrl = `${BASE_URL}/search/movie?api_key=${API_KEY}&query=${encodeURIComponent(query)}`;
   const tvUrl = `${BASE_URL}/search/tv?api_key=${API_KEY}&query=${encodeURIComponent(query)}`;
@@ -236,13 +242,11 @@ async function handleSearch(event) {
     const movieResults = isMobile() ? movie.results.slice(0, 20) : movie.results.slice(0, 7).map(item => ({ ...item, media_type: 'movie' }));
     const tvResults = isMobile() ? tv.results.slice(0, 20) : tv.results.slice(0, 7).map(item => ({ ...item, media_type: 'tv' }));
     const peopleResults = isMobile() ? people.results.slice(0, 20) : people.results.slice(0, 10).map(item => ({ ...item, media_type: 'person' }));
-
     displaySearchResults({ movie: movieResults, tv: tvResults, people: peopleResults }, query);
   } catch (error) {
     console.error("Error fetching search results:", error);
   }
 }
-
 
 // Display search results
 function displaySearchResults({ movie, tv, people }, query) {
@@ -284,8 +288,6 @@ function renderProfile(items) {
   return items
     .map(item => {
       const name = item.name || item.original_name;
-//    const rating = truncate(item.vote_average, 1);
-//    const year = extractYear(item.release_date || item.first_air_date);
       const image = item.profile_path
         ? `${IMAGE_URL}${item.profile_path}`
         : 'https://placehold.co/480x551/383852/ccc?text=No+Image';
@@ -334,15 +336,14 @@ function runtime(min) {
   return `${hour}h${min}m`;
 }
 
-async function openModal(event) {
+function openModal(event) {
   const gridItem = event.target.closest('.grid-item');
-  const id = gridItem.dataset.id; // Get the ID of the item
-  const sectionId = gridItem.closest('section')?.id; // Find the parent section's ID
-  const mediaType = gridItem.closest('section')?.dataset.type ? gridItem.closest('section')?.dataset.type : sectionId ? sectionMediaType(sectionId) : null;
-//  const mediaType = sectionId ? sectionMediaType(sectionId) : null;
+  const id = gridItem?.dataset.id; // Get the ID of the item
+  const sectionId = gridItem?.closest('section')?.id; // Find the parent section's ID
+  const mediaType = gridItem?.closest('section')?.dataset.type ? gridItem.closest('section')?.dataset.type : sectionId ? sectionMediaType(sectionId) : null;
   console.log(id,mediaType,sectionId);
   //console.error(id, sectionId, mediaType);
-  if (!mediaType || !id) {
+  if ( gridItem && !mediaType || !id) {
     console.error("Media type or ID not found");
     return;
   }
@@ -374,7 +375,7 @@ function displayModal(mediaType, data) {
           <div class="modal-info-backdrop" style="background-image : url(${IMAGE_URL}${data.backdrop_path})"></div>
           <div class="modal-info">
             <h1>${name.toUpperCase()}</h1>`;
-  //window.history.pushState({}, '', `/${mediaType}/${name}`);
+
   details.innerHTML = `
   <div class="modal-media">
     <div class="modal-cover">
@@ -536,7 +537,6 @@ function scrollEpisodeIntoView(eno) {
   const episode = document.getElementById(eno);
 
   if (!episode) {
-    //console.error(`Element with id "${eno}" not found.`);
     return;
   }
 
@@ -551,7 +551,7 @@ function scrollEpisodeIntoView(eno) {
   }
 
   // Responsive measurements based on screen size
-  const episodeWidth = isMobile() ? 8.6 * 16 : 15 * 16; // Mobile: 9.6rem, PC: 15rem
+  const episodeWidth = isMobile() ? 8.6 * 16 : 15 * 16; // Mobile: 8.6rem, PC: 15rem
   const gapWidth = isMobile() ? 0.6 * 16 : 0.8 * 16;   // Mobile: 0.6rem, PC: 0.8rem
   const totalEpisodeWidth = episodeWidth + gapWidth;
 
@@ -849,10 +849,6 @@ function goBack() {
 }
 
 
-// Listen to popstate events for navigation
-
-
-
 // header animation
 let lastScrollY = window.scrollY;
 let isScrollingDown = false;
@@ -909,11 +905,8 @@ document.addEventListener('keydown', event => {
   if (event.type === 'keydown') {
     if (event.key === 'Escape') {
         modal.classList.remove('active');
-    } else if (event.key === 'Enter' && !modal.classList.contains('active')) {
+    } else if (event.key === 'Enter' && !modal.classList.contains('active') && event.target.closest('.grid-item')) {
         openModal(event);
     }
   }
 });
-
-
-console.clear() = () => {};
