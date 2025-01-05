@@ -1,7 +1,7 @@
 const API_KEY = "213d830aae3a2f7b67e37f157405a42e";
 const BASE_URL = 'https://api.tmdb.org/3';
 const IMAGE_URL = 'https://image.tmdb.org/t/p/w500';
-const OPTIONS = 'include_null_first_air_dates=false&language=en-US&page=1&sort_by=popularity.desc';
+const OPTIONS = 'include_null_first_air_dates=false&language=as-IN&page=1&sort_by=popularity.desc';
 
 // Sections to populate
 const sections = {
@@ -229,27 +229,27 @@ async function getSearchResults(query) {
   
   const movieUrl = `${BASE_URL}/search/movie?api_key=${API_KEY}&query=${encodeURIComponent(query)}`;
   const tvUrl = `${BASE_URL}/search/tv?api_key=${API_KEY}&query=${encodeURIComponent(query)}`;
-  const peopleUrl = `${BASE_URL}/search/person?api_key=${API_KEY}&query=${encodeURIComponent(query)}`;
+  const personUrl = `${BASE_URL}/search/person?api_key=${API_KEY}&query=${encodeURIComponent(query)}`;
 
   try {
-    const [movie, tv, people] = await Promise.all([
+    const [movie, tv, person] = await Promise.all([
       fetch(movieUrl).then(res => res.json()),
       fetch(tvUrl).then(res => res.json()),
-      fetch(peopleUrl).then(res => res.json())
+      fetch(personUrl).then(res => res.json())
     ]);
 
 
-    const movieResults = isMobile() ? movie.results.slice(0, 20) : movie.results.slice(0, 7).map(item => ({ ...item, media_type: 'movie' }));
-    const tvResults = isMobile() ? tv.results.slice(0, 20) : tv.results.slice(0, 7).map(item => ({ ...item, media_type: 'tv' }));
-    const peopleResults = isMobile() ? people.results.slice(0, 20) : people.results.slice(0, 10).map(item => ({ ...item, media_type: 'person' }));
-    displaySearchResults({ movie: movieResults, tv: tvResults, people: peopleResults }, query);
+    const movieResults = isMobile() ? movie.results.slice(0, 20) : movie.results.slice(0, 14).map(item => ({ ...item, media_type: 'movie' }));
+    const tvResults = isMobile() ? tv.results.slice(0, 20) : tv.results.slice(0, 14).map(item => ({ ...item, media_type: 'tv' }));
+    const personResults = isMobile() ? person.results.slice(0, 20) : person.results.slice(0, 10).map(item => ({ ...item, media_type: 'person' }));
+    displaySearchResults({ movie: movieResults, tv: tvResults, person: personResults }, query);
   } catch (error) {
     console.error("Error fetching search results:", error);
   }
 }
 
 // Display search results
-function displaySearchResults({ movie, tv, people }, query) {
+function displaySearchResults({ movie, tv, person }, query) {
   const mainContent = document.querySelector('main');
   mainContent.innerHTML = `
     <div id=search-results>
@@ -266,10 +266,10 @@ function displaySearchResults({ movie, tv, people }, query) {
           ${renderGridItems(tv)}
         </div>
       </section>
-      <section id="people-results" data-type="people">
-      <h3>People</h3>
+      <section id="person-results" data-type="person">
+      <h3>Person</h3>
         <div class="grid-container profiles">
-        ${renderProfile(people)}  
+        ${renderProfile(person)}  
         </div>
       </section>
       <div class="modal-overlay"></div>
@@ -292,7 +292,7 @@ function renderProfile(items) {
         ? `${IMAGE_URL}${item.profile_path}`
         : 'https://placehold.co/480x551/383852/ccc?text=No+Image';
       return `
-        <div tabindex="0" class="profile-item" data-id="${item.id}" data-media-type="${item.media_type}">
+        <div tabindex="0" class="profile-item" data-id="${item.id}" data-media-type="person">
           <span>
             <img src="${image}" alt="${name}">
           </span>
@@ -307,6 +307,7 @@ function renderProfile(items) {
 
 //fetch Metadata
 async function fetchMetaData(mediaType, id) {
+
   try {
     let url;
 
@@ -314,14 +315,22 @@ async function fetchMetaData(mediaType, id) {
       url = `${BASE_URL}/movie/${id}?api_key=${API_KEY}&language=en-US&append_to_response=videos,release_dates,credits,images&include_image_language=en`;
     } else if (mediaType === "tv") {
       url = `${BASE_URL}/tv/${id}?api_key=${API_KEY}&language=en-US&append_to_response=content_ratings,credits,images&include_image_language=en`;
-      }
-      const response = await fetch(url);
-      const data = await response.json();
-      return {data, mediaType};
+    } else if (mediaType === "person") {
+      url = `${BASE_URL}/person/${id}?api_key=${API_KEY}&language=en-US`;
+    }
+    const response = await fetch(url);
+    const data = await response.json();
+    return {data, mediaType};
     } catch (error) {
       console.error("Error fetching modal data:", error);
       return null;
     }
+}
+
+function inBeta() {
+  const msg = "This functionality is currently undergoing development!!";
+  console.log(msg);
+  return msg;
 }
 
 function convertDate(dateString) {
@@ -337,7 +346,7 @@ function runtime(min) {
 }
 
 function openModal(event) {
-  const gridItem = event.target.closest('.grid-item');
+  const gridItem = event.target.closest('.grid-item, .profile-item');
   const id = gridItem?.dataset.id; // Get the ID of the item
   const sectionId = gridItem?.closest('section')?.id; // Find the parent section's ID
   const mediaType = gridItem?.closest('section')?.dataset.type ? gridItem.closest('section')?.dataset.type : sectionId ? sectionMediaType(sectionId) : null;
@@ -358,10 +367,10 @@ function displayModal(mediaType, data) {
   const modal = document.getElementById('info-modal');
   const modalContent = document.querySelector(".modal-content");
   const details = document.getElementById('modal-details');
+  
   const id = data.id;
   const name = data.name || data.title || data.original_title;
-  const cast = data.credits.cast.map(cast => cast.name).slice(0, 5).join(", ");
-  const date = convertDate(  data.release_date || data.first_air_date || data.air_date); 
+  const cast = data.credits?.cast.map(cast => cast.name).slice(0, 5).join(", "); 
   const rated = mediaType === "movie" 
     ? data.release_dates?.results?.find((item) => item.iso_3166_1 === "US")?.release_dates[0].certification
     : data.content_ratings?.results?.find((item) => item.iso_3166_1 === "US")?.rating || "";
@@ -376,23 +385,29 @@ function displayModal(mediaType, data) {
           <div class="modal-info">
             <h1>${name.toUpperCase()}</h1>`;
 
-  details.innerHTML = `
-  <div class="modal-media">
-    <div class="modal-cover">
-      <img src="${IMAGE_URL}${data.poster_path}" alt="${name}"></img>
-    </div>
-    ${logo}
-        <span class="ratings-genre"><i class="fa-solid fa-star"></i> <p data-title="${data.vote_count} votes">${truncate(data.vote_average, 1)}</p><span class="modal-genre">${data.genres
-          .map(genre => `<a href="#">${genre.name}</a>` ).slice(0, 3).join(" ")}
+  if (mediaType !== "person") {
+    const date = convertDate(  data.release_date || data.first_air_date || data.air_date);
+    details.innerHTML = `
+    <div class="modal-media">
+      <div class="modal-cover">
+        <img src="${IMAGE_URL}${data.poster_path}" alt="${name}"></img>
+      </div>
+      ${logo}
+          <span class="ratings-genre"><i class="fa-solid fa-star"></i> <p data-title="${data.vote_count} votes">${truncate(data.vote_average, 1)}</p><span class="modal-genre">${data.genres
+            .map(genre => `<a href="#">${genre.name}</a>` ).slice(0, 3).join(" ")}
+            </span>
           </span>
-        </span>
-        <div class="synopsis"><p class="overview">${data.overview || 'No description available.'}</p></div>
-        <p>Cast : ${cast}</p>
-        <p class="tags">${extractYear(date)} • ${rated !== "" ? `${rated} • `: ""} ${data.original_language.toUpperCase()} ${mediaType === "movie" ? `• ${runtime(data.runtime)}</p>` : "</p>"}
-        </span>
-    </div>
-    </span>
-  </div>`;
+          <div class="synopsis"><p class="overview">${data.overview || 'No description available.'}</p></div>
+          <p>Cast : ${cast}</p>
+          <p class="tags">${extractYear(date)} • ${rated !== "" ? `${rated} • `: ""} ${data.original_language.toUpperCase()} ${mediaType === "movie" ? `• ${runtime(data.runtime)}</p>` : "</p>"}
+          </span>
+      </div>
+      </span>
+    </div>`;
+  } else
+  if (mediaType === "person") {
+    details.innerHTML = `${inBeta()}`;
+  }
   
   if (mediaType === "movie") {
     document.querySelector(".modal-media")
@@ -412,8 +427,18 @@ function displayModal(mediaType, data) {
   } else 
   if (mediaType === "tv") {
     tvContent(data, sno = null, eno = null, ref = "modal");
-    isMobile() ? modalContent.style.height = '70%' : modalContent.style.height = '32rem' ;
-  }
+    if (!isMobile()) {
+      modalContent.style.height = '32rem';
+    }
+    else {
+      modalContent.style.height = '70%';
+      document.getElementById("season-dropdown").insertAdjacentHTML('afterend', `
+        <button class="share">
+          <i class="fa-solid fa-paper-plane"></i>
+        </button>
+        `);
+    };
+  };
 
   cappedOverview();
 
@@ -424,7 +449,6 @@ function displayModal(mediaType, data) {
   
   const btn = document.querySelector(".share");
   
-  // Share must be triggered by "user activation"
   btn?.addEventListener("click", async () => {
     try {
       await navigator.share(shareData);
@@ -891,9 +915,9 @@ document.addEventListener('click', event => {
   const modal = document.getElementById('info-modal');
   const modalContent = document.querySelector('.modal-content');
 
-  if (event.target.closest('.grid-item')) {
+  if (event.target.closest('.grid-item, .profile-item')) {
       openModal(event); 
-  } else if (!event.target.closest('.grid-item') && modal !== null) {
+  } else if (!event.target.closest('.grid-item, .profile-item') && modal !== null) {
       if (modal.contains(event.target) && !modalContent.contains(event.target)) {
             modal.classList.remove('active');
       }
@@ -905,7 +929,7 @@ document.addEventListener('keydown', event => {
   if (event.type === 'keydown') {
     if (event.key === 'Escape') {
         modal.classList.remove('active');
-    } else if (event.key === 'Enter' && !modal.classList.contains('active') && event.target.closest('.grid-item')) {
+    } else if (event.key === 'Enter' && !modal.classList.contains('active') && event.target.closest('.grid-item, .profile-item')) {
         openModal(event);
     }
   }

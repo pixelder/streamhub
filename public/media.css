@@ -86,13 +86,13 @@
     
     .grid-item img {
         border-radius: var(--border-radius2);
-        aspect-ratio: 1 / 1.34;
+        aspect-ratio: 1 / 1.38;
         object-fit: cover;
         width: 100%;
     }
 
     .grid-item-info {
-        padding-top: 0.24rem;
+        padding-top: 0rem;
     }
 
     .grid-item-info p {
@@ -270,7 +270,8 @@
     }
     
     .modal-actions {
-        margin: 0.6rem 0 0;
+        margin-top: 0.6rem;
+        padding: unset;
         gap: 0.6rem;
     }
 
@@ -281,11 +282,13 @@
     }
 
     .modal-actions .share {
-        all:unset;
         display: flex;
+    }
+
+    .share {
+        all:unset;
         place-content: center;
-        height: 100%;
-        font-size: 1.2rem;
+        font-size: 1rem;
         border-radius: var(--border-radius2);
         aspect-ratio: 1 / 1;
         padding: 0.6rem;
@@ -318,7 +321,7 @@
     }
 
     .modal-info-logo img {
-        max-width: 75%;
+        max-width: 80%;
     }
 
     .modal-info {
@@ -392,17 +395,38 @@
 
     }
     
+    /* .modal-actions {
+        margin: 0.6rem 0 0;
+        gap: 0.6rem;
+    }
+
+    .watch-btn {
+        width: 100%;
+        padding: 0.4rem;
+        font-size: 0.8rem;
+    } */
+
     .seasons-menu{
+        display: flex;
         padding: 0.6rem 0;
     }
 
     select {
         font-weight: 500;
         font-size: 0.8rem;
-        padding: 0.25rem 0.4rem;
+        padding: 0.4rem 0.4rem;
         padding-right: 1.2rem;
         background-size: 0.8rem;
         background-position: calc(100% - 0.2rem) 50%;
+    }
+
+    .modal #season-dropdown {
+        margin-right: auto;
+    }
+
+    .modal .seasons-menu .share {
+        padding: 0.4rem;
+        height: 100%;
     }
     
     .episode-container::after {
