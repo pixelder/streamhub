@@ -91,17 +91,24 @@ nav ul li {
 }
 
 nav ul li a {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
     height: 100%;
     text-decoration: none;
     color: var(--font-color1);
-    font-family: var(--font-style1);
+    font-family: var(--font-style2);
     font-size: 1rem;
-    font-weight: 600;
+    font-weight: 700;
     transition: color 0.3s;
 }
 
 nav ul li a:hover {
     color: #ff4747;
+}
+
+nav img {
+    height: 1.8rem;
 }
 
 /* Search Bar Styling */

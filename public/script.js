@@ -1,7 +1,7 @@
 const API_KEY = "213d830aae3a2f7b67e37f157405a42e";
 const BASE_URL = 'https://api.tmdb.org/3';
 const IMAGE_URL = 'https://image.tmdb.org/t/p/w500';
-const OPTIONS = 'include_null_first_air_dates=false&language=as-IN&page=1&sort_by=popularity.desc';
+const OPTIONS = 'include_null_first_air_dates=false&language=en-US&page=1&sort_by=popularity.desc';
 
 // Sections to populate
 const sections = {
@@ -393,8 +393,11 @@ function displayModal(mediaType, data) {
         <img src="${IMAGE_URL}${data.poster_path}" alt="${name}"></img>
       </div>
       ${logo}
-          <span class="ratings-genre"><i class="fa-solid fa-star"></i> <p data-title="${data.vote_count} votes">${truncate(data.vote_average, 1)}</p><span class="modal-genre">${data.genres
-            .map(genre => `<a href="#">${genre.name}</a>` ).slice(0, 3).join(" ")}
+          <span class="ratings-genre">
+            <i class="fa-solid fa-star"></i>
+            <p data-title="${data.vote_count} votes">${truncate(data.vote_average, 1)}</p>
+            <span class="modal-genre">
+              ${data.genres.map(genre => `<a href="#">${genre.name}</a>` ).slice(0, 3).join(" ")}
             </span>
           </span>
           <div class="synopsis"><p class="overview">${data.overview || 'No description available.'}</p></div>
