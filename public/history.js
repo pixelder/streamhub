@@ -103,8 +103,6 @@ function renderHistoryItems(data, item, tvData) {
 }
 
 continueWatching();
-
-logWatchHistory('history', 222766,'tv', '1', '1');
   
 /* const userData = watchHistoryCheck('history');
   if (userData) {
