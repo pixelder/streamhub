@@ -27,7 +27,7 @@
 
     #search-input {
         font-size: 0.85rem;
-        height: 1.8rem;
+        height: 2rem;
         width: 12em;
         border-radius: var(--border-radius1);
     }
@@ -65,14 +65,14 @@
         height: 1.6rem;
         font-size: 0.7rem;
     }
-
     
     .grid-container {
         visibility: visible;
         display: flex;
         flex-direction: row;
         gap: 0.36rem;
-        overflow: scroll;
+        overflow-x: scroll;
+        overflow-y: hidden;
         scrollbar-width: none;
         justify-content: flex-start;
         padding: 0 0 0rem 0rem;
@@ -145,6 +145,7 @@
 
     #continue-watching {
         display: none;
+        gap: 0.36rem;
     
         .grid-container {
             display: flex;
@@ -157,15 +158,18 @@
     
         .grid-item img {
             width: 100%;
-            height: 6rem;
+            height: 6.89rem;
         }
     
         .grid-item-info {
             height: fit-content;
             font-size: 0.8rem;
         }
-
         
+        .history-item-info h3 {
+            width: fit-content;
+            line-height: 1rem;
+        }
     
     }
 

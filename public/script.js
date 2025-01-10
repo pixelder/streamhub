@@ -14,7 +14,6 @@ function isMobile() {
   return screenWidth;
 }
 
-
 // Global variables for pagination tracking
 let pageNumbers = {}; // Track the current page number for each section
 let storedData = {}; // Store data for each section for persistent pagination
@@ -166,25 +165,6 @@ document.querySelectorAll(".media-tab").forEach(button => {
 });
 
 
-//
-// Misc. functions 
-
-function truncate(num, precision) {
-  return Math.floor(num * Math.pow(10, precision)) / Math.pow(10, precision);
-}
-
-function extractYear(dateString) {
-  const date = new Date(dateString);
-  return date.getFullYear();
-}
-
-function capString(str, maxLength) {
-  if (str.length > maxLength) {
-    return str.substring(0, maxLength - 3) + '...';
-  }
-  return str;
-}
-
 function renderGridItems(items) {
    return items
      .map(item => {
@@ -235,24 +215,6 @@ async function fetchMetaData(mediaType, id) {
       console.error("Error fetching data:", error);
       return null;
     }
-}
-
-function inBeta() {
-  const msg = "This functionality is currently undergoing development!!";
-  console.log(msg);
-  return msg;
-}
-
-function convertDate(dateString) {
-  const options = { month: 'long', day: 'numeric', year: 'numeric' };
-  const formatter = new Intl.DateTimeFormat('en-US', options);
-  return formatter.format(new Date(dateString));
-}
-
-function runtime(min) {
-	const hour =  Math.floor(min / 60.0);
-  min = min - hour * 60.0;
-  return `${hour}h${min}m`;
 }
 
 function openModal(event) {
@@ -358,32 +320,11 @@ function displayModal(mediaType, data) {
   };
 
   cappedOverview();
-
-  const shareData = {
-    text: `${name}`,
-    url: `https://pixelstream.vercel.app/watch/${mediaType}/${id}/${name}`,
-  };
-  
-  const btn = document.querySelector(".share");
-  
-  btn?.addEventListener("click", async () => {
-    try {
-      await navigator.share(shareData);
-    } catch (err) {
-      console.log(`Error: ${err}`);
-    }
-  });
-  
+  shareItem(mediaType,id,name);
 
   modal.classList.add('active');
 
 }
-
-/* function watchHistoryCheck() {
-  const sno = localStorage.getItem('sno');
-  const eno = localStorage.getItem('eno');
-  return {sno, eno};
-} */
 
 async function tvContent(data, sno, eno, ref) {
   const seasons = data.seasons.reverse();
@@ -456,91 +397,6 @@ async function tvContent(data, sno, eno, ref) {
 
 }
 
-async function cappedOverview() {
-  const container = document.querySelectorAll('.synopsis');
-  container.forEach(container => {
-    const text = container.querySelector('.overview');
-
-    // Check if the text content overflows
-    const isOverflowing = text.scrollHeight -10 > text.offsetHeight;
-    if (isOverflowing) {
-        text.style.maskImage = "linear-gradient(to bottom, black, black 70%, transparent 98%)";
-    }
-
-    // Toggle expansion and collapse
-    text.addEventListener('click', () => {
-        if (container.classList.contains('expanded')) {
-            console.log('hi');
-            container.classList.remove('expanded');
-        } else {
-            console.log('hello');
-            container.classList.add('expanded');
-        }
-    });
-  });
-}
-
-function scrollEpisodeIntoView(eno) {
-  const episode = document.getElementById(eno);
-
-  if (!episode) {
-    return;
-  }
-
-  // Scroll vertically using scrollIntoView
-  episode.scrollIntoView({ block: 'center', behavior: 'smooth' });
-
-  // Scroll horizontally if needed
-  const container = document.querySelector('.episode-container');
-  if (!container) {
-    console.error('.episode-container not found.');
-    return;
-  }
-
-  // Responsive measurements based on screen size
-  const episodeWidth = isMobile() ? 8.6 * 16 : 15 * 16; // Mobile: 8.6rem, PC: 15rem
-  const gapWidth = isMobile() ? 0.6 * 16 : 0.8 * 16;   // Mobile: 0.6rem, PC: 0.8rem
-  const totalEpisodeWidth = episodeWidth + gapWidth;
-
-  // Calculate the index of the episode
-  const allEpisodes = Array.from(container.querySelectorAll('.episode'));
-  const episodeIndex = allEpisodes.indexOf(episode);
-
-  if (episodeIndex === -1) {
-    console.error('Episode element not found inside container.');
-    return;
-  }
-
-  // Calculate the required scrollLeft position
-  const targetScrollLeft = episodeIndex * totalEpisodeWidth;
-
-  // Smooth scroll to the calculated position
-  container.scrollTo({
-    left: targetScrollLeft,
-    behavior: 'smooth',
-  });
-  
-  //
-  // mask logic
-  const scrollContainer = document.querySelector('.player-styling');
-
-  scrollContainer?.addEventListener('scroll', () => {
-    const maxScroll = scrollContainer.scrollWidth - scrollContainer.clientWidth;
-    const scrollLeft = scrollContainer.scrollLeft;
-    const buffer = 20;
-    
-    let maskGradient = scrollLeft <= buffer
-      ? 'linear-gradient(to right, black, black 98%, transparent)'
-      : scrollLeft >= maxScroll - buffer
-      ? 'linear-gradient(to right, black, black 2%, black)'
-      : 'linear-gradient(to right, black, black 98%, transparent)';
-    
-    scrollContainer.style.maskImage = maskGradient;
-    scrollContainer.style.webkitMaskImage = maskGradient;
-  });
-
-
-}
 
 document.addEventListener("click", (event) => {
   if (event.target.classList.contains("watch-btn")) {
@@ -596,7 +452,6 @@ function loadWatchPage(mediaType, name = null, id, tvData = null) {
               }`;
 
   const watchPage = document.querySelector("main");
-  let source = 1;
 
   watchPage.innerHTML = `
     <div class="watch-page">
@@ -652,6 +507,7 @@ function loadWatchPage(mediaType, name = null, id, tvData = null) {
   });
 
   // Initialize default source
+  let source = 1;
   loadSources(source, mediaType, id, season, episode);
   console.log( "log1",source, season, episode);
 
@@ -669,6 +525,8 @@ function loadWatchPage(mediaType, name = null, id, tvData = null) {
       }
     });
   });
+
+  // load utils
   cropToFit();
 }
 
@@ -718,7 +576,12 @@ function loadSources(source, mediaType, id, season = null, episode = null) {
         ></iframe>
         `;
   document.querySelector(".iframe-container").innerHTML = loadIframe;
-  logWatchHistory('history',id,mediaType,season,episode);
+  
+  (async () => {
+      cancel();
+      await wait(240); // 
+      logWatchHistory('history', id, mediaType, season, episode);
+  })();
 }
 
 function showIframe(iframe) {
