@@ -338,7 +338,7 @@ async function tvContent(data, sno, eno, ref) {
               .map(season => `
                 <option value="${season.season_number}" 
                 ${season.season_number === Number(sno) ? "selected" : ""}>
-                ${season.name}
+                Season ${season.season_number}
                 </option>
               `)
               .join("")}
@@ -578,7 +578,7 @@ function loadSources(source, mediaType, id, season = null, episode = null) {
   
   (async () => {
       cancel();
-      await wait(180); // 
+      await wait(120); // 
       logWatchHistory('history', Number(id), mediaType, season, episode);
   })();
 }

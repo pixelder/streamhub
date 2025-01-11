@@ -23,7 +23,7 @@
     --color3: #222233;
     --color4: #121225;
     --color5: #181825;
-    --font-color1: #E2E1E8;
+    --font-color1: #E6E6FA;
     --font-color2: #aaa;
     --font-color3: #888;
     --active-color: red;
@@ -45,7 +45,7 @@ body {
     font-weight: 500;
     font-size: 1rem;
     background-color: var(--bg-color); /* 151527 */
-    color: lavender;
+    color: #E6E6FA;
     height: 100%;
     overflow-y: auto;
 }
@@ -581,9 +581,6 @@ section .pagination-buttons > button {
         justify-content: flex-end;
         align-items: flex-end !important;
         height: 100%;
-        i { 
-            font-size: 0.7rem !important;
-        }
     }
 }
 /* Search Page */
@@ -1072,6 +1069,7 @@ option {
     padding-bottom: 0.24rem;
     height: 100%;
     scrollbar-width: none;
+    scroll-snap-type: x mandatory;
     border-radius: var(--border-radius1);
     mask-image: linear-gradient(to right,
     black,black 98%, transparent);
@@ -1091,6 +1089,7 @@ option {
 .player-styling .episode {
     all: unset;
     height: 100%;
+    scroll-snap-align: start;
     scale: 1;
     transition: scale 0.2s ease-in-out;
 }

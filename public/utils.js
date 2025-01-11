@@ -22,8 +22,8 @@ function convertDate(dateString) {
 
 function runtime(min) {
 	const hour =  Math.floor(min / 60.0);
-  min = min - hour * 60.0;
-  return `${hour}h${min}m`;
+  const minute = min - hour * 60.0;
+  return (hour !== 0 ? `${hour}h` : '') + `${minute}m`;
 }
 
 function inBeta() {

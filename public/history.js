@@ -1,7 +1,5 @@
 async function logWatchHistory(logType, id, mediaType, sno = null, eno = null) {
   const existingLogs = JSON.parse(localStorage.getItem(logType)) || [];
-  
-
   const logData = { sno, eno } ;
 
   const logIndex = existingLogs.findIndex(
@@ -9,22 +7,19 @@ async function logWatchHistory(logType, id, mediaType, sno = null, eno = null) {
   );
 
   if (logIndex !== -1) {
-    // Update the data only if it differs
     if (JSON.stringify(existingLogs[logIndex].data) !== JSON.stringify(logData)) {
       existingLogs[logIndex].data = logData;
     }
   } else {
-    // Add a new log
     const newLog = { id: Number(id), mediaType, data: logData };
     existingLogs.push(newLog);
   }
 
-  // Save the updated logs back to localStorage
   localStorage.setItem(logType, JSON.stringify(existingLogs));
 }
 
 async function removeFromHistory(logType, id, mediaType, sno, eno) {
-  const logs = JSON.parse(localStorage.getItem(logType)) || [];
+  const logs = JSON.parse(localStorage.getItem(logType)) || []; 
   
   sno = sno !== '' ? sno : null;
   eno = eno !== '' ? eno : null;
@@ -34,10 +29,8 @@ async function removeFromHistory(logType, id, mediaType, sno, eno) {
       String(log.data.sno) === String(sno) && String(log.data.eno) === String(eno))
   );
 
-  // Save the updated logs back to localStorage
   localStorage.setItem(logType, JSON.stringify(updatedLogs));
 
-  console.log("Updated Logs:", updatedLogs);
   continueWatching();
 }
 
@@ -94,6 +87,10 @@ function renderHistoryItems(data, item, tvData) {
       : epData.vote_average
       , 1
     );
+
+    const runTime = !tvData
+      ? data.runtime
+      : epData.runtime
     //
 
     return `
