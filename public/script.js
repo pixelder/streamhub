@@ -579,8 +579,8 @@ function loadSources(source, mediaType, id, season = null, episode = null) {
   
   (async () => {
       cancel();
-      await wait(240); // 
-      logWatchHistory('history', id, mediaType, season, episode);
+      await wait(180); // 
+      logWatchHistory('history', Number(id), mediaType, season, episode);
   })();
 }
 
@@ -648,10 +648,18 @@ document.addEventListener('click', event => {
             modal.classList.remove('active');
       }
   } else if ( event.target.closest('#continue-watching .grid-item')) {
+    
     const historyItem = event.target.closest('.grid-item').dataset;
-    const [mediaType, id, name, season, episode] = [historyItem.mediaType, historyItem.id, historyItem.name, historyItem.sno, historyItem.eno];
-    console.log(mediaType, id, name, season, episode);
-    window.location.href = `/watch/${mediaType}/${id}/${name}${ season && episode ? `/${season}/${episode}`: "" }`;
+    const [mediaType, id, name, sno, eno] = [historyItem.mediaType, historyItem.id, historyItem.name, historyItem.sno, historyItem.eno];
+    
+    if (!event.target.closest('.grid-actions')) {
+      
+      window.location.href = `/watch/${mediaType}/${id}/${name}${ sno && eno ? `/${sno}/${eno}`: "" }`;
+    
+    } else if (event.target.closest('.options-menu button')){
+      removeFromHistory('history', Number(id), mediaType, sno, eno);
+      console.log(mediaType, id, name, sno, eno);
+    }
   }
 });
 document.addEventListener('keydown', event => {
