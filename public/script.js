@@ -446,10 +446,9 @@ function loadWatchPage(mediaType, name = null, id, tvData = null) {
   episode = tvData?.episode;
   currentSeason = season;
   currentEpisode = episode;
-  const title = `${mediaType === "movie" ? name : `S${season}:E${episode} ${name}`}`;
+  const title = `${mediaType === "movie" ? name : `S${season}:E${episode} ${name}`} - PixelStream`;
   const info = `<h2>${name}</h2> ${mediaType === "movie" ? ""
-             : `<h4>S${season}:E${episode} ${tvData?.epname}</h4>`
-              }`;
+             : `<h4>S${season}:E${episode} ${tvData?.epname}</h4>`}`;
 
   const watchPage = document.querySelector("main");
 

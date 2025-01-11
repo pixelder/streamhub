@@ -10,7 +10,7 @@ async function handleSearch(event) {
 
 async function getSearchResults(query) {
   document.getElementById('search-input').value = query;
-  
+  document.querySelector("title").innerHTML = query + ` - Pixelstream`
   const movieUrl = `${BASE_URL}/search/movie?api_key=${API_KEY}&query=${encodeURIComponent(query)}`;
   const tvUrl = `${BASE_URL}/search/tv?api_key=${API_KEY}&query=${encodeURIComponent(query)}`;
   const personUrl = `${BASE_URL}/search/person?api_key=${API_KEY}&query=${encodeURIComponent(query)}`;
