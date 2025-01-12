@@ -106,7 +106,10 @@ function populateSection(sectionId, items) {
 
 
 document.addEventListener("DOMContentLoaded", () => {
-  loadDiscoverContent(213, 8, 'movie'); // Netflix and Movies as default
+  
+    whenInView('#discover-streaming', () => {
+      loadDiscoverContent(213, 8, 'movie'); // Netflix and Movies as default
+    })
 });
 
 function loadDiscoverContent(networkId = 213, providerId = 8, mediaType = 'movie') {

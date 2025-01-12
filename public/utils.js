@@ -243,8 +243,8 @@ function whenInView(selector, callback) {
   const observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
       if (entry.isIntersecting) {
-        entry.target.classList.add('visible');
-        callback(); // Call your function here
+        callback(entry.target); // Call your function here
+        observer.unobserve(entry.target);
       }
     });
   });

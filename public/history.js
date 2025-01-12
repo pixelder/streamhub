@@ -47,7 +47,7 @@ async function fetchHistoryItems(section, items) {
   const container = section.querySelector('.grid-container');
   const htmlContent = [];
 
-  for (const item of items) {
+  for (const item of items.reverse()) {
     const { id, mediaType, data: { sno, eno } } = item;
 
     try {

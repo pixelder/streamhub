@@ -45,9 +45,11 @@ body {
     font-weight: 500;
     font-size: 1rem;
     background-color: var(--bg-color); /* 151527 */
-    color: #E6E6FA;
+    color: lavender;
+    text-shadow: 0 0 10px #E6E6FA25;
     height: 100%;
     overflow-y: auto;
+    scroll-snap-type: mandatory;
 }
 h1, h2, h3, h4, h5 h6 {
     font-family: var(--font-style2);
@@ -61,9 +63,9 @@ header {
     padding: 0;
     margin: 0;
     align-content: center;
-    background-color: var(--bg-color);
+    background-color: #181825aa;
     border-bottom: 1px solid var(--color3);
-    backdrop-filter: brightness(0.2);
+    backdrop-filter: blur(5px);
     transition: top 1s, height 0.3s, padding 0.3s ease-in-out;
     z-index: 1;
 }
@@ -96,7 +98,7 @@ nav ul li a {
     color: var(--font-color1);
     font-family: var(--font-style2);
     font-size: 0.875rem;
-    font-weight: 500;
+    font-weight: 600;
     transition: color 0.3s;
 }
 
@@ -122,10 +124,9 @@ nav ul li:nth-child(1) {
 /* Search Bar Styling */
 .search-bar {
     position: relative;
-		margin-left: auto;
+	margin-left: auto;
     justify-self: flex-end;
     border: none;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
 }
   
 #search-input {
@@ -151,7 +152,7 @@ nav ul li:nth-child(1) {
 
 #search-input:focus,
 #search-input:not(:placeholder-shown) {
-    width: 20em;
+    width: 14rem;
     opacity: 1;
 }
 
@@ -162,7 +163,7 @@ nav ul li:nth-child(1) {
 
 .search-icon,
 .x-icon {
-    font-size: 0.875rem;
+    font-size: 0.85rem;
     display: flex;
     place-content: center;
     position: absolute;
@@ -190,7 +191,8 @@ nav ul li:nth-child(1) {
 
 .search-bar:has(#search-input:not(:focus)) .search-icon {
     pointer-events: none;
-    font-size: 1.12rem;
+    font-size: 1.2rem;
+    color: var(--font-color1);
 }
 
 
@@ -210,7 +212,12 @@ button {
 
 button:focus-within {
     color: var(--font-color1);
-    background-color: var(--font-color2);
+    background-color: var(--color1);
+}
+
+footer {
+    height: 0rem;
+    border-top: 1px solid var(--color3);
 }
 
 /* Sections */
@@ -224,6 +231,8 @@ section {
     padding: 0.6rem 1.4rem 0 1.4rem;
     margin-bottom: 1.4rem;
     gap: 0rem;
+    min-height: 12rem;
+    scroll-snap-align: start;
 }
 
 section h2 {
@@ -249,6 +258,10 @@ section .pagination-buttons > button {
     font-size: 0.8rem;
 }
 
+#trending-movies, #trending-series {
+    min-height: 18rem;
+}
+
 /* Grid Layout */
 
 
@@ -259,6 +272,7 @@ section .pagination-buttons > button {
     grid-template-columns: repeat(7, minmax(0, 1fr));
     justify-content: center;
     gap: 0.8rem;
+    min-height: 5rem;
 }
 
 .grid-item {
