@@ -239,4 +239,18 @@ function waitTimeout() {
 
 const { wait, cancel } = waitTimeout();
  
-  
+function whenInView(selector, callback) {
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        callback(); // Call your function here
+      }
+    });
+  });
+  const element = document.querySelector(selector);
+  if (element) {
+    observer.observe(element);
+  }
+}
+

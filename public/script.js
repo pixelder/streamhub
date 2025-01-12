@@ -387,7 +387,9 @@ async function tvContent(data, sno, eno, ref) {
       document.querySelector('.now-playing > h4').innerHTML = `S${sno}:E${eno} ${seasonData.episodes.map(episode => episode.name)[eno - 1]}`;
     };
 
-    scrollEpisodeIntoView(eno);
+    whenInView('.player-styling', () => {
+      scrollEpisodeIntoView(eno);
+    });
   };
 
   const seasonDropdown = document.getElementById('season-dropdown');
@@ -472,6 +474,7 @@ function loadWatchPage(mediaType, name = null, id, tvData = null) {
                 <p data-source="4">Superstream</p>
                 <p data-source="5">Multiembed</p>
                 <p data-source="6">Moviesapi</p>
+                <p data-source="7">AutoEmbed(Multi)</p>
               </div>
             </div>
             <div class="media-download">
@@ -551,6 +554,9 @@ function loadSources(source, mediaType, id, season = null, episode = null) {
       break;
     case 6:
       src = `https://moviesapi.club/${mediaType}/${id}${season && episode ? `-${season}-${episode}` : ''}`;
+      break;
+    case 7:
+      src = `https://hin.autoembed.cc/${mediaType}/${id}${season && episode ? `/${season}/${episode}` : ''}`;
       break;
     default:
       console.error("Invalid source selected");

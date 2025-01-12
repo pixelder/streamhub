@@ -87,46 +87,51 @@ nav ul {
     transition: padding 0.3s ease-in-out;
 }
 
-nav ul li > a {
+nav ul li a {
     display: flex;
     align-items: center;
     gap: 0.4rem;
-    height: 100%;
+    height: 2rem;
     text-decoration: none;
     color: var(--font-color1);
     font-family: var(--font-style2);
-    font-size: 1rem;
-    font-weight: 700;
+    font-size: 0.875rem;
+    font-weight: 500;
     transition: color 0.3s;
 }
 
-nav ul li > a:hover {
+nav ul li a:hover {
     color: #ff4747;
 }
 
-nav ul li a:nth-child(1):after {
+nav ul li:nth-child(1) {
+	a::after {
     content: "Pixelstream";
+    font-size: 1rem;
+    font-weight: 700;
+	} 
+	a::before {
+    content: "";
+    background-image:  url('icons/logo.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    height: 1.8rem;
+    aspect-ratio: 1 / 1;
+	}
 }
-
-nav ul li a:nth-child(1):before {
-    content: url('icons/logo.png');
-    display: flex;
-    height: 1.6rem;
-}
-
 /* Search Bar Styling */
 .search-bar {
     position: relative;
+		margin-left: auto;
     justify-self: flex-end;
-    margin-left: auto;
     border: none;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-    height: fit-content;
 }
   
 #search-input {
+    opacity: 0;
     height: 2rem;
-    width: 16em;
+    width: 2rem;
     font-family: var(--font-style2);
     font-size: 0.8rem;
     font-weight: 400;
@@ -147,6 +152,7 @@ nav ul li a:nth-child(1):before {
 #search-input:focus,
 #search-input:not(:placeholder-shown) {
     width: 20em;
+    opacity: 1;
 }
 
 #search-input:focus-visible, #search-button:focus-visible {
@@ -181,6 +187,12 @@ nav ul li a:nth-child(1):before {
     pointer-events: all;
     visibility: visible;
 }
+
+.search-bar:has(#search-input:not(:focus)) .search-icon {
+    pointer-events: none;
+    font-size: 1.12rem;
+}
+
 
 input[type="search"]::-webkit-search-cancel-button,
 input[type="search"]::-webkit-search-results-button,
@@ -479,7 +491,7 @@ section .pagination-buttons > button {
         opacity: 0;
         width: 2rem;
         height: 2rem;
-        border-radius: 50%;
+        border-radius: var(--border-radius2);
         font-size: 1.2rem;
         transition: width 0.25s, opacity 0.25s, color 0.25s ease-in-out;
         
@@ -493,7 +505,8 @@ section .pagination-buttons > button {
             display: flex;
             font-size: 1rem;
             aspect-ratio: 1 / 1;
-            border-radius: 50%;
+            border-radius: inherit;
+            margin:4px;
             align-items: center;
             justify-content: center;
             cursor: pointer;
@@ -522,7 +535,10 @@ section .pagination-buttons > button {
     }
     
     .grid-options.open {
-        border-radius: 1rem;
+        border: 1px solid #383852e5;
+        background-color: #0d0d1b;
+        backdrop-filter: blur(5px);
+        opacity: 0.8 !important;
         width: 4rem;
         .options-menu{
             all: unset;
@@ -532,9 +548,9 @@ section .pagination-buttons > button {
         }
         .options-menu button {
             all: unset;
-            font-size: 1rem;
-            color: var(--error);
-            width: 2rem;
+            font-size: 0.875rem;
+            color: red;
+            width: 1.6rem;
         }
         .options-icon {
             opacity: 0;

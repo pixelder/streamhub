@@ -13,22 +13,27 @@
         padding: 0.8rem 0.6rem;
     }
 
-    nav ul li a {
+    nav ul li {
+      display: none;
+      a {
         font-size: 1rem;
+      }
     }
 
-    nav ul li a:nth-child(1):after {
+    nav ul li:nth-child(1) {
+      display: flex;
+      a:after {
         content: "";
-    }
-
-    nav ul li a:nth-child(1):before {
+      }
+      a:before {
         height: 1.8rem;
+      }
     }
 
     #search-input {
         font-size: 0.85rem;
         height: 2rem;
-        width: 12em;
+        width: 2rem;
         border-radius: var(--border-radius1);
     }
 
