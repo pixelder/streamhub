@@ -180,23 +180,6 @@ function cropToFit() {
         setTimeout(() => {
           iframeExit.classList.add('hidden');
         }, 3000);
-
-        // Assuming same-origin iframe
-        const iframe = document.querySelector('iframe');
-
-        // Detect fullscreen changes on the iframe
-        iframe.addEventListener('fullscreenchange', () => {
-            console.log('Iframe fullscreen state changed');
-        });
-
-        // Add event listeners to the iframe's content (same-origin only)
-        iframe.contentWindow.addEventListener('keydown', (event) => {
-            console.log(`Key pressed in iframe: ${event.key}`);
-        });
-
-        iframe.contentDocument.addEventListener('mousemove', () => {
-            console.log('Mouse moved inside iframe');
-        });
       }
   });
 }

@@ -606,9 +606,11 @@
         font-size: 1.2rem;
     }
 
-    .provider-menu:hover .providers p {
-        font-size: 0.7rem;
-        padding: 0.3rem 0.4rem;
+    .provider-menu:hover, .provider-menu:has(.provider-change:focus-within) {
+        .providers p {
+            font-size: 0.7rem;
+            padding: 0.2rem 0.36rem;
+        }
     }
     .player-toolbar {
         width: 100%;

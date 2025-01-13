@@ -512,15 +512,15 @@ function loadWatchPage(mediaType, name = null, id, tvData = null) {
   });
 
   // Initialize default source
-  let source = 1;
+  let source = localStorage.getItem(id) | 1;
   loadSources(source, mediaType, id, season, episode);
   console.log( "log1",source, season, episode);
 
 
 
   // Add event listeners to dropdown items
-  const sourceItems = document.querySelectorAll('.providers p');
-  sourceItems.forEach(item => {
+  const sourceSelector = document.querySelectorAll('.providers p');
+  sourceSelector.forEach(item => {
     item.addEventListener('click', () => {
       const selectedSource = parseInt(item.getAttribute('data-source'), 10); // Ensure source is an integer
       if (selectedSource && selectedSource !== source) {
@@ -565,6 +565,16 @@ function loadSources(source, mediaType, id, season = null, episode = null) {
       console.error("Invalid source selected");
       return;
   }
+
+  const sourceSelector = document.querySelectorAll('.providers p');
+  sourceSelector.forEach(item => {
+    if (item.dataset.source === String(source)) {
+      item.classList.add('selected');
+    } else {
+      item.classList.remove('selected');
+    }
+  });
+
   // indicicate loading...
   document.querySelector(".loading").style.display = "flex";
 
@@ -585,10 +595,12 @@ function loadSources(source, mediaType, id, season = null, episode = null) {
         `;
   document.querySelector(".iframe-container").innerHTML = loadIframe;
   
+  
   (async () => {
       cancel();
       await wait(120); // 
       logWatchHistory('history', Number(id), mediaType, season, episode);
+      localStorage.setItem(id, source);
   })();
 }
 

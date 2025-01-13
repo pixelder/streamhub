@@ -145,12 +145,4 @@ function continueWatching() {
   }
 }
 
-
-
 continueWatching();
-
-  
-/* const userData = watchHistoryCheck('history');
-  if (userData) {
-    console.log(userData.mediaType, userData.sno, userData.eno);
-} */
