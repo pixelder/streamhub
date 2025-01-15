@@ -9,7 +9,7 @@ function extractYear(dateString) {
 
 function capString(str, maxLength) {
   if (str.length > maxLength) {
-      return str.substring(0, maxLength - 3) + '...';
+    return str.substring(0, maxLength - 3) + '...';
   }
   return str;
 }
@@ -21,7 +21,7 @@ function convertDate(dateString) {
 }
 
 function runtime(min) {
-	const hour =  Math.floor(min / 60.0);
+  const hour = Math.floor(min / 60.0);
   const minute = min - hour * 60.0;
   return (hour !== 0 ? `${hour}h` : '') + `${minute}m`;
 }
@@ -33,65 +33,65 @@ function inBeta() {
 }
 
 function scrollEpisodeIntoView(eno) {
-    const episode = document.getElementById(eno);
-  
-    if (!episode) {
-      return;
-    }
-  
-    // Scroll vertically using scrollIntoView
-    episode.scrollIntoView({ block: 'center', behavior: 'smooth' });
-  
-    // Scroll horizontally if needed
-    const container = document.querySelector('.episode-container');
-    if (!container) {
-      console.error('.episode-container not found.');
-      return;
-    }
-  
-    // Responsive measurements based on screen size
-    const episodeWidth = isMobile() ? 8.6 * 16 : 15 * 16; // Mobile: 8.6rem, PC: 15rem
-    const gapWidth = isMobile() ? 0.6 * 16 : 0.8 * 16;   // Mobile: 0.6rem, PC: 0.8rem
-    const totalEpisodeWidth = episodeWidth + gapWidth;
-  
-    // Calculate the index of the episode
-    const allEpisodes = Array.from(container.querySelectorAll('.episode'));
-    const episodeIndex = allEpisodes.indexOf(episode);
-  
-    if (episodeIndex === -1) {
-      console.error('Episode element not found inside container.');
-      return;
-    }
-  
-    // Calculate the required scrollLeft position
-    const targetScrollLeft = episodeIndex * totalEpisodeWidth;
-  
-    // Smooth scroll to the calculated position
-    container.scrollTo({
-      left: targetScrollLeft,
-      behavior: 'smooth',
-    });
-    
-    //
-    // mask logic
-    const scrollContainer = document.querySelector('.player-styling');
-  
-    scrollContainer?.addEventListener('scroll', () => {
-      const maxScroll = scrollContainer.scrollWidth - scrollContainer.clientWidth;
-      const scrollLeft = scrollContainer.scrollLeft;
-      const buffer = 20;
-      
-      let maskGradient = scrollLeft <= buffer
-        ? 'linear-gradient(to right, black, black 98%, transparent)'
-        : scrollLeft >= maxScroll - buffer
+  const episode = document.getElementById(eno);
+
+  if (!episode) {
+    return;
+  }
+
+  // Scroll vertically using scrollIntoView
+  episode.scrollIntoView({ block: 'center', behavior: 'smooth' });
+
+  // Scroll horizontally if needed
+  const container = document.querySelector('.episode-container');
+  if (!container) {
+    console.error('.episode-container not found.');
+    return;
+  }
+
+  // Responsive measurements based on screen size
+  const episodeWidth = isMobile() ? 8.6 * 16 : 15 * 16; // Mobile: 8.6rem, PC: 15rem
+  const gapWidth = isMobile() ? 0.6 * 16 : 0.8 * 16;   // Mobile: 0.6rem, PC: 0.8rem
+  const totalEpisodeWidth = episodeWidth + gapWidth;
+
+  // Calculate the index of the episode
+  const allEpisodes = Array.from(container.querySelectorAll('.episode'));
+  const episodeIndex = allEpisodes.indexOf(episode);
+
+  if (episodeIndex === -1) {
+    console.error('Episode element not found inside container.');
+    return;
+  }
+
+  // Calculate the required scrollLeft position
+  const targetScrollLeft = episodeIndex * totalEpisodeWidth;
+
+  // Smooth scroll to the calculated position
+  container.scrollTo({
+    left: targetScrollLeft,
+    behavior: 'smooth',
+  });
+
+  //
+  // mask logic
+  const scrollContainer = document.querySelector('.player-styling');
+
+  scrollContainer?.addEventListener('scroll', () => {
+    const maxScroll = scrollContainer.scrollWidth - scrollContainer.clientWidth;
+    const scrollLeft = scrollContainer.scrollLeft;
+    const buffer = 20;
+
+    let maskGradient = scrollLeft <= buffer
+      ? 'linear-gradient(to right, black, black 98%, transparent)'
+      : scrollLeft >= maxScroll - buffer
         ? 'linear-gradient(to right, black, black 2%, black)'
         : 'linear-gradient(to right, black, black 98%, transparent)';
-      
-      scrollContainer.style.maskImage = maskGradient;
-      scrollContainer.style.webkitMaskImage = maskGradient;
-    });
-  
-  
+
+    scrollContainer.style.maskImage = maskGradient;
+    scrollContainer.style.webkitMaskImage = maskGradient;
+  });
+
+
 }
 
 async function cappedOverview() {
@@ -100,20 +100,20 @@ async function cappedOverview() {
     const text = container.querySelector('.overview');
 
     // Check if the text content overflows
-    const isOverflowing = text.scrollHeight -10 > text.offsetHeight;
+    const isOverflowing = text.scrollHeight - 10 > text.offsetHeight;
     if (isOverflowing) {
-        text.style.maskImage = "linear-gradient(to bottom, black, black 70%, transparent 98%)";
+      text.style.maskImage = "linear-gradient(to bottom, black, black 70%, transparent 98%)";
     }
 
     // Toggle expansion and collapse
     text.addEventListener('click', () => {
-        if (container.classList.contains('expanded')) {
-            console.log('hi');
-            container.classList.remove('expanded');
-        } else {
-            console.log('hello');
-            container.classList.add('expanded');
-        }
+      if (container.classList.contains('expanded')) {
+        console.log('hi');
+        container.classList.remove('expanded');
+      } else {
+        console.log('hello');
+        container.classList.add('expanded');
+      }
     });
   });
 }
@@ -123,9 +123,9 @@ function shareItem(mediaType, id, name) {
     text: `${name}`,
     url: `https://pixelstream.vercel.app/watch/${mediaType}/${id}/${name}`,
   };
-  
+
   const btn = document.querySelector(".share");
-  
+
   btn?.addEventListener("click", async () => {
     try {
       await navigator.share(shareData);
@@ -137,91 +137,94 @@ function shareItem(mediaType, id, name) {
 
 
 function cropToFit() {
-    const iframeFullscreen = document.querySelector(".iframefullscreen");
+  const iframeFullscreen = document.querySelector(".iframefullscreen");
   const iframeExit = document.querySelector(".iframe-exit");
   const iframeElement = document.querySelector(".iframe-container");
 
 
-  iframeFullscreen.addEventListener('click', () => {
+  iframeFullscreen.addEventListener('click', (event) => {
     if (!document.fullscreenElement) {
-        if (iframeElement.requestFullscreen) {
-            iframeElement.requestFullscreen();
-        } else if (iframeElement.webkitRequestFullscreen) { // Safari
-            iframeElement.webkitRequestFullscreen();
-        } else if (iframeElement.msRequestFullscreen) { // Older Microsoft browsers
-            iframeElement.msRequestFullscreen();
-        }
-        iframeExit.style.display = "block";
+      if (iframeElement.requestFullscreen) {
+        iframeElement.requestFullscreen();
+      } else if (iframeElement.webkitRequestFullscreen) { // Safari
+        iframeElement.webkitRequestFullscreen();
+      }
+      iframeExit.style.opacity = '1';
     }
+    event.stopPropagation();
   });
 
-    // Exit fullscreen for the iframe
-  iframeExit.addEventListener('click', () => {
-      if (document.exitFullscreen) {
-          document.exitFullscreen();
-      } else if (document.webkitExitFullscreen) { // Safari
-          document.webkitExitFullscreen();
-      } else if (document.msExitFullscreen) { // Older Microsoft browsers
-          document.msExitFullscreen();
-      }
-      iframeExit.style.display = "none"; // Hide exit button
+  // Exit fullscreen for the iframe
+  iframeExit.addEventListener('click', (event) => {
+    if (document.exitFullscreen) {
+      document.exitFullscreen();
+    } else if (document.webkitExitFullscreen) { // Safari
+      document.webkitExitFullscreen();
+    }
+    iframeExit.style.opacity = '0'; // Hide exit button
+    event.stopPropagation();
   });
 
   // Handle fullscreen change events
   document.addEventListener('fullscreenchange', () => {
-      // Check if iframe is no longer in fullscreen
+      console.log('fullscreen');
       if (!document.fullscreenElement) {
-          iframeExit.style.display = "none";
-          setTimeout(() => {
-            iframeExit.classList.remove('hidden');
-          }, 3000);
+        iframeExit.classList.remove('hidden');
+        console.log('exited fullscreen');
       }
       else {
-        setTimeout(() => {
+        wait('iframeExit', 3).then(() => {
           iframeExit.classList.add('hidden');
-        }, 3000);
+          console.log('button hidden');
+        });
       }
   });
 }
 
 function waitTimeout() {
-  let timeoutId = null; // Persistent timeout ID across calls
-  let isCanceled = false; // Tracks whether the wait was canceled
-  
-  const wait = (duration) => {
-    return new Promise((resolve, reject) => {
-    // Cancel any running timeout
-    if (timeoutId) {
-      clearTimeout(timeoutId);
-      timeoutId = null;
-    }
+  const waitInstances = new Map(); // Map to track each wait instance by unique ID
 
-    isCanceled = false; // Reset cancellation state
-    timeoutId = setTimeout(() => {
-      if (isCanceled) {
-      reject(new Error("Wait canceled"));
-      } else {
-      resolve();
+  const wait = (id, duration) => {
+    console.log(`wait initiated for ID: ${id}`);
+    return new Promise((resolve, reject) => {
+      if (waitInstances.has(id)) {
+        clearTimeout(waitInstances.get(id).timeoutId);
+        waitInstances.delete(id);
       }
-      timeoutId = null; // Clear timeout ID after execution
-    }, duration * 1000);
+
+      const instance = {
+        isCanceled: false,
+        timeoutId: setTimeout(() => {
+          if (instance.isCanceled) {
+            reject(new Error(`Wait canceled for ID: ${id}`));
+          } else {
+            resolve(`Wait completed for ID: ${id}`);
+          }
+          waitInstances.delete(id);
+        }, duration * 1000),
+      };
+
+      waitInstances.set(id, instance);
     });
   };
-  
-  const cancel = () => {
-    if (timeoutId) {
-    clearTimeout(timeoutId);
-    timeoutId = null;
-    isCanceled = true;
-    console.log("Wait canceled");
+
+  const cancel = (id) => {
+    if (waitInstances.has(id)) {
+      const instance = waitInstances.get(id);
+      clearTimeout(instance.timeoutId);
+      instance.isCanceled = true;
+      waitInstances.delete(id);
+      console.log(`Wait canceled for ID: ${id}`);
+    } else {
+      console.log(`No active wait found for ID: ${id}`);
     }
   };
-  
+
   return { wait, cancel };
 }
 
 const { wait, cancel } = waitTimeout();
- 
+
 function whenInView(selector, callback) {
   const observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => {

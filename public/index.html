@@ -1,17 +1,27 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
+    <title>Home | Pixelstream</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <meta property="og:title" content="Pixelstream" />
     <meta property="og:image" content="https://github.com/pixelder/streamhub-logos/blob/main/meta_dark.png?raw=true">
     <meta property="og:description" content="Watch movies and tv shows for free" />
-    <title>Home | Pixelstream</title>
+    
+    <script src="https://kit.fontawesome.com/60a2eca232.js" crossorigin="anonymous" defer></script>
+
+    <!-- local items -->
     <link rel="stylesheet" href="styles.css" type="text/css">
     <link rel="stylesheet" href="media.css" type="text/css">
     <link rel="icon" href="icons/favicon.png" type="image/png">
-    <script src="https://kit.fontawesome.com/60a2eca232.js" crossorigin="anonymous"></script>
+    <script src="script.js" defer></script>
+    <script src="utils.js" defer></script>
+    <script src="search.js" defer></script>
+    <script src="history.js" defer></script>
 </head>
+
 <body>
     <!-- Top Navbar -->
     <header id="header">
@@ -24,15 +34,15 @@
                 <form class="search-bar" onsubmit="return handleSearch(event)">
                     <input type="search" id="search-input" onsubmit="return handleSearch(event)" placeholder="Search" />
                     <i class="search-icon fa-solid fa-magnifying-glass"></i>
-                    <button type="reset" class="x-icon" id="search-button" ><!-- onclick="handleSearch(event)" -->
+                    <button type="reset" class="x-icon" id="search-button"><!-- onclick="handleSearch(event)" -->
                         <i class="fa-solid fa-xmark"></i>
                     </button>
                 </form>
-                  
+
             </ul>
         </nav>
     </header>
-    
+
     <!-- Body Content -->
     <main id="main-content">
         <section id="continue-watching">
@@ -50,7 +60,7 @@
                 </button>
             </div>
             <div class="grid-container"></div>
-        </section>          
+        </section>
         <section id="trending-series">
             <h2>Trending Series</h2>
             <div class="pagination-buttons">
@@ -74,8 +84,8 @@
             </div>
             <div class="tab-items">
                 <div class="media-switch">
-                    <button class="media-tab active"  data-type="movie">Movies</button>
-                    <button class="media-tab"  data-type="tv">TV Shows</button>
+                    <button class="media-tab active" data-type="movie">Movies</button>
+                    <button class="media-tab" data-type="tv">TV Shows</button>
                 </div>
                 <div class="pagination-buttons">
                     <button class="prev-page">
@@ -91,18 +101,15 @@
         <div class="modal-overlay"></div>
         <div id="info-modal" class="modal">
             <div class="modal-content">
-              <div id="modal-details">
-                <!-- Dynamic content will be injected here -->
-              </div>
+                <div id="modal-details">
+                    <!-- Dynamic content will be injected here -->
+                </div>
             </div>
-        </div>           
+        </div>
     </main>
     <footer>
 
     </footer>
-    <script src="utils.js"></script>
-    <script src="script.js"></script>
-    <script src="search.js"></script>
-    <script src="history.js"></script>
 </body>
+
 </html>

@@ -3,28 +3,26 @@
 <head>
     <%- include('partials/head') %>
 </head>
+
+<script defer>
+
+    const query =  `<%= query %>`.replace(/&amp;/g, '&')
+                .replace(/&lt;/g, '<')
+                .replace(/&gt;/g, '>')
+                .replace(/&quot;/g, '"')
+                .replace(/&#039;/g, "'");
+
+    document.addEventListener("DOMContentLoaded", () => {
+        getSearchResults(query);
+    });
+    
+</script>
+
 <body>
     <!-- Top Navbar -->
     <%- include('partials/header') %>
     
     <main id="main-content">  
     </main>
-    <script src="/utils.js"></script>
-    <script src="/script.js"></script>
-    <script src="/search.js"></script>
-    <script src="/history.js"></script>
-    <script>
-
-        const query =  `<%= query %>`.replace(/&amp;/g, '&')
-                    .replace(/&lt;/g, '<')
-                    .replace(/&gt;/g, '>')
-                    .replace(/&quot;/g, '"')
-                    .replace(/&#039;/g, "'");
-
-        document.addEventListener("DOMContentLoaded", () => {
-            getSearchResults(query);
-        });
-        
-    </script>
 </body>
 </html>

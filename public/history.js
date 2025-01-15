@@ -1,6 +1,6 @@
 async function logWatchHistory(logType, id, mediaType, sno = null, eno = null) {
   const existingLogs = JSON.parse(localStorage.getItem(logType)) || [];
-  const logData = { sno, eno } ;
+  const logData = { sno, eno };
 
   const logIndex = existingLogs.findIndex(
     log => Number(log.id) === Number(id) && log.mediaType === mediaType
@@ -19,12 +19,12 @@ async function logWatchHistory(logType, id, mediaType, sno = null, eno = null) {
 }
 
 async function removeFromHistory(logType, id, mediaType, sno, eno) {
-  const logs = JSON.parse(localStorage.getItem(logType)) || []; 
-  
+  const logs = JSON.parse(localStorage.getItem(logType)) || [];
+
   sno = sno !== '' ? sno : null;
   eno = eno !== '' ? eno : null;
 
-  const updatedLogs = logs.filter(log => 
+  const updatedLogs = logs.filter(log =>
     !(Number(log.id) === id && log.mediaType === mediaType &&
       String(log.data.sno) === String(sno) && String(log.data.eno) === String(eno))
   );
@@ -42,7 +42,7 @@ function watchHistoryCheck(logType) {
   return jsonData ? JSON.parse(jsonData) : [];
 }
 
-  
+
 async function fetchHistoryItems(section, items) {
   const container = section.querySelector('.grid-container');
   const htmlContent = [];
@@ -73,27 +73,27 @@ async function fetchHistoryItems(section, items) {
 
 
 function renderHistoryItems(data, item, tvData) {
-    const [id , mediaType] = [ item.id, item.mediaType];
-    const [sno, eno] = tvData ? [item.data.sno, item.data.eno] : ["", ""];
-    const epData = tvData?.episodes[eno - 1];
-    //
-    const image = !tvData 
-      ? data.backdrop_path ? `${IMAGE_URL}${data.backdrop_path}` : 'https://placehold.co/440x661/383852/ccc?text=No+Image'
-      : (IMAGE_URL + epData.still_path);
-    const name = (data.title || data.name);
-    const info = `S${sno}:E${eno} ` + epData?.name;
-    const rating = truncate(!tvData
-      ? data.vote_average 
-      : epData.vote_average
-      , 1
-    );
+  const [id, mediaType] = [item.id, item.mediaType];
+  const [sno, eno] = tvData ? [item.data.sno, item.data.eno] : ["", ""];
+  const epData = tvData?.episodes[eno - 1];
+  //
+  const image = !tvData
+    ? data.backdrop_path ? `${IMAGE_URL}${data.backdrop_path}` : 'https://placehold.co/440x661/383852/ccc?text=No+Image'
+    : (IMAGE_URL + epData.still_path);
+  const name = (data.title || data.name);
+  const info = `S${sno}:E${eno} ` + epData?.name;
+  const rating = truncate(!tvData
+    ? data.vote_average
+    : epData.vote_average
+    , 1
+  );
 
-    const runTime = !tvData
-      ? data.runtime
-      : epData.runtime
-    //
+  const runTime = !tvData
+    ? data.runtime
+    : epData.runtime
+  //
 
-    return `
+  return `
       <div tabindex="0" role="button" aria-pressed="false" class="grid-item"
       data-id="${id}" data-media-type="${mediaType}"
       data-sno="${sno}" data-eno="${eno}" data-name="${name}">
@@ -108,11 +108,11 @@ function renderHistoryItems(data, item, tvData) {
             </div>
           </div>
         </div>
-        <img src="${image}" alt="${info}">
+        <img src="${image}" alt="${tvData ? info : name}">
         <div class="grid-item-info">
           <span class="history-item-info">
             <h3>${capString(name, 40)}</h3>
-            ${ tvData ? `<p>${capString(info, 40)}</p>` : ""}
+            ${tvData ? `<p>${capString(info, 40)}</p>` : ""}
           </span>
           <span class="grid-rating">
             <p class="rating">
@@ -127,8 +127,9 @@ function renderHistoryItems(data, item, tvData) {
 function openMenu() {
   console.log('hi');
   document.addEventListener('click', (event) => {
-    const optionsButton = event.target.closest('.options-buttons'); 
+    const optionsButton = event.target.closest('.options-buttons');
     optionsButton?.closest('.grid-options')?.classList.toggle('open');
+    event.stopPropagation();
   });
 }
 

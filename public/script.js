@@ -21,7 +21,7 @@ let isFetching = {}; // Track fetching state per section to avoid multiple fetch
 
 async function fetchContent(sectionId, url, limit) {
   limit = isMobile() ? 20 : 14; // Set limit based on device size
-  
+
   if (!pageNumbers[sectionId]) pageNumbers[sectionId] = 1; // Initialize page number if not set
   if (!isFetching[sectionId]) isFetching[sectionId] = false; // Initialize fetching state
 
@@ -89,8 +89,8 @@ Object.entries(sections).forEach(([sectionId, url]) => {
 
 // Populate a section with content
 function populateSection(sectionId, items) {
-    const container = document.querySelector(`#${sectionId} .grid-container`);
-    container.innerHTML = renderGridItems(items);
+  const container = document.querySelector(`#${sectionId} .grid-container`);
+  container.innerHTML = renderGridItems(items);
 }
 
 
@@ -106,15 +106,15 @@ function populateSection(sectionId, items) {
 
 
 document.addEventListener("DOMContentLoaded", () => {
-  
-    whenInView('#discover-streaming', () => {
-      loadDiscoverContent(213, 8, 'movie'); // Netflix and Movies as default
-    })
+
+  whenInView('#discover-streaming', () => {
+    loadDiscoverContent(213, 8, 'movie'); // Netflix and Movies as default
+  })
 });
 
 function loadDiscoverContent(networkId = 213, providerId = 8, mediaType = 'movie') {
   const sectionId = 'discover-streaming';
-    if (document.getElementById(sectionId)) {
+  if (document.getElementById(sectionId)) {
     const url = `${BASE_URL}/discover/${mediaType}?api_key=${API_KEY}&with_networks=${networkId}&with_watch_providers=${providerId}&watch_region=US&${OPTIONS}`;
     let limit;
     storedData[sectionId] = [];
@@ -132,7 +132,7 @@ function sectionMediaType(sectionId) {
   }
   const url = sections[sectionId];
   if (!url) {
-    console.log( "url null" );
+    console.log("url null");
     return null;
   } else return url.includes("/tv") ? "tv" : "movie";
 }
@@ -169,16 +169,16 @@ document.querySelectorAll(".media-tab").forEach(button => {
 
 
 function renderGridItems(items) {
-   return items
-     .map(item => {
-       const mediaType = item.media_type;
-       const title = item.title || item.name;
-       const rating = truncate(item.vote_average, 1);
-       const year = extractYear(item.release_date || item.first_air_date);
-       const image = item.poster_path
-         ? `${IMAGE_URL}${item.poster_path}`
-         : 'https://placehold.co/440x661/383852/ccc?text=No+Image';
-       return `
+  return items
+    .map(item => {
+      const mediaType = item.media_type;
+      const title = item.title || item.name;
+      const rating = truncate(item.vote_average, 1);
+      const year = extractYear(item.release_date || item.first_air_date);
+      const image = item.poster_path
+        ? `${IMAGE_URL}${item.poster_path}`
+        : 'https://placehold.co/440x661/383852/ccc?text=No+Image';
+      return `
          <div tabindex="0" role="button" aria-pressed="false" class="grid-item" id="grid-item" data-id="${item.id}" data-media-type="${mediaType}">
            <div>
              <img src="${image}" alt="${title}">
@@ -195,9 +195,9 @@ function renderGridItems(items) {
            </div>
          </div>
        `;
-     })
-     .join('');
- }
+    })
+    .join('');
+}
 
 //fetch Metadata
 async function fetchMetaData(mediaType, id) {
@@ -213,21 +213,21 @@ async function fetchMetaData(mediaType, id) {
     }
     const response = await fetch(url);
     const data = await response.json();
-    return {data, mediaType};
-    } catch (error) {
-      console.error("Error fetching data:", error);
-      return null;
-    }
+    return { data, mediaType };
+  } catch (error) {
+    console.error("Error fetching data:", error);
+    return null;
+  }
 }
 
 function openModal(event) {
   const gridItem = event.target.closest('.grid-item, .profile-item');
   const id = gridItem?.dataset.id; // Get the ID of the item
   const sectionId = gridItem?.closest('section')?.id; // Find the parent section's ID
-  const mediaType = ( gridItem?.closest('section')?.dataset.type ?? sectionMediaType(sectionId) )
-                  ?? gridItem.dataset.mediaType;
-  console.log(id,mediaType,sectionId);
-  if ( gridItem && !mediaType || !id) {
+  const mediaType = (gridItem?.closest('section')?.dataset.type ?? sectionMediaType(sectionId))
+    ?? gridItem.dataset.mediaType;
+  console.log(id, mediaType, sectionId);
+  if (gridItem && !mediaType || !id) {
     console.error("Media type or ID not found");
     return;
   }
@@ -242,11 +242,11 @@ function displayModal(mediaType, data) {
   const modal = document.getElementById('info-modal');
   const modalContent = document.querySelector(".modal-content");
   const details = document.getElementById('modal-details');
-  
+
   const id = data.id;
   const name = data.name || data.title || data.original_title;
-  const cast = data.credits?.cast.map(cast => cast.name).slice(0, 5).join(", "); 
-  const rated = mediaType === "movie" 
+  const cast = data.credits?.cast.map(cast => cast.name).slice(0, 5).join(", ");
+  const rated = mediaType === "movie"
     ? data.release_dates?.results?.find((item) => item.iso_3166_1 === "US")?.release_dates[0].certification
     : data.content_ratings?.results?.find((item) => item.iso_3166_1 === "US")?.rating || "";
   const logo = data.images?.logos?.[0]?.file_path
@@ -261,7 +261,7 @@ function displayModal(mediaType, data) {
             <h1>${name.toUpperCase()}</h1>`;
 
   if (mediaType !== "person") {
-    const date = convertDate(  data.release_date || data.first_air_date || data.air_date);
+    const date = convertDate(data.release_date || data.first_air_date || data.air_date);
     details.innerHTML = `
     <div class="modal-media">
       <div class="modal-cover">
@@ -272,26 +272,26 @@ function displayModal(mediaType, data) {
             <i class="fa-solid fa-star"></i>
             <p data-title="${data.vote_count} votes">${truncate(data.vote_average, 1)}</p>
             <span class="modal-genre">
-              ${data.genres.map(genre => `<a href="#">${genre.name}</a>` ).slice(0, 3).join(" ")}
+              ${data.genres.map(genre => `<a href="#">${genre.name}</a>`).slice(0, 3).join(" ")}
             </span>
           </span>
           <div class="synopsis"><p class="overview">${data.overview || 'No description available.'}</p></div>
           <p>Cast : ${cast}</p>
-          <p class="tags">${extractYear(date)} • ${rated !== "" ? `${rated} • `: ""} ${data.original_language.toUpperCase()} ${mediaType === "movie" ? `• ${runtime(data.runtime)}</p>` : "</p>"}
+          <p class="tags">${extractYear(date)} • ${rated !== "" ? `${rated} • ` : ""} ${data.original_language.toUpperCase()} ${mediaType === "movie" ? `• ${runtime(data.runtime)}</p>` : "</p>"}
           </span>
       </div>
       </span>
     </div>`;
   } else
-  if (mediaType === "person") {
-    details.innerHTML = `${inBeta()}`;
-  }
-  
+    if (mediaType === "person") {
+      details.innerHTML = `${inBeta()}`;
+    }
+
   const userData = watchHistoryCheck(id);
 
   if (mediaType === "movie") {
     document.querySelector(".modal-media")
-    .insertAdjacentHTML('afterend', `
+      .insertAdjacentHTML('afterend', `
       <div class="modal-actions">
         <button class="watch-btn" 
         data-name="${name}" 
@@ -304,26 +304,26 @@ function displayModal(mediaType, data) {
       </div>
     `);
     modalContent.style.height = "fit-content";
-  } else 
-  if (mediaType === "tv") {
-    let sno = userData?.sno;
-    let eno = userData?.eno;
-    tvContent(data, sno, eno, ref = "modal");
-    if (!isMobile()) {
-      modalContent.style.height = '32rem';
-    }
-    else {
-      modalContent.style.height = '70%';
-      document.getElementById("season-dropdown").insertAdjacentHTML('afterend', `
+  } else
+    if (mediaType === "tv") {
+      let sno = userData?.sno;
+      let eno = userData?.eno;
+      tvContent(data, sno, eno, ref = "modal");
+      if (!isMobile()) {
+        modalContent.style.height = '32rem';
+      }
+      else {
+        modalContent.style.height = '70%';
+        document.getElementById("season-dropdown").insertAdjacentHTML('afterend', `
         <button class="share">
           <i class="fa-solid fa-paper-plane"></i>
         </button>
         `);
+      };
     };
-  };
 
   cappedOverview();
-  shareItem(mediaType,id,name);
+  shareItem(mediaType, id, name);
 
   modal.classList.add('active');
 
@@ -333,33 +333,33 @@ async function tvContent(data, sno, eno, ref) {
   const seasons = data.seasons.reverse();
   sno === null ? sno = -1 : "";
   const containerClass = ref === "modal" ? "episode-wrap" : "episode-player";
-  const tvInfo =`
+  const tvInfo = `
     <div class="season-info">
       <div class="seasons-menu">
         <select id="season-dropdown">
            ${seasons
-              .map(season => `
+      .map(season => `
                 <option value="${season.season_number}" 
                 ${season.season_number === Number(sno) ? "selected" : ""}>
                 Season ${season.season_number}
                 </option>
               `)
-              .join("")}
+      .join("")}
         </select>
       </div>
     <div class="episode-container ${containerClass}" id="episode-container">
     </div>
     </div>
     `;
-    //modal
-    document.querySelector(".modal-media")?.insertAdjacentHTML('afterend',tvInfo);
-    //player
-    ref !== "modal" ? document.querySelector(".player-episodes").innerHTML = tvInfo : "";
-  
+  //modal
+  document.querySelector(".modal-media")?.insertAdjacentHTML('afterend', tvInfo);
+  //player
+  ref !== "modal" ? document.querySelector(".player-episodes").innerHTML = tvInfo : "";
+
   //episode info
   const episodeContainer = document.getElementById('episode-container');
-    
-  const displaySeasonInfo = async (event) => { 
+
+  const displaySeasonInfo = async (event) => {
     const selectedSeason = event.target.value;
     try {
       const response = await fetch(`${BASE_URL}/tv/${data.id}/season/${selectedSeason}?api_key=${API_KEY}`);
@@ -426,13 +426,13 @@ document.addEventListener("click", (event) => {
                   <h4>S${season}:E${episode} ${epname}</h4>`;
     const tvData = { season, episode, epname };
 
-    if (document.getElementById('episode-container').classList.contains('player-styling')) {    
+    if (document.getElementById('episode-container').classList.contains('player-styling')) {
       currentSeason = season;
       currentEpisode = episode;
       loadSources(source = 1, mediaType, id, season, episode);
-      console.log("log2",source, season, episode);
+      console.log("log2", source, season, episode);
       document.querySelector("title").innerHTML = title;
-      if (info) {document.querySelector(".now-playing").innerHTML = info};
+      if (info) { document.querySelector(".now-playing").innerHTML = info };
       window.history.pushState({}, '', `/watch/${mediaType}/${id}/${name}${season && episode ? `/${season}/${episode}` : ''}`);
     }
     else {
@@ -441,6 +441,7 @@ document.addEventListener("click", (event) => {
     }
 
   }
+  event.stopPropagation();
 });
 
 let currentSeason = null;
@@ -453,7 +454,7 @@ function loadWatchPage(mediaType, name = null, id, tvData = null) {
   currentEpisode = episode;
   const title = `${mediaType === "movie" ? name : `S${season}:E${episode} ${name}`} - PixelStream`;
   const info = `<h2>${name}</h2> ${mediaType === "movie" ? ""
-             : `<h4>S${season}:E${episode} ${tvData?.epname}</h4>`}`;
+    : `<h4>S${season}:E${episode} ${tvData?.epname}</h4>`}`;
 
   const watchPage = document.querySelector("main");
 
@@ -503,18 +504,18 @@ function loadWatchPage(mediaType, name = null, id, tvData = null) {
   document.querySelector(".now-playing").innerHTML = info;
 
   //display metadata on watch page
-  fetchMetaData(mediaType, id).then(({data}) => {
+  fetchMetaData(mediaType, id).then(({ data }) => {
     const sno = season;
     const eno = episode;
     if (mediaType == 'tv') {
-        tvContent(data, sno, eno, ref = "player");
+      tvContent(data, sno, eno, ref = "player");
     };
   });
 
   // Initialize default source
   let source = localStorage.getItem(id) | 1;
   loadSources(source, mediaType, id, season, episode);
-  console.log( "log1",source, season, episode);
+  console.log("log1", source, season, episode);
 
 
 
@@ -526,7 +527,7 @@ function loadWatchPage(mediaType, name = null, id, tvData = null) {
       if (selectedSource && selectedSource !== source) {
         source = selectedSource; // Update the source
         loadSources(source, mediaType, id, currentSeason, currentEpisode);
-        console.log( "log3",source, season, episode);
+        console.log("log3", source, season, episode);
       }
     });
   });
@@ -594,14 +595,23 @@ function loadSources(source, mediaType, id, season = null, episode = null) {
         ></iframe>
         `;
   document.querySelector(".iframe-container").innerHTML = loadIframe;
-  
-  
-  (async () => {
-      cancel();
-      await wait(120); // 
+
+
+  const taskId = "logHistory";
+  cancel(taskId);
+
+  wait(taskId, 120)
+    .then(() => {
       logWatchHistory('history', Number(id), mediaType, season, episode);
       localStorage.setItem(id, source);
-  })();
+    })
+    .catch((err) => {
+      if (err.message.includes("Wait canceled")) {
+        console.log("Wait was canceled before completion.");
+      } else {
+        console.error("Error:", err.message);
+      }
+    });
 }
 
 function showIframe(iframe) {
@@ -624,7 +634,7 @@ window.addEventListener('scroll', () => {
   const header = document.getElementById('header');
   const nav = document.querySelector("nav > ul");
   const input = document.getElementById('search-input');
-  
+
   if (window.scrollY > lastScrollY) {
     // Scrolling down
     if (!isScrollingDown) {
@@ -634,7 +644,7 @@ window.addEventListener('scroll', () => {
       header.style.height = isMobile() ? "3rem" : "2.8rem";
       clearTimeout(hideTimeout);
       hideTimeout = setTimeout(() => {
-      header.classList.add('hidden');
+        header.classList.add('hidden');
       }, 750);
     }
   } else {
@@ -662,38 +672,40 @@ document.addEventListener('click', event => {
   const modalContent = document.querySelector('.modal-content');
 
   if (event.target.closest('.grid-item, .profile-item') && !event.target.closest('#continue-watching .grid-item')) {
-      openModal(event); 
+    openModal(event);
   } else if (!event.target.closest('.grid-item, .profile-item') && modal !== null) {
-      if (modal.contains(event.target) && !modalContent.contains(event.target)) {
-            modal.classList.remove('active');
-      }
-  } else if ( event.target.closest('#continue-watching .grid-item')) {
-    
+    if (modal.contains(event.target) && !modalContent.contains(event.target)) {
+      modal.classList.remove('active');
+    }
+  } else if (event.target.closest('#continue-watching .grid-item')) {
+
     const historyItem = event.target.closest('.grid-item').dataset;
-    const [mediaType, id, name, sno, eno] = [historyItem.mediaType, historyItem.id, historyItem.name, historyItem.sno, historyItem.eno];
-    
+    const { mediaType, id, name, sno, eno } = historyItem;
+
     if (!event.target.closest('.grid-actions')) {
-      
-      window.location.href = `/watch/${mediaType}/${id}/${name}${ sno && eno ? `/${sno}/${eno}`: "" }`;
-    
-    } else if (event.target.closest('.options-menu button')){
+
+      window.location.href = `/watch/${mediaType}/${id}/${name}${sno && eno ? `/${sno}/${eno}` : ""}`;
+
+    } else if (event.target.closest('.options-menu button')) {
       removeFromHistory('history', Number(id), mediaType, sno, eno);
       console.log(mediaType, id, name, sno, eno);
     }
   }
+  event.stopPropagation();
 });
+
+
 document.addEventListener('keydown', event => {
   const modal = document.getElementById('info-modal');
 
   if (event.type === 'keydown') {
     if (event.key === 'Escape') {
-        modal.classList.remove('active');
-    } else if ( event.key === 'Enter' && 
-                !modal.classList.contains('active') && 
-                event.target.closest('.grid-item, .profile-item') &&
-                !event.target.closest('#continue-watching .grid-item')
-              ) {
-        openModal(event);
+      modal.classList.remove('active');
+    } else if (event.key === 'Enter' &&
+      !modal.classList.contains('active') &&
+      event.target.closest('.grid-item, .profile-item')
+    ) {
+      openModal(event);
     }
   }
 });
