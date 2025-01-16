@@ -556,6 +556,7 @@ section .pagination-buttons>button {
     /* Icons */
     .options-icon,
     .options-x-icon {
+      pointer-events: none;
       position: absolute;
       transition: opacity 0.25s ease-in-out;
     }
@@ -584,6 +585,7 @@ section .pagination-buttons>button {
       font-size: 0.875rem;
       color: red;
       width: 1.6rem;
+      pointer-events: all;
     }
 
     .options-icon {
@@ -1142,59 +1144,63 @@ option {
   display: none;
 }
 
-.player-styling .episode-width {
-  min-width: unset;
-  max-width: fit-content;
-}
+.player-styling {
+  .episode-width {
+    min-width: unset;
+    max-width: fit-content;
+  }
+ .episode {
+    all: unset;
+    height: 100%;
+    scroll-snap-align: start;
+    scale: 1;
+    transition: scale 0.2s ease-in-out;
+  }
 
+  .episode.current img{
+    border: 1px solid var(--color1);
+  }
 
-.player-styling .episode {
-  all: unset;
-  height: 100%;
-  scroll-snap-align: start;
-  scale: 1;
-  transition: scale 0.2s ease-in-out;
-}
+  .episode-items::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: #30303d no-repeat center center / cover;
+    filter: blur(20px) brightness(0.75);
+    z-index: -1;
+    transform: scale(0.7);
+  }
 
-.player-styling .episode-items::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: #30303d no-repeat center center / cover;
-  filter: blur(20px) brightness(0.75);
-  z-index: -1;
-  transform: scale(0.7);
-}
-
-.player-styling .episode:hover {
+ .episode:hover {
   scale: 0.97;
-}
+  }
 
-.player-styling .episode-items img {
-  width: 15rem;
-  border-radius: var(--border-radius1);
-}
+ .episode-items img {
+    width: 15rem;
+    border-radius: var(--border-radius1);
+  }
 
-.player-styling .episode-items {
-  all: unset;
-}
+ .episode-items {
+    all: unset;
+  }
 
-.player-styling .episode-items h3 {
-  font-size: 0.875rem;
-  line-height: 0.96rem;
-  margin: 0;
-}
+  .episode-items h3 {
+    font-size: 0.875rem;
+    line-height: 0.96rem;
+    margin: 0;
+  }
 
-.player-styling .episode-items p {
-  all: unset;
+ .episode-items p {
+    all: unset;
+    display: none;
+  }
+
+ .episode-overview {
   display: none;
-}
-
-.player-styling .episode-overview {
-  display: none;
+  }
 }
 
 

@@ -57,10 +57,8 @@ async function fetchHistoryItems(section, items) {
         const response = await fetch(`${BASE_URL}/tv/${id}/season/${sno}?api_key=${API_KEY}`);
         const tvData = await response.json();
         htmlContent.push(renderHistoryItems(data, item, tvData));
-        openMenu;
       } else {
         htmlContent.push(renderHistoryItems(data, item));
-        openMenu;
       }
     } catch (error) {
       console.error(`Error fetching data for item ID ${id}:`, error);
@@ -68,7 +66,6 @@ async function fetchHistoryItems(section, items) {
   }
 
   container.innerHTML = htmlContent.join(""); // Batch update the DOM
-  openMenu();
 }
 
 
@@ -108,7 +105,7 @@ function renderHistoryItems(data, item, tvData) {
             </div>
           </div>
         </div>
-        <img src="${image}" alt="${tvData ? info : name}">
+        <img src="${image}">
         <div class="grid-item-info">
           <span class="history-item-info">
             <h3>${capString(name, 40)}</h3>
@@ -117,21 +114,21 @@ function renderHistoryItems(data, item, tvData) {
           <span class="grid-rating">
             <p class="rating">
             <i class="fa-solid fa-star"></i>
-            ${rating}</p>
+            ${rating}
+            </p>
           </span>
         </div>
       </div>
     `;
 }
 
-function openMenu() {
-  console.log('hi');
-  document.addEventListener('click', (event) => {
-    const optionsButton = event.target.closest('.options-buttons');
-    optionsButton?.closest('.grid-options')?.classList.toggle('open');
+
+document.addEventListener('click', (event) => {
+  if( event.target.matches(".options-buttons")) {
+    event.target.closest('.grid-options')?.classList.toggle('open');
     event.stopPropagation();
-  });
-}
+  };
+});
 
 
 function continueWatching() {

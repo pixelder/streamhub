@@ -240,3 +240,37 @@ function whenInView(selector, callback) {
   }
 }
 
+
+//header anim
+let lastScrollY = window.scrollY;
+let isScrollingDown = false;
+let hideTimeout;
+
+window.addEventListener('scroll', () => {
+  const header = document.getElementById('header');
+  const nav = document.querySelector("nav > ul");
+  const input = document.getElementById('search-input');
+
+  if (window.scrollY > lastScrollY) {
+    // Scrolling down
+    if (!isScrollingDown) {
+      isScrollingDown = true;
+      input.style.height = "1.8rem";
+      nav.style.padding = isMobile() ? "0.4rem 0.6rem" : "0.4rem 1.4rem";
+      header.style.height = isMobile() ? "3rem" : "2.8rem";
+      clearTimeout(hideTimeout);
+      hideTimeout = setTimeout(() => {
+        header.classList.add('hidden');
+      }, 500);
+    }
+  } else {
+    // Scrolling up
+    isScrollingDown = false;
+    input.style.height = "2rem";
+    nav.style.padding = isMobile() ? "0.8rem 0.6rem" : "0.8rem 1.4rem";
+    header.style.height = isMobile() ? "3.6rem" : "4rem";
+    clearTimeout(hideTimeout); // Cancel any pending hide
+    header.classList.remove('hidden'); // No delay to reappear
+  }
+  lastScrollY = window.scrollY;
+});

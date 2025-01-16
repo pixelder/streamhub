@@ -93,22 +93,9 @@ function populateSection(sectionId, items) {
   container.innerHTML = renderGridItems(items);
 }
 
-
-// Attach event listeners to each section's pagination buttons
-/* document.querySelectorAll('.pagination-buttons').forEach((buttonsContainer) => {
-  console.log('hi');
-    const sectionId = buttonsContainer.closest('section').id;
-    console.log(sectionId);
-    buttonsContainer.querySelector('.prev-page').addEventListener('click', () => showPreviousPage(sectionId));
-    buttonsContainer.querySelector('.next-page').addEventListener('click', () => showNextPage(sectionId));
-}); */
-
-
-
 document.addEventListener("DOMContentLoaded", () => {
-
   whenInView('#discover-streaming', () => {
-    loadDiscoverContent(213, 8, 'movie'); // Netflix and Movies as default
+    loadDiscoverContent();
   })
 });
 
@@ -125,16 +112,10 @@ function loadDiscoverContent(networkId = 213, providerId = 8, mediaType = 'movie
 }
 
 function sectionMediaType(sectionId) {
-  //return document.getElementById(sectionId).dataset.type;
   const mediaType = document.querySelector(".media-switch .active")?.dataset.type;
   if (sectionId === "discover-streaming") {
     return mediaType; // Returns either 'movie' or 'tv'
   }
-  const url = sections[sectionId];
-  if (!url) {
-    console.log("url null");
-    return null;
-  } else return url.includes("/tv") ? "tv" : "movie";
 }
 
 document.querySelectorAll(".tab-menu .tab").forEach(tab => {
@@ -287,7 +268,7 @@ function displayModal(mediaType, data) {
       details.innerHTML = `${inBeta()}`;
     }
 
-  const userData = watchHistoryCheck(id);
+  const userData = watchHistoryCheck('history')?.filter(item => item?.id === id)[0]?.data;
 
   if (mediaType === "movie") {
     document.querySelector(".modal-media")
@@ -388,9 +369,13 @@ async function tvContent(data, sno, eno, ref) {
     if (ref != "modal") {
       document.getElementById('episode-container').classList.add('player-styling');
       document.querySelector('.now-playing > h4').innerHTML = `S${sno}:E${eno} ${seasonData.episodes.map(episode => episode.name)[eno - 1]}`;
-    };
-
-    whenInView('.player-styling', () => {
+      document.querySelectorAll('.episode').forEach(item => {
+        if (item.dataset.episode === String(episode)) {
+          item.classList.add('current');
+        }
+      });
+    }
+    whenInView('.player-styling, .modal', () => {
       scrollEpisodeIntoView(eno);
     });
   };
@@ -411,6 +396,7 @@ document.addEventListener("click", (event) => {
 
     //loadWatchPage(mediaType, name, id);
     window.location.href = `/watch/${mediaType}/${id}/${name}`;
+    event.stopPropagation();
   }
 
   if (event.target.closest(".episode img")) {
@@ -434,14 +420,15 @@ document.addEventListener("click", (event) => {
       document.querySelector("title").innerHTML = title;
       if (info) { document.querySelector(".now-playing").innerHTML = info };
       window.history.pushState({}, '', `/watch/${mediaType}/${id}/${name}${season && episode ? `/${season}/${episode}` : ''}`);
+      scrollEpisodeIntoView(episode);
+      
     }
     else {
       window.location.href = `/watch/${mediaType}/${id}/${name}${season && episode ? `/${season}/${episode}` : ''}`;
       //loadWatchPage(mediaType, name, id, tvData);
     }
-
-  }
   event.stopPropagation();
+  }
 });
 
 let currentSeason = null;
@@ -505,9 +492,9 @@ function loadWatchPage(mediaType, name = null, id, tvData = null) {
 
   //display metadata on watch page
   fetchMetaData(mediaType, id).then(({ data }) => {
-    const sno = season;
-    const eno = episode;
     if (mediaType == 'tv') {
+      const sno = season;
+      const eno = episode;
       tvContent(data, sno, eno, ref = "player");
     };
   });
@@ -516,8 +503,6 @@ function loadWatchPage(mediaType, name = null, id, tvData = null) {
   let source = localStorage.getItem(id) | 1;
   loadSources(source, mediaType, id, season, episode);
   console.log("log1", source, season, episode);
-
-
 
   // Add event listeners to dropdown items
   const sourceSelector = document.querySelectorAll('.providers p');
@@ -576,6 +561,14 @@ function loadSources(source, mediaType, id, season = null, episode = null) {
     }
   });
 
+  const episodeSelector = document.querySelectorAll('.episode');
+  episodeSelector.forEach(item => {
+    if (item.dataset.episode === String(episode)) {
+      item.classList.add('current');
+    } else {
+      item.classList.remove('current');
+    }
+  });
   // indicicate loading...
   document.querySelector(".loading").style.display = "flex";
 
@@ -598,9 +591,10 @@ function loadSources(source, mediaType, id, season = null, episode = null) {
 
 
   const taskId = "logHistory";
+  const duration = 120;
   cancel(taskId);
 
-  wait(taskId, 120)
+  wait(taskId, duration)
     .then(() => {
       logWatchHistory('history', Number(id), mediaType, season, episode);
       localStorage.setItem(id, source);
@@ -624,88 +618,38 @@ function goBack() {
   window.history.back();
 }
 
-
-// header animation
-let lastScrollY = window.scrollY;
-let isScrollingDown = false;
-let hideTimeout;
-
-window.addEventListener('scroll', () => {
-  const header = document.getElementById('header');
-  const nav = document.querySelector("nav > ul");
-  const input = document.getElementById('search-input');
-
-  if (window.scrollY > lastScrollY) {
-    // Scrolling down
-    if (!isScrollingDown) {
-      isScrollingDown = true;
-      input.style.height = "1.8rem";
-      nav.style.padding = isMobile() ? "0.4rem 0.6rem" : "0.4rem 1.4rem";
-      header.style.height = isMobile() ? "3rem" : "2.8rem";
-      clearTimeout(hideTimeout);
-      hideTimeout = setTimeout(() => {
-        header.classList.add('hidden');
-      }, 750);
-    }
-  } else {
-    // Scrolling up
-    isScrollingDown = false;
-    input.style.height = "2rem";
-    nav.style.padding = isMobile() ? "0.8rem 0.6rem" : "0.8rem 1.4rem";
-    header.style.height = isMobile() ? "3.6rem" : "4rem";
-    clearTimeout(hideTimeout); // Cancel any pending hide
-    header.classList.remove('hidden'); // No delay to reappear
-  }
-  lastScrollY = window.scrollY;
-});
-
-// Close modal on click
-/*  function closeModal() {
-  document.getElementById('info-modal').classList.remove('active');
-  //.style.display = 'none';
-  //window.history.pushState({}, '', `/`);
-  //window.history.back();
-} */
-
-document.addEventListener('click', event => {
-  const modal = document.getElementById('info-modal');
-  const modalContent = document.querySelector('.modal-content');
-
-  if (event.target.closest('.grid-item, .profile-item') && !event.target.closest('#continue-watching .grid-item')) {
-    openModal(event);
-  } else if (!event.target.closest('.grid-item, .profile-item') && modal !== null) {
-    if (modal.contains(event.target) && !modalContent.contains(event.target)) {
-      modal.classList.remove('active');
-    }
-  } else if (event.target.closest('#continue-watching .grid-item')) {
-
-    const historyItem = event.target.closest('.grid-item').dataset;
-    const { mediaType, id, name, sno, eno } = historyItem;
-
-    if (!event.target.closest('.grid-actions')) {
-
-      window.location.href = `/watch/${mediaType}/${id}/${name}${sno && eno ? `/${sno}/${eno}` : ""}`;
-
-    } else if (event.target.closest('.options-menu button')) {
-      removeFromHistory('history', Number(id), mediaType, sno, eno);
-      console.log(mediaType, id, name, sno, eno);
-    }
-  }
-  event.stopPropagation();
+['click', 'keydown'].forEach(eventType => {
+  document.addEventListener(eventType, globalAddEventListener);
 });
 
 
-document.addEventListener('keydown', event => {
+function globalAddEventListener (event) {
   const modal = document.getElementById('info-modal');
-
-  if (event.type === 'keydown') {
-    if (event.key === 'Escape') {
-      modal.classList.remove('active');
-    } else if (event.key === 'Enter' &&
-      !modal.classList.contains('active') &&
-      event.target.closest('.grid-item, .profile-item')
+  const modalActive = modal?.classList.contains('active');
+  const gridItem = event.target.closest('.grid-item, .profile-item');
+  const continueWatching = event.target.closest('#continue-watching .grid-item');
+  
+  if (gridItem && !modalActive) {
+    if (event.type === 'click' && !continueWatching ||
+        event.key === 'Enter' && (!continueWatching || event.shiftKey)
     ) {
       openModal(event);
+      event.stopPropagation();
+    } else if (continueWatching) {
+      const { mediaType, id, name, sno, eno } = gridItem.dataset;
+      if ((event.type === 'click' || event.key === 'Enter') && !event.target.closest('.grid-actions')) {
+        window.location.href = `/watch/${mediaType}/${id}/${name}${sno && eno ? `/${sno}/${eno}` : ""}`;
+        event.stopPropagation();
+      } else if (event.target.closest('.options-menu button')) {
+          removeFromHistory('history', Number(id), mediaType, sno, eno);
+          console.log(mediaType, id, sno, eno);
+          event.stopPropagation();
+      } 
+    }
+  } else if (modalActive) {
+    if (event.key === 'Escape' || event.target.matches('#info-modal')) {
+      modal.classList.remove('active');
+      event.stopPropagation();
     }
   }
-});
+}
