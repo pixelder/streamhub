@@ -654,20 +654,31 @@
     .player-styling {
         gap: 0.6rem;
         width: 100%;
-    }
 
-    .player-styling .episode-items::before {
-        filter: blur(20px) brightness(0.8);
-        transform: scaleX(0.7) scaleY(0.55);
-    }
+        .episode.current {
+            .episode-items::before {
+                filter: blur(20px) brightness(1.6);   
+            }
+        }
+        .episode-items {
+            width: unset;
+            min-height: unset;
+        }
+    
+        .episode-items::before {
+            top: 0%;
+            height: 80%;
+            filter: blur(20px) brightness(0.8);
+        }
 
-    .player-styling .episode-items img {
-        width: 8.6rem;
-    }
+        .episode-items img {
+            width: 8.6rem;
+        }
 
-    .player-styling .episode-items h3 {
-        font-size: 0.75rem;
-        line-height: 0.8rem;
+        .episode-items h3 {
+            font-size: 0.75rem;
+            line-height: 0.8rem;
+        }
     }
 
     .watch-page {

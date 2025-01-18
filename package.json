@@ -1,7 +1,7 @@
 {
     "name": "pixelstream",
-    "version": "2.0.0",
-    "description": "A streaming site",
+    "version": "2.5.0",
+    "description": "Watch your favorite movies and tv shows",
     "main": "server.js",
     "scripts": {
         "start": "nodemon server.js"
