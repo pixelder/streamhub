@@ -31,10 +31,15 @@ async function removeFromHistory(logType, id, mediaType, sno, eno) {
 
   localStorage.setItem(logType, JSON.stringify(updatedLogs));
 
-  continueWatching();
+  contWatching ? continueWatching() : '';
 }
 
-
+async function toggleBookmark(logtype,id, mediaType) {
+  temp = contWatching;
+  contWatching = false;
+  logWatchHistory(logtype,id,mediaType)
+  contWatching = temp;
+}
 
 
 function watchHistoryCheck(logType) {
@@ -138,9 +143,12 @@ function continueWatching() {
   if (history.length > 0) {
     section.style.display = "flex";
     fetchHistoryItems(section, history);
+    contWatching = true;
   } else {
     section.style.display = "none"; // Hide section if history is empty
+    contWatching = false;
   }
 }
 
+let contWatching = false;
 continueWatching();

@@ -7,8 +7,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <meta property="og:title" content="Pixelstream" />
-    <meta property="og:image" content="https://github.com/pixelder/streamhub-logos/blob/main/meta_dark.png?raw=true">
-    <meta property="og:description" content="Watch movies and tv shows for free" />
+    <meta property="og:image" content="https://pixelstream.vercel.app/meta/meta_dark.png">
+    <meta property="og:description" content="Watch your favorite movies and tv shows" />
     
     <script src="https://kit.fontawesome.com/60a2eca232.js" crossorigin="anonymous" defer></script>
 
@@ -20,6 +20,7 @@
     <script src="utils.js" defer></script>
     <script src="search.js" defer></script>
     <script src="history.js" defer></script>
+    <script src="explore.js" defer></script>
 </head>
 
 <body>
@@ -27,9 +28,9 @@
     <header id="header">
         <nav>
             <ul>
-                <li><a href="#"></a></li>
-                <li><a href="#trending-movies">Movies</a></li>
-                <li><a href="#trending-series">TV Shows</a></li>
+                <li><a href="/"></a></li>
+                <li><a onclick="loadExplorePage('movie')">Movies</a></li>
+                <li><a onclick="loadExplorePage('tv')">TV Shows</a></li>
                 <li><a href="#discover-streaming">What's Streaming</a></li>
                 <form class="search-bar" onsubmit="return handleSearch(event)">
                     <input type="search" id="search-input" onsubmit="return handleSearch(event)" placeholder="Search" />
@@ -108,7 +109,22 @@
         </div>
     </main>
     <footer>
-
+        <ul>
+            <li><a href="/">
+                <i class="fa-solid fa-house"></i>
+                <p>Home</p>
+                </a>
+            </li>
+            <li><a onclick="loadExplorePage('movie')">
+                    <i class="fa-solid fa-film"></i>
+                    <p>Movies</p>
+                </a></li>
+            <li><a onclick="loadExplorePage('tv')">
+                    <i class="fa-solid fa-tv"></i>                    
+                    <p>TV</p>
+                </a>
+            </li>
+        </ul>
     </footer>
 </body>
 

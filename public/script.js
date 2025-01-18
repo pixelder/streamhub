@@ -1,7 +1,7 @@
 const API_KEY = "213d830aae3a2f7b67e37f157405a42e";
 const BASE_URL = 'https://api.tmdb.org/3';
 const IMAGE_URL = 'https://image.tmdb.org/t/p/w500';
-const OPTIONS = 'include_null_first_air_dates=false&language=en-US&page=1&sort_by=popularity.desc';
+const OPTIONS = 'include_adult=false&include_null_first_air_dates=false&language=en-US';
 
 // Sections to populate
 const sections = {
@@ -19,30 +19,32 @@ let pageNumbers = {}; // Track the current page number for each section
 let storedData = {}; // Store data for each section for persistent pagination
 let isFetching = {}; // Track fetching state per section to avoid multiple fetches
 
-async function fetchContent(sectionId, url, limit) {
-  limit = isMobile() ? 20 : 14; // Set limit based on device size
+let isLoading = false;
+let isBrowsing = false;
 
+async function fetchContent(sectionId, url) {
+  const limit = (isMobile() || isBrowsing) ? 20 : 14; // Set limit based on device size
+  //const limit = 20;
   if (!pageNumbers[sectionId]) pageNumbers[sectionId] = 1; // Initialize page number if not set
   if (!isFetching[sectionId]) isFetching[sectionId] = false; // Initialize fetching state
 
   // Prevent multiple fetch requests while one is ongoing
   if (isFetching[sectionId]) return;
-
+  
   try {
     isFetching[sectionId] = true; // Set fetching flag to true
 
     // Modify the URL to include the correct page number
-    const pageUrl = `${url}&page=${pageNumbers[sectionId]}`;
+    const pageUrl = `${url}${!isBrowsing ? `&page=${pageNumbers[sectionId]}` : ''}`;
     const response = await fetch(pageUrl);
     const data = await response.json();
+    const media_type = url.includes('/movie') ? 'movie' : 'tv';
+    
+    storedData[sectionId] = data.results; // Reset stored data for a new page
+    storedData[sectionId].forEach(res => res.media_type = media_type);
 
-    // Reset stored data for a new page
-    storedData[sectionId] = data.results;
-
-    // Determine the results to show based on the limit
     const accumulatedResults = storedData[sectionId].slice(0, limit);
 
-    // Populate the section with the fetched results
     populateSection(sectionId, accumulatedResults);
     setupPagination(sectionId, url, limit);
   } catch (error) {
@@ -53,61 +55,79 @@ async function fetchContent(sectionId, url, limit) {
 }
 
 // Set up pagination buttons for the section
-function setupPagination(sectionId, url, limit) {
+function setupPagination(sectionId, url) {
   const prevButton = document.querySelector(`#${sectionId} .prev-page`);
   const nextButton = document.querySelector(`#${sectionId} .next-page`);
 
   // Remove previous event listeners to avoid duplication
-  prevButton.replaceWith(prevButton.cloneNode(true)); // Reset the "previous" button
-  nextButton.replaceWith(nextButton.cloneNode(true)); // Reset the "next" button
+  prevButton?.replaceWith(prevButton.cloneNode(true)); // Reset the "previous" button
+  nextButton?.replaceWith(nextButton.cloneNode(true)); // Reset the "next" button
 
   const updatedPrevButton = document.querySelector(`#${sectionId} .prev-page`);
   const updatedNextButton = document.querySelector(`#${sectionId} .next-page`);
 
   // Previous page button functionality
-  updatedPrevButton.addEventListener('click', () => {
+  updatedPrevButton?.addEventListener('click', () => {
     if (pageNumbers[sectionId] > 1) {
       pageNumbers[sectionId]--; // Decrement the page number
-      fetchContent(sectionId, url, limit); // Fetch the previous page
+      fetchContent(sectionId, url); // Fetch the previous page
     }
   });
 
   // Next page button functionality
-  updatedNextButton.addEventListener('click', () => {
+  updatedNextButton?.addEventListener('click', () => {
     pageNumbers[sectionId]++; // Increment the page number
-    fetchContent(sectionId, url, limit); // Fetch the next page
+    fetchContent(sectionId, url); // Fetch the next page
   });
 }
 
 // Load content for each section
 Object.entries(sections).forEach(([sectionId, url]) => {
   if (document.getElementById([sectionId])) {
-    let limit = isMobile() ? 20 : 14;
-    fetchContent(sectionId, url, limit);
+    fetchContent(sectionId, url);
   }
 });
 
 // Populate a section with content
 function populateSection(sectionId, items) {
   const container = document.querySelector(`#${sectionId} .grid-container`);
-  container.innerHTML = renderGridItems(items);
+  if (isBrowsing) {
+    container.innerHTML += renderGridItems(items);
+  } else {
+    container.innerHTML = renderGridItems(items);
+  }
 }
-
 document.addEventListener("DOMContentLoaded", () => {
   whenInView('#discover-streaming', () => {
-    loadDiscoverContent();
+    loadDiscoverContent( 213, 8, 'movie','discover-streaming');
   })
 });
 
-function loadDiscoverContent(networkId = 213, providerId = 8, mediaType = 'movie') {
-  const sectionId = 'discover-streaming';
+let selectedGenres = []
+let excludedGenres = []
+let currentPage = 1
+let sortMode = ''
+let minVoteCount = 400
+let currentYear
+
+async function loadDiscoverContent(networkId, providerId, mediaType, sectionId) {
+
+  const params = new URLSearchParams({
+    with_genres: selectedGenres.join(','),
+    without_genres: excludedGenres.join(','),
+    page: currentPage,
+    sort_by: sortMode,
+    primary_release_year: currentYear,
+    first_air_date: currentYear,
+    'vote_count.gte': minVoteCount
+  });
+
   if (document.getElementById(sectionId)) {
-    const url = `${BASE_URL}/discover/${mediaType}?api_key=${API_KEY}&with_networks=${networkId}&with_watch_providers=${providerId}&watch_region=US&${OPTIONS}`;
-    let limit;
+    const url = `${BASE_URL}/discover/${mediaType}?api_key=${API_KEY}&${params}&with_networks=${networkId}&with_watch_providers=${providerId}&watch_region=US&${OPTIONS}`;
     storedData[sectionId] = [];
-    pageNumbers['discover-streaming'] = 1;
-    console.log(mediaType, url);
-    fetchContent(sectionId, url, limit);
+    pageNumbers[sectionId] = 1;
+    console.log(mediaType, isBrowsing);
+    fetchContent(sectionId, url);
   }
 }
 
@@ -126,7 +146,7 @@ document.querySelectorAll(".tab-menu .tab").forEach(tab => {
     const networkId = tab.dataset.network;
     const providerId = tab.dataset.provider;
     console.log(mediaType, networkId, providerId);
-    loadDiscoverContent(networkId, providerId, mediaType);
+    loadDiscoverContent(networkId, providerId, mediaType, 'discover-streaming');
   });
 });
 
@@ -144,7 +164,7 @@ document.querySelectorAll(".media-tab").forEach(button => {
     const providerId = document.querySelector(".tab-menu .active").dataset.provider;
     console.log(mediaType, networkId, providerId);
     // Load content dynamically
-    loadDiscoverContent(networkId, providerId, mediaType);
+    loadDiscoverContent(networkId, providerId, mediaType, 'discover-streaming');
   });
 });
 
@@ -162,6 +182,14 @@ function renderGridItems(items) {
       return `
          <div tabindex="0" role="button" aria-pressed="false" class="grid-item" id="grid-item" data-id="${item.id}" data-media-type="${mediaType}">
            <div>
+            <div class="grid-actions">
+              <div class="grid-options">
+                <div class="options-buttons">
+                  <i class="options-icon fa-regular fa-bookmark"></i>
+                  <i class="options-x-icon fa-solid fa-bookmark"></i>
+                </div>
+              </div>
+            </div>
              <img src="${image}" alt="${title}">
            </div>
            <div class="grid-item-info">
@@ -253,7 +281,7 @@ function displayModal(mediaType, data) {
             <i class="fa-solid fa-star"></i>
             <p data-title="${data.vote_count} votes">${truncate(data.vote_average, 1)}</p>
             <span class="modal-genre">
-              ${data.genres.map(genre => `<a href="#">${genre.name}</a>`).slice(0, 3).join(" ")}
+              ${data.genres.map(genre => `<a href="#">${genre.name}</a>`).slice(0, 5).join(" ")}
             </span>
           </span>
           <div class="synopsis"><p class="overview">${data.overview || 'No description available.'}</p></div>
@@ -626,17 +654,20 @@ function goBack() {
 function globalAddEventListener (event) {
   const modal = document.getElementById('info-modal');
   const modalActive = modal?.classList.contains('active');
-  const gridItem = event.target.closest('.grid-item, .profile-item');
   const continueWatching = event.target.closest('#continue-watching .grid-item');
+  const gridItem = event.target.closest('.grid-item, .profile-item');
   
   if (gridItem && !modalActive) {
-    if (event.type === 'click' && !continueWatching ||
-        event.key === 'Enter' && (!continueWatching || event.shiftKey)
-    ) {
-      openModal(event);
-      event.stopPropagation();
+    const { mediaType, id, name, sno, eno } = gridItem.dataset;
+    if ((event.type === 'click' && !continueWatching ||
+        event.key === 'Enter' && (!continueWatching || event.shiftKey))) {
+      if (!event.target.closest('.grid-options')) {
+        openModal(event);
+        event.stopPropagation();
+      } else {
+        toggleBookmark('bookmarks', id, mediaType);
+      }
     } else if (continueWatching) {
-      const { mediaType, id, name, sno, eno } = gridItem.dataset;
       if ((event.type === 'click' || event.key === 'Enter') && !event.target.closest('.grid-actions')) {
         window.location.href = `/watch/${mediaType}/${id}/${name}${sno && eno ? `/${sno}/${eno}` : ""}`;
         event.stopPropagation();
