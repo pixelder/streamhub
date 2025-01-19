@@ -444,18 +444,16 @@ document.addEventListener("click", (event) => {
       currentSeason = season;
       currentEpisode = episode;
       loadSources(source = 1, mediaType, id, season, episode);
-      console.log("log2", source, season, episode);
       document.querySelector("title").innerHTML = title;
       if (info) { document.querySelector(".now-playing").innerHTML = info };
       window.history.pushState({}, '', `/watch/${mediaType}/${id}/${name}${season && episode ? `/${season}/${episode}` : ''}`);
       scrollEpisodeIntoView(episode);
-      
     }
     else {
       window.location.href = `/watch/${mediaType}/${id}/${name}${season && episode ? `/${season}/${episode}` : ''}`;
       //loadWatchPage(mediaType, name, id, tvData);
     }
-  event.stopPropagation();
+    event.stopPropagation();
   }
 });
 
@@ -530,7 +528,6 @@ function loadWatchPage(mediaType, name = null, id, tvData = null) {
   // Initialize default source
   let source = localStorage.getItem(id) | 1;
   loadSources(source, mediaType, id, season, episode);
-  console.log("log1", source, season, episode);
 
   // Add event listeners to dropdown items
   const sourceSelector = document.querySelectorAll('.providers p');
@@ -540,7 +537,6 @@ function loadWatchPage(mediaType, name = null, id, tvData = null) {
       if (selectedSource && selectedSource !== source) {
         source = selectedSource; // Update the source
         loadSources(source, mediaType, id, currentSeason, currentEpisode);
-        console.log("log3", source, season, episode);
       }
     });
   });

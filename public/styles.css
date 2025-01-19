@@ -824,8 +824,6 @@ section .pagination-buttons>button {
     }
   }
 
-
-
   .grid-item-info {
     bottom: 0;
     position: absolute;
@@ -840,7 +838,7 @@ section .pagination-buttons>button {
     flex-direction: column;
     justify-content: flex-end;
     gap: 0.1rem;
-    text-shadow: 1px 1px 5px #00000066;
+    text-shadow: 0 0 5px #000;
     width: 80%;
 
   }
@@ -1347,8 +1345,11 @@ option {
 
 /* Style inside player */
 .player-styling {
+  position: relative;
   padding-bottom: 0.24rem;
   height: 100%;
+  overflow-x: auto;
+  overflow-y: visible;
   scrollbar-width: none;
   scroll-snap-type: x mandatory;
   border-radius: var(--border-radius1);
@@ -1374,6 +1375,10 @@ option {
     transition: scale 0.2s ease-in-out;
   }
 
+  .episode:hover {
+    scale: 0.97;
+  }
+
   .episode img {
     border: 1px solid var(--color3);
     transition: border 0.2s ;
@@ -1387,10 +1392,11 @@ option {
     .episode-items::before {
       filter: blur(30px) brightness(2);
     }
-  }
-
-  .episode:hover {
-    scale: 0.97;
+    
+    .episode-items {
+      filter: saturate(1);
+      opacity: 1;
+    }
   }
 
   .episode-items {
@@ -1398,13 +1404,15 @@ option {
     display: block;
     width: 15rem;
     min-height: 8.4rem;
+    filter: saturate(0.8);
+    opacity: 0.8;
     transition: filter 0.2s;
   }
 
   .episode-items::before {
     content: "";
     position: absolute;
-    top: 0.2rem;
+    top: 2%;
     left: 0;
     width: 100%;
     height: 90%;

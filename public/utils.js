@@ -240,6 +240,30 @@ function whenInView(selector, callback) {
   }
 }
 
+function footerHTML () {
+  console.log('hi');
+  document.querySelector('footer').innerHTML = `
+    <ul>
+            <li><a href="/">
+                <i class="fa-solid fa-house"></i>
+                <p>Home</p>
+                </a>
+            </li>
+            <li><a onclick="loadExplorePage('movie')">
+                    <i class="fa-solid fa-film"></i>
+                    <p>Movies</p>
+                </a></li>
+            <li><a onclick="loadExplorePage('tv')">
+                    <i class="fa-solid fa-display"></i>                    
+                    <p>TV</p>
+                </a>
+            </li>
+        </ul>
+  `
+}
+
+footerHTML();
+
 
 //header anim
 let lastScrollY = window.scrollY;
