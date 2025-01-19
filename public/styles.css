@@ -254,11 +254,13 @@ button {
   outline: none;
   border: none;
   text-align: center;
+  user-select: none;
 }
 
-button:focus-within {
+button:active {
   color: var(--font-color1);
   background-color: var(--color1);
+  transition: all 0.2s;
 }
 
 footer {
@@ -588,7 +590,7 @@ section .pagination-buttons>button {
   display: flex;
   flex-wrap: wrap;
   width: 100%;
-  margin-bottom: 20px;
+  margin-bottom: 0.8rem;
   gap: 0.8rem;
 }
 
@@ -643,6 +645,8 @@ section .pagination-buttons>button {
 
 .filter-menu {
   display: none;
+  flex-direction: column;
+  gap:  var(--padding1);
   position: fixed;
   top: 50%;
   left: 50%;
@@ -653,28 +657,42 @@ section .pagination-buttons>button {
   border: 1px solid var(--color3);
   border-radius: var(--border-radius1);
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-  padding: 20px;
+  padding: calc(var(--padding1) * 2);
   z-index: 1001;
 }
-#filterMenu h2 {
-  margin-top: 0;
+.filter-menu h3 {
+  font-size: 1rem;
+  margin-bottom: auto;
 }
-#filterMenu .form-group {
-  margin-bottom: 15px;
+.filter-menu .form-group {
+  margin-bottom: 0;
 }
-#filterMenu label {
+.filter-menu label {
   display: block;
-  margin-bottom: 5px;
-  font-weight: bold;
+  margin-bottom: 0.4rem;
+  font-size: 0.875rem;
+  font-weight: 600;
 }
-#filterMenu input {
-  width: 100%;
-  padding: 8px;
-  font-size: 14px;
-  border: 1px solid #ddd;
-  border-radius: 5px;
+.filter-menu select {
+  position: relative;
 }
-#filterMenu button {
+
+.country-name {
+  display: block;
+}
+
+.country-name::after {
+  position: absolute;
+  left: 50px;
+  background-color: red;
+  width: 50px;
+  height: 50px;
+  border: 1px solid red;
+  content: 'hi';
+  font-size: inherit;
+}
+
+.filter-menu button {
   background-color: #007bff;
   color: white;
   border: none;
@@ -682,7 +700,7 @@ section .pagination-buttons>button {
   border-radius: 5px;
   cursor: pointer;
 }
-#filterOverlay {
+.filter-overlay {
   position: fixed;
   top: 0;
   left: 0;

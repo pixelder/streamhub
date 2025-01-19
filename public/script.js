@@ -107,8 +107,11 @@ let selectedGenres = []
 let excludedGenres = []
 let currentPage = 1
 let sortMode = ''
-let minVoteCount = 400
-let currentYear
+let minVoteCount = 60
+let currentYear = null
+let selectedCountry = 'US';
+let selectedLanguage = 'en';
+
 
 async function loadDiscoverContent(networkId, providerId, mediaType, sectionId) {
 
@@ -119,11 +122,14 @@ async function loadDiscoverContent(networkId, providerId, mediaType, sectionId) 
     sort_by: sortMode,
     primary_release_year: currentYear,
     first_air_date: currentYear,
+    with_origin_country: selectedCountry,
+    with_original_language: selectedLanguage,
     'vote_count.gte': minVoteCount
   });
 
   if (document.getElementById(sectionId)) {
     const url = `${BASE_URL}/discover/${mediaType}?api_key=${API_KEY}&${params}&with_networks=${networkId}&with_watch_providers=${providerId}&watch_region=US&${OPTIONS}`;
+    console.log(url);
     storedData[sectionId] = [];
     pageNumbers[sectionId] = 1;
     console.log(mediaType, isBrowsing);
