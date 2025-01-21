@@ -58,7 +58,7 @@
         font-size: 0.8rem;
     }
 
-    input[type="number"] {
+    input[type="number"] , input {
         width: 4rem;
         outline: 0;
         border: 1px solid var(--color1);
@@ -81,7 +81,7 @@
     footer { 
         display: flex;
         position: fixed;
-        bottom: 0%;
+        bottom: 0rem;
         width: 100%;
         height: 4rem;
         /* background-image: linear-gradient(to bottom,
@@ -106,6 +106,7 @@
         box-shadow: 0 0 30px 10px var(--bg-color);
         transition: top 1s, height 0.3s, padding 0.3s ease-in-out;
         z-index: 1;
+        transition: bottom 0.4s;
     
         ul {
             list-style: none;
@@ -269,6 +270,15 @@
         height: 0.68rem;
         text-align: left;
     }
+    .grid-options {
+        width: 1.8rem;
+        height: 1.8rem;
+
+        .options-buttons {
+          font-size: 0.8rem;
+        }
+    }
+
     /* Browse Page */
 
     #browse-movies, #browse-tvs {
@@ -297,7 +307,7 @@
 
         .filter-button {
             position: fixed;
-            z-index: 1111;
+            z-index: 2;
             bottom: 5rem;
             right: 1rem;
             font-size: 0px;
@@ -310,6 +320,33 @@
                 font-size: 1rem;
             }
         }
+
+        .vote-count {
+            font-size: 0.8rem;
+
+            input[type="number"] {
+                height: 100%;
+            }
+            input[type="range"] {
+                width: 45%;
+            }
+        }
+        .min-rating {
+            flex: 1;
+            font-size: 0.8rem;
+            gap: 0.6rem;
+
+            input[type="number"] {
+                width: 2.8rem;
+                height: 100%;
+            }
+            input[type="range"] {
+                width: 45%;
+            }
+        }
+
+
+
     }
 
     #continue-watching {

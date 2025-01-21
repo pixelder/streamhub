@@ -6,6 +6,7 @@ async function handleSearch(event) {
   if (!query) return;
 
   window.location.href = `/search?q=${encodeURIComponent(query)}`;
+  loc();
 }
 
 async function getSearchResults(query) {

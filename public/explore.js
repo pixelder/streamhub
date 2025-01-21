@@ -1,7 +1,17 @@
 const GENRE_URL = `https://api.themoviedb.org/3/genre`
 
 let isMovie = null;
+
+
 function loadExplorePage(mediaType) {
+    document.querySelector('title').innerText = `Browse ${mediaType !== 'tv' ? mediaType : `serie`}s | Pixelstream`;
+    console.log(loc());
+    !loc().includes(`/${mediaType}`) ? window.history.pushState('', '', `/${mediaType}`) : '';
+    window.addEventListener('popstate', function() {
+        console.log('active');
+        window.location.href = `${loc()}`;
+    });
+    
     isBrowsing = true;
     isMovie = mediaType === 'movie' ? true : false; 
     const main = document.querySelector('main');
@@ -10,7 +20,8 @@ function loadExplorePage(mediaType) {
         <section id="browse-${mediaType}s" data-type="${mediaType}">
             <h2>${sectionTitle}</h2>
             <div class="filters">
-                <div class="genre-chips" id="genreChips"></div>
+                <div class="genre-chips" id="genreChips">
+                </div>
                 <select id="sort">
                     <option value="popularity.desc" "selected">Popularity</option>
                     <option value="vote_average.desc">Rating</option>
@@ -18,10 +29,25 @@ function loadExplorePage(mediaType) {
                     <option value="${isMovie ? 'title.desc' : 'name.desc'}">Name</option>
                 </select>
                 <input type="number" id="year-picker" min="1888" max="2099" step="1" value="" placeholder="eg. 2024" />
+                <div class="min-rating">
+                    <input id="min-rating-number" type="number" value="5" min="0" step="0.1" max="10">
+                    <p>0</p>
+                    <input id="min-rating-slider" type="range" value="5" min="0" step="0.1" max="10">
+                    <p>10</p>
+                </div>
                 <button class="filter-button"><i class="fa-solid fa-filter"></i>       Filter</button>
                 <div class="filter-overlay"></div>
                 <div class="filter-menu">
                     <h3>More Filters</h3>
+                    <div class="form-group">
+                        <label for="min-vote-slider">Minimum vote count</label>
+                        <div class="vote-count">
+                            <input id="min-vote-number" type="number" value="200" min="0" step="10" max="500">
+                            <p>0</p>
+                            <input id="min-vote-slider" type="range" value="200" min="0" step="35" max="500">
+                            <p>500</p>
+                        </div>
+                    </div>
                     <div class="form-group">
                         <label for="countryFilter">Country</label>
                         <select id="countryFilter">
@@ -33,6 +59,9 @@ function loadExplorePage(mediaType) {
                         <select id="languageFilter">
                             <option value="">Any</option>
                         </select>
+                    </div>
+                    <div class="form-group">
+                        <button class="reset-button" onclick=filterReset()>Reset</button>
                     </div>
                 </div>
             </div>
@@ -46,8 +75,11 @@ function loadExplorePage(mediaType) {
                     </div>
                 </div>
             </div>
-        `;
+    `;
+
+    filterReset()
     loadDiscoverContent( '', '', mediaType,`browse-${mediaType}s`);
+    
     fetchGenres(mediaType);
     fetchCountriesAndLanguages();
     
@@ -58,9 +90,9 @@ function loadExplorePage(mediaType) {
         }
     })
 
+    filterParams();
 
     const filters = document.querySelector('.filters');
-    console.log(filters);
     
     ['click', 'change'].forEach(eventType => {
         filters.removeEventListener(eventType, filterAddEventLister);
@@ -69,10 +101,86 @@ function loadExplorePage(mediaType) {
         filters.addEventListener(eventType, filterAddEventLister);
     });
 
-    filters.dispatchEvent(new Event('click') || new Event('change'));
+    //filters.dispatchEvent(/* new Event('click') ||  */new Event('change', () => {console.log('hi')}));
 }
 
 
+function filterParams() {
+    const minVoteSlider = document.getElementById("min-vote-slider")
+    const minVoteNumber = document.getElementById("min-vote-number")
+    const minRateSlider = document.getElementById("min-rating-slider")
+    const minRateNumber = document.getElementById("min-rating-number")
+    const sortBy = document.getElementById("sort")
+    const yearPicker = document.getElementById("year-picker")
+    const countryFilter = document.getElementById("countryFilter")
+    const languageFilter = document.getElementById("languageFilter")
+    const genreContainer = document.getElementById("genreChips");
+    
+    // New values
+    sortBy.oninput = function () {
+        sortMode = this.value
+    }
+    
+    yearPicker.oninput = function () {
+        currentYear = this.value
+    }
+
+    minVoteSlider.oninput = function () {
+        minVoteNumber.value = this.value
+        minVoteCount = this.value
+    }
+
+    minVoteNumber.oninput = function () {
+        minVoteSlider.value = this.value
+        minVoteCount = this.value
+    }
+
+    minRateSlider.oninput = function () {
+        minRateNumber.value = this.value
+        minRate = this.value
+    }
+
+    minRateNumber.oninput = function () {
+        minRateSlider.value = this.value
+        minRate = this.value
+    }
+    
+    countryFilter.oninput = function () {
+        selectedCountry = this.value
+    }
+
+    languageFilter.oninput = function () {
+        selectedLanguage = this.value
+    }
+
+    // On reset
+    sortBy.value = sortMode
+    yearPicker.value = currentYear
+    minVoteNumber.value = minVoteCount
+    minVoteSlider.value = minVoteCount
+    minRateNumber.value = minRate
+    minRateSlider.value = minRate
+    countryFilter.value = selectedCountry
+    languageFilter.value = selectedLanguage
+
+    updateChips(genreContainer)
+}
+
+
+function filterReset() {
+    selectedGenres = []
+    excludedGenres = []
+    currentPage = 1
+    sortMode = 'popularity.desc'
+    minVoteCount = 200
+    minRate = 5
+    currentYear = null
+    selectedCountry = '';
+    selectedLanguage = '';
+
+    filterParams();
+    resetSection();
+}
 
 async function fetchGenres(mediaType) {
     const genreContainer = document.getElementById("genreChips");
@@ -106,27 +214,33 @@ async function fetchCountriesAndLanguages() {
     // Fetch countries
     const countryResponse = await fetch(`https://api.themoviedb.org/3/configuration/countries??language=en-US&api_key=${API_KEY}`);
     const countries = await countryResponse.json();
-
+    const counteryList = ['US', 'JP', 'IN', 'FR', 'AU', 'UK', 'DE','IE', 'UA', 'MX', 'KO']
     const countrySelect = document.getElementById('countryFilter');
     countries.forEach(country => {
-        const option = document.createElement('option');
-        option.value = country.iso_3166_1;
-        option.textContent = country.iso_3166_1;
-        countrySelect.appendChild(option);
+        if (counteryList.includes(country.iso_3166_1)) {
+            const option = document.createElement('option');
+            option.value = country.iso_3166_1;
+            option.textContent = country.english_name;
+            countrySelect.appendChild(option);
+        }
     });
+
+
 
     //countrySelect.insertAdjacentText("afterend", `    ${selectedCountry}`);
 
     // Fetch languages
     const languageResponse = await fetch(`https://api.themoviedb.org/3/configuration/languages?api_key=${API_KEY}`);
     const languages = await languageResponse.json();
-
+    const languagelist = [ 'en', 'hi', 'as', 'fr', 'ja', 'ko']
     const languageSelect = document.getElementById('languageFilter');
     languages.forEach(language => {
-        const option = document.createElement('option');
-        option.value = language.iso_639_1;
-        option.textContent = language.iso_639_1;
-        languageSelect.appendChild(option);
+        if (languagelist.includes(language.iso_639_1)) {
+            const option = document.createElement('option');
+            option.value = language.iso_639_1;
+            option.textContent = language.english_name;
+            languageSelect.appendChild(option);
+        }
     });
 }
 
@@ -185,20 +299,13 @@ function filterAddEventLister(event) {
             const isMenuVisible = filterMenu.style.display === 'flex';
             filterMenu.style.display = isMenuVisible ? 'none' : 'flex';
             filterOverlay.style.display = isMenuVisible ? 'none' : 'flex';
+            event.stopPropagation();
         } else if (event.target.closest('.filter-overlay')) {
             filterMenu.style.display = 'none';
             filterOverlay.style.display = 'none';
+            event.stopPropagation();
         };
     } else if ( event.type === 'change') {
-        if ( event.target.closest('#sort')) {
-            sortMode = event.target.value;
-        } else if ( event.target.closest('#year-picker')) {
-            currentYear = event.target.value;
-        } else if ( event.target.closest('#countryFilter')) {
-            selectedCountry = event.target.value || 'US';
-        } else if ( event.target.closest('#languageFilter')) {
-            selectedLanguage = event.target.value || 'en';
-        }
         resetSection();
     }
 }

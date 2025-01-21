@@ -1,11 +1,16 @@
+
+function getLogData(logType) {
+  const jsonData = localStorage.getItem(logType);
+  return jsonData ? JSON.parse(jsonData) : [];
+}
+
 async function logWatchHistory(logType, id, mediaType, sno = null, eno = null) {
-  const existingLogs = JSON.parse(localStorage.getItem(logType)) || [];
+  const existingLogs = getLogData(logType);
   const logData = { sno, eno };
-
-  const logIndex = existingLogs.findIndex(
-    log => Number(log.id) === Number(id) && log.mediaType === mediaType
-  );
-
+  const logIndex = existingLogs.findIndex( log => 
+    Number(log.id) === Number(id) && log.mediaType === mediaType
+  )
+  
   if (logIndex !== -1) {
     if (JSON.stringify(existingLogs[logIndex].data) !== JSON.stringify(logData)) {
       existingLogs[logIndex].data = logData;
@@ -18,12 +23,16 @@ async function logWatchHistory(logType, id, mediaType, sno = null, eno = null) {
   localStorage.setItem(logType, JSON.stringify(existingLogs));
 }
 
-async function removeFromHistory(logType, id, mediaType, sno, eno) {
-  const logs = JSON.parse(localStorage.getItem(logType)) || [];
+function logExists(logtype, id, mediaType) {
+  const logs = getLogData(logtype);
+  const hasItem = logs.some( log => {
+    return Number(log.id) === Number(id) && log.mediaType === mediaType
+  });
+  return hasItem
+}
 
-  sno = sno !== '' ? sno : null;
-  eno = eno !== '' ? eno : null;
-
+async function removeFromHistory(logType, id, mediaType, sno = null, eno = null) {
+  const logs = getLogData(logType);
   const updatedLogs = logs.filter(log =>
     !(Number(log.id) === id && log.mediaType === mediaType &&
       String(log.data.sno) === String(sno) && String(log.data.eno) === String(eno))
@@ -34,19 +43,16 @@ async function removeFromHistory(logType, id, mediaType, sno, eno) {
   contWatching ? continueWatching() : '';
 }
 
-async function toggleBookmark(logtype,id, mediaType) {
+async function toggleBookmark(logtype,id, mediaType, sno = null, eno = null) {
   temp = contWatching;
   contWatching = false;
-  logWatchHistory(logtype,id,mediaType)
+  if( logExists(logtype, id, mediaType) ) {
+    removeFromHistory(logtype,Number(id),mediaType, sno, eno);
+  } else {
+    logWatchHistory(logtype,id,mediaType, sno, eno)
+  }
   contWatching = temp;
 }
-
-
-function watchHistoryCheck(logType) {
-  const jsonData = localStorage.getItem(logType);
-  return jsonData ? JSON.parse(jsonData) : [];
-}
-
 
 async function fetchHistoryItems(section, items) {
   const container = section.querySelector('.grid-container');
@@ -76,7 +82,7 @@ async function fetchHistoryItems(section, items) {
 
 function renderHistoryItems(data, item, tvData) {
   const [id, mediaType] = [item.id, item.mediaType];
-  const [sno, eno] = tvData ? [item.data.sno, item.data.eno] : ["", ""];
+  const [sno, eno] = [item.data.sno, item.data.eno];
   const epData = tvData?.episodes[eno - 1];
   //
   const image = !tvData
@@ -138,7 +144,7 @@ document.addEventListener('click', (event) => {
 
 function continueWatching() {
   const section = document.getElementById('continue-watching');
-  const history = watchHistoryCheck('history');
+  const history = getLogData('history');
 
   if (history.length > 0) {
     section.style.display = "flex";

@@ -53,7 +53,8 @@ body {
   text-shadow: 0 0 10px #E6E6FA25;
   height: 100%;
   overflow-y: auto;
-  scroll-snap-type: mandatory;
+  scroll-behavior: smooth;
+  scroll-snap-type: y mandatory;
 }
 
 h1,
@@ -76,9 +77,9 @@ header {
   background-color: #0d0d1bcc;
   border-bottom: 1px solid var(--color3);
 
-  box-shadow: 0 0 20px 5px var(--bg-color);
+  box-shadow: 0 0 15px 5px var(--bg-color);
   backdrop-filter: blur(5px);
-  transition: top 0.7s, height 0.3s, padding 0.3s ease-in-out;
+  transition: top 0.4s, height 0.3s, padding 0.3s ease-in-out;
   z-index: 1;
 }
 
@@ -221,7 +222,7 @@ input[type="search"]::-webkit-search-results-decoration {
   display: none;
 }
 
-input[type="number"] {
+input {
   width: 6rem;
   outline: 0;
   border: 1px solid var(--color1);
@@ -230,6 +231,43 @@ input[type="number"] {
   background-color: #30303d77;
   font-size: 0.875rem;
   color: var(--font-color1);
+}
+
+input[type="range"] {
+  padding: 0rem 0.2rem;
+  -webkit-appearance: none;
+  appearance: none;
+  width: 10rem;
+  height: 0.6rem;
+  border: 1px solid var(--color1);
+  border-radius: var(--border-radius2);
+  cursor: pointer;
+}
+
+input[type="range"]::-moz-range-thumb {
+  width: 8px;
+  height: 24px;
+  border: 1px solid var(--color1);
+  border-radius: var(--border-radius2);
+  background: var(--color5);
+  transition: filter 0.2s;
+}
+input[type="range"]::-moz-range-thumb:active {
+  filter: brightness(1.2);
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 25px;
+  height: 25px;
+}
+input[type="range"]::-webkit-slider-thumb:hover {
+  background: #2E8B57;
+}
+
+#min-vote-number {
+  width: fit-content;
 }
 
 select {
@@ -410,9 +448,11 @@ section .pagination-buttons>button {
   line-height: 10px;
 }
 
-.grid-item:is(:hover, :focus) .grid-options {
-  opacity: 1;
-  color: var(--font-color1);
+.grid-item:is(:hover, :focus), .grid-item:has(.grid-options.open) {
+  .grid-options {
+    opacity: 1 !important;
+    color: var(--font-color1);
+  }
 }
 
 .grid-actions {
@@ -426,59 +466,41 @@ section .pagination-buttons>button {
 
 /* Container for the menu */
 .grid-options {
-  position: relative;
-  display: flex;
-  justify-content: flex-start;
-  flex-direction: row-reverse;
   opacity: 0;
   width: 2rem;
   height: 2rem;
-  background-color: #181825bb;
-  border: 1px solid #383852e5;
+  background-color: #181825cc;
+  border: 1px solid var(--color1);
   border-radius: var(--border-radius1);
-  font-size: 1.2rem;
   transition: width 0.25s, opacity 0.25s, color 0.25s ease-in-out;
 
   .options-buttons {
-    position: relative;
     display: flex;
-    font-size: 0.875rem;
+    font-size: 0.85rem;
     aspect-ratio: 1 / 1;
-    border-radius: inherit;
-    margin: 4px;
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    text-shadow: 0 0 3px #30303d;
-    background-color: transparent;
-    border: 1px solid transparent;
-    transition: border 0.25s, background-color 0.25s ease-in-out;
   }
-
-  /* Icons */
-  .options-icon,
-  .options-x-icon {
+  .options-icon, .options-x-icon {
+    color: #aaaae0;
     pointer-events: none;
     position: absolute;
     transition: opacity 0.25s ease-in-out;
   }
-
   .options-x-icon {
     opacity: 0;
   }
-
 }
 
 .grid-options.open {
-  border: 1px solid #383852e5;
-  background-color: #0d0d1bbb;
   backdrop-filter: blur(5px);
 
   .options-icon {
     opacity: 0;
   }
-
   .options-x-icon {
+    color: var(--font-color1);
     opacity: 1;
   }
 }
@@ -585,6 +607,13 @@ section .pagination-buttons>button {
 
 /* Browse Page */
 
+#browse-movies, #browse-tvs {
+  .grid-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(10rem, 1fr));
+  }
+}
+
 .filters {/* 
   position: relative; */
   display: flex;
@@ -630,12 +659,11 @@ section .pagination-buttons>button {
   filter: opacity(0.7);
 }
 
-.filter-button {
+.filter-button, .reset-button {
   gap: 0.6rem;
   font-size: 0.875rem;
   padding: 8px 10px;
   margin-left: auto;
-  background: var(--error);
   border-radius: var(--border-radius2);
 
   i {
@@ -643,7 +671,16 @@ section .pagination-buttons>button {
   }
 }
 
+.filter-button {
+  background: #526DA8;
+}
+
+.reset-button {
+  background: var(--error);
+}
+
 .filter-menu {
+  box-sizing: border-box;
   display: none;
   flex-direction: column;
   gap:  var(--padding1);
@@ -677,6 +714,25 @@ section .pagination-buttons>button {
   position: relative;
 }
 
+.vote-count, .min-rating {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  font-size: 0.875rem;
+  font-weight: 400;
+
+  input[type="number"] {
+    height: 100%;
+    width: 4rem;
+  }
+  input[type="range"] {
+    width: 50%;
+  }
+}
+
+
+
+
 .country-name {
   display: block;
 }
@@ -693,12 +749,13 @@ section .pagination-buttons>button {
 }
 
 .filter-menu button {
-  background-color: #007bff;
+  width: 100%;
   color: white;
   border: none;
-  padding: 10px 20px;
-  border-radius: 5px;
+  margin-top: 0.3rem;
+  padding: 0.68rem 1rem;
   cursor: pointer;
+  box-sizing: border-box;
 }
 .filter-overlay {
   position: fixed;
@@ -708,7 +765,7 @@ section .pagination-buttons>button {
   height: 100%;
   background: rgba(0, 0, 0, 0.5);
   display: none;
-  z-index: 1000;
+  z-index: 1;
 }
 
 /* Continue Watching */
@@ -740,12 +797,6 @@ section .pagination-buttons>button {
     mask-image: linear-gradient(to top, rgba(0, 0, 0, 0.4) 0%, black 50%);
   }
 
-  .grid-item:is(:hover, :focus), .grid-item:has(.grid-options.open) {
-    .grid-options {
-      opacity: 1;
-      color: var(--font-color1);
-    }
-  }
 
   .grid-actions {
     position: absolute;
@@ -1200,8 +1251,9 @@ body:has(.modal.active) {
   align-items: center;
   gap: inherit;
   padding-left: 0.2rem;
-  overflow-y: scroll;
+  overflow-x: auto;
   scrollbar-width: none;
+  scroll-behavior: smooth;
 }
 
 .modal-info a {

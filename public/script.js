@@ -3,21 +3,20 @@ const BASE_URL = 'https://api.tmdb.org/3';
 const IMAGE_URL = 'https://image.tmdb.org/t/p/w500';
 const OPTIONS = 'include_adult=false&include_null_first_air_dates=false&language=en-US';
 
-// Sections to populate
-const sections = {
-  'trending-movies': `${BASE_URL}/trending/movie/week?api_key=${API_KEY}`,
-  'trending-series': `${BASE_URL}/trending/tv/week?api_key=${API_KEY}`,
-};
+function loc() {
+  return window.location.href;
+}
+loc();
 
-function isMobile() {
+ function isMobile() {
   const screenWidth = window.innerWidth <= 768;
   return screenWidth;
 }
 
-// Global variables for pagination tracking
 let pageNumbers = {}; // Track the current page number for each section
 let storedData = {}; // Store data for each section for persistent pagination
 let isFetching = {}; // Track fetching state per section to avoid multiple fetches
+
 
 let isLoading = false;
 let isBrowsing = false;
@@ -35,7 +34,7 @@ async function fetchContent(sectionId, url) {
     isFetching[sectionId] = true; // Set fetching flag to true
 
     // Modify the URL to include the correct page number
-    const pageUrl = `${url}${!isBrowsing ? `&page=${pageNumbers[sectionId]}` : ''}`;
+    const pageUrl = `${url}${ !isBrowsing ? `&page=${pageNumbers[sectionId]}` : ''}`;
     const response = await fetch(pageUrl);
     const data = await response.json();
     const media_type = url.includes('/movie') ? 'movie' : 'tv';
@@ -46,7 +45,7 @@ async function fetchContent(sectionId, url) {
     const accumulatedResults = storedData[sectionId].slice(0, limit);
 
     populateSection(sectionId, accumulatedResults);
-    setupPagination(sectionId, url, limit);
+    setupPagination(sectionId, url);
   } catch (error) {
     console.error(`Error fetching data for ${sectionId}:`, error);
   } finally {
@@ -81,12 +80,7 @@ function setupPagination(sectionId, url) {
   });
 }
 
-// Load content for each section
-Object.entries(sections).forEach(([sectionId, url]) => {
-  if (document.getElementById([sectionId])) {
-    fetchContent(sectionId, url);
-  }
-});
+
 
 // Populate a section with content
 function populateSection(sectionId, items) {
@@ -97,21 +91,47 @@ function populateSection(sectionId, items) {
     container.innerHTML = renderGridItems(items);
   }
 }
-document.addEventListener("DOMContentLoaded", () => {
-  whenInView('#discover-streaming', () => {
-    loadDiscoverContent( 213, 8, 'movie','discover-streaming');
-  })
-});
+
 
 let selectedGenres = []
 let excludedGenres = []
 let currentPage = 1
-let sortMode = ''
-let minVoteCount = 60
+let sortMode = 'popularity.desc'
+let minVoteCount = 200
+let minRate = 5
 let currentYear = null
-let selectedCountry = 'US';
-let selectedLanguage = 'en';
+let selectedCountry = ''
+let selectedLanguage = ''
 
+const sections = {
+  'trending-movies': `${BASE_URL}/trending/movie/week?api_key=${API_KEY}`,
+  'trending-series': `${BASE_URL}/trending/tv/week?api_key=${API_KEY}`,
+  'discover-streaming': ``,
+};
+
+Object.entries(sections).forEach(([sectionId, url]) => {
+  if ( document.getElementById([sectionId]) && sectionId !== 'discover-streaming' ) {
+    fetchContent(sectionId, url);
+  } else {
+      loadDiscoverContent( 213, 8, 'movie','discover-streaming');
+  }
+});
+
+
+document.addEventListener('DOMContentLoaded', () => {
+
+  function handleRouting() {
+    const path = window.location.pathname;
+    if (path === '/movie') {
+      loadExplorePage('movie');
+    } else if (path === '/tv') {
+      loadExplorePage('tv');
+    }
+  }
+  handleRouting();
+
+  window.addEventListener('popstate', handleRouting);
+});
 
 async function loadDiscoverContent(networkId, providerId, mediaType, sectionId) {
 
@@ -124,15 +144,16 @@ async function loadDiscoverContent(networkId, providerId, mediaType, sectionId) 
     first_air_date: currentYear,
     with_origin_country: selectedCountry,
     with_original_language: selectedLanguage,
-    'vote_count.gte': minVoteCount
+    'vote_average.gte': minRate,
+    'vote_count.gte': minVoteCount,
+    with_networks: networkId,
+    with_watch_providers: providerId
   });
 
   if (document.getElementById(sectionId)) {
-    const url = `${BASE_URL}/discover/${mediaType}?api_key=${API_KEY}&${params}&with_networks=${networkId}&with_watch_providers=${providerId}&watch_region=US&${OPTIONS}`;
-    console.log(url);
+    const url = `${BASE_URL}/discover/${mediaType}?api_key=${API_KEY}&${params}&watch_region=IN&${OPTIONS}`;
     storedData[sectionId] = [];
     pageNumbers[sectionId] = 1;
-    console.log(mediaType, isBrowsing);
     fetchContent(sectionId, url);
   }
 }
@@ -140,7 +161,7 @@ async function loadDiscoverContent(networkId, providerId, mediaType, sectionId) 
 function sectionMediaType(sectionId) {
   const mediaType = document.querySelector(".media-switch .active")?.dataset.type;
   if (sectionId === "discover-streaming") {
-    return mediaType; // Returns either 'movie' or 'tv'
+    return mediaType;
   }
 }
 
@@ -151,6 +172,7 @@ document.querySelectorAll(".tab-menu .tab").forEach(tab => {
     const mediaType = document.querySelector(".media-switch .active").dataset.type;
     const networkId = tab.dataset.network;
     const providerId = tab.dataset.provider;
+    minVoteCount = 60
     console.log(mediaType, networkId, providerId);
     loadDiscoverContent(networkId, providerId, mediaType, 'discover-streaming');
   });
@@ -158,18 +180,13 @@ document.querySelectorAll(".tab-menu .tab").forEach(tab => {
 
 document.querySelectorAll(".media-tab").forEach(button => {
   button.addEventListener("click", () => {
-    // Remove the active class from all buttons
     document.querySelector(".media-tab.active").classList.remove("active");
-
-    // Add the active class to the clicked button
     button.classList.add("active");
-
-    // Get the selected media type
     const mediaType = button.dataset.type;
     const networkId = document.querySelector(".tab-menu .active").dataset.network;
     const providerId = document.querySelector(".tab-menu .active").dataset.provider;
+    minVoteCount = 60
     console.log(mediaType, networkId, providerId);
-    // Load content dynamically
     loadDiscoverContent(networkId, providerId, mediaType, 'discover-streaming');
   });
 });
@@ -178,7 +195,9 @@ document.querySelectorAll(".media-tab").forEach(button => {
 function renderGridItems(items) {
   return items
     .map(item => {
+      const id = item.id;
       const mediaType = item.media_type;
+      const bookmark = logExists('bookmarks', id, mediaType);
       const title = item.title || item.name;
       const rating = truncate(item.vote_average, 1);
       const year = extractYear(item.release_date || item.first_air_date);
@@ -189,7 +208,7 @@ function renderGridItems(items) {
          <div tabindex="0" role="button" aria-pressed="false" class="grid-item" id="grid-item" data-id="${item.id}" data-media-type="${mediaType}">
            <div>
             <div class="grid-actions">
-              <div class="grid-options">
+              <div class="grid-options ${bookmark? 'open': ''}">
                 <div class="options-buttons">
                   <i class="options-icon fa-regular fa-bookmark"></i>
                   <i class="options-x-icon fa-solid fa-bookmark"></i>
@@ -239,9 +258,7 @@ function openModal(event) {
   const gridItem = event.target.closest('.grid-item, .profile-item');
   const id = gridItem?.dataset.id; // Get the ID of the item
   const sectionId = gridItem?.closest('section')?.id; // Find the parent section's ID
-  const mediaType = (gridItem?.closest('section')?.dataset.type ?? sectionMediaType(sectionId))
-    ?? gridItem.dataset.mediaType;
-  console.log(id, mediaType, sectionId);
+  const mediaType = gridItem?.closest('section')?.dataset.type ?? gridItem.dataset.mediaType;
   if (gridItem && !mediaType || !id) {
     console.error("Media type or ID not found");
     return;
@@ -302,7 +319,7 @@ function displayModal(mediaType, data) {
       details.innerHTML = `${inBeta()}`;
     }
 
-  const userData = watchHistoryCheck('history')?.filter(item => item?.id === id)[0]?.data;
+  const userData = getLogData('history')?.filter(item => item?.id === id)[0]?.data;
 
   if (mediaType === "movie") {
     document.querySelector(".modal-media")
@@ -553,7 +570,7 @@ function loadWatchPage(mediaType, name = null, id, tvData = null) {
 
 // Sources
 function loadSources(source, mediaType, id, season = null, episode = null) {
-  console.log(source);
+  loc();
   let src = "";
   switch (source) {
     case 1:
@@ -667,7 +684,7 @@ function globalAddEventListener (event) {
         openModal(event);
         event.stopPropagation();
       } else {
-        toggleBookmark('bookmarks', id, mediaType);
+        toggleBookmark('bookmarks', id, mediaType, sno, eno);
       }
     } else if (continueWatching) {
       if ((event.type === 'click' || event.key === 'Enter') && !event.target.closest('.grid-actions')) {

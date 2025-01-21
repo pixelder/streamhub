@@ -241,7 +241,6 @@ function whenInView(selector, callback) {
 }
 
 function footerHTML () {
-  console.log('hi');
   document.querySelector('footer').innerHTML = `
     <ul>
             <li><a href="/">
@@ -271,8 +270,9 @@ let isScrollingDown = false;
 let hideTimeout;
 
 window.addEventListener('scroll', () => {
-  const header = document.getElementById('header');
-  const nav = document.querySelector("nav > ul");
+  const header = document.querySelector('header');
+  const footer = document.querySelector('footer')
+  const nav = document.querySelector("#header > nav > ul");
   const input = document.getElementById('search-input');
 
   if (window.scrollY > lastScrollY) {
@@ -285,16 +285,21 @@ window.addEventListener('scroll', () => {
       clearTimeout(hideTimeout);
       hideTimeout = setTimeout(() => {
         header.classList.add('hidden');
-      }, 500);
+        footer.style.bottom = '-4rem';
+      }, 300);
     }
   } else {
     // Scrolling up
     isScrollingDown = false;
-    input.style.height = "2rem";
-    nav.style.padding = isMobile() ? "0.8rem 0.6rem" : "0.8rem 1.4rem";
-    header.style.height = isMobile() ? "3.6rem" : "4rem";
     clearTimeout(hideTimeout); // Cancel any pending hide
     header.classList.remove('hidden'); // No delay to reappear
+    footer.style.bottom = '0rem';
+    hideTimeout = setTimeout(() => {
+      input.style.height = "2rem";
+      nav.style.padding = isMobile() ? "0.8rem 0.6rem" : "0.8rem 1.4rem";
+      header.style.height = isMobile() ? "3.6rem" : "4rem";
+  
+    }, 200);
   }
   lastScrollY = window.scrollY;
 });
