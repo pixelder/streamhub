@@ -33,6 +33,7 @@ function logExists(logtype, id, mediaType) {
 
 async function removeFromHistory(logType, id, mediaType, sno = null, eno = null) {
   const logs = getLogData(logType);
+  console.log(sno,eno);
   const updatedLogs = logs.filter(log =>
     !(Number(log.id) === id && log.mediaType === mediaType &&
       String(log.data.sno) === String(sno) && String(log.data.eno) === String(eno))
@@ -82,7 +83,7 @@ async function fetchHistoryItems(section, items) {
 
 function renderHistoryItems(data, item, tvData) {
   const [id, mediaType] = [item.id, item.mediaType];
-  const [sno, eno] = [item.data.sno, item.data.eno];
+  const [sno, eno] = tvData? [item.data.sno, item.data.eno] : [null,null];
   const epData = tvData?.episodes[eno - 1];
   //
   const image = !tvData
@@ -146,13 +147,15 @@ function continueWatching() {
   const section = document.getElementById('continue-watching');
   const history = getLogData('history');
 
-  if (history.length > 0) {
-    section.style.display = "flex";
-    fetchHistoryItems(section, history);
-    contWatching = true;
-  } else {
-    section.style.display = "none"; // Hide section if history is empty
-    contWatching = false;
+  if (section) {
+    if (history.length > 0) {
+      section.style.display = "flex";
+      fetchHistoryItems(section, history);
+      contWatching = true;
+    } else {
+      section.style.display = "none"; // Hide section if history is empty
+      contWatching = false;
+    }
   }
 }
 

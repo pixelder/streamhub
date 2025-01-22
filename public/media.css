@@ -65,13 +65,13 @@
         border-radius: var(--border-radius2);
         padding: 0.4rem;
         background-color: #30303d77;
-        font-size: 0.8rem;
+        font-size: 12px;
         color: var(--font-color1);
       }
 
     select {
         font-weight: 500;
-        font-size: 0.8rem;
+        font-size: 12px;
         padding: 0.4rem;
         padding-right: 1.2rem;
         background-size: 0.8rem;
@@ -283,6 +283,7 @@
 
     #browse-movies, #browse-tvs {
         .grid-container {
+            margin-top: 0.24rem ;
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(6.5rem, 1fr));
         }
@@ -292,14 +293,47 @@
             min-width: unset;
         }
 
+        .result-message {
+            margin: 1.2rem 0.6rem 0.4rem;
+            
+            label {
+              font-size: 1.2rem;
+              font-weight: 700;
+            }
+
+            p, li {
+              font-size: 0.8rem;
+            }
+          }
+
         .filters {
-            flex-wrap: wrap;
-            width: 100%;
-            gap: 0.6rem;
-            margin-bottom: 0.6rem;
-            overflow-x: auto;
+            gap: 0.36rem;
+            margin-bottom: 0.36rem;
+            
+            .form-group {
+                display: flex;
+                flex: 0 1;
+                max-width: unset;
+                flex-direction: column;
+              }
+            
+              label {
+                margin-bottom: 0.36rem;
+                font-size: 0.875rem;
+              }
+
+            .form-group:has(.min-rating) {
+                flex: 1 1;
+                max-width: 16rem;
+                margin-left: auto;
+            }
         }
-        
+
+        .genre-chips {
+            width: calc(100vw - 1.2rem);
+            margin-bottom: 0.36rem;
+        }
+
         .chip {
             padding: var(--padding1);
             font-size: 12px;
@@ -321,8 +355,12 @@
             }
         }
 
+        .filter-menu { 
+            width: calc(100% - ( 0.6rem * 4 ));
+        }
+
         .vote-count {
-            font-size: 0.8rem;
+            font-size: 12px;
 
             input[type="number"] {
                 height: 100%;
@@ -332,16 +370,15 @@
             }
         }
         .min-rating {
-            flex: 1;
-            font-size: 0.8rem;
-            gap: 0.6rem;
+            font-size: 12px;
+            gap: 0.36rem;
 
             input[type="number"] {
-                width: 2.8rem;
+                width: 2.2rem;
                 height: 100%;
             }
             input[type="range"] {
-                width: 45%;
+                width: 100%;
             }
         }
 

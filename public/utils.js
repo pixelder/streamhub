@@ -14,6 +14,22 @@ function capString(str, maxLength) {
   return str;
 }
 
+function abbvText(text, limit) {
+  const words = text.split(' ');
+
+  const filteredWords = words.filter(w => w !== w.toLowerCase());
+  
+  if ((words.length !== 1) && (text.length > limit)) {
+      let abbreviation = '';
+      for (const word of filteredWords) {
+          abbreviation += word[0].toUpperCase();
+      }
+      return abbreviation;
+  } else {
+    return text;
+  }
+}
+
 function convertDate(dateString) {
   const options = { month: 'long', day: 'numeric', year: 'numeric' };
   const formatter = new Intl.DateTimeFormat('en-US', options);
@@ -275,7 +291,9 @@ window.addEventListener('scroll', () => {
   const nav = document.querySelector("#header > nav > ul");
   const input = document.getElementById('search-input');
 
-  if (window.scrollY > lastScrollY) {
+  let end = ((window.scrollY + 2 + window.innerHeight) >= (document.body.scrollHeight)) || window.scrollY <= 40;
+
+  if (window.scrollY > lastScrollY && !end) {
     // Scrolling down
     if (!isScrollingDown) {
       isScrollingDown = true;
@@ -288,8 +306,9 @@ window.addEventListener('scroll', () => {
         footer.style.bottom = '-4rem';
       }, 300);
     }
-  } else {
+  } else if ( (window.scrollY > lastScrollY) || end) {
     // Scrolling up
+    console.log('end');
     isScrollingDown = false;
     clearTimeout(hideTimeout); // Cancel any pending hide
     header.classList.remove('hidden'); // No delay to reappear
@@ -299,7 +318,7 @@ window.addEventListener('scroll', () => {
       nav.style.padding = isMobile() ? "0.8rem 0.6rem" : "0.8rem 1.4rem";
       header.style.height = isMobile() ? "3.6rem" : "4rem";
   
-    }, 200);
+    }, 150);
   }
   lastScrollY = window.scrollY;
 });

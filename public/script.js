@@ -20,6 +20,7 @@ let isFetching = {}; // Track fetching state per section to avoid multiple fetch
 
 let isLoading = false;
 let isBrowsing = false;
+let pageEnd = false;
 
 async function fetchContent(sectionId, url) {
   const limit = (isMobile() || isBrowsing) ? 20 : 14; // Set limit based on device size
@@ -38,7 +39,7 @@ async function fetchContent(sectionId, url) {
     const response = await fetch(pageUrl);
     const data = await response.json();
     const media_type = url.includes('/movie') ? 'movie' : 'tv';
-    
+    currentPage = data.page;
     storedData[sectionId] = data.results; // Reset stored data for a new page
     storedData[sectionId].forEach(res => res.media_type = media_type);
 
@@ -85,8 +86,22 @@ function setupPagination(sectionId, url) {
 // Populate a section with content
 function populateSection(sectionId, items) {
   const container = document.querySelector(`#${sectionId} .grid-container`);
+  
   if (isBrowsing) {
+    currentPage++
+    const msg = document.querySelector('.result-message');
+    msg.classList.remove('show');
+    msg.querySelector('label').innerText = 'Loading...';
+    msg.style.display = 'flex';
     container.innerHTML += renderGridItems(items);
+    if (items.length < 20) {
+      pageEnd = true;
+      msg.querySelector('label').innerText = 'No more results';
+      msg.classList.add('show');
+    } else {
+      msg.classList.remove('show');
+      msg.style.display = 'none';
+    }
   } else {
     container.innerHTML = renderGridItems(items);
   }
@@ -151,7 +166,7 @@ async function loadDiscoverContent(networkId, providerId, mediaType, sectionId) 
   });
 
   if (document.getElementById(sectionId)) {
-    const url = `${BASE_URL}/discover/${mediaType}?api_key=${API_KEY}&${params}&watch_region=IN&${OPTIONS}`;
+    const url = `${BASE_URL}/discover/${mediaType}?api_key=${API_KEY}&${params}&watch_region=US&${OPTIONS}`;
     storedData[sectionId] = [];
     pageNumbers[sectionId] = 1;
     fetchContent(sectionId, url);
@@ -692,7 +707,6 @@ function globalAddEventListener (event) {
         event.stopPropagation();
       } else if (event.target.closest('.options-menu button')) {
           removeFromHistory('history', Number(id), mediaType, sno, eno);
-          console.log(mediaType, id, sno, eno);
           event.stopPropagation();
       } 
     }

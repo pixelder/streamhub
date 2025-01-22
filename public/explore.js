@@ -20,25 +20,37 @@ function loadExplorePage(mediaType) {
         <section id="browse-${mediaType}s" data-type="${mediaType}">
             <h2>${sectionTitle}</h2>
             <div class="filters">
-                <div class="genre-chips" id="genreChips">
+                <div class="form-group">
+                    <label>Genre</label>
+                    <div class="genre-chips" id="genreChips">
+                    </div>
                 </div>
-                <select id="sort">
-                    <option value="popularity.desc" "selected">Popularity</option>
-                    <option value="vote_average.desc">Rating</option>
-                    <option value="${isMovie ? 'primary_release_date.desc' : 'first_air_date.desc'}">Date</option>
-                    <option value="${isMovie ? 'title.desc' : 'name.desc'}">Name</option>
-                </select>
-                <input type="number" id="year-picker" min="1888" max="2099" step="1" value="" placeholder="eg. 2024" />
-                <div class="min-rating">
-                    <input id="min-rating-number" type="number" value="5" min="0" step="0.1" max="10">
-                    <p>0</p>
-                    <input id="min-rating-slider" type="range" value="5" min="0" step="0.1" max="10">
-                    <p>10</p>
+                <div class="form-group">
+                    <label>Sort by</label>
+                    <select id="sort">
+                        <option value="popularity.desc" "selected">Popularity</option>
+                        <option value="vote_average.desc">Rating</option>
+                        <option value="${isMovie ? 'primary_release_date.desc' : 'first_air_date.desc'}">Date</option>
+                        <option value="${isMovie ? 'title.desc' : 'name.desc'}">Name</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Year</label>
+                    <input type="number" id="year-picker" min="1888" max="2099" step="1" value="" placeholder="eg. 2024" />
+                </div>
+                <div class="form-group">
+                    <label>Minimum Rating</label>
+                    <div class="min-rating">
+                        <input id="min-rating-number" type="number" value="5" min="0" step="0.1" max="10">
+                        <p>0</p>
+                        <input id="min-rating-slider" type="range" value="5" min="0" step="0.1" max="10">
+                        <p>10</p>
+                    </div>
                 </div>
                 <button class="filter-button"><i class="fa-solid fa-filter"></i>       Filter</button>
                 <div class="filter-overlay"></div>
                 <div class="filter-menu">
-                    <h3>More Filters</h3>
+                    <h2>More Filters</h2>
                     <div class="form-group">
                         <label for="min-vote-slider">Minimum vote count</label>
                         <div class="vote-count">
@@ -66,6 +78,18 @@ function loadExplorePage(mediaType) {
                 </div>
             </div>
             <div class='grid-container'></div>
+            <div class='result-message'>
+                <label>No more results</label>
+                <hr class="hr">
+                <div class="message">
+                    <p>Have you tried</p>
+                    <ul>
+                        <li>lowering the <strong>minimum vote count</strong> ?</li>
+                        <li>lowering the <strong>minimum rating value</strong> ?</li>
+                        <li>selecting the proper country or language ?</li>
+                    </ul>  
+                </div>  
+            </div>
         </section>
         <div class="modal-overlay"></div>
             <div id="info-modal" class="modal">
@@ -84,9 +108,11 @@ function loadExplorePage(mediaType) {
     fetchCountriesAndLanguages();
     
     window.addEventListener("scroll", () => {
-        if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 10) {
-            currentPage++
-            loadDiscoverContent( '', '', mediaType,`browse-${mediaType}s`);
+        if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 50) {
+            if ( !pageEnd ) {
+                console.log(currentPage)
+                loadDiscoverContent( '', '', mediaType,`browse-${mediaType}s`);
+            }
         }
     })
 
@@ -101,6 +127,8 @@ function loadExplorePage(mediaType) {
         filters.addEventListener(eventType, filterAddEventLister);
     });
 
+    const msg = document.querySelector('.result-message');
+    msg.classList.remove('show');
     //filters.dispatchEvent(/* new Event('click') ||  */new Event('change', () => {console.log('hi')}));
 }
 
@@ -177,9 +205,10 @@ function filterReset() {
     currentYear = null
     selectedCountry = '';
     selectedLanguage = '';
-
+    
     filterParams();
     resetSection();
+    pageEnd = false;
 }
 
 async function fetchGenres(mediaType) {
@@ -214,13 +243,13 @@ async function fetchCountriesAndLanguages() {
     // Fetch countries
     const countryResponse = await fetch(`https://api.themoviedb.org/3/configuration/countries??language=en-US&api_key=${API_KEY}`);
     const countries = await countryResponse.json();
-    const counteryList = ['US', 'JP', 'IN', 'FR', 'AU', 'UK', 'DE','IE', 'UA', 'MX', 'KO']
+    const counteryList = ['US', 'JP', 'IN', 'FR', 'AU', 'GB', 'DE','IE', 'UA', 'MX', 'KO']
     const countrySelect = document.getElementById('countryFilter');
     countries.forEach(country => {
-        if (counteryList.includes(country.iso_3166_1)) {
+        if ( counteryList.includes(country.iso_3166_1) ) {
             const option = document.createElement('option');
             option.value = country.iso_3166_1;
-            option.textContent = country.english_name;
+            option.textContent = abbvText(country.english_name, 13);
             countrySelect.appendChild(option);
         }
     });
@@ -307,5 +336,6 @@ function filterAddEventLister(event) {
         };
     } else if ( event.type === 'change') {
         resetSection();
+        pageEnd = false
     }
 }
