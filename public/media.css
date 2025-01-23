@@ -418,6 +418,23 @@
 
         }
 
+        .grid-options {
+            width: 1.8rem;
+            height: 1.8rem;
+          
+            .options-buttons {
+              font-size: 0.8rem;
+            }
+        }
+
+        .grid-options.open {
+            width: 3.2rem;
+
+            .options-menu button {
+                font-size: 0.8rem;
+                width: 1rem;
+            }
+        }
     }
 
     #discover-streaming {

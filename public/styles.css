@@ -738,7 +738,7 @@ section .pagination-buttons>button {
 .filter-button {
   height: 1.45rem;
   background: #1A589E;
-  box-shadow: 0 0 16px 8px rgba(0, 0, 0, 0.6);
+  box-shadow: 0 0 12px 4px #0d0d1bb7;
 }
 
 .reset-button {
@@ -764,6 +764,7 @@ section .pagination-buttons>button {
   z-index: 1;
 
   h2 {
+    margin: unset;
     margin-bottom: auto;
   }
 

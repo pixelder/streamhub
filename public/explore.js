@@ -243,7 +243,7 @@ async function fetchCountriesAndLanguages() {
     // Fetch countries
     const countryResponse = await fetch(`https://api.themoviedb.org/3/configuration/countries??language=en-US&api_key=${API_KEY}`);
     const countries = await countryResponse.json();
-    const counteryList = ['US', 'JP', 'IN', 'FR', 'AU', 'GB', 'DE','IE', 'UA', 'MX', 'KO']
+    const counteryList = ['AS','US','AU', 'GB', 'IE', 'JP', 'KO', 'IN', 'RU', 'MX', 'FR', 'DE',]
     const countrySelect = document.getElementById('countryFilter');
     countries.forEach(country => {
         if ( counteryList.includes(country.iso_3166_1) ) {
@@ -254,14 +254,10 @@ async function fetchCountriesAndLanguages() {
         }
     });
 
-
-
-    //countrySelect.insertAdjacentText("afterend", `    ${selectedCountry}`);
-
     // Fetch languages
     const languageResponse = await fetch(`https://api.themoviedb.org/3/configuration/languages?api_key=${API_KEY}`);
     const languages = await languageResponse.json();
-    const languagelist = [ 'en', 'hi', 'as', 'fr', 'ja', 'ko']
+    const languagelist = [ 'en', 'ja', 'ko', 'hi', 'as','ru','es', 'fr', 'de']
     const languageSelect = document.getElementById('languageFilter');
     languages.forEach(language => {
         if (languagelist.includes(language.iso_639_1)) {

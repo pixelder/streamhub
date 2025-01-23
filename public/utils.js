@@ -291,7 +291,7 @@ window.addEventListener('scroll', () => {
   const nav = document.querySelector("#header > nav > ul");
   const input = document.getElementById('search-input');
 
-  let end = ((window.scrollY + 2 + window.innerHeight) >= (document.body.scrollHeight)) || window.scrollY <= 40;
+  let end = ((window.scrollY + 10 + window.innerHeight) >= (document.body.scrollHeight)) || window.scrollY <= 40;
 
   if (window.scrollY > lastScrollY && !end) {
     // Scrolling down
@@ -306,7 +306,7 @@ window.addEventListener('scroll', () => {
         footer.style.bottom = '-4rem';
       }, 300);
     }
-  } else if ( (window.scrollY > lastScrollY) || end) {
+  } else if ( (window.scrollY <= lastScrollY) || end) {
     // Scrolling up
     console.log('end');
     isScrollingDown = false;

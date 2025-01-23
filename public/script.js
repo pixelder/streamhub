@@ -528,7 +528,7 @@ function loadWatchPage(mediaType, name = null, id, tvData = null) {
                 <p data-source="3">Vidsrc</p>
                 <p data-source="4">Superstream</p>
                 <p data-source="5">Multiembed</p>
-                <p data-source="6">Moviesapi</p>
+                <p data-source="6">111movies</p>
                 <p data-source="7">AutoEmbed(Multi)</p>
               </div>
             </div>
@@ -604,7 +604,7 @@ function loadSources(source, mediaType, id, season = null, episode = null) {
       src = `https://multiembed.mov/?video_id=${id}&tmdb=1${season && episode ? `&s=${season}&p=${episode}` : ''}`;
       break;
     case 6:
-      src = `https://moviesapi.club/${mediaType}/${id}${season && episode ? `-${season}-${episode}` : ''}`;
+      src = `https://111movies.com/${mediaType}/${id}${season && episode ? `/${season}/${episode}` : ''}`;
       break;
     case 7:
       src = `https://hin.autoembed.cc/${mediaType}/${id}${season && episode ? `/${season}/${episode}` : ''}`;
