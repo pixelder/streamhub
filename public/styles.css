@@ -79,7 +79,7 @@ header {
 
   box-shadow: 0 0 15px 5px var(--bg-color);
   backdrop-filter: blur(5px);
-  transition: top 0.5s, height 0.2s, padding 0.3s ease-in-out;
+  transition: top 0.4s, height 0.2s, padding 0.3s ease-in-out;
   z-index: 1;
 }
 
@@ -97,7 +97,7 @@ nav ul {
   display: flex;
   flex-direction: row;
   align-items: center;
-  padding: 0.8rem 1.4rem;
+  padding: 12px 1.4rem;
   min-height: 100%;
   gap: 2rem;
   transition: padding 0.3s ease-in-out;
@@ -150,7 +150,7 @@ nav ul li:nth-child(1) {
   height: 2rem;
   width: 2rem;
   font-family: var(--font-style2);
-  font-size: 0.8rem;
+  font-size: 12px;
   font-weight: 400;
   padding-left: 0.48rem;
   color: var(--font-color1);
@@ -281,12 +281,17 @@ select {
   background-position: calc(100% - 0.36rem) 50%;
   background-color: #30303d77;
   box-shadow: 0 0 4px rgba(0, 0, 0, 0.3);
-  padding: 0.6rem 0.8rem;
+  padding: 0.6rem 12px;
   padding-right: 1.8rem;
   font-size: 0.875rem;
   border: 1px solid var(--color1);
   border-radius: var(--border-radius2);
   cursor: pointer;
+}
+
+select:focus-visible {
+  outline: 2px inset var(--font-color3) !important;
+  filter: brightness(1.25);
 }
 
 button {
@@ -303,6 +308,12 @@ button:active {
   background-color: var(--color1);
   transition: all 0.2s;
 }
+
+button:focus-visible {
+  outline: 2px inset var(--font-color3) !important;
+  filter: brightness(1.4);
+}
+
 
 footer {
   display: none;
@@ -343,7 +354,7 @@ section .pagination-buttons>button {
   border-radius: var(--border-radius2);
   aspect-ratio: 1 / 1;
   height: 1.8rem;
-  font-size: 0.8rem;
+  font-size: 12px;
 }
 
 #trending-movies,
@@ -360,7 +371,7 @@ section .pagination-buttons>button {
   display: grid;
   grid-template-columns: repeat(7, minmax(0, 1fr));
   justify-content: center;
-  gap: 0.8rem;
+  gap: 12px;
   min-height: 5rem;
 }
 
@@ -382,16 +393,13 @@ section .pagination-buttons>button {
 }
 
 
-.grid-item:hover {
-  scale: 1.05;
+.grid-item:hover, .grid-item:focus-within {
+  scale: 1.0625;
   box-shadow: 0 6px 15px rgb(8, 8, 22);
   border: 1px solid #383852e5;
   cursor: pointer;
 }
 
-.grid-item:focus-within {
-  scale: 1.05;
-}
 
 .grid-item div {
   position: relative;
@@ -451,7 +459,9 @@ section .pagination-buttons>button {
   line-height: 10px;
 }
 
-.grid-item:is(:hover, :focus), .grid-item:has(.grid-options.open) {
+.grid-item:is(:hover, :focus),
+.grid-item:has(.grid-options.open),
+.grid-item:has(.grid-options:focus-within) {
   .grid-options {
     opacity: 1 !important;
     color: var(--font-color1);
@@ -533,7 +543,7 @@ section .pagination-buttons>button {
   border-bottom: none;
   border-radius: var(--border-radius1) var(--border-radius1) 0 0;
   cursor: pointer;
-  font-size: 0.8rem;
+  font-size: 12px;
   transition: background-color 0.3s, color 0.3s, border-radius 0.3s;
 }
 
@@ -589,7 +599,7 @@ section .pagination-buttons>button {
 .media-tab {
   display: inline-block;
   min-width: 50%;
-  font-size: 0.8rem;
+  font-size: 12px;
   text-align: center;
   background-color: transparent;
   color: var(--font-color2);
@@ -668,8 +678,8 @@ section .pagination-buttons>button {
   display: flex;
   flex-wrap: wrap;
   width: 100%;
-  margin-bottom: 0.8rem;
-  gap: 0.8rem;
+  margin-bottom: 12px;
+  gap: 12px;
 
   .form-group {
     display: inline-grid;
@@ -731,7 +741,7 @@ section .pagination-buttons>button {
   border-radius: var(--border-radius2);
 
   i {
-    font-size: 0.8rem;
+    font-size: 12px;
   }
 }
 
@@ -821,6 +831,90 @@ section .pagination-buttons>button {
   z-index: 1;
 }
 
+.dialog-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.8);
+  z-index: 1;
+}
+.dialog {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  translate: -50% -50%;
+  width: fit-content;
+  max-width: 25rem;
+  height: fit-content;
+  display: inline-grid;
+  gap: var(--padding1);
+  justify-items: center;
+  padding: calc(var(--padding1) * 2) 1.4rem;
+  border: 1px solid var(--color2);
+  border-radius: var(--border-radius1);
+  background: var(--color5);
+  text-shadow: none;
+
+
+  h2 {
+    font-size: 1.35rem;
+    padding: var(--padding1);
+  }
+
+  .message-box {
+    display: flex;
+    width: 100%;
+    flex-direction: row;
+    align-items: center;
+    padding: var(--padding1);
+    color: var(--error);
+    font-size: 0.875rem;
+    font-weight: 600;
+    border-left: 0.6rem solid var(--error);
+    border-radius: var(--border-radius2);
+    background: rgba(166, 25, 46, 0.12);
+
+    .icon {
+      font-size: 1.6rem;
+      padding: var(--padding1);
+    }
+
+    .message {
+      padding: var(--padding1);
+    }
+  }
+
+  .message-box.green {
+    color: var(--success);
+    border-left: 0.6rem solid var(--success);
+    background: rgba(25, 166, 46, 0.12);
+  }
+  
+  .dialog-buttons {
+    display: flex;
+    flex-direction: row;
+    gap: 1rem;
+    width: 100%;
+    height: 2.6rem;
+    padding: 0 2rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    text-wrap: nowrap;
+  }
+  button {
+    flex: 1 0;
+    border-radius: var(--border-radius1);
+    background: #30303d77;
+    padding: var(--padding1);
+  }
+
+  #accept {
+    background: var(--error);
+  }
+}
+
 /* Continue Watching */
 #continue-watching {
   display: none;
@@ -831,7 +925,7 @@ section .pagination-buttons>button {
         visibility: hidden; */
     display: grid;
     grid-template-columns: repeat(5, minmax(0, 1fr));
-    gap: 0.8rem;
+    gap: 12px;
   }
 
   .grid-item {
@@ -867,12 +961,13 @@ section .pagination-buttons>button {
     justify-content: flex-start;
     flex-direction: row-reverse;
     opacity: 0;
-    width: 2rem;
-    height: 2rem;
+    width: 2.2rem;
+    height: 2.2rem;
     background: transparent;
-    border: none;
+    border: 1px solid transparent;
+    padding: 4px;
+    gap: 4px;
     border-radius: var(--border-radius2);
-    font-size: 1.2rem;
     transition: width 0.25s, opacity 0.25s, color 0.25s ease-in-out;
 
     .options-menu {
@@ -886,9 +981,10 @@ section .pagination-buttons>button {
       display: flex;
       font-size: 1rem;
       aspect-ratio: 1 / 1;
+      height: 100%;
       border-radius: inherit;
-      margin: 4px;
-      align-items: center;
+/*       margin: 4px;
+ */   align-items: center;
       justify-content: center;
       cursor: pointer;
       text-shadow: 0 0 3px #30303d;
@@ -897,7 +993,7 @@ section .pagination-buttons>button {
       transition: border 0.25s, background-color 0.25s ease-in-out;
     }
 
-    .options-buttons:hover {
+    .options-buttons:hover, .options-buttons:focus-within {
       background-color: #38385255;
       border: 1px solid #383852e5;
     }
@@ -920,7 +1016,12 @@ section .pagination-buttons>button {
     border: 1px solid #383852e5;
     background-color: #0d0d1bbb;
     backdrop-filter: blur(5px);
-    width: 4rem;
+    width: fit-content;
+
+    /* .options-buttons {
+      background-color: #38385255;
+      border: 1px solid #383852e5;
+    } */
 
     .options-menu {
       all: unset;
@@ -929,12 +1030,21 @@ section .pagination-buttons>button {
       opacity: 1;
     }
 
-    .options-menu button {
-      all: unset;
-      font-size: 0.875rem;
-      color: red;
-      width: 1.6rem;
-      pointer-events: all;
+    .options-menu {
+      button {
+        all: unset;
+        font-size: 0.875rem;
+        color: var(--error);
+        filter: saturate(1.4);
+        pointer-events: all;
+        aspect-ratio: 1 / 1;
+        border: 1px solid #383852e5;
+        border-radius: var(--border-radius2);
+      }
+      button:focus-visible {
+        outline: 2px solid var(--font-color1);
+        background-color: var(--color3);
+      }
     }
 
     .options-icon {
@@ -992,7 +1102,7 @@ section .pagination-buttons>button {
 
 #search-results h1 {
   font-size: 1.6rem;
-  margin: 0.8rem 1.4rem 0rem;
+  margin: 12px 1.4rem 0rem;
   padding: 0;
 }
 
@@ -1002,7 +1112,7 @@ section .pagination-buttons>button {
   display: flex;
   flex-wrap: wrap;
   flex: 1;
-  gap: 0.8rem;
+  gap: 12px;
   justify-content: flex-start;
 }
 
@@ -1066,7 +1176,7 @@ section .pagination-buttons>button {
 }
 
 .profile-item-info p {
-  font-size: 0.8rem;
+  font-size: 12px;
   line-height: 0.92rem;
   margin: auto 0.2rem;
 }
@@ -1270,7 +1380,7 @@ body:has(.modal.active) {
 }
 
 .ratings-genre i {
-  font-size: 0.8rem;
+  font-size: 12px;
   line-height: normal;
 }
 
@@ -1322,11 +1432,11 @@ body:has(.modal.active) {
 p.tags {
   padding: 0rem 0 0rem 0;
   color: var(--font-color3);
-  font-size: 0.8rem;
+  font-size: 12px;
 }
 
 .seasons-menu {
-  padding: 0.8rem 0;
+  padding: 12px 0;
 }
 
 .seasons-menu select {
@@ -1345,7 +1455,7 @@ option {
 .episode-container {
   display: flex;
   flex-direction: row;
-  gap: 0.8rem;
+  gap: 12px;
   margin: 0 auto;
 }
 
@@ -1364,7 +1474,7 @@ option {
 
 .episode-container::after {
   content: "";
-  min-width: calc((100% - 0.8rem) / 2);
+  min-width: calc((100% - 12px) / 2);
 }
 
 .episode-width {
@@ -1373,7 +1483,7 @@ option {
 
 .episode {
   flex: 1;
-  padding: 0.8rem;
+  padding: 12px;
   background-color: #30303d77;
   border-radius: var(--border-radius2);
   border: 1px solid var(--color1);
@@ -1386,7 +1496,7 @@ option {
   flex-wrap: wrap;
   flex: 1;
   justify-content: space-between;
-  gap: 0.8rem;
+  gap: 12px;
 }
 
 .episode-items img {
@@ -1398,6 +1508,11 @@ option {
   border-radius: var(--border-radius2);
   cursor: pointer;
   box-shadow: 0 0 4px rgba(0, 0, 0, 0.3);
+}
+
+.episode-items img:focus-visible {
+  outline: none;
+  border: 2px inset var(--font-color3);
 }
 
 
@@ -1498,7 +1613,7 @@ option {
     transition: scale 0.2s ease-in-out;
   }
 
-  .episode:hover {
+  .episode:hover, .episode:has(.episode-items img:focus-visible) {
     scale: 0.97;
   }
 
@@ -1696,7 +1811,7 @@ iframe {
   height: auto;
   width: 100%;
   padding: 0 8%;
-  margin-top: -0.8rem;
+  margin-top: -12px;
 }
 
 /* Dropdown container */
@@ -1724,7 +1839,7 @@ iframe {
 .providers p {
   opacity: 0;
   color: var(--font-color1);
-  font-size: 0.8rem;
+  font-size: 12px;
   margin: 0.2rem;
   padding: 0.36rem;
   border-radius: var(--border-radius2);

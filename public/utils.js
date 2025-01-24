@@ -66,7 +66,7 @@ function scrollEpisodeIntoView(eno) {
   }
 
   // Responsive measurements based on screen size
-  const episodeWidth = isMobile() ? 8.6 * 16 : 15 * 16; // Mobile: 8.6rem, PC: 15rem
+  const episodeWidth = isMobile() ? 9.2 * 16 : 15 * 16; // Mobile: 8.6rem, PC: 15rem
   const gapWidth = isMobile() ? 0.6 * 16 : 0.8 * 16;   // Mobile: 0.6rem, PC: 0.8rem
   const totalEpisodeWidth = episodeWidth + gapWidth;
 
@@ -307,18 +307,78 @@ window.addEventListener('scroll', () => {
       }, 300);
     }
   } else if ( (window.scrollY <= lastScrollY) || end) {
-    // Scrolling up
-    console.log('end');
     isScrollingDown = false;
     clearTimeout(hideTimeout); // Cancel any pending hide
-    header.classList.remove('hidden'); // No delay to reappear
+    
+    input.style.height = "2rem";
+    nav.style.padding = isMobile() ? "0.8rem 0.6rem" : "0.8rem 1.4rem";
+    header.style.height = isMobile() ? "3.6rem" : "4rem";
+    header.classList.remove('hidden');
     footer.style.bottom = '0rem';
-    hideTimeout = setTimeout(() => {
-      input.style.height = "2rem";
-      nav.style.padding = isMobile() ? "0.8rem 0.6rem" : "0.8rem 1.4rem";
-      header.style.height = isMobile() ? "3.6rem" : "4rem";
-  
-    }, 150);
   }
   lastScrollY = window.scrollY;
 });
+
+
+function getConfirm({ title, message, success, canceled, state = 1 } = {}) {
+  
+  let successIcon
+  let cancelIcon
+  switch (state) {
+    case 1 :
+      successIcon = `<i class="fa-solid fa-circle-check"></i>`
+      break;
+  }
+  
+  const overlay = document.createElement('div');
+  overlay.setAttribute('tabindex','0');
+  overlay.classList.add('dialog-overlay');
+  overlay.innerHTML = `
+    <div class="dialog">
+        <h2>${title || `Are you sure?`}</h2>
+        <div class="message-box">
+            <span class="icon">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+            </span>
+            <span class="message">
+                <p>${message || `This action can not be undone.<br>Do you wish to proceed?`}</p>
+            </span>
+        </div>
+        <div class="dialog-buttons">
+            <button tabindex="0" id="decline">Go Back</button>
+            <button tabindex="0" id="accept"><i class="fa-solid fa-trash-can"></i>&nbsp;Continue</button>
+        </div>
+    </div>
+  `;
+  document.querySelector('main').appendChild(overlay);
+  document.getElementById('decline').focus();
+  return new Promise((resolve) => {
+    const handleDialog = (e) => {
+      const decline = e.target.matches('#decline') || e.target.matches('.dialog-overlay');
+      const accept = e.target.matches('#accept');
+      if (decline || accept) {
+          const messageBox = overlay.querySelector('.message-box');
+          const dialogButtons = overlay.querySelector('.dialog-buttons');
+          dialogButtons.style.display = 'none';
+          if (decline || e.type === 'keydown' && e.key === 'Escape') {
+              overlay.querySelector('h2').innerText = canceled.title;
+              messageBox.classList.add('green');
+              messageBox.querySelector('.icon').innerHTML = cancelIcon || successIcon;
+              messageBox.querySelector('p').innerText = canceled.message;
+              resolve(false);
+          } else if (accept) {
+              overlay.querySelector('h2').innerText = success.title;
+              messageBox.querySelector('.icon').innerHTML = successIcon;
+              messageBox.querySelector('p').innerText = success.message;
+              resolve(true);
+          }
+          ['click','keydown'].forEach(type => overlay.removeEventListener(type, handleDialog));
+          setTimeout(() => {
+              document.querySelector('main').removeChild(overlay);
+          }, 2000);
+      }
+    };
+    ['click','keydown'].forEach(type => overlay.addEventListener(type, handleDialog));
+  });
+}
+

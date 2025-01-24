@@ -48,6 +48,7 @@ async function toggleBookmark(logtype,id, mediaType, sno = null, eno = null) {
   temp = contWatching;
   contWatching = false;
   if( logExists(logtype, id, mediaType) ) {
+    console.log('log exists')
     removeFromHistory(logtype,Number(id),mediaType, sno, eno);
   } else {
     logWatchHistory(logtype,id,mediaType, sno, eno)
@@ -103,17 +104,17 @@ function renderHistoryItems(data, item, tvData) {
   //
 
   return `
-      <div tabindex="0" role="button" aria-pressed="false" class="grid-item"
+      <div tabindex="0" aria-pressed="true" class="grid-item"
       data-id="${id}" data-media-type="${mediaType}"
       data-sno="${sno}" data-eno="${eno}" data-name="${name}">
         <div class="grid-actions">
           <div class="grid-options">
-            <div class="options-buttons">
+            <div tabindex="0" class="options-buttons">
               <i class="options-icon fa-solid fa-ellipsis-vertical"></i>
               <i class="options-x-icon fa-solid fa-xmark"></i>
             </div>
             <div class="options-menu">
-              <button><i class="fa-solid fa-trash"></i></button>
+              <button tabindex="0" role="button"><i class="fa-solid fa-trash-can"></i></button>
             </div>
           </div>
         </div>
@@ -134,13 +135,13 @@ function renderHistoryItems(data, item, tvData) {
     `;
 }
 
-
-document.addEventListener('click', (event) => {
-  if( event.target.matches(".options-buttons")) {
-    event.target.closest('.grid-options')?.classList.toggle('open');
-    event.stopPropagation();
-  };
-});
+/* 
+document.addEventListener('click' || 'keydown', (event) => {
+    if( event.target.matches(".options-buttons")) {
+      event.target.closest('.grid-options')?.classList.toggle('open');
+      event.stopPropagation();
+    };
+}); */
 
 
 function continueWatching() {
