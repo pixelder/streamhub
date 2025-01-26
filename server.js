@@ -1,27 +1,24 @@
 const express = require('express');
-const helmet = require('helmet');
+//const helmet = require('helmet');
 const app = express();
 const path = require('path');
 
-app.set('view engine', 'ejs')
-app.set('views', path.join(__dirname, 'views'));
-
-app.use(helmet());
-
+//app.use(helmet());
 
 app.use(express.static(path.join(__dirname, 'public')));
+
+
+app.set('view engine', 'ejs')
+app.set('views', path.join(__dirname, 'views'));
 
 app.get(['/', '/movie', '/tv'], (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
-
-
 app.get('/search', async (req, res) => {
   const query = req.query.q;
   res.render('search', { query });
 });
-
 
 // Dynamic route for the watch page
 app.get('/watch/movie/:id/:name', (req, res) => {
