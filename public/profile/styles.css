@@ -1,0 +1,22 @@
+#bookmarks {
+  .grid-container {
+    min-height: unset;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(10rem, 1fr));
+  }
+}
+
+@media (max-width: 767px) {
+  #bookmarks {
+    .grid-container {
+      margin-top: 0.24rem ;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(6.5rem, 1fr));
+    }
+    
+    .grid-item {
+      flex: 1 1 auto;
+      min-width: unset;
+    }
+  }
+}

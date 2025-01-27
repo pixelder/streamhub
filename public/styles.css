@@ -38,6 +38,8 @@
   --font-style1: "Geist", sans-serif;
   --font-style2: "Onest", sans-serif;
   --padding1: 0.6rem;
+  --modal-backdrop: '';
+  --modal-backdrop-opacity: 0.8;
   font-size: 100%;
   -webkit-tap-highlight-color: transparent;
 
@@ -150,7 +152,7 @@ nav ul li:nth-child(1) {
   height: 2rem;
   width: 2rem;
   font-family: var(--font-style2);
-  font-size: 12px;
+  font-size: 0.8125rem;
   font-weight: 400;
   padding-left: 0.48rem;
   color: var(--font-color1);
@@ -371,7 +373,7 @@ section .pagination-buttons>button {
   display: grid;
   grid-template-columns: repeat(7, minmax(0, 1fr));
   justify-content: center;
-  gap: 12px;
+  gap: 0.8125rem;
   min-height: 5rem;
 }
 
@@ -388,13 +390,14 @@ section .pagination-buttons>button {
   border-radius: var(--border-radius1);
   background-color: var(--color5);
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+  transform: scale(1);
   transition: scale 0.25s, border 0.25s, box-shadow 0.25s ease-in-out;
   /* box-shadow: 0 10px 24px rgba(0, 0, 0, 0.7); */
 }
 
 
 .grid-item:hover, .grid-item:focus-within {
-  scale: 1.0625;
+  scale: 1.0625 ;
   box-shadow: 0 6px 15px rgb(8, 8, 22);
   border: 1px solid #383852e5;
   cursor: pointer;
@@ -419,13 +422,12 @@ section .pagination-buttons>button {
   justify-content: space-between;
   text-align: left;
   padding-top: 0rem;
-  height: 2.6rem;
+  height: 2.625rem;
 }
 
 .grid-item-info p {
-  font-size: 12.4px;
+  font-size: 0.8125rem;
   line-height: 14px;
-  max-height: calc(15px * 2);
 }
 
 
@@ -433,7 +435,6 @@ section .pagination-buttons>button {
   flex: 1;
   overflow: hidden;
   text-overflow: ellipsis;
-  height: fit-content;
   max-width: 78%;
 }
 
@@ -454,7 +455,7 @@ section .pagination-buttons>button {
 
 .grid-item-info>p:nth-last-child(1) {
   align-self: flex-end;
-  font-size: calc(12px / 1.12);
+  font-size: 0.75rem;
   width: 100%;
   line-height: 10px;
 }
@@ -543,7 +544,7 @@ section .pagination-buttons>button {
   border-bottom: none;
   border-radius: var(--border-radius1) var(--border-radius1) 0 0;
   cursor: pointer;
-  font-size: 12px;
+  font-size: 0.8125rem;
   transition: background-color 0.3s, color 0.3s, border-radius 0.3s;
 }
 
@@ -588,7 +589,7 @@ section .pagination-buttons>button {
 .media-switch {
   display: flex;
   width: 10rem;
-  height: 1.96rem;
+  height: 2rem;
   text-wrap: nowrap;
   border-radius: var(--border-radius2);
   overflow: hidden;
@@ -599,7 +600,7 @@ section .pagination-buttons>button {
 .media-tab {
   display: inline-block;
   min-width: 50%;
-  font-size: 12px;
+  font-size: 0.8125rem;
   text-align: center;
   background-color: transparent;
   color: var(--font-color2);
@@ -849,7 +850,7 @@ section .pagination-buttons>button {
   max-width: 25rem;
   height: fit-content;
   display: inline-grid;
-  gap: var(--padding1);
+  gap: 0;
   justify-items: center;
   padding: calc(var(--padding1) * 2) 1.4rem;
   border: 1px solid var(--color2);
@@ -869,6 +870,7 @@ section .pagination-buttons>button {
     flex-direction: row;
     align-items: center;
     padding: var(--padding1);
+    margin: var(--padding1) 0;
     color: var(--error);
     font-size: 0.875rem;
     font-weight: 600;
@@ -877,7 +879,7 @@ section .pagination-buttons>button {
     background: rgba(166, 25, 46, 0.12);
 
     .icon {
-      font-size: 1.6rem;
+      font-size: 1.4rem;
       padding: var(--padding1);
     }
 
@@ -897,7 +899,8 @@ section .pagination-buttons>button {
     flex-direction: row;
     gap: 1rem;
     width: 100%;
-    height: 2.6rem;
+    height: 2.4rem;
+    margin-top: var(--padding1);
     padding: 0 2rem;
     font-size: 0.875rem;
     font-weight: 600;
@@ -908,6 +911,11 @@ section .pagination-buttons>button {
     border-radius: var(--border-radius1);
     background: #30303d77;
     padding: var(--padding1);
+    transition: filter 0.2s;
+  }
+
+  button:hover {
+    filter: brightness(1.2);
   }
 
   #accept {
@@ -1224,6 +1232,7 @@ body:has(.modal.active) {
 }
 
 .modal-content {
+  box-sizing: border-box;
   position: relative;
   width: 58rem;
   height: fit-content;
@@ -1234,8 +1243,28 @@ body:has(.modal.active) {
   border: 1px solid var(--color1);
   /* 3838526b */
   backdrop-filter: brightness(0.2);
-  background-color: rgba(20, 20, 39, 0.86);
+  background-color: #141427db;
   transition: width 0.2s;
+}
+
+.modal-content::before {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  top: 0rem;
+  right: 0rem;
+  height: 92%;
+  aspect-ratio: 16 / 9;
+  opacity: var(--modal-backdrop-opacity);
+  background-image: var(--modal-backdrop);
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+  background-position: 0rem 0rem;
+  mask-image: url(images/mask.png);
+  mask-size: 110% 120%;
+  mask-repeat: no-repeat;
+  mask-position: calc(100% + 1.8rem) -2.6rem;
+  transition: opacity 0.15s ease-in-out;
 }
 
 .close-btn {
@@ -1261,7 +1290,7 @@ body:has(.modal.active) {
 
 .modal-media {
   display: flex;
-  flex-direction: row;
+  flex-direction: row-reverse;
   justify-content: space-between;
   height: 21rem;
   width: 100%;
@@ -1309,6 +1338,7 @@ body:has(.modal.active) {
 }
 
 .modal-cover>img {
+  opacity: 0;
   height: 100%;
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
   border-radius: var(--border-radius2);
@@ -1320,7 +1350,7 @@ body:has(.modal.active) {
   flex-direction: column;
   justify-content: flex-end;
   gap: 1.4rem;
-  width: 80%;
+  width: 50%;
   height: 100%;
   transition: max-width 1s ease-in-out;
 }
@@ -1329,12 +1359,12 @@ body:has(.modal.active) {
   display: flex;
   flex-direction: row;
   max-width: 100%;
-  max-height: 45%;
+  max-height: 35%;
   align-items: flex-end;
 }
 
 .modal-info-logo img {
-  max-width: 55%;
+  max-width: 65%;
   height: 100%;
   object-fit: contain;
 }
@@ -1369,6 +1399,7 @@ body:has(.modal.active) {
   padding: 0rem 5% 0rem 0;
   font-size: 0.875rem;
   line-height: 0.96rem;
+  text-shadow: 0 0 2px #000;
 }
 
 .ratings-genre {
@@ -1414,7 +1445,7 @@ body:has(.modal.active) {
   align-items: center;
   gap: inherit;
   padding-left: 0.2rem;
-  overflow-x: auto;
+  overflow-x: visible;
   scrollbar-width: none;
   scroll-behavior: smooth;
 }
@@ -1423,6 +1454,7 @@ body:has(.modal.active) {
   text-decoration: none;
   color: var(--font-color2);
   font-size: 0.74rem;
+  text-wrap: nowrap;
   padding: 0.12rem 0.24rem;
   background-color: #222233;
   border: 1px solid var(--color2);
@@ -1432,7 +1464,8 @@ body:has(.modal.active) {
 p.tags {
   padding: 0rem 0 0rem 0;
   color: var(--font-color3);
-  font-size: 12px;
+  font-size: 0.875rem;
+  font-weight: 600;
 }
 
 .seasons-menu {
@@ -1442,7 +1475,7 @@ p.tags {
 .seasons-menu select {
   background-size: 1.12rem;
   font-weight: 600;
-  font-size: 1.12rem;
+  font-size: 1rem;
   outline: 0px;
   width: auto;
 }
@@ -1484,7 +1517,7 @@ option {
 .episode {
   flex: 1;
   padding: 12px;
-  background-color: #30303d77;
+  background-color: #222233ee;
   border-radius: var(--border-radius2);
   border: 1px solid var(--color1);
   box-shadow: 0 0 4px rgba(0, 0, 0, 0.3);
@@ -1580,293 +1613,3 @@ option {
 
 }
 
-
-/* Style inside player */
-.player-styling {
-  position: relative;
-  padding-bottom: 0.24rem;
-  height: 100%;
-  overflow-x: auto;
-  overflow-y: visible;
-  scrollbar-width: none;
-  scroll-snap-type: x mandatory;
-  border-radius: var(--border-radius1);
-  mask-image: linear-gradient(to right,
-      black, black 98%, transparent);
-  transition: mask-image 0.3s ease-in-out;
-}
-
-.player-styling::after {
-  display: none;
-}
-
-.player-styling {
-  .episode-width {
-    min-width: unset;
-    max-width: fit-content;
-  }
- .episode {
-    all: unset;
-    height: 100%;
-    scroll-snap-align: start;
-    scale: 1;
-    transition: scale 0.2s ease-in-out;
-  }
-
-  .episode:hover, .episode:has(.episode-items img:focus-visible) {
-    scale: 0.97;
-  }
-
-  .episode img {
-    border: 1px solid var(--color3);
-    transition: border 0.2s ;
-  }
-
-  .episode.current {
-    img {
-      border: 1px solid var(--color1);
-    }
-
-    .episode-items::before {
-      filter: blur(30px) brightness(2);
-    }
-    
-    .episode-items {
-      filter: saturate(1);
-      opacity: 1;
-    }
-  }
-
-  .episode-items {
-    all: unset;
-    display: block;
-    width: 15rem;
-    min-height: 8.4rem;
-    filter: saturate(0.8);
-    opacity: 0.8;
-    transition: filter 0.2s;
-  }
-
-  .episode-items::before {
-    content: "";
-    position: absolute;
-    top: 2%;
-    left: 0;
-    width: 100%;
-    height: 90%;
-    border-radius: 20%;
-    background: #30303d no-repeat center center / cover;
-    filter: blur(30px) brightness(0.75);
-    z-index: -1;
-    transform: scale(0.7);
-  }
-
-  .episode-items img {
-    width: 15rem;
-    border-radius: var(--border-radius1);
-  }
-
-  .episode-items h3 {
-    font-size: 0.875rem;
-    line-height: 0.96rem;
-    margin: 0;
-  }
-
- .episode-items p {
-    all: unset;
-    display: none;
-  }
-
- .episode-overview {
-  display: none;
-  }
-}
-
-
-
-/* player */
-
-.watch-page {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  color: var(--font-color1);
-  padding: 1.2rem 1rem;
-  gap: 1.2rem;
-  width: 100%;
-}
-
-
-.watch-page .now-playing {
-  line-height: 2rem;
-  margin-right: auto;
-  margin-left: 8%;
-}
-
-.now-playing h2 {
-  font-size: 2rem;
-}
-
-.now-playing h4 {
-  font-size: 1.2rem;
-  color: var(--font-color3);
-}
-
-.player-container {
-  margin-top: 0.2rem;
-  width: 100%;
-  align-content: center;
-}
-
-.player {
-  display: flex;
-  position: relative;
-  flex-direction: column;
-  aspect-ratio: 16 / 8;
-  width: 84%;
-  margin: auto;
-  border-radius: var(--border-radius1);
-  background-color: #000;
-  overflow: hidden;
-}
-
-.loading {
-  position: absolute;
-  top: 0;
-  width: 100%;
-  height: calc(100% - 2.36rem);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: #383852;
-  color: var(--font-color1);
-  font-size: 1.5rem;
-}
-
-.iframe-container {
-  width: 100%;
-  height: calc(100% - 2rem);
-  z-index: 0;
-  overflow: hidden;
-}
-
-iframe {
-  position: relative;
-  width: calc(100% * 1.114);
-  height: calc(100% * 1.114);
-  transform: scale(0.9);
-  transform-origin: 0 0;
-  -moz-transform: scale(0.9);
-  -o-transform: scale(0.9);
-  -webkit-transform: scale(0.9);
-}
-
-.player-toolbar {
-  display: flex;
-  justify-content: space-between;
-  width: 100%;
-  height: 2.4rem;
-  background-color: var(--color3);
-  border-radius: 0 0 5px 5px;
-  align-content: center;
-}
-
-.player-toolbar button {
-  aspect-ratio: 1 / 1;
-  height: calc(100% - (var(--padding1) * 2));
-  margin: var(--padding1);
-  font-size: 0.875rem;
-  color: var(--font-color1);
-  cursor: pointer;
-  border-radius: var(--border-radius2);
-}
-
-.iframe-exit {
-  opacity: 0;
-  top: 2%;
-  right: 2%;
-  position: absolute;
-  z-index: 1000;
-  width: 2rem;
-  aspect-ratio: 1 / 1;
-  border-radius: var(--border-radius2) ;
-  transition: opacity 0.25s, top 0.25s ease-in-out;
-}
-
-.iframe-exit.hidden {
-  top: 0%;
-  opacity: 0 !important;
-}
-
-.iframe-exit.hidden:hover {
-    top: 2%;
-    opacity: 1 !important;
-}
-
-
-.player-episodes {
-  position: relative;
-  float: left;
-  height: auto;
-  width: 100%;
-  padding: 0 8%;
-  margin-top: -12px;
-}
-
-/* Dropdown container */
-.provider-menu {
-  position: relative;
-  width: fit-content;
-  height: 100%;
-}
-
-/* Dropdown content */
-.providers {
-  position: absolute;
-  bottom: calc(100% + var(--padding1));
-  left: var(--padding1);
-  width: fit-content;
-  max-height: 0px; /* Responsive height */
-  opacity: 1;
-  overflow: hidden;
-  outline: 1px solid transparent;
-  background-color: #141427;
-  border-radius: var(--border-radius2);
-  transition: max-height 0.25s, outline 0.25s ease-in-out;
-}
-
-.providers p {
-  opacity: 0;
-  color: var(--font-color1);
-  font-size: 12px;
-  margin: 0.2rem;
-  padding: 0.36rem;
-  border-radius: var(--border-radius2);
-  cursor: pointer;
-  transition: background-color 0.25s, opacity 0.25s ease-in-out;
-}
-
-/* Links inside the dropdown */
-.provider-menu:hover,
-.provider-menu:has(.provider-change:focus-within) {
-
-  .providers {
-    overflow: scroll;
-    outline: 1px solid var(--color2);
-    max-height: 1000px;
-
-    p {
-      opacity: 1;
-    }
-
-    p:hover,
-    p.selected {
-      background-color: var(--color1);
-    }
-  }
-}
-
-.media-download {
-  display: none;
-}

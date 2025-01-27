@@ -15,6 +15,7 @@ app.get(['/', '/movie', '/tv'], (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
+
 app.get('/search', async (req, res) => {
   const query = req.query.q;
   res.render('search', { query });

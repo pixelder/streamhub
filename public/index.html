@@ -18,9 +18,9 @@
     <link rel="icon" href="icons/favicon.png" type="image/png">
     <script src="script.js" defer></script>
     <script src="utils.js" defer></script>
-    <script src="search.js" defer></script>
     <script src="history.js" defer></script>
     <script src="explore.js" defer></script>
+    <script src="listeners.js" defer></script>
 </head>
 
 <body>
@@ -31,7 +31,8 @@
                 <li><a href="/"></a></li>
                 <li><a onclick="loadExplorePage('movie')">Movies</a></li>
                 <li><a onclick="loadExplorePage('tv')">TV Shows</a></li>
-                <li><a href="#discover-streaming">What's Streaming</a></li>
+                <li><a href="/#discover-streaming">What's Streaming</a></li>
+                <li><a href="profile">Your Lists</a></li>
                 <form class="search-bar" onsubmit="return handleSearch(event)">
                     <input type="search" id="search-input" onsubmit="return handleSearch(event)" placeholder="Search" />
                     <i class="search-icon fa-solid fa-magnifying-glass"></i>
@@ -46,7 +47,7 @@
 
     <!-- Body Content -->
     <main id="main-content">
-        <section id="continue-watching">
+        <section id="continue-watching" data-type="history">
             <h2>Continue Watching</h2>
             <div class="grid-container"></div>
         </section>

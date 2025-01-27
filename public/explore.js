@@ -11,7 +11,7 @@ function loadExplorePage(mediaType) {
         console.log('active');
         window.location.href = `${loc()}`;
     });
-    
+    loc();
     isBrowsing = true;
     isMovie = mediaType === 'movie' ? true : false; 
     const main = document.querySelector('main');

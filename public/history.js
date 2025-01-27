@@ -33,7 +33,6 @@ function logExists(logtype, id, mediaType) {
 
 async function removeFromHistory(logType, id, mediaType, sno = null, eno = null) {
   const logs = getLogData(logType);
-  console.log(sno,eno);
   const updatedLogs = logs.filter(log =>
     !(Number(log.id) === id && log.mediaType === mediaType &&
       String(log.data.sno) === String(sno) && String(log.data.eno) === String(eno))
@@ -41,7 +40,6 @@ async function removeFromHistory(logType, id, mediaType, sno = null, eno = null)
 
   localStorage.setItem(logType, JSON.stringify(updatedLogs));
 
-  contWatching ? continueWatching() : '';
 }
 
 async function toggleBookmark(logtype,id, mediaType, sno = null, eno = null) {
@@ -59,19 +57,23 @@ async function toggleBookmark(logtype,id, mediaType, sno = null, eno = null) {
 async function fetchHistoryItems(section, items) {
   const container = section.querySelector('.grid-container');
   const htmlContent = [];
-
   for (const item of items.reverse()) {
     const { id, mediaType, data: { sno, eno } } = item;
-
     try {
       const { data } = await fetchMetaData(mediaType, id);
 
-      if (mediaType === "tv") {
-        const response = await fetch(`${BASE_URL}/tv/${id}/season/${sno}?api_key=${API_KEY}`);
-        const tvData = await response.json();
-        htmlContent.push(renderHistoryItems(data, item, tvData));
+      if (section.id === 'continue-watching' ) {
+        if ( mediaType === "tv") {
+          const response = await fetch(`${BASE_URL}/tv/${id}/season/${sno}?api_key=${API_KEY}`);
+          const tvData = await response.json();
+          htmlContent.push(renderHistoryItems(data, item, tvData));
+        } else {
+          htmlContent.push(renderHistoryItems(data, item));
+        }
       } else {
-        htmlContent.push(renderHistoryItems(data, item));
+        const resultItem = [data]
+        resultItem.forEach(res => res.media_type = mediaType)
+        htmlContent.push(renderGridItems(resultItem))
       }
     } catch (error) {
       console.error(`Error fetching data for item ID ${id}:`, error);
@@ -144,21 +146,23 @@ document.addEventListener('click' || 'keydown', (event) => {
 }); */
 
 
-function continueWatching() {
-  const section = document.getElementById('continue-watching');
-  const history = getLogData('history');
+function loadUserContent(sectionId,logType) {
+  const section = document.getElementById(sectionId);
+  const logData = getLogData(logType);
 
   if (section) {
-    if (history.length > 0) {
-      section.style.display = "flex";
-      fetchHistoryItems(section, history);
-      contWatching = true;
+    if (logData.length > 0) {
+      if (sectionId === 'continue-watching') {
+        contWatching = true;
+        section.style.display = "flex";
+      }
+      fetchHistoryItems(section, logData);
     } else {
-      section.style.display = "none"; // Hide section if history is empty
-      contWatching = false;
+      if (sectionId === 'continue-watching') {
+        section.style.display = "none"; // Hide section if history is empty
+        contWatching = false;
+      }
+      fetchHistoryItems(section, logData);
     }
   }
 }
-
-let contWatching = false;
-continueWatching();
