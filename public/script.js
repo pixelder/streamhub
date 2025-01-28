@@ -104,30 +104,31 @@ async function fetchContent(sectionId, url) {
   if (isFetching[sectionId]) return;
   
   try {
-    isFetching[sectionId] = true; // Set fetching flag to true
+    isFetching[sectionId] = true; // fetching for the sectionID
 
-    // Modify the URL to include the correct page number
     const pageUrl = `${url}${ !isBrowsing ? `&page=${pageNumbers[sectionId]}` : ''}`;
     const response = await fetch(pageUrl);
     const data = await response.json();
     const media_type = url.includes('/movie') ? 'movie' : 'tv';
-    currentPage = data.page;
     storedData[sectionId] = data.results; // Reset stored data for a new page
     storedData[sectionId].forEach(res => res.media_type = media_type);
+    
+    currentPage = data.page;
 
     const accumulatedResults = storedData[sectionId].slice(0, limit);
 
     populateSection(sectionId, accumulatedResults);
-    setupPagination(sectionId, url);
+    addPaginationButtons(sectionId, url);
+
   } catch (error) {
     console.error(`Error fetching data for ${sectionId}:`, error);
   } finally {
-    isFetching[sectionId] = false;
+    isFetching[sectionId] = false; // Done Fetching for sectionId
   }
 }
 
-// Set up pagination buttons for the section
-function setupPagination(sectionId, url) {
+
+function addPaginationButtons(sectionId, url) {
   const prevButton = document.querySelector(`#${sectionId} .prev-page`);
   const nextButton = document.querySelector(`#${sectionId} .next-page`);
 
@@ -162,13 +163,16 @@ document.addEventListener('DOMContentLoaded', () => {
     if (path === ('' || '/')) {
       window.onload = function() {
         loadSections()
-        loc();
         loadUserContent('continue-watching','history');
+        footerHTML();
+        loc();
       }
     } else if (path === '/movie') {
       loadExplorePage('movie');
+      footerHTML();
     } else if (path === '/tv') {
       loadExplorePage('tv');
+      footerHTML();
     }
   }
   handleRouting();

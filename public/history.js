@@ -4,7 +4,7 @@ function getLogData(logType) {
   return jsonData ? JSON.parse(jsonData) : [];
 }
 
-async function logWatchHistory(logType, id, mediaType, sno = null, eno = null) {
+async function logToLocalStorage(logType, id, mediaType, sno = null, eno = null) {
   const existingLogs = getLogData(logType);
   const logData = { sno, eno };
   const logIndex = existingLogs.findIndex( log => 
@@ -31,7 +31,7 @@ function logExists(logtype, id, mediaType) {
   return hasItem
 }
 
-async function removeFromHistory(logType, id, mediaType, sno = null, eno = null) {
+async function removeFromLocalStorage(logType, id, mediaType, sno = null, eno = null) {
   const logs = getLogData(logType);
   const updatedLogs = logs.filter(log =>
     !(Number(log.id) === id && log.mediaType === mediaType &&
@@ -47,16 +47,16 @@ async function toggleBookmark(logtype,id, mediaType, sno = null, eno = null) {
   contWatching = false;
   if( logExists(logtype, id, mediaType) ) {
     console.log('log exists')
-    removeFromHistory(logtype,Number(id),mediaType, sno, eno);
+    removeFromLocalStorage(logtype,Number(id),mediaType, sno, eno);
   } else {
-    logWatchHistory(logtype,id,mediaType, sno, eno)
+    logToLocalStorage(logtype,id,mediaType, sno, eno)
   }
   contWatching = temp;
 }
 
 async function fetchHistoryItems(section, items) {
   const container = section.querySelector('.grid-container');
-  const htmlContent = [];
+  const gridContent = [];
   for (const item of items.reverse()) {
     const { id, mediaType, data: { sno, eno } } = item;
     try {
@@ -66,21 +66,21 @@ async function fetchHistoryItems(section, items) {
         if ( mediaType === "tv") {
           const response = await fetch(`${BASE_URL}/tv/${id}/season/${sno}?api_key=${API_KEY}`);
           const tvData = await response.json();
-          htmlContent.push(renderHistoryItems(data, item, tvData));
+          gridContent.push(renderHistoryItems(data, item, tvData));
         } else {
-          htmlContent.push(renderHistoryItems(data, item));
+          gridContent.push(renderHistoryItems(data, item));
         }
       } else {
         const resultItem = [data]
         resultItem.forEach(res => res.media_type = mediaType)
-        htmlContent.push(renderGridItems(resultItem))
+        gridContent.push(renderGridItems(resultItem))
       }
     } catch (error) {
       console.error(`Error fetching data for item ID ${id}:`, error);
     }
   }
 
-  container.innerHTML = htmlContent.join(""); // Batch update the DOM
+  container.innerHTML = gridContent.join(""); // Batch update the DOM
 }
 
 

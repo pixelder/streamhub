@@ -71,23 +71,21 @@ async function handleSearch(event) {
 function populateSection(sectionId, items) {
   const container = document.querySelector(`#${sectionId} .grid-container`);
   
-  if (isBrowsing) {
-    currentPage++
-    const msg = document.querySelector('.result-message');
-    msg.classList.remove('show');
-    msg.querySelector('label').innerText = 'Loading...';
-    msg.style.display = 'flex';
-    container.innerHTML += renderGridItems(items);
-    if (items.length < 20) {
-      pageEnd = true;
-      msg.querySelector('label').innerText = 'No more results';
-      msg.classList.add('show');
-    } else {
-      msg.classList.remove('show');
-      msg.style.display = 'none';
-    }
+  if (!isBrowsing) return container.innerHTML = renderGridItems(items);
+  
+  currentPage++
+  const msg = document.querySelector('.result-message');
+  msg.classList.remove('show');
+  msg.querySelector('label').innerText = 'Loading...';
+  msg.style.display = 'flex';
+  container.innerHTML += renderGridItems(items);
+  if (items.length < 20) {
+    pageEnd = true;
+    msg.querySelector('label').innerText = 'No more results';
+    msg.classList.add('show');
   } else {
-    container.innerHTML = renderGridItems(items);
+    msg.classList.remove('show');
+    msg.style.display = 'none';
   }
 }
 
@@ -619,14 +617,12 @@ function footerHTML () {
             </li>
             <li><a href="/profile">
                     <i class="fa-solid fa-user"></i>                    
-                    <p>Your Lists</p>
+                    <p>You</p>
                 </a>
             </li>
         </ul>
   ` : '';
 }
-
-footerHTML();
 
 
 // Helper function to get element's position
@@ -646,7 +642,7 @@ let isScrollingDown = false;
 let hideTimeout;
 
 window.addEventListener('scroll', () => {
-  console.log('scrolling')
+
   const header = document.querySelector('header');
   const footer = document.querySelector('footer');
   const nav = document.querySelector("#header > nav > ul");

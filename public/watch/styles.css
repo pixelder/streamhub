@@ -17,6 +17,10 @@
   display: none;
 }
 
+.player-styling:focus-visible {
+  border: 2px inset var(--font-color1);
+}
+
 .player-styling {
   .episode-width {
     min-width: unset;
@@ -81,6 +85,10 @@
   .episode-items img {
     width: 15rem;
     border-radius: var(--border-radius1);
+  }
+
+  .episode-items img:focus-visible {
+    outline: 2px inset var(--font-color1);
   }
 
   .episode-items h3 {

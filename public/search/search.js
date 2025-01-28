@@ -4,20 +4,30 @@ const BASE_URL = 'https://api.tmdb.org/3';
 const IMAGE_URL = 'https://image.tmdb.org/t/p/w500';
 const IMAGE_ORG = 'https://image.tmdb.org/t/p/original'
 
+let contWatching = false
+
 async function getSearchResults(query) {
 
   document.getElementById('search-input').value = query;
   document.querySelector("title").innerText = query + ` - Pixelstream`
-  const movieUrl = `${BASE_URL}/search/movie?api_key=${API_KEY}&query=${encodeURIComponent(query)}`;
-  const tvUrl = `${BASE_URL}/search/tv?api_key=${API_KEY}&query=${encodeURIComponent(query)}`;
-  const personUrl = `${BASE_URL}/search/person?api_key=${API_KEY}&query=${encodeURIComponent(query)}`;
+
+  const params = new URLSearchParams({
+    api_key : API_KEY,
+    query : encodeURIComponent(query)
+  })
+  
+  const mediaType = [ 'movie', 'tv','person' ]
+
+  const searchUrls = Object.fromEntries(
+    mediaType.map( type => 
+      [ type, `${BASE_URL}/search/${type}?${params}`]
+    )
+  )
 
   try {
-    const [movie, tv, person] = await Promise.all([
-      fetch(movieUrl).then(res => res.json()),
-      fetch(tvUrl).then(res => res.json()),
-      fetch(personUrl).then(res => res.json())
-    ]);
+    const [movie, tv, person] = await Promise.all(
+      Object.values(searchUrls).map( url => fetch(url).then( res => res.json() ) )
+    );
 
     const mediaType = { movie, tv, person }
 
@@ -25,10 +35,15 @@ async function getSearchResults(query) {
       data.results.forEach(item => item.media_type = mediaType)
     })
 
-    const movieResults = movie.results.slice( 0, isMobile() ? 20 : 14)
-    const tvResults = tv.results.slice( 0, isMobile() ? 20 : 14) 
-    const personResults = person.results.slice( 0, isMobile() ? 20 : 14)
-    displaySearchResults({ movie: movieResults, tv: tvResults, person: personResults }, query);
+    const finalResults = Object.fromEntries(
+      Object.entries(mediaType).map(([mediaType,data]) => [
+        mediaType,
+        data.results.slice( 0, isMobile() ? 20 : 14)  
+      ])
+    )
+
+    console.log(finalResults)
+    displaySearchResults(finalResults, query);
   } catch (error) {
     console.error("Error fetching search results:", error);
   }
@@ -89,4 +104,8 @@ function renderProfile(items) {
       `;
     })
     .join('');
+}
+
+window.onload = function() {
+  footerHTML()
 }

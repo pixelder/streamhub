@@ -168,7 +168,7 @@ function loadSources(source, mediaType, id, season = null, episode = null) {
 
   wait(taskId, duration)
     .then(() => {
-      logWatchHistory('history', Number(id), mediaType, season, episode);
+      logToLocalStorage('history', Number(id), mediaType, season, episode);
       localStorage.setItem(id, source);
     })
     .catch((err) => {

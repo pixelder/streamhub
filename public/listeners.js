@@ -45,7 +45,7 @@ function globalAddEventListener (event) {
             const sectionId = section.id
             const logType = section.dataset.type
             console.log(sectionId,logType)
-            removeFromHistory(logType, Number(id), mediaType, sno, eno)
+            removeFromLocalStorage(logType, Number(id), mediaType, sno, eno)
             console.log('item removed')
             loadUserContent( sectionId, logType);
           }

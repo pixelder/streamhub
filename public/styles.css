@@ -82,7 +82,7 @@ header {
   box-shadow: 0 0 15px 5px var(--bg-color);
   backdrop-filter: blur(5px);
   transition: top 0.4s, height 0.2s, padding 0.3s ease-in-out;
-  z-index: 1;
+  z-index: 2;
 }
 
 
@@ -390,7 +390,6 @@ section .pagination-buttons>button {
   border-radius: var(--border-radius1);
   background-color: var(--color5);
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-  transform: scale(1);
   transition: scale 0.25s, border 0.25s, box-shadow 0.25s ease-in-out;
   /* box-shadow: 0 10px 24px rgba(0, 0, 0, 0.7); */
 }
@@ -436,6 +435,7 @@ section .pagination-buttons>button {
   overflow: hidden;
   text-overflow: ellipsis;
   max-width: 78%;
+  max-height: calc(0.875rem * 2);
 }
 
 .grid-rating {
