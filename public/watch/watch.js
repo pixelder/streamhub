@@ -2,6 +2,7 @@ const API_KEY = "213d830aae3a2f7b67e37f157405a42e";
 const BASE_URL = 'https://api.tmdb.org/3';
 const IMAGE_URL = 'https://image.tmdb.org/t/p/w500';
 
+
 let currentSeason = null;
 let currentEpisode = null;
 
@@ -10,9 +11,6 @@ function loadWatchPage(mediaType, name = null, id, tvData = null) {
   episode = tvData?.episode;
   currentSeason = season;
   currentEpisode = episode;
-  const title = `${mediaType === "movie" ? name : `S${season}:E${episode} ${name}`} - PixelStream`;
-  const info = `<h2>${name}</h2> ${mediaType === "movie" ? ""
-    : `<h4>S${season}:E${episode} ${tvData?.epname}</h4>`}`;
 
   const watchPage = document.querySelector("main");
 
@@ -58,8 +56,6 @@ function loadWatchPage(mediaType, name = null, id, tvData = null) {
       </div>
     </div>
   `;
-  document.querySelector("title").innerHTML = title;
-  document.querySelector(".now-playing").innerHTML = info;
 
   //display metadata on watch page
   fetchMetaData(mediaType, id).then(({ data }) => {
@@ -68,26 +64,37 @@ function loadWatchPage(mediaType, name = null, id, tvData = null) {
       const eno = episode;
       tvContent(data, sno, eno, ref = "player");
     };
+    const name = data.original_title ?? data.name;
+    
+    const title = `${mediaType === "movie" ? name : `S${season}:E${episode} ${name}`} - PixelStream`;
+    const info = `<h2>${name}</h2> ${mediaType === "movie" ? ""
+      : `<h4>S${season}:E${episode} ${tvData?.epname}</h4>`}`;
+
+    document.querySelector("title").innerText = title;
+    document.querySelector(".now-playing").innerHTML = info;
+    
+    history.replaceState('','',`/watch/${mediaType}/${id}/${name}${mediaType === 'tv' ? `/${season}/${episode}` : ''}`)
   });
 
-  // Initialize default source
-  let source = localStorage.getItem(id) | 1;
+  // set default source and load Iframe
+  let source = getLoggedSource(id) || 1;
   loadSources(source, mediaType, id, season, episode);
 
   // Add event listeners to dropdown items
   const sourceSelector = document.querySelectorAll('.providers p');
   sourceSelector.forEach(item => {
     item.addEventListener('click', () => {
-      const selectedSource = parseInt(item.getAttribute('data-source'), 10); // Ensure source is an integer
-      if (selectedSource && selectedSource !== source) {
-        source = selectedSource; // Update the source
-        loadSources(source, mediaType, id, currentSeason, currentEpisode);
-      }
+      const lastSource = item.classList.contains('selected');
+      source = Number(item.getAttribute('data-source'));
+      if (!lastSource) loadSources(source, mediaType, id, currentSeason, currentEpisode);
     });
   });
 
   // load utils
   cropToFit();
+
+  if ( mediaType === "movie" ) return;
+
   ['click','keydown'].forEach(eventType => {
     document.removeEventListener(eventType, watchEventListeners)  
     document.addEventListener(eventType, watchEventListeners)
@@ -98,6 +105,7 @@ function loadWatchPage(mediaType, name = null, id, tvData = null) {
 function loadSources(source, mediaType, id, season = null, episode = null) {
   loc();
   let src = "";
+  console.warn(source, `from loadSource`)
   switch (source) {
     case 1:
       src = `https://vidlink.pro/${mediaType}/${id}${season && episode ? `/${season}/${episode}` : ''}`;
@@ -124,7 +132,6 @@ function loadSources(source, mediaType, id, season = null, episode = null) {
       console.error("Invalid source selected");
       return;
   }
-
   const sourceSelector = document.querySelectorAll('.providers p');
   sourceSelector.forEach(item => {
     if (item.dataset.source === String(source)) {
@@ -161,7 +168,6 @@ function loadSources(source, mediaType, id, season = null, episode = null) {
         ></iframe>
         `;
   document.querySelector(".iframe-container").innerHTML = loadIframe;
- 
   const taskId = "logHistory";
   const duration = 120;
   cancel(taskId);
@@ -178,6 +184,10 @@ function loadSources(source, mediaType, id, season = null, episode = null) {
         console.error("Error:", err.message);
       }
     });
+}
+
+function getLoggedSource(id) {
+  return Number(localStorage.getItem(id))
 }
 
 function showIframe(iframe) {

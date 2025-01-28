@@ -234,7 +234,6 @@ async function fetchGenres(mediaType) {
                 }, 300);
             }
         });
-
         genreContainer.appendChild(chip);
     });
 }

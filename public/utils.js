@@ -347,10 +347,17 @@ async function tvContent(data, sno, eno, ref) {
 
 function watchEventListeners(event) {
   console.log('i ran');
-  if(event.type === 'click' || event.type === 'keydown' && event.key === 'Enter') {
+  if (event.type === 'click' || event.type === 'keydown' && event.key === 'Enter') {
     if (event.target.classList.contains("watch-btn")) {
-      const id = event.target.dataset.id;
-      const name = event.target.dataset.name;
+      
+      const sanitizedData = Object.fromEntries(
+        Object.entries(event.target.dataset).map(([key, data]) => [
+          key, escapeHTML(data)
+        ])
+      );
+
+      const { id, name } = sanitizedData
+
       const mediaType = "movie";
   
       //loadWatchPage(mediaType, name, id);
@@ -360,11 +367,15 @@ function watchEventListeners(event) {
   
     if (event.target.closest(".episode img")) {
       const episodeElement = event.target.closest(".episode");
-      const name = episodeElement.dataset.name;
-      const id = episodeElement.dataset.id;
-      const season = episodeElement.dataset.season;
-      const episode = episodeElement.dataset.episode;
-      const epname = episodeElement.dataset.epname;
+      
+      const sanitizedData = Object.fromEntries(
+        Object.entries(episodeElement.dataset).map(([key, data]) => [
+          key, escapeHTML(data)
+        ])
+      );
+
+      const { name, id, season, episode, epname } = sanitizedData;
+
       const mediaType = "tv";
       const title = `${mediaType === "movie" ? name : `S${season}:E${episode} ${name}`}`;
       const info = `<h2>${name}</h2>
@@ -374,8 +385,9 @@ function watchEventListeners(event) {
       if (document.getElementById('episode-container').classList.contains('player-styling')) {
         currentSeason = season;
         currentEpisode = episode;
-        loadSources(source = 1, mediaType, id, season, episode);
-        document.querySelector("title").innerHTML = title;
+        const source = getLoggedSource(id) || 1;
+        loadSources(source, mediaType, id, season, episode);
+        document.querySelector("title").innerText = title;
         if (info) { document.querySelector(".now-playing").innerHTML = info };
         window.history.pushState({}, '', `/watch/${mediaType}/${id}/${name}${season && episode ? `/${season}/${episode}` : ''}`);
         scrollEpisodeIntoView(episode);
@@ -389,6 +401,11 @@ function watchEventListeners(event) {
   }
 }
 
+function escapeHTML(str){
+  var p = document.createElement("p");
+  p.appendChild(document.createTextNode(str));
+  return p.innerHTML;
+}
 
 function scrollEpisodeIntoView(eno) {
   const episode = document.getElementById(eno);
