@@ -71,7 +71,7 @@ async function handleSearch(event) {
 function populateSection(sectionId, items) {
   const container = document.querySelector(`#${sectionId} .grid-container`);
   
-  if (!isBrowsing) return container.innerHTML = renderGridItems(items);
+  if (!isBrowsing) return container.innerHTML = renderGridItems(items)
   
   currentPage++
   const msg = document.querySelector('.result-message');
@@ -389,7 +389,7 @@ function watchEventListeners(event) {
       if (document.getElementById('episode-container').classList.contains('player-styling')) {
         currentSeason = season;
         currentEpisode = episode;
-        const source = getLoggedSource(id) || 1;
+        const source = getLoggedSource(Number(id)) || 1;
         
         loadSources(source, mediaType, Number(id), Number(season), Number(episode));
         
