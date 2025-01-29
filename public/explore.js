@@ -110,7 +110,7 @@ function loadExplorePage(mediaType) {
     window.addEventListener("scroll", () => {
         if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 50) {
             if ( !pageEnd ) {
-                console.log(currentPage)
+                console.log('loading page',currentPage)
                 loadDiscoverContent( '', '', mediaType,`browse-${mediaType}s`);
             }
         }

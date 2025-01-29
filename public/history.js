@@ -56,39 +56,67 @@ async function toggleBookmark(logtype,id, mediaType, sno = null, eno = null) {
 
 async function fetchHistoryItems(section, items) {
   const container = section.querySelector('.grid-container');
-  const gridContent = [];
-  for (const item of items.reverse()) {
+  const fragment = document.createDocumentFragment();
+  const existingItems = new Map();
+
+  // Store existing items for tracking (by unique key)
+  container.querySelectorAll("[data-id]").forEach(el => {
+    existingItems.set(el.dataset.id, el);
+  });
+
+  const newItems = new Set(items.map(item => item.id)); // Track current valid items
+  const promises = items.slice().reverse().map(async (item) => {
     const { id, mediaType, data: { sno, eno } } = item;
+
+    // Skip if already rendered and unchanged
+    if (existingItems.has(id)) {
+      existingItems.delete(id); // Mark as still valid
+      return;
+    }
+
     try {
       const { data } = await fetchMetaData(mediaType, id);
+      let content;
 
-      if (section.id === 'continue-watching' ) {
-        if ( mediaType === "tv") {
-          const response = await fetch(`${BASE_URL}/tv/${id}/season/${sno}?api_key=${API_KEY}`);
-          const tvData = await response.json();
-          gridContent.push(renderHistoryItems(data, item, tvData));
-        } else {
-          gridContent.push(renderHistoryItems(data, item));
-        }
+      if (section.id === 'continue-watching' && mediaType === "tv") {
+        const { data: tvData } = await fetchMetaData(mediaType, id, sno);
+        content = renderHistoryItems(data, item, tvData);
       } else {
-        const resultItem = [data]
-        resultItem.forEach(res => res.media_type = mediaType)
-        gridContent.push(renderGridItems(resultItem))
+        data.media_type = mediaType;
+        content = section.id === 'continue-watching'
+          ? renderHistoryItems(data, item)
+          : renderGridItems([data]);
       }
+
+      const wrapper = document.createElement("div");
+      wrapper.innerHTML = content;
+      const newElement = wrapper.firstElementChild;
+      newElement.dataset.id = id; // Set unique identifier
+      fragment.appendChild(newElement);
     } catch (error) {
       console.error(`Error fetching data for item ID ${id}:`, error);
     }
-  }
+  });
 
-  container.innerHTML = gridContent.join(""); // Batch update the DOM
+  await Promise.allSettled(promises);
+
+  // Remove old items that are no longer in the `items` list
+  existingItems.forEach((el, id) => {
+    if (!newItems.has(id)) {
+      el.remove();
+    }
+  });
+
+  container.appendChild(fragment); // Efficient DOM update
 }
+
 
 
 function renderHistoryItems(data, item, tvData) {
   const [id, mediaType] = [item.id, item.mediaType];
   const [sno, eno] = tvData? [item.data.sno, item.data.eno] : [null,null];
   const epData = tvData?.episodes[eno - 1];
-  //
+
   const image = !tvData
     ? data.backdrop_path ? `${IMAGE_URL}${data.backdrop_path}` : 'https://placehold.co/440x661/383852/ccc?text=No+Image'
     : (IMAGE_URL + epData.still_path);
@@ -149,20 +177,19 @@ document.addEventListener('click' || 'keydown', (event) => {
 function loadUserContent(sectionId,logType) {
   const section = document.getElementById(sectionId);
   const logData = getLogData(logType);
+  if (!section) return
 
-  if (section) {
-    if (logData.length > 0) {
-      if (sectionId === 'continue-watching') {
-        contWatching = true;
-        section.style.display = "flex";
-      }
-      fetchHistoryItems(section, logData);
-    } else {
-      if (sectionId === 'continue-watching') {
-        section.style.display = "none"; // Hide section if history is empty
-        contWatching = false;
-      }
-      fetchHistoryItems(section, logData);
+  if (logData.length > 0) {
+    if (sectionId === 'continue-watching') {
+      contWatching = true;
+      section.style.display = "flex";
     }
+    fetchHistoryItems(section, logData);
+  } else {
+    if (sectionId === 'continue-watching') {
+      section.style.display = "none"; // Hide section if history is empty
+      contWatching = false;
+    }
+    fetchHistoryItems(section, logData);
   }
 }

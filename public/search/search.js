@@ -42,7 +42,6 @@ async function getSearchResults(query) {
       ])
     )
 
-    console.log(finalResults)
     displaySearchResults(finalResults, query);
   } catch (error) {
     console.error("Error fetching search results:", error);

@@ -508,7 +508,6 @@ section .pagination-buttons>button {
 }
 
 .grid-options.open {
-  backdrop-filter: blur(5px);
 
   .options-icon {
     opacity: 0;
@@ -1023,7 +1022,6 @@ section .pagination-buttons>button {
   .grid-options.open {
     border: 1px solid #383852e5;
     background-color: #0d0d1bbb;
-    backdrop-filter: blur(5px);
     width: fit-content;
 
     /* .options-buttons {

@@ -131,13 +131,14 @@ function renderGridItems(items) {
 }
 
 //fetch Metadata
-async function fetchMetaData(mediaType, id) {
+async function fetchMetaData(mediaType, id, season) {
+
   try {
     let url;
     if (mediaType === "movie") {
       url = `${BASE_URL}/movie/${id}?api_key=${API_KEY}&language=en-US&append_to_response=videos,release_dates,credits,images&include_image_language=en`;
     } else if (mediaType === "tv") {
-      url = `${BASE_URL}/tv/${id}?api_key=${API_KEY}&language=en-US&append_to_response=content_ratings,credits,images&include_image_language=en`;
+      url = `${BASE_URL}/tv/${id}${ season ? `/season/${season}` : '' }?api_key=${API_KEY}&language=en-US&append_to_response=content_ratings,credits,images&include_image_language=en`;
     } else if (mediaType === "person") {
       url = `${BASE_URL}/person/${id}?api_key=${API_KEY}&language=en-US`;
     }
@@ -153,8 +154,7 @@ async function fetchMetaData(mediaType, id) {
 function openModal(event) {
   const gridItem = event.target.closest('.grid-item, .profile-item');
   const id = gridItem?.dataset.id; // Get the ID of the item
-  console.log(id)
-  const sectionId = gridItem?.closest('section')?.id; // Find the parent section's ID
+  //const sectionId = gridItem?.closest('section')?.id; // Find the parent section's ID
   const mediaType =  gridItem?.dataset?.mediaType ?? gridItem?.closest('section')?.dataset?.type ;
   console.log(mediaType, id)
   if (gridItem && !mediaType || !id) {
@@ -173,7 +173,6 @@ function displayModal(mediaType, data) {
   const modalContent = document.querySelector(".modal-content");
   const details = document.getElementById('modal-details');
   const id = data.id;
-  console.log(id)
   const name = data.name || data.title || data.original_title;
   const cast = data.credits?.cast.map(cast => cast.name).slice(0, 5).join(", ");
   const rated = mediaType === "movie"
@@ -270,6 +269,7 @@ function displayModal(mediaType, data) {
 
 async function tvContent(data, sno, eno, ref) {
   const seasons = data.seasons.reverse();
+  const id = data.id
   sno === null ? sno = -1 : "";
   const containerClass = ref === "modal" ? "episode-wrap" : "episode-player";
   const tvInfo = `
@@ -301,8 +301,8 @@ async function tvContent(data, sno, eno, ref) {
   const displaySeasonInfo = async (event) => {
     const selectedSeason = event.target.value;
     try {
-      const response = await fetch(`${BASE_URL}/tv/${data.id}/season/${selectedSeason}?api_key=${API_KEY}`);
-      seasonData = await response.json();
+      const { data } = await fetchMetaData('tv',id,selectedSeason);
+      seasonData = data
       episodeContainer.innerHTML = seasonData.episodes
         .map(episode => `
           <div id="${episode.episode_number}" class="episode episode-width" data-name="${data.name}" data-id="${data.id}" data-season="${selectedSeason}" data-episode="${episode.episode_number}" data-epname="${episode.name}">
@@ -361,7 +361,7 @@ function watchEventListeners(event) {
       const mediaType = "movie";
   
       //loadWatchPage(mediaType, name, id);
-      window.location.href = `/watch/${mediaType}/${id}/${name}`;
+      window.location.href = `/watch/${mediaType}/${Number(id)}/${Number(name)}`;
       event.stopPropagation();
     }
   
@@ -374,9 +374,13 @@ function watchEventListeners(event) {
         ])
       );
 
-      const { name, id, season, episode, epname } = sanitizedData;
-
       const mediaType = "tv";
+
+      const { name, id, season, episode, epname } = sanitizedData;
+      //console.log( id, season, episode)
+      //sourceValidator(mediaType, id, season, episode)
+
+
       const title = `${mediaType === "movie" ? name : `S${season}:E${episode} ${name}`}`;
       const info = `<h2>${name}</h2>
                     <h4>S${season}:E${episode} ${epname}</h4>`;
@@ -386,10 +390,13 @@ function watchEventListeners(event) {
         currentSeason = season;
         currentEpisode = episode;
         const source = getLoggedSource(id) || 1;
-        loadSources(source, mediaType, id, season, episode);
+        
+        loadSources(source, mediaType, Number(id), Number(season), Number(episode));
+        
+        window.history.pushState({}, '', `/watch/${mediaType}/${Number(id)}/${name}${season && episode ? `/${Number(season)}/${Number(episode)}` : ''}`);
         document.querySelector("title").innerText = title;
         if (info) { document.querySelector(".now-playing").innerHTML = info };
-        window.history.pushState({}, '', `/watch/${mediaType}/${id}/${name}${season && episode ? `/${season}/${episode}` : ''}`);
+        
         scrollEpisodeIntoView(episode);
       }
       else {
@@ -405,6 +412,13 @@ function escapeHTML(str){
   var p = document.createElement("p");
   p.appendChild(document.createTextNode(str));
   return p.innerHTML;
+}
+
+async function sourceValidator( mediaType, id, season = null, eno = null) {
+  const { data }  = await fetchMetaData(mediaType,id,season)
+  const episode = data.episodes.filter(ep => ep.episode_number === Number(eno))[0].episode_number
+
+  return { id : Number(id), season : data.season_number, episode }
 }
 
 function scrollEpisodeIntoView(eno) {

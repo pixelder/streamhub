@@ -582,7 +582,7 @@
         overflow: scroll;
         max-height: 70% !important;
         padding: 12px;
-        backdrop-filter: blur(15px);
+        backdrop-filter: blur(10px);
     }
 
     .modal-content::before {

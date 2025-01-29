@@ -65,7 +65,7 @@ function loadWatchPage(mediaType, name = null, id, tvData = null) {
       tvContent(data, sno, eno, ref = "player");
     };
     const name = data.original_title ?? data.name;
-    
+
     const title = `${mediaType === "movie" ? name : `S${season}:E${episode} ${name}`} - PixelStream`;
     const info = `<h2>${name}</h2> ${mediaType === "movie" ? ""
       : `<h4>S${season}:E${episode} ${tvData?.epname}</h4>`}`;
@@ -165,6 +165,7 @@ function loadSources(source, mediaType, id, season = null, episode = null) {
           style="display: none;"
           onload="showIframe(this)"
           class="iframe"
+          sandbox
         ></iframe>
         `;
   document.querySelector(".iframe-container").innerHTML = loadIframe;
