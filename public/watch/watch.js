@@ -59,11 +59,7 @@ function loadWatchPage(mediaType, name = null, id, tvData = null) {
 
   //display metadata on watch page
   fetchMetaData(mediaType, id).then(({ data }) => {
-    if (mediaType == 'tv') {
-      const sno = season;
-      const eno = episode;
-      tvContent(data, sno, eno, ref = "player");
-    }
+    
     const name = data.original_title ?? data.name;
 
     const title = `${mediaType === "movie" ? name : `S${season}:E${episode} ${name}`} - PixelStream`;
@@ -74,6 +70,12 @@ function loadWatchPage(mediaType, name = null, id, tvData = null) {
     document.querySelector(".now-playing").innerHTML = info;
     
     history.replaceState('','',`/watch/${mediaType}/${id}/${name}${mediaType === 'tv' ? `/${season}/${episode}` : ''}`)
+  
+    if (mediaType == 'tv') {
+      const sno = season;
+      const eno = episode;
+      tvContent(data, sno, eno, ref = "player");
+    }
   });
 
   // set default source and load Iframe
