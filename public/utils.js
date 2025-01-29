@@ -131,7 +131,7 @@ function renderGridItems(items) {
 }
 
 //fetch Metadata
-async function fetchMetaData(mediaType, id, season) {
+async function fetchMetaData(mediaType, id, season = null) {
 
   try {
     let url;
