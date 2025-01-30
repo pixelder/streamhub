@@ -6,21 +6,29 @@ function getLogData(logType) {
 
 async function logToLocalStorage(logType, id, mediaType, sno = null, eno = null) {
   const existingLogs = getLogData(logType);
-  const logData = { sno, eno };
-  const logIndex = existingLogs.findIndex( log => 
-    Number(log.id) === Number(id) && log.mediaType === mediaType
-  )
-  
-  if (logIndex !== -1) {
-    if (JSON.stringify(existingLogs[logIndex].data) !== JSON.stringify(logData)) {
-      existingLogs[logIndex].data = logData;
-    }
-  } else {
-    const newLog = { id: Number(id), mediaType, data: logData };
+  const tvData = { sno, eno };
+  const newLog = { id: Number(id), mediaType, data: tvData };
+
+  if (logType === 'history') {
     existingLogs.push(newLog);
+    localStorage.setItem(logType, JSON.stringify(existingLogs));
+    return
   }
+  
+  if (logExists(logType, id, mediaType)) {
+    removeFromLocalStorage(logType, Number(id), mediaType, sno, eno)
+  }
+  existingLogs.push(newLog);
 
   localStorage.setItem(logType, JSON.stringify(existingLogs));
+}
+
+function fixLog() {
+  if ( localStorage.getItem('watching') !== null ) return
+
+  const historyData = getLogData('history') // old history log
+  localStorage.removeItem('history')
+  localStorage.setItem('watching', JSON.stringify(historyData));
 }
 
 function logExists(logtype, id, mediaType) {
@@ -78,13 +86,13 @@ async function fetchHistoryItems(section, items) {
       const { data } = await fetchMetaData(mediaType, id);
       let content;
 
-      if (section.id === 'continue-watching' && mediaType === "tv") {
+      if (section.id !== 'bookmarks' && mediaType === "tv") {
         const { data: tvData } = await fetchMetaData(mediaType, id, sno);
-        content = renderHistoryItems(data, item, tvData);
+        content = renderLogItems(data, item, tvData);
       } else {
         data.media_type = mediaType;
-        content = section.id === 'continue-watching'
-          ? renderHistoryItems(data, item)
+        content = section.id !== "bookmarks"
+          ? renderLogItems(data, item)
           : renderGridItems([data]);
       }
 
@@ -111,9 +119,7 @@ async function fetchHistoryItems(section, items) {
   container.appendChild(fragment); // Efficient DOM update
 }
 
-
-
-function renderHistoryItems(data, item, tvData) {
+function renderLogItems(data, item, tvData) {
   const [id, mediaType] = [item.id, item.mediaType];
   const [sno, eno] = tvData? [item.data.sno, item.data.eno] : [null,null];
   const epData = tvData?.episodes[eno - 1];
@@ -178,22 +184,22 @@ document.addEventListener('click' || 'keydown', (event) => {
 function loadUserContent(sectionId,logType) {
   const section = document.getElementById(sectionId);
   const container = section?.querySelector('.grid-container')
-  const logData = getLogData(logType);
+  const tvData = getLogData(logType);
   if (!section) return
 
-  if (logData.length > 0) {
+  if (tvData.length > 0) {
     if (sectionId === 'continue-watching') {
       contWatching = true;
       section.style.display = "flex";
     }
-    fetchHistoryItems(section, logData);
+    fetchHistoryItems(section, tvData);
   } else {
     if (sectionId === 'continue-watching') {
       section.style.display = "none"; // Hide section if history is empty
       contWatching = false;
     }
     container.classList.add('empty')
-    fetchHistoryItems(section, logData);
+    fetchHistoryItems(section, tvData);
   }
 }
 

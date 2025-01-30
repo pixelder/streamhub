@@ -1,4 +1,4 @@
-#bookmarks {
+#bookmarks, #history {
   .grid-container {
     min-height: unset;
     display: grid;
@@ -6,29 +6,30 @@
 
     .filler {
       display: none;
+      aspect-ratio: 1 / 0.2;
     }
   }
-
+  
   .grid-container.empty {
     display: flex;
     
     .filler {
-      min-height: 8rem;
       display: flex;
       flex-direction: column;
       place-content: center;
       width: 100%;
-      aspect-ratio: 1 / 0.2;
       background: var(--color5);
       border-radius: var(--border-radius1);
-      color: var(--color1);
+      color: #757592;
       text-shadow: none;
-      fill: var(--color1);
     }
 
     .icon {
       display: flex;
-      width: 2.5rem;
+      width: 2.4rem;
+      place-content: center;
+      aspect-ratio: 1 / 1;
+      font-size: 1.8rem;
       margin: 0 auto;
     }
 
@@ -38,8 +39,16 @@
   }
 }
 
+#history {
+  .grid-container {
+    .filler {
+      aspect-ratio: 1 / 0.14;
+    }
+  }
+}
+
 @media (max-width: 767px) {
-  #bookmarks {
+  #bookmarks, #history {
     .grid-container {
       margin-top: 0.24rem ;
       display: grid;
@@ -55,6 +64,15 @@
     .grid-item {
       flex: 1 1 auto;
       min-width: unset;
+    }
+  }
+
+  #history {
+    .grid-container {
+      .filler {
+        aspect-ratio: unset;
+        max-height: 6.6rem;
+      }
     }
   }
 }

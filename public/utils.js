@@ -145,6 +145,7 @@ async function fetchMetaData(mediaType, id, season = null) {
     } else if (mediaType === "person") {
       url = `${BASE_URL}/person/${id}?api_key=${API_KEY}&language=en-US`;
     }
+    // console.log(url)
     const response = await fetch(url);
     const data = await response.json();
     return { data, mediaType };
@@ -170,6 +171,14 @@ function openModal(event) {
   });
 }
 
+function getCountryCertification(data, mediaType) {
+  const country = data.origin_country[0] || "US";
+  const rated = mediaType === "movie"
+  ? data.release_dates?.results?.find((item) => item.iso_3166_1 === (country || "US"))?.release_dates[0].certification
+  : data.content_ratings?.results?.find((item) => item.iso_3166_1 === (country || "US"))?.rating || "";
+  return {country, rated}
+} 
+
 // Display modal with fetched data
 function displayModal(mediaType, data) {
   const modal = document.getElementById('info-modal');
@@ -178,9 +187,7 @@ function displayModal(mediaType, data) {
   const id = data.id;
   const name = data.name || data.title || data.original_title;
   const cast = data.credits?.cast.map(cast => cast.name).slice(0, 5).join(", ");
-  const rated = mediaType === "movie"
-    ? data.release_dates?.results?.find((item) => item.iso_3166_1 === "US")?.release_dates[0].certification
-    : data.content_ratings?.results?.find((item) => item.iso_3166_1 === "US")?.rating || "";
+  const { country, rated } = getCountryCertification(data, mediaType) 
   const logo = data.images?.logos?.[0]?.file_path
     ? `<span>
           <div class="modal-info-logo">
@@ -486,28 +493,28 @@ function scrollEpisodeIntoView(eno) {
 
 }
 
-async function cappedOverview() {
-  const synopsis = document.querySelectorAll('.synopsis');
-  synopsis.forEach(synopsis => {
-    const text = synopsis.querySelector('.overview');
+let isListenerAttached = false; // Prevent multiple event listeners
 
-    // Check if the text content overflows
-    const isOverflowing = text.scrollHeight - 10 > text.offsetHeight;
-    if (isOverflowing) {
+function cappedOverview() {
+  document.querySelectorAll('.synopsis .overview').forEach(text => {
+    if (text.scrollHeight > text.offsetHeight + 5) {
       text.style.maskImage = "linear-gradient(to bottom, black, black 70%, transparent 98%)";
     }
-
-    const overview = (e) => {
-      const container = e.target.closest('.synopsis')
-      if ( container ) {
-        container.classList.toggle('expanded');
-        e.stopPropagation()
-      }
-    }
-    document.removeEventListener('click', overview)
-    document.addEventListener('click', overview);
   });
+
+  if (!isListenerAttached) {
+    document.addEventListener('click', (e) => {
+      const container = e.target.closest('.synopsis');
+      if (container) {
+        container.classList.toggle('expanded');
+        e.stopPropagation();
+      }
+    });
+
+    isListenerAttached = true;
+  }
 }
+
 
 function shareItem(mediaType, id, name) {
   const shareData = {

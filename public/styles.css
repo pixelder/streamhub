@@ -948,9 +948,11 @@ section .pagination-buttons>button {
   }
 }
 
-/* Continue Watching */
 #continue-watching {
   display: none;
+}
+/* Continue Watching */
+#continue-watching, #history {
 
   .grid-container {
     width: 100%;
@@ -1138,14 +1140,20 @@ section .pagination-buttons>button {
   padding: 0;
 }
 
-#search-results>section {
-  margin: 0;
-  margin-bottom: 1.4rem;
-  display: flex;
-  flex-wrap: wrap;
-  flex: 1;
-  gap: 12px;
-  justify-content: flex-start;
+#search-results {
+  section {
+    display: none;
+    margin: 0;
+    margin-bottom: 1.4rem;
+    flex-wrap: wrap;
+    flex: 1;
+    gap: 12px;
+    justify-content: flex-start;
+  }
+  
+  section:has(.grid-item, .profile-item) {
+    display: flex;
+  }
 }
 
 #search-results>section>h3 {

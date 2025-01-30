@@ -159,20 +159,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function handleRouting() {
     const path = window.location.pathname;
-
-    if (path === ('' || '/')) {
-      window.onload = function() {
-        loadSections()
-        loadUserContent('continue-watching','history');
-        footerHTML();
-        loc();
-      }
-    } else if (path === '/movie') {
+    if (path === '/movie') {
       loadExplorePage('movie');
       footerHTML();
     } else if (path === '/tv') {
       loadExplorePage('tv');
       footerHTML();
+    } else if (path === ('' || '/')) {
+      window.onload = function() {
+        loadSections()
+        fixLog()
+        loadUserContent('continue-watching','watching');
+        footerHTML();
+        loc();
+      }
     }
   }
   handleRouting();

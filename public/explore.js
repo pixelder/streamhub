@@ -240,9 +240,9 @@ async function fetchGenres(mediaType) {
 
 async function fetchCountriesAndLanguages() {
     // Fetch countries
-    const countryResponse = await fetch(`https://api.themoviedb.org/3/configuration/countries??language=en-US&api_key=${API_KEY}`);
+    const countryResponse = await fetch(`https://api.themoviedb.org/3/configuration/countries?language=en-US&api_key=${API_KEY}`);
     const countries = await countryResponse.json();
-    const counteryList = ['AS','US','AU', 'GB', 'IE', 'JP', 'KO', 'IN', 'RU', 'MX', 'FR', 'DE',]
+    const counteryList = ['AS','US','AU', 'GB', 'IE', 'JP', 'KO', 'IN', 'RU', 'MX', 'FR', 'DE',];
     const countrySelect = document.getElementById('countryFilter');
     countries.forEach(country => {
         if ( counteryList.includes(country.iso_3166_1) ) {
