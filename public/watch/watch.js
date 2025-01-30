@@ -60,7 +60,7 @@ function loadWatchPage(mediaType, name = null, id, tvData = null) {
   //display metadata on watch page
   fetchMetaData(mediaType, id).then(({ data }) => {
     
-    const name = data.original_title ?? data.name;
+    const name = data.original_title ?? data.name
 
     const title = `${mediaType === "movie" ? name : `S${season}:E${episode} ${name}`} - PixelStream`;
     const info = `<h2>${name}</h2> ${mediaType === "movie" ? ""
