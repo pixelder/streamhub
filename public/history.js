@@ -107,6 +107,7 @@ async function fetchHistoryItems(section, items) {
     }
   });
 
+  container.classList.remove('loading')
   container.appendChild(fragment); // Efficient DOM update
 }
 
@@ -176,6 +177,7 @@ document.addEventListener('click' || 'keydown', (event) => {
 
 function loadUserContent(sectionId,logType) {
   const section = document.getElementById(sectionId);
+  const container = section?.querySelector('.grid-container')
   const logData = getLogData(logType);
   if (!section) return
 
@@ -190,6 +192,11 @@ function loadUserContent(sectionId,logType) {
       section.style.display = "none"; // Hide section if history is empty
       contWatching = false;
     }
+    container.classList.add('empty')
     fetchHistoryItems(section, logData);
   }
+}
+
+function resetHistory(logtype){
+  localStorage.removeItem(logtype);
 }

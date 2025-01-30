@@ -167,7 +167,6 @@ function loadSources(source, mediaType, id, season = null, episode = null) {
           style="display: none;"
           onload="showIframe(this)"
           class="iframe"
-          sandbox
         ></iframe>
         `;
   document.querySelector(".iframe-container").innerHTML = loadIframe;

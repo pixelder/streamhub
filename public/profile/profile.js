@@ -7,7 +7,7 @@ const OPTIONS = 'include_adult=false&include_null_first_air_dates=false&language
 let isBrowsing = false;
 
 function loadProfile() {
-  window.history.replaceState('','','/profile')
+  //window.history.replaceState('','','/profile')
   loadUserContent('continue-watching', 'history')
   loadUserContent('bookmarks','bookmarks')
 }

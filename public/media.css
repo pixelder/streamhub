@@ -193,6 +193,12 @@
         padding: 0 0 0rem 0rem;
     }
 
+    .grid-container.loading {
+        .filler {
+            aspect-ratio: 1 / 0.5;
+        }
+    }
+
     .grid-item {
         aspect-ratio: unset;
         max-width: calc((100dvw - 1.2rem - 0.72rem) / 3);;

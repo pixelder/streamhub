@@ -359,10 +359,6 @@ section .pagination-buttons>button {
   font-size: 12px;
 }
 
-#trending-movies,
-#trending-series {
-  min-height: 18rem;
-}
 
 /* Grid Layout */
 
@@ -374,9 +370,39 @@ section .pagination-buttons>button {
   grid-template-columns: repeat(7, minmax(0, 1fr));
   justify-content: center;
   gap: 0.8125rem;
-  min-height: 5rem;
+
+  .filler {
+    display: none;
+  }
 }
 
+.grid-container.loading {
+  display: grid;
+  grid-template-columns: repeat(1, minmax(0, 1fr));
+
+  .filler {
+    display: flex;
+    flex-direction: column;
+    place-content: center;
+    width: 100%;
+    aspect-ratio: 1 / 0.22;
+    background: var(--color5);
+    border-radius: var(--border-radius1);
+    color: var(--color1);
+    text-shadow: none;
+    fill: var(--color1);
+  }
+
+  .icon {
+    display: flex;
+    width: 2.5rem;
+    margin: 0 auto;
+  }
+
+  .message {
+    margin: 0 auto;
+  }
+}
 
 .grid-item {
   visibility: visible;

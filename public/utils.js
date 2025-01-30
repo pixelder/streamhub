@@ -70,8 +70,11 @@ async function handleSearch(event) {
 // Populate a section with content
 function populateSection(sectionId, items) {
   const container = document.querySelector(`#${sectionId} .grid-container`);
-  
-  if (!isBrowsing) return container.innerHTML = renderGridItems(items)
+  if (!isBrowsing) {
+    container.innerHTML = renderGridItems(items)
+    container.classList.remove('loading');
+    return
+  }
   
   currentPage++
   const msg = document.querySelector('.result-message');
@@ -301,8 +304,8 @@ async function tvContent(data, sno, eno, ref) {
   const displaySeasonInfo = async (event) => {
     const selectedSeason = event.target.value;
     try {
-      const { data } = await fetchMetaData('tv',id,selectedSeason);
-      seasonData = data
+      const { data: tvData} = await fetchMetaData('tv',id,selectedSeason);
+      seasonData = tvData
       episodeContainer.innerHTML = seasonData.episodes
         .map(episode => `
           <div id="${episode.episode_number}" class="episode episode-width" data-name="${data.name}" data-id="${data.id}" data-season="${selectedSeason}" data-episode="${episode.episode_number}" data-epname="${episode.name}">
@@ -357,11 +360,11 @@ function watchEventListeners(event) {
       );
 
       const { id, name } = sanitizedData
-
+      console.log( id, name)
       const mediaType = "movie";
   
       //loadWatchPage(mediaType, name, id);
-      window.location.href = `/watch/${mediaType}/${Number(id)}/${Number(name)}`;
+      window.location.href = `/watch/${mediaType}/${Number(id)}/${name}`;
       event.stopPropagation();
     }
   

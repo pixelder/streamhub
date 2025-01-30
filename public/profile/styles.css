@@ -3,6 +3,38 @@
     min-height: unset;
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(10rem, 1fr));
+
+    .filler {
+      display: none;
+    }
+  }
+
+  .grid-container.empty {
+    display: flex;
+    
+    .filler {
+      min-height: 8rem;
+      display: flex;
+      flex-direction: column;
+      place-content: center;
+      width: 100%;
+      aspect-ratio: 1 / 0.2;
+      background: var(--color5);
+      border-radius: var(--border-radius1);
+      color: var(--color1);
+      text-shadow: none;
+      fill: var(--color1);
+    }
+
+    .icon {
+      display: flex;
+      width: 2.5rem;
+      margin: 0 auto;
+    }
+
+    .message {
+      margin: 0 auto;
+    }
   }
 }
 
@@ -12,6 +44,12 @@
       margin-top: 0.24rem ;
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(6.5rem, 1fr));
+    }
+
+    .grid-container.empty {
+      .filler {
+        aspect-ratio: 1 / 0.53;
+      }
     }
     
     .grid-item {
