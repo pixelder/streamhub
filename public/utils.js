@@ -642,29 +642,36 @@ function footerHTML () {
   const footer = document.querySelector('footer')
   footer ? footer.innerHTML = `
     <ul>
-            <li><a href="/">
+            <li><a href="/" id="home" onclick=setActiveIcon(this.id)>
                 <i class="fa-solid fa-house"></i>
                 <p>Home</p>
                 </a>
             </li>
-            <li><a href="/movie">
+            <li><a href="/movie" id="movie" onclick=setActiveIcon(this.id)>
                     <i class="fa-solid fa-film"></i>
                     <p>Movies</p>
                 </a></li>
-            <li><a href="/tv">
+            <li><a href="/tv" id="tv" onclick=setActiveIcon(this.id)>
                     <i class="fa-solid fa-display"></i>                    
                     <p>TV</p>
                 </a>
             </li>
-            <li><a href="/profile">
+            <li><a href="/profile" id="profile" onclick=setActiveIcon(this.id)>
                     <i class="fa-solid fa-user"></i>                    
                     <p>You</p>
                 </a>
             </li>
         </ul>
   ` : '';
+
 }
 
+function setActiveIcon(button) {
+  const footer = document.querySelector('footer')
+  footer.querySelectorAll('a').forEach(btn => btn.classList.remove('active'))
+  const active = document.getElementById(button);
+  active.classList.add('active')
+}
 
 // Helper function to get element's position
 function isElementInView(element) {

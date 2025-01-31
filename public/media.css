@@ -136,6 +136,7 @@
                 font-size: 1.3rem;
                 aspect-ratio: 1 / 1;
                 height: 100%;
+                opacity: 0.5;
                 
                 p {
                     font-size: 0.66rem;
@@ -147,6 +148,9 @@
                     aspect-ratio: 1 / 1;
                     
                 }
+            }
+            li a.active {
+                opacity: 1;
             }
         }
     }
@@ -199,14 +203,13 @@
     }
 
     .grid-container.loading {
-        .filler {
-            aspect-ratio: 1 / 0.5;
-        }
+        display: grid;
+        grid-template-rows: repeat(1, 50vw);
     }
 
     .grid-item {
         aspect-ratio: unset;
-        max-width: calc((100dvw - 1.2rem - 0.72rem) / 3);;
+        max-width: calc((100dvw - 1.2rem - 0.72rem) / 3);
         min-width: calc((100dvw - 1.2rem - 0.72rem) / 3);
         padding: 0.36rem;
         border-radius: var(--border-radius1);

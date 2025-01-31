@@ -56,8 +56,13 @@
     }
 
     .grid-container.empty {
+      display: grid;
+      grid-template-columns: repeat(1, 1fr);
+      grid-template-rows: repeat(auto-fill, minmax(13rem, 1fr));
       .filler {
-        aspect-ratio: 1 / 0.53;
+        grid-column: span 1;
+        height: 100%;
+        /* aspect-ratio: 1 / 0.53; */
       }
     }
     
@@ -68,9 +73,12 @@
   }
 
   #history {
-    .grid-container {
+    .grid-container.empty {
+      display: grid;
+      grid-template-columns: repeat(1, 1fr);
+      grid-template-rows: none;
       .filler {
-        aspect-ratio: unset;
+        aspect-ratio: 1 / 0.53;
         max-height: 6.6rem;
       }
     }

@@ -127,7 +127,6 @@ async function fetchContent(sectionId, url) {
   }
 }
 
-
 function addPaginationButtons(sectionId, url) {
   const prevButton = document.querySelector(`#${sectionId} .prev-page`);
   const nextButton = document.querySelector(`#${sectionId} .next-page`);
@@ -154,7 +153,6 @@ function addPaginationButtons(sectionId, url) {
   });
 }
 
-
 document.addEventListener('DOMContentLoaded', () => {
 
   function handleRouting() {
@@ -162,15 +160,18 @@ document.addEventListener('DOMContentLoaded', () => {
     if (path === '/movie') {
       loadExplorePage('movie');
       footerHTML();
+      setActiveIcon('movie')
     } else if (path === '/tv') {
       loadExplorePage('tv');
       footerHTML();
+      setActiveIcon('tv')
     } else if (path === ('' || '/')) {
       window.onload = function() {
         loadSections()
         fixLog()
         loadUserContent('continue-watching','watching');
         footerHTML();
+        setActiveIcon('home')
         loc();
       }
     }

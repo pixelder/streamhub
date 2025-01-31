@@ -16,4 +16,5 @@ function loadProfile() {
 window.onload = function() {
   loadProfile()
   footerHTML()
+  setActiveIcon('profile')
 }

@@ -107,4 +107,5 @@ function renderProfile(items) {
 
 window.onload = function() {
   footerHTML()
+  setActiveIcon('')
 }
