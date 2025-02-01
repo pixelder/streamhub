@@ -165,7 +165,7 @@ document.addEventListener('DOMContentLoaded', () => {
       loadExplorePage('tv');
       footerHTML();
       setActiveIcon('tv')
-    } else if (path === ('' || '/')) {
+    } else if (path === '' || path === '/') {
       window.onload = function() {
         loadSections()
         fixLog()
