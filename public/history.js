@@ -5,21 +5,22 @@ function getLogData(logType) {
 }
 
 async function logToLocalStorage(logType, id, mediaType, sno = null, eno = null) {
-  const existingLogs = getLogData(logType);
-  const tvData = { sno, eno };
-  const newLog = { id: Number(id), mediaType, data: tvData };
+  let existingLogs = getLogData(logType);
+  const newLog = { id: Number(id), mediaType, data: { sno, eno } };
 
   if (logType === 'history') {
     existingLogs.push(newLog);
     localStorage.setItem(logType, JSON.stringify(existingLogs));
     return
   }
-  
-  if (logExists(logType, id, mediaType)) {
-    removeFromLocalStorage(logType, Number(id), mediaType, sno, eno)
-  }
-  existingLogs.push(newLog);
 
+  if (logExists(logType, id, mediaType)) {
+    const logs = existingLogs.find(log => Number(log.id) === Number(id) && log.mediaType === mediaType)
+    await removeFromLocalStorage(logType, id, mediaType, logs.data.sno, logs.data.eno);
+  }
+
+  existingLogs = getLogData(logType);
+  existingLogs.push(newLog);
   localStorage.setItem(logType, JSON.stringify(existingLogs));
 }
 
@@ -41,20 +42,19 @@ function logExists(logtype, id, mediaType) {
 
 async function removeFromLocalStorage(logType, id, mediaType, sno = null, eno = null) {
   const logs = getLogData(logType);
+  console.log(sno,eno)
   const updatedLogs = logs.filter(log =>
     !(Number(log.id) === id && log.mediaType === mediaType &&
       String(log.data.sno) === String(sno) && String(log.data.eno) === String(eno))
   );
-
+  console.log(updatedLogs)
   localStorage.setItem(logType, JSON.stringify(updatedLogs));
-
 }
 
 async function toggleBookmark(logtype,id, mediaType, sno = null, eno = null) {
-  temp = contWatching;
+  let temp = contWatching;
   contWatching = false;
   if( logExists(logtype, id, mediaType) ) {
-    console.log('log exists')
     removeFromLocalStorage(logtype,Number(id),mediaType, sno, eno);
   } else {
     logToLocalStorage(logtype,id,mediaType, sno, eno)
@@ -204,5 +204,5 @@ function loadUserContent(sectionId,logType) {
 }
 
 function resetHistory(logtype){
-  localStorage.removeItem(logtype);
+  localStorage.setItem(logtype, '');
 }
