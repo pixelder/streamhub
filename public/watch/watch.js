@@ -179,7 +179,7 @@ function loadSources(source, mediaType, id, season = null, episode = null) {
   });
 
   const taskId = "logHistory";
-  const duration = 2;
+  const duration = 120;
   cancel(taskId);
 
   wait(taskId, duration)
