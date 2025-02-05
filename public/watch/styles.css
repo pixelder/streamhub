@@ -187,6 +187,16 @@ iframe {
   -webkit-transform: scale(0.9);
 }
 
+iframe.zoom {
+  width: calc(100% * 1.515);
+  height: calc(100% * 1.515);
+  transform: scale(0.66);
+  transform-origin: 0 0;
+  -moz-transform: scale(0.66);
+  -o-transform: scale(0.66);
+  -webkit-transform: scale(0.66);
+}
+
 .player-toolbar {
   display: flex;
   justify-content: space-between;

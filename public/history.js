@@ -1,22 +1,58 @@
 
+
+
 function getLogData(logType) {
   const jsonData = localStorage.getItem(logType);
   return jsonData ? JSON.parse(jsonData) : [];
 }
 
+
+function fixLog() {
+
+  ['history','watching','bookmarks'].forEach(logType => {
+    const logData = getLogData(logType);
+    const updatedLog = logData.map(item => {
+      if (!item.hasOwnProperty('index')) {
+        console.log('fixing log')
+        item.index = Date.now() + Math.floor(Math.random() * 1000);
+      }
+      return item;
+    });
+    localStorage.setItem(logType, JSON.stringify(updatedLog));
+  })
+
+  if (localStorage.getItem('watching') !== null) return;
+
+  const historyData = getLogData('history');
+  localStorage.removeItem('history');
+  localStorage.setItem(logType, JSON.stringify(historyData));
+}
+
+// Modified logToLocalStorage to assign a unique index to each log entry
 async function logToLocalStorage(logType, id, mediaType, sno = null, eno = null) {
   let existingLogs = getLogData(logType);
-  const newLog = { id: Number(id), mediaType, data: { sno, eno } };
+
+  const newLog = {
+    id: Number(id),
+    mediaType,
+    index: Date.now(),
+    data: { sno: String(sno), eno: String(eno) }
+  };
 
   if (logType === 'history') {
     existingLogs.push(newLog);
     localStorage.setItem(logType, JSON.stringify(existingLogs));
-    return
+    return;
   }
 
   if (logExists(logType, id, mediaType)) {
-    const logs = existingLogs.find(log => Number(log.id) === Number(id) && log.mediaType === mediaType)
-    await removeFromLocalStorage(logType, id, mediaType, logs.data.sno, logs.data.eno);
+    const logs = existingLogs.find(log =>
+      Number(log.id) === Number(id) &&
+      log.mediaType === mediaType
+    );
+    if (logs.length > 1) console.log('multiple log index exists for id',id)
+    // Pass the log’s index along so we only remove that specific entry.
+    await removeFromLocalStorage(logType, id, mediaType, logs.data.sno, logs.data.eno, logs.index);
   }
 
   existingLogs = getLogData(logType);
@@ -24,40 +60,34 @@ async function logToLocalStorage(logType, id, mediaType, sno = null, eno = null)
   localStorage.setItem(logType, JSON.stringify(existingLogs));
 }
 
-function fixLog() {
-  if ( localStorage.getItem('watching') !== null ) return
 
-  const historyData = getLogData('history') // old history log
-  localStorage.removeItem('history')
-  localStorage.setItem('watching', JSON.stringify(historyData));
-}
-
-function logExists(logtype, id, mediaType) {
-  const logs = getLogData(logtype);
-  const hasItem = logs.some( log => {
-    return Number(log.id) === Number(id) && log.mediaType === mediaType
-  });
-  return hasItem
-}
-
-async function removeFromLocalStorage(logType, id, mediaType, sno = null, eno = null) {
+async function removeFromLocalStorage(logType, id, mediaType, sno = null, eno = null, index = null) {
   const logs = getLogData(logType);
-  console.log(sno,eno)
-  const updatedLogs = logs.filter(log =>
-    !(Number(log.id) === id && log.mediaType === mediaType &&
-      String(log.data.sno) === String(sno) && String(log.data.eno) === String(eno))
-  );
-  console.log(updatedLogs)
+  const updatedLogs = logs.filter(log => {
+    const isSameLog = Number(log.id) === Number(id) &&
+                      log.mediaType === mediaType &&
+                      String(log.data.sno) === String(sno) &&
+                      String(log.data.eno) === String(eno);
+    if (index) return !(Number(log.index) === Number(index)) 
+    return !isSameLog;
+  });
+
   localStorage.setItem(logType, JSON.stringify(updatedLogs));
 }
 
-async function toggleBookmark(logtype,id, mediaType, sno = null, eno = null) {
+
+function logExists(logType, id, mediaType) {
+  const logs = getLogData(logType);
+  return logs.some(log => Number(log.id) === Number(id) && log.mediaType === mediaType);
+}
+
+async function toggleBookmark(logType, id, mediaType, sno = null, eno = null, index = null) {
   let temp = contWatching;
   contWatching = false;
-  if( logExists(logtype, id, mediaType) ) {
-    removeFromLocalStorage(logtype,Number(id),mediaType, sno, eno);
+  if (logExists(logType, id, mediaType)) {
+    removeFromLocalStorage(logType, Number(id), mediaType, sno, eno, index);
   } else {
-    logToLocalStorage(logtype,id,mediaType, sno, eno)
+    logToLocalStorage(logType, id, mediaType, sno, eno);
   }
   contWatching = temp;
 }
@@ -67,31 +97,31 @@ async function fetchHistoryItems(section, items) {
   const fragment = document.createDocumentFragment();
   const existingItems = new Map();
 
-  // Store existing items for tracking (by unique key)
   container.querySelectorAll("[data-id]").forEach(el => {
-    existingItems.set(el.dataset.id, el);
+    const key = el.dataset.id + (el.dataset.index || '');
+    existingItems.set(key, el);
   });
 
-  const newItems = new Set(items.map(item => item.id)); // Track current valid items
-  const promises = items.slice().reverse().map(async (item) => {
-    const { id, mediaType, data: { sno, eno } } = item;
+  const newItems = new Set(items.map(item => item.id + item.index));
 
-    // Skip if already rendered and unchanged
-    if (existingItems.has(id)) {
-      existingItems.delete(id); // Mark as still valid
+  const promises = items.slice().reverse().map(async (item) => {
+    const { id, mediaType, index, data: { sno, eno } } = item;
+
+    const key = id + index;
+    if (existingItems.has(key)) {
+      existingItems.delete(key);
       return;
     }
 
     try {
       const { data } = await fetchMetaData(mediaType, id);
       let content;
-
-      if (section.id !== 'bookmarks' && mediaType === "tv") {
+      if (section.dataset.type !== 'bookmarks' && mediaType === "tv") {
         const { data: tvData } = await fetchMetaData(mediaType, id, sno);
         content = renderLogItems(data, item, tvData);
       } else {
         data.media_type = mediaType;
-        content = section.id !== "bookmarks"
+        content = section.dataset.type !== "bookmarks"
           ? renderLogItems(data, item)
           : renderGridItems([data]);
       }
@@ -99,7 +129,9 @@ async function fetchHistoryItems(section, items) {
       const wrapper = document.createElement("div");
       wrapper.innerHTML = content;
       const newElement = wrapper.firstElementChild;
-      newElement.dataset.id = id; // Set unique identifier
+      newElement.dataset.id = id; // Set unique identifier for the item
+      // Also assign the data-index attribute so we can track this instance.
+      newElement.dataset.index = index;
       fragment.appendChild(newElement);
     } catch (error) {
       console.error(`Error fetching data for item ID ${id}:`, error);
@@ -108,42 +140,37 @@ async function fetchHistoryItems(section, items) {
 
   await Promise.allSettled(promises);
 
-  // Remove old items that are no longer in the `items` list
-  existingItems.forEach((el, id) => {
-    if (!newItems.has(id)) {
+  // Remove old items that are no longer in the `items` list (using the combined key)
+  existingItems.forEach((el, key) => {
+    if (!newItems.has(key)) {
       el.remove();
     }
   });
 
-  container.classList.remove('loading')
-  container.appendChild(fragment); // Efficient DOM update
+  container.appendChild(fragment);
 }
 
 function renderLogItems(data, item, tvData) {
   const [id, mediaType] = [item.id, item.mediaType];
-  const [sno, eno] = tvData? [item.data.sno, item.data.eno] : [null,null];
+  const index = item.index || null;
+  const [sno, eno] = tvData ? [item.data.sno, item.data.eno] : ['',''];
   const epData = tvData?.episodes[eno - 1];
 
   const image = !tvData
-    ? data.backdrop_path ? `${IMAGE_URL}${data.backdrop_path}` : 'https://placehold.co/440x661/383852/ccc?text=No+Image'
+    ? data.backdrop_path
+      ? `${IMAGE_URL}${data.backdrop_path}`
+      : 'https://placehold.co/440x661/383852/ccc?text=No+Image'
     : (IMAGE_URL + epData.still_path);
   const name = (data.title || data.name);
-  const info = `S${sno}:E${eno} ` + epData?.name;
-  const rating = truncate(!tvData
-    ? data.vote_average
-    : epData.vote_average
-    , 1
-  );
-
-  const runTime = !tvData
-    ? data.runtime
-    : epData.runtime
-  //
+  const info = `S${sno}:E${eno} ` + (epData?.name || '');
+  const rating = truncate(!tvData ? data.vote_average : epData.vote_average, 1);
+  //const runTime = !tvData ? data.runtime : epData.runtime;
 
   return `
       <div tabindex="0" aria-pressed="true" class="grid-item"
-      data-id="${id}" data-media-type="${mediaType}"
-      data-sno="${sno}" data-eno="${eno}" data-name="${name}">
+           data-id="${id}"  data-index="${index}" 
+           data-media-type="${mediaType}" data-name="${name}"
+           ${tvData ? `data-sno="${sno}" data-eno="${eno}"` : ''}>
         <div class="grid-actions">
           <div class="grid-options">
             <div tabindex="0" class="options-buttons">
@@ -163,28 +190,21 @@ function renderLogItems(data, item, tvData) {
           </span>
           <span class="grid-rating">
             <p class="rating">
-            <i class="fa-solid fa-star"></i>
-            ${rating}
+              <i class="fa-solid fa-star"></i>
+              ${rating}
             </p>
           </span>
         </div>
       </div>
-    `;
+  `;
 }
-
-/* 
-document.addEventListener('click' || 'keydown', (event) => {
-    if( event.target.matches(".options-buttons")) {
-      event.target.closest('.grid-options')?.classList.toggle('open');
-      event.stopPropagation();
-    };
-}); */
 
 
 function loadUserContent(sectionId,logType) {
   const section = document.getElementById(sectionId);
   const container = section?.querySelector('.grid-container')
   const tvData = getLogData(logType);
+  console.log(`loading user content for ${sectionId}`)
   if (!section) return
 
   if (tvData.length > 0) {

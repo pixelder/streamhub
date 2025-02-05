@@ -85,6 +85,16 @@
       -webkit-transform: scale(0.8);
   }
 
+  iframe.zoom {
+    width: calc(100% * 2.22);
+    height: calc(100% * 2.22);
+    transform: scale(0.45);
+    transform-origin: 0 0;
+    -moz-transform: scale(0.45);
+    -o-transform: scale(0.45);
+    -webkit-transform: scale(0.45);
+  }
+
   .loading {
       height: calc(100% - 1.94em);
       font-size: 1.2rem;

@@ -32,9 +32,10 @@ function loadWatchPage(mediaType, name = null, id, tvData = null) {
                 <p data-source="2">VidPlay</p>
                 <p data-source="3">Vidsrc</p>
                 <p data-source="4">Whvx</p>
-                <p data-source="5">Multiembed</p>
+                <p data-source="5">Videasy</p>
                 <p data-source="6">111movies</p>
-                <p data-source="7">AutoEmbed(Multi)</p>
+                <p data-source="7">Multiembed</p>
+                <p data-source="8">AutoEmbed(Multi)</p>
               </div>
             </div>
             <div class="media-download">
@@ -107,33 +108,58 @@ function loadWatchPage(mediaType, name = null, id, tvData = null) {
 function loadSources(source, mediaType, id, season = null, episode = null) {
   loc();
   let src = "";
-  console.warn(source, `from loadSource`)
+  const urlPath = `${mediaType}/${id}${season && episode ? `/${season}/${episode}` : ''}`
   switch (source) {
     case 1:
-      src = `https://vidlink.pro/${mediaType}/${id}${season && episode ? `/${season}/${episode}` : ''}`;
+      src = `https://vidlink.pro/${urlPath}`;
       break;
     case 2:
-      src = `https://vidsrc.cc/v2/embed/${mediaType}/${id}${season && episode ? `/${season}/${episode}` : ''}`;
+      src = `https://vidsrc.cc/v2/embed/${urlPath}`;
       break;
     case 3:
-      src = `https://vidsrc.icu/embed/${mediaType}/${id}${season && episode ? `/${season}/${episode}` : ''}`;
+      src = `https://vidsrc.icu/embed/${urlPath}`;
       break;
     case 4:
-      src = `https://vidbinge.dev/embed/${mediaType}/${id}${season && episode ? `/${season}/${episode}` : ''}`;
+      src = `https://vidbinge.dev/embed/${urlPath}`;
       break;
     case 5:
-      src = `https://multiembed.mov/?video_id=${id}&tmdb=1${season && episode ? `&s=${season}&p=${episode}` : ''}`;
+      src = `https://player.videasy.net/${urlPath}`;
       break;
     case 6:
-      src = `https://111movies.com/${mediaType}/${id}${season && episode ? `/${season}/${episode}` : ''}`;
+      src = `https://111movies.com/${urlPath}`;
       break;
     case 7:
-      src = `https://hin.autoembed.cc/${mediaType}/${id}${season && episode ? `/${season}/${episode}` : ''}`;
+      src = `https://multiembed.mov/?video_id=${id}&tmdb=1${season && episode ? `&s=${season}&p=${episode}` : ''}`;
+      break;
+    case 8:
+      src = `https://hin.autoembed.cc/${urlPath}`;
       break;
     default:
       console.error("Invalid source selected");
       return;
   }
+
+  const loadIframe = `
+    <button class="iframe-exit">
+      <i class="fa-solid fa-compress"></i>
+    </button>
+    <iframe
+      src="${src}"
+      referrerpolicy="origin"
+      frameborder="0"
+      scrolling="no"
+      allowfullscreen
+      style="display: none;"
+      onload="showIframe(this)"
+      allow="encrypted-media"
+      class="iframe${source === 5 ? ` zoom` : ''}"
+    ></iframe>
+  `;
+
+  // indicicate loading...
+  document.querySelector(".loading").style.display = "flex";
+  document.querySelector(".iframe-container").innerHTML = loadIframe;
+
   const sourceSelector = document.querySelectorAll('.providers p');
   sourceSelector.forEach(item => {
     if (item.dataset.source === String(source)) {
@@ -151,27 +177,9 @@ function loadSources(source, mediaType, id, season = null, episode = null) {
       item.classList.remove('current');
     }
   });
-  // indicicate loading...
-  document.querySelector(".loading").style.display = "flex";
 
-  const loadIframe = `
-          <button class="iframe-exit">
-            <i class="fa-solid fa-compress"></i>
-          </button>
-          <iframe
-          src="${src}"
-          referrerpolicy="origin"
-          frameborder="0"
-          scrolling="no"
-          allowfullscreen
-          style="display: none;"
-          onload="showIframe(this)"
-          class="iframe"
-        ></iframe>
-        `;
-  document.querySelector(".iframe-container").innerHTML = loadIframe;
   const taskId = "logHistory";
-  const duration = 120;
+  const duration = 2;
   cancel(taskId);
 
   wait(taskId, duration)

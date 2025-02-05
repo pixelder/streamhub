@@ -14,7 +14,7 @@ function globalAddEventListener (event) {
   const gridItem = event.target.closest('.grid-item, .profile-item');
   
   if (gridItem && !modalActive) {
-    const { mediaType, id, name, sno, eno } = gridItem.dataset;
+    const { mediaType, id, name, sno, eno, index } = gridItem.dataset;
     if ((event.type === 'click' && !watchingOrHistory ||
         event.type === 'keydown' && event.key === 'Enter' && (!watchingOrHistory || event.shiftKey))) {
       if (!event.target.closest('.grid-options')) {
@@ -28,6 +28,7 @@ function globalAddEventListener (event) {
       }
     } else if ((watchingOrHistory) && (event.type === 'click' || event.type === 'keydown' && event.key === 'Enter')) {
       if ( !event.target.closest('.grid-actions')) {
+        console.log(sno, eno, null)
         window.location.href = `/watch/${mediaType}/${id}/${name}${sno && eno ? `/${sno}/${eno}` : ""}`;
         event.stopPropagation();
       } else if ( event.target.matches(".options-buttons")) {
@@ -44,9 +45,8 @@ function globalAddEventListener (event) {
             const section = event.target.closest('section');
             const sectionId = section.id
             const logType = section.dataset.type
-            console.log(sectionId,logType)
-            removeFromLocalStorage(logType, Number(id), mediaType, sno, eno)
-            console.log('item removed')
+            removeFromLocalStorage(logType, Number(id), mediaType, sno, eno, index)
+            console.log(sectionId,logType,'item removed')
             loadUserContent( sectionId, logType);
           }
         });
