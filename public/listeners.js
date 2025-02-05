@@ -23,7 +23,7 @@ function globalAddEventListener (event) {
       } else {
         console.log('toggling bookmark')
         event.target.closest('.grid-options')?.classList.toggle('open');
-        toggleBookmark('bookmarks', id, mediaType, sno, eno);
+        toggleBookmark('bookmarks', id, mediaType, sno, eno, index);
         loadUserContent( 'bookmarks', 'bookmarks');
       }
     } else if ((watchingOrHistory) && (event.type === 'click' || event.type === 'keydown' && event.key === 'Enter')) {
