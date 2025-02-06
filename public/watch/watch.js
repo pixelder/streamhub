@@ -114,7 +114,7 @@ function loadSources(source, mediaType, id, season = null, episode = null) {
       src = `https://vidlink.pro/${urlPath}`;
       break;
     case 2:
-      src = `https://vidsrc.cc/v2/embed/${urlPath}`;
+      src = `https://vidsrc.cc/v3/embed/${urlPath}`;
       break;
     case 3:
       src = `https://vidsrc.icu/embed/${urlPath}`;
