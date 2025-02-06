@@ -154,7 +154,7 @@ function renderLogItems(data, item, tvData) {
   const [id, mediaType] = [item.id, item.mediaType];
   const index = item.index || null;
   const [sno, eno] = tvData ? [item.data.sno, item.data.eno] : ['',''];
-  const epData = tvData?.episodes[eno - 1];
+  const epData = tvData ? tvData?.episodes[eno - 1] : '';
 
   const image = !tvData
     ? data.backdrop_path

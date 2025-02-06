@@ -6,7 +6,6 @@
 
     .filler {
       display: none;
-      aspect-ratio: 1 / 0.2;
     }
   }
   
@@ -18,6 +17,7 @@
       flex-direction: column;
       place-content: center;
       width: 100%;
+      aspect-ratio: 1 / 0.2;
       background: var(--color5);
       border-radius: var(--border-radius1);
       color: #757592;
@@ -62,7 +62,7 @@
       .filler {
         grid-column: span 1;
         height: 100%;
-        /* aspect-ratio: 1 / 0.53; */
+        aspect-ratio: auto;
       }
     }
     

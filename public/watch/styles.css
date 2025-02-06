@@ -35,7 +35,7 @@
   }
 
   .episode:hover, .episode:has(.episode-items img:focus-visible) {
-    scale: 0.97;
+    scale: 0.9375;
   }
 
   .episode img {
