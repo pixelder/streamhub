@@ -598,12 +598,13 @@
     }
 
     .modal-content::before {
-        display: none;
+        /* display: none; */
         height: unset;
         width: 100%;
-        aspect-ratio: 16 / 9;
-        mask-position: calc(100% + 1.6rem) -1.6rem;
-        mask-size: 115% 118%;
+        mask-image: url(assets/images/mask_mobile.png);
+        mask-position: 50% 45%;
+        mask-size: 122% 122%;
+        filter:brightness(0.75);
     }
 
     #modal-details {
@@ -689,9 +690,9 @@
 
     .modal-info>h1 {
         position: relative;
-        margin: unset !important;
-        margin-top: -5rem !important;
-        font-size: 1.6rem !important;
+        padding: var(--padding1) 0;
+        margin-top: -2rem !important;
+        font-size: 1.8rem !important;
     }
 
     .modal-info-backdrop {

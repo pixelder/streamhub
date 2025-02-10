@@ -167,11 +167,11 @@ document.addEventListener('DOMContentLoaded', () => {
       setActiveIcon('tv')
     } else if (path === '' || path === '/') {
       window.onload = function() {
-        loadSections()
-        fixLog()
-        loadUserContent('continue-watching','watching');
         footerHTML();
         setActiveIcon('home')
+        loadSections()
+        loadUserContent('continue-watching','watching');
+        fixLog()
         loc();
       }
     }

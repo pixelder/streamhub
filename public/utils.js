@@ -172,110 +172,185 @@ function openModal(event) {
 }
 
 function getCountryCertification(data, mediaType) {
-  const country = data.origin_country[0] || "US";
-  const rated = mediaType === "movie"
-  ? data.release_dates?.results?.find((item) => item.iso_3166_1 === (country || "US"))?.release_dates[0].certification
-  : data.content_ratings?.results?.find((item) => item.iso_3166_1 === (country || "US"))?.rating || "";
-  return {country, rated}
-} 
+  const DEFAULT_COUNTRY = "US";
+  const ORIGIN_COUNTRY = data.origin_country?.[0];
 
-// Display modal with fetched data
-function displayModal(mediaType, data) {
-  const modal = document.getElementById('info-modal');
-  const modalContent = document.querySelector(".modal-content");
-  const details = document.getElementById('modal-details');
-  const id = data.id;
-  const name = data.name || data.title || data.original_title;
-  const cast = data.credits?.cast.map(cast => cast.name).slice(0, 5).join(", ");
-  const { country, rated } = getCountryCertification(data, mediaType) 
-  const logo = data.images?.logos?.[0]?.file_path
-    ? `<span>
-          <div class="modal-info-logo">
-            <img src="${IMAGE_URL}${data.images.logos[0].file_path}" alt="Logo">
-          </div>
-          <div class="modal-info">`
-    : `<span>
-          <div class="modal-info-backdrop" style="background-image : url(${IMAGE_ORG}${data.backdrop_path})"></div>
-          <div class="modal-info">
-            <h1>${name.toUpperCase()}</h1>`;
-  document.documentElement.style.setProperty('--modal-backdrop', `url(${IMAGE_ORG}${data.backdrop_path})`);
-  if (mediaType !== "person") {
-    const date = convertDate(data.release_date || data.first_air_date || data.air_date);
-    details.innerHTML = `
-    <div class="modal-media">
-      <div class="modal-cover">
-        <img src="${IMAGE_URL}${data.poster_path}" alt="${name}"></img>
-      </div>
-      ${logo}
-          <span class="ratings-genre">
-            <i class="fa-solid fa-star"></i>
-            <p data-title="${data.vote_count} votes">${truncate(data.vote_average, 1)}</p>
-            <span class="modal-genre">
-              ${data.genres.map(genre => `<a href="#">${genre.name}</a>`).slice(0, 5).join(" ")}
-            </span>
-          </span>
-          <div class="synopsis"><p class="overview">${data.overview || 'No description available.'}</p></div>
-          <p>Cast : ${cast}</p>
-          <p class="tags">${extractYear(date)} • ${rated !== "" ? `${rated} • ` : ""} ${data.original_language.toUpperCase()} ${mediaType === "movie" ? `• ${runtime(data.runtime)}</p>` : "</p>"}
-          </span>
-      </div>
-      </span>
-    </div>`;
-  } else
-    if (mediaType === "person") {
-      details.innerHTML = `${inBeta()}`;
-    }
-
-  const userData = getLogData('history')?.filter(item => item?.id === id)[0]?.data;
+  let rating = "";
+  let results = [];
 
   if (mediaType === "movie") {
-    document.querySelector(".modal-media")
-      .insertAdjacentHTML('afterend', `
-      <div class="modal-actions">
-        <button class="watch-btn" 
-        data-name="${name}" 
-        data-id="${id}">
-          Watch
-        </button>
-        <button tab-index="0" class="share">
-          <i class="fa-solid fa-paper-plane"></i>
-        </button>
-      </div>
-    `);
-    modalContent.style.height = "fit-content";
-  } else
-    if (mediaType === "tv") {
-      let sno = userData?.sno;
-      let eno = userData?.eno;
-      tvContent(data, sno, eno, ref = "modal");
-      if (!isMobile()) {
-        modalContent.style.height = '32rem';
-      }
-      else {
-        modalContent.style.height = '70%';
-        document.getElementById("season-dropdown").insertAdjacentHTML('afterend', `
-        <button class="share">
-          <i class="fa-solid fa-paper-plane"></i>
-        </button>
-        `);
-      };
-    };
+    results = data.release_dates?.results || [];
+    rating =
+      results.find(item => item.iso_3166_1 === ORIGIN_COUNTRY)
+        ?.release_dates?.[0]?.certification ||
+      results.find(item => item.iso_3166_1 === DEFAULT_COUNTRY)
+        ?.release_dates?.[0]?.certification ||
+      "";
+  } else {
+    results = data.content_ratings?.results || [];
+    rating =
+      results.find(item => item.iso_3166_1 === ORIGIN_COUNTRY)
+        ?.rating ||
+      results.find(item => item.iso_3166_1 === DEFAULT_COUNTRY)
+        ?.rating ||
+      "";
+  }
 
-  shareItem(mediaType, id, name);
+  return { country: ORIGIN_COUNTRY, rated: rating };
+} 
 
-  modal.classList.add('active');
+function displayModal(mediaType, data) {
+  const modal = document.getElementById('info-modal');
+  const modalContent = document.querySelector('.modal-content');
+  const details = document.getElementById('modal-details');
+
+  const backdropPath = data.backdrop_path
+  document.documentElement.style.setProperty(
+    '--modal-backdrop',
+    `url(${ backdropPath ? IMAGE_ORG + data.backdrop_path : ''})`
+  );
+
+  const contentLogoHTML = getContentLogoHTML(data);
+
+  if (mediaType === 'person') {
+    details.innerHTML = inBeta();
+  } else {
+    details.innerHTML = buildMediaDetailsHTML(data, mediaType, contentLogoHTML);
+  }
+
+  if (mediaType === 'movie') {
+    insertMovieActions(data);
+    modalContent.style.height = 'fit-content';
+  }
+
+  if (mediaType === 'tv') {
+    const userData = getLogData('watching')?.find(item => item.id === data.id)?.data;
+    const season = userData?.sno;
+    const episode = userData?.eno;
+
+    tvContent(data, season, episode, 'modal');
+
+    if (!isMobile()) {
+      modalContent.style.height = '32rem';
+    } else {
+      modalContent.style.height = '70%';
+      const seasonDropdown = document.getElementById('season-dropdown');
+      seasonDropdown.insertAdjacentHTML('afterend', getShareButtonHTML());
+    }
+  }
+
+  initializeModalListeners(mediaType, data, modalContent, details);
+
+  modal.setAttribute('active','')
+ // modal.classList.add('active');
   details.focus();
-
-  ['click','keydown'].forEach(eventType => {
-    document.removeEventListener(eventType, watchEventListeners)  
-    document.addEventListener(eventType, watchEventListeners)
-  });
-  
-  details.removeEventListener('scroll', () => { backdropAnim(details,modalContent)});
-  details.addEventListener('scroll',() => { backdropAnim(details,modalContent)});
 
   cappedOverview();
 }
+
+
+function getContentLogoHTML(data) {
+  const name = data.name || data.title || data.original_title;
+  const logoPath = data.images?.logos?.[0]?.file_path
+  return `
+    <span>
+      <div class="modal-info-logo">
+        ${ logoPath ? `<img src="${IMAGE_URL}${logoPath}" alt="Logo">` :''}
+      </div>
+      <div class="modal-info">
+        ${ !logoPath ? `<h1>${name.toUpperCase()}</h1>` : ''}
+  `;
+}
+
+function buildMediaDetailsHTML(data, mediaType, contentLogoHTML) {
+  const name = data.name || data.title || data.original_title;
+  const releaseDate = data.release_date || data.first_air_date || data.air_date || '';
+  const formattedDate = convertDate(releaseDate);
+  const genresHTML = data.genres
+    .map(genre => `<a href="#">${genre.name}</a>`)
+    .slice(0, 5)
+    .join(' ');
+  const castHTML = (data.credits?.cast || [])
+    .slice(0, 5)
+    .map(cast => cast.name)
+    .join(', ');
+  const { rated } = getCountryCertification(data, mediaType);
+  
+  const detailsBodyHTML = `
+    <div class="modal-media">
+      <div class="modal-cover">
+        <img src="${IMAGE_URL}${data.poster_path}" alt="${name}">
+      </div>
+      ${contentLogoHTML}
+        <span class="ratings-genre">
+          <i class="fa-solid fa-star"></i>
+          <p data-title="${data.vote_count} votes">${truncate(data.vote_average, 1)}</p>
+          <span class="modal-genre">
+            ${genresHTML}
+          </span>
+        </span>
+        <div class="synopsis">
+          <p class="overview">
+            ${data.overview || 'No description available.'}
+          </p>
+        </div>
+        <p>Cast: ${castHTML}</p>
+        <p class="tags">
+          ${extractYear(formattedDate)} • 
+          ${rated !== '' ? `${rated} • ` : ''} 
+          ${data.original_language.toUpperCase()} 
+          ${mediaType === 'movie' ? `• ${runtime(data.runtime)}` : ''}
+        </p>
+      </div>
+    </span>
+  </div>
+  `;
+  return detailsBodyHTML;
+}
+
+
+function insertMovieActions(data) {
+  const name = data.name || data.title || data.original_title;
+  const actionHTML = `
+    <div class="modal-actions">
+      <button class="watch-btn" data-name="${name}" data-id="${data.id}">
+        Watch
+      </button>
+      <button tabindex="0" class="share">
+        <i class="fa-solid fa-paper-plane"></i>
+      </button>
+    </div>
+  `;
+  // Insert action buttons immediately after the modal-media section.
+  const modalMedia = document.querySelector('.modal-media');
+  if (modalMedia) {
+    modalMedia.insertAdjacentHTML('afterend', actionHTML);
+  }
+}
+
+function getShareButtonHTML() {
+  return `
+    <button class="share">
+      <i class="fa-solid fa-paper-plane"></i>
+    </button>
+  `;
+}
+
+function initializeModalListeners(mediaType,data, modalContent, details) {
+  const id = data.id
+  const name = data.name || data.title || data.original_title
+  
+  shareItem(mediaType, id, name);
+
+  ['click', 'keydown'].forEach(eventType => {
+    document.removeEventListener(eventType, watchEventListeners);
+    document.addEventListener(eventType, watchEventListeners);
+  });
+
+  details.removeEventListener('scroll', () => backdropAnim(details, modalContent));
+  details.addEventListener('scroll', () => backdropAnim(details, modalContent));
+}
+
 
 async function tvContent(data, sno, eno, ref) {
   const seasons = data.seasons.reverse();
@@ -310,30 +385,26 @@ async function tvContent(data, sno, eno, ref) {
 
   const displaySeasonInfo = async (event) => {
     const selectedSeason = event.target.value;
-    try {
-      const { data: tvData} = await fetchMetaData('tv',id,selectedSeason);
-      seasonData = tvData
-      episodeContainer.innerHTML = seasonData.episodes
-        .map(episode => `
-          <div id="${episode.episode_number}" class="episode episode-width" data-name="${data.name}" data-id="${data.id}" data-season="${selectedSeason}" data-episode="${episode.episode_number}" data-epname="${episode.name}">
-            <div class="episode-items">
-              <img tabindex="0" src="${episode.still_path ? IMAGE_URL + episode.still_path : 'https://placehold.co/500x281?text=No+Image+Available'}" alt="Episode ${episode.episode_number}">
-              <div class="episode-info">
-                <h3>${episode.episode_number}. ${episode.name}</h3>
-                <p>Rated: ${episode.vote_average.toFixed(1)}</p>
-                <p>${convertDate(episode.air_date)}</p>
-              </div>
-              <div class="synopsis">
-                <p class="overview">${episode.overview || "No overview available"}</p>
-              </div>
+    const { data: tvData} = await fetchMetaData('tv',id,selectedSeason);
+    const seasonData = tvData
+    episodeContainer.innerHTML = seasonData.episodes
+      .map(episode => `
+        <div id="${episode.episode_number}" class="episode episode-width" data-name="${data.name}" data-id="${data.id}" data-season="${selectedSeason}" data-episode="${episode.episode_number}" data-epname="${episode.name}">
+          <div class="episode-items">
+            <img tabindex="0" src="${episode.still_path ? IMAGE_URL + episode.still_path : 'https://placehold.co/500x281?text=No+Image+Available'}" alt="Episode ${episode.episode_number}">
+            <div class="episode-info">
+              <h3>${episode.episode_number}. ${episode.name}</h3>
+              <p>Rated: ${episode.vote_average.toFixed(1)}</p>
+              <p>${convertDate(episode.air_date)}</p>
+            </div>
+            <div class="synopsis">
+              <p class="overview">${episode.overview || "No overview available"}</p>
             </div>
           </div>
-        `)
-        .join("");
+        </div>
+      `)
+      .join("");
 
-    } catch (error) {
-      console.error('Error fetching season details:', error);
-    }
     if (ref != "modal") {
       document.getElementById('episode-container').classList.add('player-styling');
       document.querySelector('.now-playing > h4').innerHTML = `S${sno}:E${eno} ${seasonData.episodes.map(episode => episode.name)[eno - 1]}`;
@@ -346,7 +417,8 @@ async function tvContent(data, sno, eno, ref) {
     whenInView('.player-styling, .modal', () => {
       scrollEpisodeIntoView(eno);
     });
-  };
+  }
+
 
   const seasonDropdown = document.getElementById('season-dropdown');
   seasonDropdown.removeEventListener('change', displaySeasonInfo);
@@ -667,10 +739,11 @@ function footerHTML () {
 }
 
 function setActiveIcon(button) {
+  if (button === '') return;
   const footer = document.querySelector('footer')
   footer.querySelectorAll('a').forEach(btn => btn.classList.remove('active'))
   const active = document.getElementById(button);
-  active.classList.add('active')
+  active?.classList.add('active')
 }
 
 // Helper function to get element's position
@@ -709,7 +782,7 @@ window.addEventListener('scroll', () => {
       hideTimeout = setTimeout(() => {
         header.classList.add('hidden');
         footer ? footer.style.bottom = '-4rem' : '';
-      }, 300);
+      }, 500);
     }
   } else if ( (window.scrollY <= lastScrollY) || end) {
     isScrollingDown = false;

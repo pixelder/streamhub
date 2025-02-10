@@ -8,7 +8,7 @@
 
 function globalAddEventListener (event) {
   const modal = document.getElementById('info-modal');
-  const modalActive = modal?.classList.contains('active');
+  const modalActive = modal.getAttribute('active') !== null ? true : false;
   const watchingOrHistory = event.target.closest('#continue-watching .grid-item') || event.target.closest('#history .grid-item');
   const bookmarks = event.target.closest('#bookmarks .grid-item');
   const gridItem = event.target.closest('.grid-item, .profile-item');
@@ -55,7 +55,7 @@ function globalAddEventListener (event) {
     }
   } else if (modalActive) {
     if (event.key === 'Escape' || event.target.matches('#info-modal')) {
-      modal.classList.remove('active');
+      modal.removeAttribute('active','')
       event.stopPropagation();
     }
   }
