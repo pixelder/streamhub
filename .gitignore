@@ -1,3 +1,5 @@
-node_modules
-favicon_io
-.vscode
+/.vscode
+/favicon_io
+/node_modules
+.github
+/src

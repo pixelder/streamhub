@@ -1,43 +1,94 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
+    <title>Home | Pixelstream</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Streaming Hub</title>
-    <link rel="stylesheet" href="styles.css">
-    <link rel="stylesheet" href="media.css">
+
+    <meta property="og:title" content="Pixelstream" />
+    <meta property="og:image" content="https://pixelstream.vercel.app/assets/meta/meta_dark.png">
+    <meta property="og:description" content="Watch your favorite movies and tv shows" />
+    
+    <script src="https://kit.fontawesome.com/60a2eca232.js" crossorigin="anonymous" defer></script>
+
+    <!-- local items -->
+    <link rel="stylesheet" href="styles.css" type="text/css">
+    <link rel="stylesheet" href="media.css" type="text/css">
+    <link rel="icon" href="assets/icons/favicon.png" type="image/png">
+    <script src="script.js" defer></script>
+    <script src="utils.js" defer></script>
+    <script src="history.js" defer></script>
+    <script src="explore.js" defer></script>
+    <script src="listeners.js" defer></script>
 </head>
+
 <body>
+    <script>0</script>
     <!-- Top Navbar -->
     <header id="header">
         <nav>
             <ul>
-                <li><a href="index.html">Home</a></li>
-                <!-- <li><a href="movies.html">Movies</a></li>
-                <li><a href="tv-shows.html">TV Shows</a></li> -->
-                <div class="search-bar">
-                    <input type="text" id="search-input" placeholder="Search" />
-                    <img src="icons/search.png" id="search-button" onclick="handleSearch()"></img>
-                </div>
+                <li><a href="/"></a></li>
+                <li><a onclick="loadExplorePage('movie')">Movies</a></li>
+                <li><a onclick="loadExplorePage('tv')">TV Shows</a></li>
+                <li><a href="/#discover-streaming">What's Streaming</a></li>
+                <li><a href="profile">Your Lists</a></li>
+                <form class="search-bar" onsubmit="return handleSearch(event)">
+                    <input type="search" id="search-input" onsubmit="return handleSearch(event)" placeholder="Search" />
+                    <i class="search-icon fa-solid fa-magnifying-glass"></i>
+                    <button type="reset" class="x-icon" id="search-button"><!-- onclick="handleSearch(event)" -->
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </form>
+
             </ul>
         </nav>
     </header>
 
-
-      
     <!-- Body Content -->
     <main id="main-content">
+        <section id="continue-watching" data-type="watching">
+            <h2>Continue Watching</h2>
+            <div class="grid-container">
+            </div>
+        </section>
         <section id="trending-movies">
             <h2>Trending Movies</h2>
-            <div class="grid-container"></div>
-<!--             <button class="show-more" onclick="expandSection('trending-movies')">Show More</button>
-            <button class="collapse" onclick="collapseSection('trending-movies')" style="display: none;">Collapse</button> -->
-        </section>          
+            <div class="pagination-buttons">
+                <button class="prev-page">
+                    <i class="fa-solid fa-chevron-left"></i>
+                </button>
+                <button class="next-page">
+                    <i class="fa-solid fa-chevron-right"></i>
+                </button>
+            </div>
+            <div class="grid-container loading">
+                <div class="filler">
+                    <div class="message">
+                        <h4>Loading...</h4>
+                    </div>
+                </div>
+            </div>
+        </section>
         <section id="trending-series">
             <h2>Trending Series</h2>
-            <div class="grid-container"></div>
-<!--             <button class="show-more" onclick="expandSection('trending-series')">Show More</button>
-            <button class="collapse" onclick="collapseSection('trending-series')" style="display: none;">Collapse</button> -->        </section>
+            <div class="pagination-buttons">
+                <button class="prev-page">
+                    <i class="fa-solid fa-chevron-left"></i>
+                </button>
+                <button class="next-page">
+                    <i class="fa-solid fa-chevron-right"></i>
+                </button>
+            </div>
+            <div class="grid-container loading">
+                <div class="filler">
+                    <div class="message">
+                        <h4>Loading...</h4>
+                    </div>
+                </div>
+            </div>
+        </section>
         <section id="discover-streaming">
             <h2>Discover what's streaming</h2>
             <div class="tab-menu">
@@ -49,22 +100,38 @@
             </div>
             <div class="tab-items">
                 <div class="media-switch">
-                    <button class="media-tab active"  data-type="movie">Movies</button>
-                    <button class="media-tab"  data-type="tv">TV Shows</button>
+                    <button class="media-tab active" data-type="movie">Movies</button>
+                    <button class="media-tab" data-type="tv">TV Shows</button>
                 </div>
-                <div class="grid-container"></div>
+                <div class="pagination-buttons">
+                    <button class="prev-page">
+                        <i class="fa-solid fa-chevron-left"></i>
+                    </button>
+                    <button class="next-page">
+                        <i class="fa-solid fa-chevron-right"></i>
+                    </button>
+                </div>
+                <div class="grid-container loading">
+                    <div class="filler">
+                        <div class="message">
+                            <h4>Loading...</h4>
+                        </div>
+                    </div>
+                </div>
             </div>
         </section>
+        <div class="modal-overlay"></div>
         <div id="info-modal" class="modal">
             <div class="modal-content">
-              <span class="close-btn" onclick="closeModal()">&times;</span>
-              <div id="modal-details">
-                <!-- Dynamic content will be injected here -->
-              </div>
+                <div tabindex="0" id="modal-details">
+                    <!-- Dynamic content will be injected here -->
+                </div>
             </div>
-        </div>           
+        </div>
     </main>
-
-    <script src="script.js"></script>
+    <footer>
+        <!-- Dynamic bootom bar -->
+    </footer>
 </body>
+
 </html>

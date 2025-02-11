@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include('partials/head') %>
+    <script src="/search/search.js" defer></script>
+    <script src="/listeners.js" defer></script>
+</head>
+
+<script defer>
+
+    const query =  `<%= query %>`.replace(/&amp;/g, '&')
+                .replace(/&lt;/g, '<')
+                .replace(/&gt;/g, '>')
+                .replace(/&quot;/g, '"')
+                .replace(/&#039;/g, "'");
+
+    document.addEventListener("DOMContentLoaded", () => {
+        getSearchResults(query);
+    });
+    
+</script>
+
+<body>
+    <!-- Top Navbar -->
+    <%- include('partials/header') %>
+    
+    <main id="main-content">  
+    </main>
+    <footer></footer>
+</body>
+</html>
