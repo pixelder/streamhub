@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Home | Pixelstream</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta property="og:title" content="Pixelstream" />
+    <meta property="og:image" content="https://pixelstream.vercel.app/meta/meta_dark.png">
+    <meta property="og:description" content="Watch your favorite movies and tv shows" />
+    
+    <script src="https://kit.fontawesome.com/60a2eca232.js" crossorigin="anonymous" defer></script>
+
+    <!-- local items -->
+    <link rel="stylesheet" href="styles.css" type="text/css">
+    <!-- <link rel="stylesheet" href="./media.css" type="text/css"> -->
+    <link rel="icon" href="icons/favicon.png" type="image/png">
+    <script src="script.js" defer></script>
+    <script src="utils.js" defer></script><!-- 
+    <script src="../search.js" defer></script>
+    <script src="../history.js" defer></script>
+    <script src="../explore.js" defer></script> -->
+</head>
+
+<body>
+    <!-- Top Navbar -->
+    <header id="header">
+        <nav>
+            <ul>
+                <li><a href="/"></a></li>
+                <li><a onclick="loadExplorePage('movie')">Movies</a></li>
+                <li><a onclick="loadExplorePage('tv')">TV Shows</a></li>
+                <li><a href="#discover-streaming">What's Streaming</a></li>
+                <form class="search-bar" onsubmit="return handleSearch(event)">
+                    <input type="search" id="search-input" onsubmit="return handleSearch(event)" placeholder="Search" />
+                    <i class="search-icon fa-solid fa-magnifying-glass"></i>
+                    <button type="reset" class="x-icon" id="search-button"><!-- onclick="handleSearch(event)" -->
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </form>
+
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Body Content -->
+    <main id="main-content">
+        <section id="continue-watching">
+            <h2>Continue Watching</h2>
+            <div class="grid-container"></div>
+        </section>
+        <section id="trending-movies">
+            <h2>Trending Movies</h2>
+            <div class="pagination-buttons">
+                <button class="prev-page">
+                    <i class="fa-solid fa-chevron-left"></i>
+                </button>
+                <button class="next-page">
+                    <i class="fa-solid fa-chevron-right"></i>
+                </button>
+            </div>
+            <div class="grid-container"></div>
+        </section>
+        <section id="trending-series">
+            <h2>Trending Series</h2>
+            <div class="pagination-buttons">
+                <button class="prev-page">
+                    <i class="fa-solid fa-chevron-left"></i>
+                </button>
+                <button class="next-page">
+                    <i class="fa-solid fa-chevron-right"></i>
+                </button>
+            </div>
+            <div class="grid-container"></div>
+        </section>
+        <section id="discover-streaming">
+            <h2>Discover what's streaming</h2>
+            <div class="tab-menu">
+                <button class="tab active" data-network="213" data-provider="8">Netflix</button>
+                <button class="tab" data-network="1024" data-provider="2100">Amazon Prime</button>
+                <button class="tab" data-network="2552" data-provider="350">Apple TV+</button>
+                <button class="tab" data-network="" data-provider="1899">HBO Max</button>
+                <button class="tab" data-network="" data-provider="531">Paramount+</button>
+            </div>
+            <div class="tab-items">
+                <div class="media-switch">
+                    <button class="media-tab active" data-type="movie">Movies</button>
+                    <button class="media-tab" data-type="tv">TV Shows</button>
+                </div>
+                <div class="pagination-buttons">
+                    <button class="prev-page">
+                        <i class="fa-solid fa-chevron-left"></i>
+                    </button>
+                    <button class="next-page">
+                        <i class="fa-solid fa-chevron-right"></i>
+                    </button>
+                </div>
+                <div class="grid-container"></div>
+            </div>
+        </section>
+        <div class="modal-overlay"></div>
+        <div id="info-modal" class="modal">
+            <div class="modal-content">
+                <div id="modal-details">
+                    <!-- Dynamic content will be injected here -->
+                </div>
+            </div>
+        </div>
+    </main>
+    <footer>
+        <!-- Dynamic bootom bar -->
+    </footer>
+</body>
+
+</html>
