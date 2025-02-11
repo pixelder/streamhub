@@ -417,6 +417,7 @@ async function tvContent(data, sno, eno, ref) {
     whenInView('.player-styling, .modal', () => {
       scrollEpisodeIntoView(eno);
     });
+    enableHorizontalWheelScroll('.player-styling', 3)
   }
 
 
@@ -737,6 +738,26 @@ function footerHTML () {
   ` : '';
 
 }
+
+function enableHorizontalWheelScroll(container, factor = 1) {
+  const gridContainers = document.querySelectorAll(container); // Select all matching elements
+
+  gridContainers.forEach(gridContainer => {
+      // Check if the container is overflowing horizontally
+      if (gridContainer.scrollWidth > gridContainer.clientWidth) {
+          const scrollEvent = (e) => {
+              e.preventDefault();
+              gridContainer.scrollLeft += e.deltaY * factor; // Adjust scroll speed if needed
+          };
+
+          // Remove previous listener to prevent duplicates
+          gridContainer.removeEventListener("wheel", scrollEvent);
+          gridContainer.addEventListener("wheel", scrollEvent);
+      }
+  });
+}
+
+
 
 function setActiveIcon(button) {
   if (button === '') return;
