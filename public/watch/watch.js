@@ -47,7 +47,7 @@ function loadWatchPage(mediaType, name = null, id, tvData = null) {
                 <div class="provider"> 
                   <p class="provider-name" data-source="4">Whvx</p>
                 </div>
-                <div class="provider"> 
+                <div class="provider" ${mediaType === 'tv' ? `style='display:none'` : ''}> 
                   <p class="provider-name" data-source="5">Videasy</p>
                 </div>
                 <div class="provider"> 
