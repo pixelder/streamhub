@@ -236,6 +236,8 @@ async function fetchGenres(mediaType) {
         });
         genreContainer.appendChild(chip);
     });
+
+    enableHorizontalWheelScroll('.genre-chips', 2)
 }
 
 async function fetchCountriesAndLanguages() {
