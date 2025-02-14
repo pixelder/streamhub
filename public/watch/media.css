@@ -99,12 +99,22 @@
       height: calc(100% - 1.94em);
       font-size: 1.2rem;
   }
-
-  .providers p {
-      font-size: 0.7rem;
-      padding: 0.2rem 0.36rem;
+  .providers {
+    width: 8rem;
   }
 
+  .provider {
+      font-size: 0.7rem;
+      .provider-name {
+        margin: 0.2rem 0.25rem;
+      }
+   }
+
+   .provider-settings {
+        .switch {
+            height: 0.5rem;
+        }
+   }
   .player-toolbar {
       width: 100%;
       border-radius: 0;

@@ -28,14 +28,37 @@ function loadWatchPage(mediaType, name = null, id, tvData = null) {
                 <i class="fa-solid fa-server"></i>
               </button>
               <div class="providers">
-                <p data-source="1">Vidlink</p>
-                <p data-source="2">VidPlay</p>
-                <p data-source="3">Vidsrc</p>
-                <p data-source="4">Whvx</p>
-                <p data-source="5">Videasy</p>
-                <p data-source="6">111movies</p>
-                <p data-source="7">Multiembed</p>
-                <p data-source="8">AutoEmbed(Multi)</p>
+                <div class="provider">
+                  <p class="provider-name" data-source="1">Vidlink</p>
+                </div>
+                <div class="provider">                
+                  <p class="provider-name" data-source="2">VidPlay</p>
+                  <span class="provider-settings">
+                    <p class="version">v3</p>
+                    <div class="switch-buttons">
+                      <button class="switch" data-version="2"></button>
+                      <button class="switch active" data-version="3"></button>
+                    </div>
+                  </span>
+                </div>
+                <div class="provider">                
+                  <p class="provider-name" data-source="3">Vidsrc</p>
+                </div>
+                <div class="provider"> 
+                  <p class="provider-name" data-source="4">Whvx</p>
+                </div>
+                <div class="provider"> 
+                  <p class="provider-name" data-source="5">Videasy</p>
+                </div>
+                <div class="provider"> 
+                  <p class="provider-name" data-source="6">111movies</p>
+                </div>
+                <div class="provider"> 
+                  <p class="provider-name" data-source="7">Multiembed</p>
+                </div>
+                <div class="provider"> 
+                  <p class="provider-name" data-source="8">AutoEmbed(Multi)</p>
+                </div> 
               </div>
             </div>
             <div class="media-download">
@@ -84,12 +107,16 @@ function loadWatchPage(mediaType, name = null, id, tvData = null) {
   loadSources(source, mediaType, id, season, episode);
 
   // Add event listeners to dropdown items
-  const sourceSelector = document.querySelectorAll('.providers p');
+  const sourceSelector = document.querySelectorAll('.provider');
   sourceSelector.forEach(item => {
-    item.addEventListener('click', () => {
-      const lastSource = item.classList.contains('selected');
-      source = Number(item.getAttribute('data-source'));
-      if (!lastSource) loadSources(source, mediaType, id, currentSeason, currentEpisode);
+    item.addEventListener('click', (e) => {
+      const provider = item.querySelector('.provider-name')
+      const lastSource = provider.classList.contains('selected');
+      const settingsChange = e.target.closest('.provider-settings > .switch-buttons')
+      source = Number(provider.getAttribute('data-source'));
+      let settings = [ null ]
+      if (settingsChange) settings = providerSettings(item);
+      if (!lastSource || settingsChange) loadSources(source, mediaType, id, currentSeason, currentEpisode, settings);
     });
   });
 
@@ -104,63 +131,22 @@ function loadWatchPage(mediaType, name = null, id, tvData = null) {
   });
 }
 
+function providerSettings(item) {
+  item.querySelectorAll('.switch').forEach(btn => btn.classList.toggle('active'));
+  const settings = item.querySelector('.switch.active').dataset
+  item.querySelector('.version').innerText = `v${settings.version}`
+  return settings
+}
+
 // Sources
-function loadSources(source, mediaType, id, season = null, episode = null) {
+function loadSources(source, mediaType, id, season = null, episode = null, settings = [ null ]) {
   loc();
-  let src = "";
-  const urlPath = `${mediaType}/${id}${season && episode ? `/${season}/${episode}` : ''}`
-  switch (source) {
-    case 1:
-      src = `https://vidlink.pro/${urlPath}`;
-      break;
-    case 2:
-      src = `https://vidsrc.cc/v3/embed/${urlPath}`;
-      break;
-    case 3:
-      src = `https://vidsrc.icu/embed/${urlPath}`;
-      break;
-    case 4:
-      src = `https://vidbinge.dev/embed/${urlPath}`;
-      break;
-    case 5:
-      src = `https://player.videasy.net/${urlPath}`;
-      break;
-    case 6:
-      src = `https://111movies.com/${urlPath}`;
-      break;
-    case 7:
-      src = `https://multiembed.mov/?video_id=${id}&tmdb=1${season && episode ? `&s=${season}&p=${episode}` : ''}`;
-      break;
-    case 8:
-      src = `https://hin.autoembed.cc/${urlPath}`;
-      break;
-    default:
-      console.error("Invalid source selected");
-      return;
-  }
-
-  const loadIframe = `
-    <button class="iframe-exit">
-      <i class="fa-solid fa-compress"></i>
-    </button>
-    <iframe
-      src="${src}"
-      referrerpolicy="origin"
-      frameborder="0"
-      scrolling="no"
-      allowfullscreen
-      style="display: none;"
-      onload="showIframe(this)"
-      allow="encrypted-media"
-      class="iframe${source === 5 ? ` zoom` : ''}"
-    ></iframe>
-  `;
-
+  const loadIframe = getSourceIframe(source, mediaType, id, season, episode, settings)
   // indicicate loading...
   document.querySelector(".loading").style.display = "flex";
   document.querySelector(".iframe-container").innerHTML = loadIframe;
 
-  const sourceSelector = document.querySelectorAll('.providers p');
+  const sourceSelector = document.querySelectorAll('.provider-name');
   sourceSelector.forEach(item => {
     if (item.dataset.source === String(source)) {
       item.classList.add('selected');
@@ -197,11 +183,68 @@ function loadSources(source, mediaType, id, season = null, episode = null) {
     });
 }
 
+function getSourceIframe(source, mediaType, id, season = null, episode = null, settings = [ null ]) {
+  let src = "";
+  const urlPath = `${mediaType}/${id}${season && episode ? `/${season}/${episode}` : ''}`
+  
+  const { version } = settings ? settings : [ null ];
+
+  switch (source) {
+    case 1:
+      src = `https://vidlink.pro/${urlPath}`;
+      break;
+    case 2:
+      src = `https://vidsrc.cc/v${version || 3}/embed/${urlPath}`;
+      break;
+    case 3:
+      src = `https://vidsrc.icu/embed/${urlPath}`;
+      break;
+    case 4:
+      src = `https://vidbinge.dev/embed/${urlPath}`;
+      break;
+    case 5:
+      src = `https://player.videasy.net/${urlPath}`;
+      break;
+    case 6:
+      src = `https://111movies.com/${urlPath}`;
+      break;
+    case 7:
+      src = `https://multiembed.mov/?video_id=${id}&tmdb=1${season && episode ? `&s=${season}&p=${episode}` : ''}`;
+      break;
+    case 8:
+      src = `https://hin.autoembed.cc/${urlPath}`;
+      break;
+    default:
+      console.error("Invalid source selected");
+      return;
+  }
+
+  //  referrerpolicy="origin"
+
+  const iframeHTML = `
+    <button class="iframe-exit">
+      <i class="fa-solid fa-compress"></i>
+    </button>
+    <iframe
+      src="${src}"
+      frameborder="0"
+      scrolling="no"
+      allowfullscreen
+      style="display: none;"
+      onload="showIframe(this)"
+      class="iframe${source === 5 ? ` zoom` : ''}"
+    ></iframe>
+  `;
+
+  return iframeHTML
+}
+
 function getLoggedSource(id) {
   return Number(localStorage.getItem(id))
 }
 
 function showIframe(iframe) {
+  //console.log(iframe)
   iframe.style.display = "block";
   document.querySelector(".loading").style.display = "none";
 }
