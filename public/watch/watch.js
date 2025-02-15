@@ -243,8 +243,8 @@ function getSourceIframe(source, mediaType, id, season = null, episode = null, s
     ></iframe>
   `;
 
-  console.log(src)
-  return null //iframeHTML
+  //console.log(src)
+  return iframeHTML
 }
 
 function getLoggedSource(id) {
