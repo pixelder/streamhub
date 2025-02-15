@@ -264,6 +264,7 @@ iframe.zoom {
   width: 10rem;
   max-height: 0px; /* Responsive height */
   opacity: 0;
+  overflow: auto;
   outline: 1px solid transparent;
   background-color: #141427;
   border-radius: var(--border-radius2);
@@ -275,7 +276,6 @@ iframe.zoom {
   align-items: center;
   justify-content: space-between;
   opacity: 0;
-  pointer-events: none;
   color: var(--font-color1);
   margin: 0.25rem;
   border-radius: var(--border-radius2);
@@ -326,7 +326,6 @@ iframe.zoom {
     max-height: 1000px;
 
     .provider {
-      pointer-events: all;
       opacity: 1;
     }
 

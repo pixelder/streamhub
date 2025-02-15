@@ -114,8 +114,9 @@ function loadWatchPage(mediaType, name = null, id, tvData = null) {
       const lastSource = provider.classList.contains('selected');
       const settingsChange = e.target.closest('.provider-settings > .switch-buttons')
       source = Number(provider.getAttribute('data-source'));
-      let settings = [ null ]
-      if (settingsChange) settings = providerSettings(item);
+      let settings = getProviderSettings(item) || [ null ]
+      if (settingsChange) settings = setProviderSettings(item);
+      console.log(source, settings)
       if (!lastSource || settingsChange) loadSources(source, mediaType, id, currentSeason, currentEpisode, settings);
     });
   });
@@ -131,9 +132,15 @@ function loadWatchPage(mediaType, name = null, id, tvData = null) {
   });
 }
 
-function providerSettings(item) {
+function setProviderSettings(item) {
   item.querySelectorAll('.switch').forEach(btn => btn.classList.toggle('active'));
-  const settings = item.querySelector('.switch.active').dataset
+  return getProviderSettings(item)
+}
+
+function getProviderSettings(item) {
+  const btn = item.querySelector('.switch.active')
+  const settings = btn?.dataset
+  if (!settings) return
   item.querySelector('.version').innerText = `v${settings.version}`
   return settings
 }
@@ -236,7 +243,8 @@ function getSourceIframe(source, mediaType, id, season = null, episode = null, s
     ></iframe>
   `;
 
-  return iframeHTML
+  console.log(src)
+  return null //iframeHTML
 }
 
 function getLoggedSource(id) {
