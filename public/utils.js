@@ -1075,7 +1075,7 @@ function setupCheckboxListeners(sectionID) {
 
     let hold = false;
     const timer = setTimeout(() => {
-      navigator.vibrate(100)
+      navigator.vibrate(30)
       hold = true;
       console.log("Element is being held");
       const isActive = item.querySelector(".selectable.active");
