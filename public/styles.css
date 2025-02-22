@@ -13,7 +13,7 @@
   @supports (-webkit-appearance:none) and (contain:paint) and (not (-moz-appearance:button)) {
     scrollbar-width: none;
   }
-  
+
 }
 
 
@@ -331,34 +331,137 @@ section {
   flex-wrap: wrap;
   padding: 0.6rem 1.4rem 0 1.4rem;
   margin-bottom: 1.4rem;
-  gap: 0rem;
+  gap: 0.6rem;
   min-height: 12rem;
   scroll-snap-align: start;
 }
 
-section h2 {
-  font-size: 1.4rem;
-  margin: var(--padding1) 0;
-  text-align: left;
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  gap: inherit;
+  width: 100%;
+  padding-top: var(--padding1);
 }
 
-section .pagination-buttons {
+section h2 {
+  font-size: 24px;
+  margin-right: auto;
+  text-align: left;
+  text-wrap: nowrap;
+}
+
+.actions {
+  display: none;
+  /* flex-direction: row-reverse; */
+  justify-content: flex-end;
+  gap: 0.4rem;
+  /* margin-bottom: 0.6rem; */
+}
+
+section:has(.grid-item) .actions {
+  display: flex;
+}
+
+.actions button {
+  font-size: 14px;
+  height: 30px;
+  aspect-ratio: 1 / 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-sizing: border-box;
+  text-shadow: none;
+  border-radius: var(--border-radius2);
+  border: 1px solid #3838528c;
+  background: var(--color5);
+}
+
+.actions .pagination-buttons {
   display: flex;
   flex-direction: row;
-  padding-bottom: auto;
   gap: 0.4rem;
-  margin: var(--padding1) 0rem 0 auto;
+  button {
+    font-size: 12px;
+  }
 }
 
-section .pagination-buttons>button {
-  border: 1px solid #3838528c;
-  background-color: var(--color5);
+.actions .edit-button {
+  i {
+    position: absolute;
+    opacity: 0;
+    scale: 0;
+    transition: scale 0.2s ease-in-out;
+  }
+
+  i.active {
+    opacity: 1;
+    scale: unset;
+  }
+}
+
+.actions .delete-button {
+  position: absolute;
+  color: var(--error);
+  filter: saturate(1.4);
+  opacity: 0;
+  scale: 0;
+  transition: scale 0.2s ease-in-out;
+}
+
+.actions:has(.delete-button.active) .delete-button {
+  position: relative;
+  opacity: 1;
+  scale: unset;
+}
+
+section:has(.delete-button.active) .select-action {
+    scale: unset;
+    opacity: 1;
+    transition:  opacity 0.2s, scale 0.2s ease-in-out;
+    transition-delay: 0.1s;
+  }
+
+
+.select-action {
+  display: flex;
+  scale: 0;
+  opacity: 0;
+  width: fit-content;
+  height: 30px;
+  align-items: center;
+  text-wrap: nowrap;
+  font-size: 14px;
   border-radius: var(--border-radius2);
-  aspect-ratio: 1 / 1;
-  height: 1.8rem;
-  font-size: 12px;
+  border: 1px solid #3838528c;
+  background: var(--color5) !important;
+  transition:  opacity 0.1s, scale 0.1s ease-in-out;
+  transition-delay: 0.1s;
 }
 
+
+.select-all {
+  position: relative !important;
+  padding: unset !important;
+  aspect-ratio: 1 / 1;
+  justify-content: center;
+  align-items: center;
+  width: fit-content !important;
+  display: flex;
+}
+
+.v-separator {
+  border-left: 1px solid #383852;
+  height: 60%;
+}
+
+.selection-count {
+  /* height: inherit; */
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  margin: 0 var(--padding1);
+}
 
 /* Grid Layout */
 
@@ -385,7 +488,8 @@ section .pagination-buttons>button {
     display: flex;
     flex-direction: column;
     place-content: center;
-    width: 100%;/* 
+    width: 100%;
+    /* 
     aspect-ratio: 1 / 0.22; */
     background: var(--color5);
     border-radius: var(--border-radius1);
@@ -421,14 +525,13 @@ section .pagination-buttons>button {
   /* box-shadow: 0 10px 24px rgba(0, 0, 0, 0.7); */
 }
 
-
-.grid-item:hover, .grid-item:focus-within {
-  scale: 1.0625 ;
+.grid-item:hover,
+.grid-item:focus-within {
+  scale: 1.0625;
   box-shadow: 0 6px 15px rgb(8, 8, 22);
   border: 1px solid #383852e5;
   cursor: pointer;
 }
-
 
 .grid-item div {
   position: relative;
@@ -455,7 +558,6 @@ section .pagination-buttons>button {
   font-size: 0.8125rem;
   line-height: 14px;
 }
-
 
 .grid-item-info>p:nth-child(1) {
   flex: 1;
@@ -523,34 +625,107 @@ section .pagination-buttons>button {
     justify-content: center;
     cursor: pointer;
   }
-  .options-icon, .options-x-icon {
+
+  .options-icon,
+  .options-x-icon {
     color: #aaaae0;
     pointer-events: none;
     position: absolute;
     transition: opacity 0.25s ease-in-out;
   }
+
   .options-x-icon {
     opacity: 0;
   }
 }
 
 .grid-options.open {
-
   .options-icon {
     opacity: 0;
   }
+
   .options-x-icon {
     color: var(--font-color1);
     opacity: 1;
   }
 }
 
+.grid-item:has(.selectable.active),
+.grid-item:has(.selectable.active):hover {
+  scale: unset !important;
+
+  .grid-actions {
+    opacity: 0;
+  }
+}
+
+/* Selectable items */
+.selectable {
+  position: absolute;
+  z-index: 2;
+  opacity: 0;
+  visibility: hidden;
+  width: 100%;
+  height: 100%;
+  padding: var(--padding1);
+  transition: opacity 0.2s ease-in-out;
+
+  .checkbox-button {
+    scale: 0;
+    transition: scale 0.2s ease-in-out;
+  }
+}
+
+.selectable.active {
+  opacity: 1;
+  visibility: visible;
+  background: #18182555;
+  backdrop-filter: saturate(0.5);
+  transition: background 0.2s ease-in-out;
+
+  .checkbox-button {
+    scale: unset;
+  }
+}
+
+.checkbox-button {
+  display: flex;
+  width: fit-content;
+  font-size: 16px;
+
+  /* color: #aaaae0; */
+  .fa-square-check {
+    position: absolute;
+    opacity: 0;
+    scale: 0;
+    transition: all 0.2s ease-in-out;
+  }
+}
+
+.selectable input[type="checkbox"]:checked+.checkbox-button>i {
+  scale: unset;
+  opacity: 1;
+}
+
+.selectable input[type="checkbox"] {
+  display: none;
+}
+
+.selectable:has(input[type="checkbox"]:checked) {
+  background: #18182511;
+  backdrop-filter: saturate(1);
+}
 
 
 #discover-streaming {
+  display: flex;
   flex-wrap: nowrap;
   flex-direction: column;
   gap: 0;
+
+  h2 {
+    margin: var(--padding1) 0;
+  }
 }
 
 
@@ -599,16 +774,6 @@ section .pagination-buttons>button {
   gap: 0.6rem;
 }
 
-.tab-items .pagination-buttons {
-  height: 100%;
-  margin: unset;
-  margin-left: auto;
-}
-
-.tab-items .pagination-buttons button {
-  margin: unset;
-}
-
 .tab-items .grid-container {
   gap: inherit;
 }
@@ -617,6 +782,7 @@ section .pagination-buttons>button {
   display: flex;
   width: 10rem;
   height: 2rem;
+  margin-right: auto;
   text-wrap: nowrap;
   border-radius: var(--border-radius2);
   overflow: hidden;
@@ -648,14 +814,18 @@ section .pagination-buttons>button {
 
 /* Browse Page */
 
-#browse-movies, #browse-tvs {
+#browse-movies,
+#browse-tvs {
+  display: flex;
   flex-direction: column;
   gap: 0;
+
   .grid-container {
-      min-height: unset;
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(10rem, 1fr));
+    min-height: unset;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(10rem, 1fr));
   }
+
   .result-message {
     display: none;
     flex-direction: column;
@@ -664,11 +834,11 @@ section .pagination-buttons>button {
     color: #757592;
     border: 1px solid var(--color1);
     border-radius: var(--border-radius1);
-    
+
     label {
       font-size: 1.4rem;
       font-weight: 700;
-      margin: calc(var(--padding1) * 2) ;
+      margin: calc(var(--padding1) * 2);
     }
 
     .message {
@@ -689,6 +859,7 @@ section .pagination-buttons>button {
     ul {
       list-style: inside;
     }
+
     li {
       font-size: 0.875rem;
     }
@@ -696,12 +867,15 @@ section .pagination-buttons>button {
 }
 
 .result-message.show {
-  .message , hr {
+
+  .message,
+  hr {
     display: block;
   }
 }
 
-.filters {/* 
+.filters {
+  /* 
   position: relative; */
   display: flex;
   flex-wrap: wrap;
@@ -714,7 +888,7 @@ section .pagination-buttons>button {
     max-width: 100%;
   }
 
-  label {   
+  label {
     width: fit-content;
     margin-bottom: 0.4rem;
     font-size: 1rem;
@@ -745,6 +919,7 @@ section .pagination-buttons>button {
     cursor: pointer;
     transition: background-color 0.2s, border 0.2s;
   }
+
   .chip::selection {
     background: transparent;
   }
@@ -754,13 +929,15 @@ section .pagination-buttons>button {
     border: 1px solid var(--color1);
     filter: brightness(1.2);
   }
+
   .chip.excluded {
     color: var(--font-color3);
     filter: opacity(0.7);
   }
 }
 
-.filter-button, .reset-button {
+.filter-button,
+.reset-button {
   gap: 0.6rem;
   font-size: 0.875rem;
   font-weight: 600;
@@ -809,10 +986,12 @@ section .pagination-buttons>button {
   .form-group {
     margin-bottom: 0;
   }
+
   label {
     display: block;
     margin-bottom: 0.4rem;
   }
+
   select {
     max-width: 6rem;
   }
@@ -828,7 +1007,8 @@ section .pagination-buttons>button {
 }
 
 
-.vote-count, .min-rating {
+.vote-count,
+.min-rating {
   display: flex;
   gap: 1rem;
   align-items: center;
@@ -839,6 +1019,7 @@ section .pagination-buttons>button {
     height: 100%;
     width: 4rem;
   }
+
   input[type="range"] {
     width: 50%;
   }
@@ -866,85 +1047,108 @@ section .pagination-buttons>button {
   width: 100%;
   height: 100%;
   background: rgba(0, 0, 0, 0.8);
-  z-index: 1;
+  z-index: 2;
 }
+
+
 .dialog {
+  --spacing: 1.8;
   position: fixed;
   top: 50%;
   left: 50%;
   translate: -50% -50%;
+  min-width: min-content;
   width: fit-content;
-  max-width: 25rem;
+  max-width: 360px;
   height: fit-content;
   display: inline-grid;
-  gap: 0;
+  gap: calc(var(--padding1) * var(--spacing));
   justify-items: center;
-  padding: calc(var(--padding1) * 2) 1.4rem;
+  padding: calc(var(--padding1) * var(--spacing));
   border: 1px solid var(--color2);
   border-radius: var(--border-radius1);
   background: var(--color5);
   text-shadow: none;
 
-
   h2 {
-    font-size: 1.35rem;
-    padding: var(--padding1);
+    font-size: 24px;
+    line-break: normal;
+    text-wrap: wrap;
+    /* padding: calc(var(--padding1) * 0.5); */ 
   }
 
   .message-box {
     display: flex;
+    gap: var(--padding1);
     width: 100%;
+    height: fit-content;
     flex-direction: row;
+    /* justify-content: space-around; */
     align-items: center;
     padding: var(--padding1);
-    margin: var(--padding1) 0;
-    color: var(--error);
-    font-size: 0.875rem;
-    font-weight: 600;
-    border-left: 0.6rem solid var(--error);
+    color: var(--font-color2);
+    font-size: 14px;
+    /* font-weight: 600; */
+    border: 1px dashed var(--error);
     border-radius: var(--border-radius2);
-    background: rgba(166, 25, 46, 0.12);
-
+    --bg-warn: rgba(166, 25, 46, 0.10);
+    --bg-warn2: rgba(166, 25, 46, 0.30);
+    background: repeating-linear-gradient(
+      45deg,
+      var(--bg-warn),
+      var(--bg-warn) 5%,
+      var(--bg-warn2) 5%,
+      var(--bg-warn2) 10%
+    );
+    background-size: cover;
     .icon {
-      font-size: 1.4rem;
-      padding: var(--padding1);
+      font-size: 20px;
+      height: 2rem;
+      transition: height 0.2s, width 0.2s ease;
+      aspect-ratio: 1 / 1;
+      /* border: 1px solid red; */
+      display: flex;
+      justify-content: center;
+      align-items: center;
     }
 
     .message {
-      padding: var(--padding1);
+      height: fit-content;
+      width: fit-content;
+      /* border:  1px solid red; */
     }
   }
 
   .message-box.green {
     color: var(--success);
-    border-left: 0.6rem solid var(--success);
+    border: 1px dashed var(--success);
     background: rgba(25, 166, 46, 0.12);
   }
-  
+
   .dialog-buttons {
     display: flex;
     flex-direction: row;
-    gap: 1rem;
+    gap: inherit;
     width: 100%;
-    height: 2.4rem;
-    margin-top: var(--padding1);
-    padding: 0 2rem;
-    font-size: 0.875rem;
-    font-weight: 600;
+    height: 2.2rem;
+    font-size: 14px;
+    font-weight: 500;
     text-wrap: nowrap;
   }
+
   button {
     flex: 1 0;
-    border-radius: var(--border-radius1);
+    border-radius: var(--border-radius2);
     background: #30303d77;
-    padding: var(--padding1);
-    transition: filter 0.2s;
+    /* transition: filter 0.2s; */
   }
 
   button:hover {
     filter: brightness(1.2);
   }
-
+  button:active {
+    filter: brightness(1.3) saturate(1.4);
+  }
   #accept {
     background: var(--error);
   }
@@ -953,13 +1157,14 @@ section .pagination-buttons>button {
 #continue-watching {
   display: none;
 }
+
 /* Continue Watching */
-#continue-watching, #history {
+#continue-watching,
+#history {
 
   .grid-container {
     width: 100%;
-    /*
-        visibility: hidden; */
+    /* visibility: hidden; */
     display: grid;
     grid-template-columns: repeat(5, minmax(0, 1fr));
     gap: 12px;
@@ -971,6 +1176,7 @@ section .pagination-buttons>button {
     z-index: 0;
     min-width: fit-content;
     padding: 0;
+    background: var(--bg-color);
   }
 
   .grid-item img {
@@ -978,16 +1184,15 @@ section .pagination-buttons>button {
     z-index: inherit;
     aspect-ratio: 16 / 9;
     height: 100%;
-    mask-image: linear-gradient(to top, rgba(0, 0, 0, 0.4) 0%, black 50%);
+    mask-image: linear-gradient(to top, rgba(0, 0, 0, 0.1) 0%, black 40%, black 60%, rgba(0, 0, 0, 0.5) 100%);
   }
-
 
   .grid-actions {
     position: absolute;
     top: 0;
     right: 0;
     display: flex;
-    z-index: 1000;
+    z-index: 2;
     padding: calc(var(--padding1) / 2);
   }
 
@@ -1020,8 +1225,9 @@ section .pagination-buttons>button {
       aspect-ratio: 1 / 1;
       height: 100%;
       border-radius: inherit;
-/*       margin: 4px;
- */   align-items: center;
+      /*       margin: 4px;
+ */
+      align-items: center;
       justify-content: center;
       cursor: pointer;
       text-shadow: 0 0 3px #30303d;
@@ -1030,7 +1236,8 @@ section .pagination-buttons>button {
       transition: border 0.25s, background-color 0.25s ease-in-out;
     }
 
-    .options-buttons:hover, .options-buttons:focus-within {
+    .options-buttons:hover,
+    .options-buttons:focus-within {
       background-color: #38385255;
       border: 1px solid #383852e5;
     }
@@ -1077,6 +1284,7 @@ section .pagination-buttons>button {
         border: 1px solid #383852e5;
         border-radius: var(--border-radius2);
       }
+
       button:focus-visible {
         outline: 2px solid var(--font-color1);
         background-color: var(--color3);
@@ -1096,7 +1304,7 @@ section .pagination-buttons>button {
     bottom: 0;
     position: absolute;
     padding: var(--padding1);
-    z-index: 1000;
+    z-index: 1;
     height: fit-content;
     width: 100%;
   }
@@ -1112,6 +1320,7 @@ section .pagination-buttons>button {
   }
 
   .history-item-info h3 {
+    font-size: 18px;
     width: fit-content;
     line-height: 1.1rem;
   }
@@ -1152,7 +1361,7 @@ section .pagination-buttons>button {
     gap: 12px;
     justify-content: flex-start;
   }
-  
+
   section:has(.grid-item, .profile-item) {
     display: flex;
   }
@@ -1238,11 +1447,12 @@ section .pagination-buttons>button {
 
 body:has(.modal:is([active])) {
   overflow: hidden;
+
   .modal-overlay {
     opacity: 1;
     backdrop-filter: blur(5px) brightness(0.4);
     visibility: visible;
-  } 
+  }
 }
 
 .modal:is([active]) {
@@ -1644,4 +1854,3 @@ option {
   padding-bottom: 0 !important;
 
 }
-
