@@ -954,6 +954,7 @@ function setupCheckboxListeners(sectionID) {
   };
 
   const resetEditing = () => {
+    navigator.vibrate(60)
     selectAllBox.checked = false;
     checkboxes.forEach(cb => cb.checked = false);
     selectedItems = [];
@@ -970,7 +971,6 @@ function setupCheckboxListeners(sectionID) {
     );
 
     resetEditing();
-    navigator.vibrate(80)
 
     if (!gridItem) {
       setTimeout(() => {
