@@ -49,19 +49,45 @@
     <!-- Body Content -->
     <main id="main-content">
         <section id="continue-watching" data-type="watching">
-            <h2>Continue Watching</h2>
+            <div class="section-header">
+                <h2>Continue Watching</h2>
+                <div class="select-action">
+                    <label class="select-all selectable">
+                        <input type="checkbox" />
+                        <span class="checkbox-button">
+                          <i class="fa-regular fa-square"></i>
+                          <i class="fa-solid fa-square-check"></i>
+                        </span>
+                    </label>
+                    <div class="v-separator"></div>
+                    <div class="selection-count"><p></p></div>
+                </div>
+                <div class="actions">
+                    <button class="delete-button">
+                        <i class="fa-solid fa-trash-can"></i>
+                    </button>
+                    <button class="edit-button">
+                        <i class="fa-solid fa-pencil active"></i>
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
+            </div>
             <div class="grid-container">
             </div>
         </section>
         <section id="trending-movies">
-            <h2>Trending Movies</h2>
-            <div class="pagination-buttons">
-                <button class="prev-page">
-                    <i class="fa-solid fa-chevron-left"></i>
-                </button>
-                <button class="next-page">
-                    <i class="fa-solid fa-chevron-right"></i>
-                </button>
+            <div class="section-header">
+                <h2>Trending Movies</h2>
+                <div class="actions">
+                    <div class="pagination-buttons">
+                        <button class="prev-page">
+                            <i class="fa-solid fa-chevron-left"></i>
+                        </button>
+                        <button class="next-page">
+                            <i class="fa-solid fa-chevron-right"></i>
+                        </button>
+                    </div>
+                </div>
             </div>
             <div class="grid-container loading">
                 <div class="filler">
@@ -72,14 +98,18 @@
             </div>
         </section>
         <section id="trending-series">
-            <h2>Trending Series</h2>
-            <div class="pagination-buttons">
-                <button class="prev-page">
-                    <i class="fa-solid fa-chevron-left"></i>
-                </button>
-                <button class="next-page">
-                    <i class="fa-solid fa-chevron-right"></i>
-                </button>
+            <div class="section-header">
+                <h2>Trending Series</h2>
+                <div class="actions">
+                    <div class="pagination-buttons">
+                        <button class="prev-page">
+                            <i class="fa-solid fa-chevron-left"></i>
+                        </button>
+                        <button class="next-page">
+                            <i class="fa-solid fa-chevron-right"></i>
+                        </button>
+                    </div>
+                </div>
             </div>
             <div class="grid-container loading">
                 <div class="filler">
@@ -103,13 +133,15 @@
                     <button class="media-tab active" data-type="movie">Movies</button>
                     <button class="media-tab" data-type="tv">TV Shows</button>
                 </div>
-                <div class="pagination-buttons">
-                    <button class="prev-page">
-                        <i class="fa-solid fa-chevron-left"></i>
-                    </button>
-                    <button class="next-page">
-                        <i class="fa-solid fa-chevron-right"></i>
-                    </button>
+                <div class="actions">
+                    <div class="pagination-buttons">
+                        <button class="prev-page">
+                            <i class="fa-solid fa-chevron-left"></i>
+                        </button>
+                        <button class="next-page">
+                            <i class="fa-solid fa-chevron-right"></i>
+                        </button>
+                    </div>
                 </div>
                 <div class="grid-container loading">
                     <div class="filler">
