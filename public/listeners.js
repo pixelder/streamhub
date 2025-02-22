@@ -1,18 +1,19 @@
 // Event listeners for the home page and anywhere there is grid-item
 
-['click', 'keydown'].forEach(eventType => {
+['touchstart','mousedown','click', 'keydown'].forEach(eventType => {
   document.removeEventListener(eventType, globalAddEventListener);
   document.addEventListener(eventType, globalAddEventListener);
 });
 
-
+let wasEditing = false
 function globalAddEventListener (event) {
+  const editing =  event.target.closest('.selectable.active') || event.target.querySelector('.selectable.active')
+  if (editing) return
   const modal = document.getElementById('info-modal');
   const modalActive = modal.getAttribute('active') !== null ? true : false;
   const watchingOrHistory = event.target.closest('#continue-watching .grid-item') || event.target.closest('#history .grid-item');
-  const bookmarks = event.target.closest('#bookmarks .grid-item');
+  //const bookmarks = event.target.closest('#bookmarks .grid-item');
   const gridItem = event.target.closest('.grid-item, .profile-item');
-  
   if (gridItem && !modalActive) {
     const { mediaType, id, name, sno, eno, index } = gridItem.dataset;
     if ((event.type === 'click' && !watchingOrHistory ||
@@ -27,8 +28,8 @@ function globalAddEventListener (event) {
         loadUserContent( 'bookmarks', 'bookmarks');
       }
     } else if ((watchingOrHistory) && (event.type === 'click' || event.type === 'keydown' && event.key === 'Enter')) {
-      if ( !event.target.closest('.grid-actions')) {
-        console.log(sno, eno, null)
+      if ( !event.target.closest('.grid-actions') && !editing && !wasEditing) {
+        console.log(id, mediaType,sno, eno, null)
         window.location.href = `/watch/${mediaType}/${id}/${name}${sno && eno ? `/${sno}/${eno}` : ""}`;
         event.stopPropagation();
       } else if ( event.target.matches(".options-buttons")) {

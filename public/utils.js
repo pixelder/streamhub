@@ -18,13 +18,13 @@ function abbvText(text, limit) {
   const words = text.split(' ');
 
   const filteredWords = words.filter(w => w !== w.toLowerCase());
-  
+
   if ((words.length !== 1) && (text.length > limit)) {
-      let abbreviation = '';
-      for (const word of filteredWords) {
-          abbreviation += word[0].toUpperCase();
-      }
-      return abbreviation;
+    let abbreviation = '';
+    for (const word of filteredWords) {
+      abbreviation += word[0].toUpperCase();
+    }
+    return abbreviation;
   } else {
     return text;
   }
@@ -75,7 +75,7 @@ function populateSection(sectionId, items) {
     container.classList.remove('loading');
     return
   }
-  
+
   currentPage++
   const msg = document.querySelector('.result-message');
   msg.classList.remove('show');
@@ -102,13 +102,13 @@ function renderGridItems(items) {
       const rating = truncate(item.vote_average, 1);
       const year = extractYear(item.release_date || item.first_air_date);
       const image = item.poster_path
-      ? `${IMAGE_URL}${item.poster_path}`
-      : 'https://placehold.co/440x661/383852/ccc?text=No+Image';
+        ? `${IMAGE_URL}${item.poster_path}`
+        : 'https://placehold.co/440x661/383852/ccc?text=No+Image';
       return `
          <div tabindex="0" class="grid-item" id="grid-item" data-id="${item.id}" data-media-type="${mediaType}">
            <div>
             <div class="grid-actions">
-              <div class="grid-options ${bookmark? 'open': ''}">
+              <div class="grid-options ${bookmark ? 'open' : ''}">
                 <div tabindex="0" class="options-buttons">
                   <i class="options-icon fa-regular fa-bookmark"></i>
                   <i class="options-x-icon fa-solid fa-bookmark"></i>
@@ -141,7 +141,7 @@ async function fetchMetaData(mediaType, id, season = null) {
     if (mediaType === "movie") {
       url = `${BASE_URL}/movie/${id}?api_key=${API_KEY}&language=en-US&append_to_response=videos,release_dates,credits,images&include_image_language=en`;
     } else if (mediaType === "tv") {
-      url = `${BASE_URL}/tv/${id}${ season ? `/season/${season}` : '' }?api_key=${API_KEY}&language=en-US&append_to_response=content_ratings,credits,images&include_image_language=en`;
+      url = `${BASE_URL}/tv/${id}${season ? `/season/${season}` : ''}?api_key=${API_KEY}&language=en-US&append_to_response=content_ratings,credits,images&include_image_language=en`;
     } else if (mediaType === "person") {
       url = `${BASE_URL}/person/${id}?api_key=${API_KEY}&language=en-US`;
     }
@@ -159,7 +159,7 @@ function openModal(event) {
   const gridItem = event.target.closest('.grid-item, .profile-item');
   const id = gridItem?.dataset.id; // Get the ID of the item
   //const sectionId = gridItem?.closest('section')?.id; // Find the parent section's ID
-  const mediaType =  gridItem?.dataset?.mediaType ?? gridItem?.closest('section')?.dataset?.type ;
+  const mediaType = gridItem?.dataset?.mediaType ?? gridItem?.closest('section')?.dataset?.type;
   console.log(mediaType, id)
   if (gridItem && !mediaType || !id) {
     console.error("Media type or ID not found");
@@ -173,7 +173,7 @@ function openModal(event) {
 
 function getCountryCertification(data, mediaType) {
   const DEFAULT_COUNTRY = "US";
-  const ORIGIN_COUNTRY = data.origin_country?.[0];
+  const ORIGIN_COUNTRY = data.origin_displayCountry?.[0];
 
   let rating = "";
   let results = [];
@@ -196,8 +196,8 @@ function getCountryCertification(data, mediaType) {
       "";
   }
 
-  return { country: ORIGIN_COUNTRY, rated: rating };
-} 
+  return { displayCountry: ORIGIN_COUNTRY, rated: rating };
+}
 
 function displayModal(mediaType, data) {
   const modal = document.getElementById('info-modal');
@@ -207,7 +207,7 @@ function displayModal(mediaType, data) {
   const backdropPath = data.backdrop_path
   document.documentElement.style.setProperty(
     '--modal-backdrop',
-    `url(${ backdropPath ? IMAGE_ORG + data.backdrop_path : ''})`
+    `url(${backdropPath ? IMAGE_ORG + data.backdrop_path : ''})`
   );
 
   const contentLogoHTML = getContentLogoHTML(data);
@@ -241,8 +241,8 @@ function displayModal(mediaType, data) {
 
   initializeModalListeners(mediaType, data, modalContent, details);
 
-  modal.setAttribute('active','')
- // modal.classList.add('active');
+  modal.setAttribute('active', '')
+  // modal.classList.add('active');
   details.focus();
 
   cappedOverview();
@@ -255,10 +255,10 @@ function getContentLogoHTML(data) {
   return `
     <span>
       <div class="modal-info-logo">
-        ${ logoPath ? `<img src="${IMAGE_URL}${logoPath}" alt="Logo">` :''}
+        ${logoPath ? `<img src="${IMAGE_URL}${logoPath}" alt="Logo">` : ''}
       </div>
       <div class="modal-info">
-        ${ !logoPath ? `<h1>${name.toUpperCase()}</h1>` : ''}
+        ${!logoPath ? `<h1>${name.toUpperCase()}</h1>` : ''}
   `;
 }
 
@@ -275,7 +275,7 @@ function buildMediaDetailsHTML(data, mediaType, contentLogoHTML) {
     .map(cast => cast.name)
     .join(', ');
   const { rated } = getCountryCertification(data, mediaType);
-  
+
   const detailsBodyHTML = `
     <div class="modal-media">
       <div class="modal-cover">
@@ -284,7 +284,7 @@ function buildMediaDetailsHTML(data, mediaType, contentLogoHTML) {
       ${contentLogoHTML}
         <span class="ratings-genre">
           <i class="fa-solid fa-star"></i>
-          <p data-title="${data.vote_count} votes">${truncate(data.vote_average, 1)}</p>
+          <p data-title="${data.vote_displayCount} votes">${truncate(data.vote_average, 1)}</p>
           <span class="modal-genre">
             ${genresHTML}
           </span>
@@ -336,10 +336,10 @@ function getShareButtonHTML() {
   `;
 }
 
-function initializeModalListeners(mediaType,data, modalContent, details) {
+function initializeModalListeners(mediaType, data, modalContent, details) {
   const id = data.id
   const name = data.name || data.title || data.original_title
-  
+
   shareItem(mediaType, id, name);
 
   ['click', 'keydown'].forEach(eventType => {
@@ -385,7 +385,7 @@ async function tvContent(data, sno, eno, ref) {
 
   const displaySeasonInfo = async (event) => {
     const selectedSeason = event.target.value;
-    const { data: tvData} = await fetchMetaData('tv',id,selectedSeason);
+    const { data: tvData } = await fetchMetaData('tv', id, selectedSeason);
     const seasonData = tvData
     episodeContainer.innerHTML = seasonData.episodes
       .map(episode => `
@@ -431,7 +431,7 @@ function watchEventListeners(event) {
   console.log('i ran');
   if (event.type === 'click' || event.type === 'keydown' && event.key === 'Enter') {
     if (event.target.classList.contains("watch-btn")) {
-      
+
       const sanitizedData = Object.fromEntries(
         Object.entries(event.target.dataset).map(([key, data]) => [
           key, escapeHTML(data)
@@ -439,17 +439,17 @@ function watchEventListeners(event) {
       );
 
       const { id, name } = sanitizedData
-      console.log( id, name)
+      console.log(id, name)
       const mediaType = "movie";
-  
+
       //loadWatchPage(mediaType, name, id);
       window.location.href = `/watch/${mediaType}/${Number(id)}/${name}`;
       event.stopPropagation();
     }
-  
+
     if (event.target.closest(".episode img")) {
       const episodeElement = event.target.closest(".episode");
-      
+
       const sanitizedData = Object.fromEntries(
         Object.entries(episodeElement.dataset).map(([key, data]) => [
           key, escapeHTML(data)
@@ -467,18 +467,18 @@ function watchEventListeners(event) {
       const info = `<h2>${name}</h2>
                     <h4>S${season}:E${episode} ${epname}</h4>`;
       const tvData = { season, episode, epname };
-  
+
       if (document.getElementById('episode-container').classList.contains('player-styling')) {
         currentSeason = season;
         currentEpisode = episode;
         const source = getLoggedSource(Number(id)) || 1;
-        
+
         loadSources(source, mediaType, Number(id), Number(season), Number(episode));
-        
+
         window.history.pushState({}, '', `/watch/${mediaType}/${Number(id)}/${name}${season && episode ? `/${Number(season)}/${Number(episode)}` : ''}`);
         document.querySelector("title").innerText = title;
         if (info) { document.querySelector(".now-playing").innerHTML = info };
-        
+
         scrollEpisodeIntoView(episode);
       }
       else {
@@ -490,17 +490,17 @@ function watchEventListeners(event) {
   }
 }
 
-function escapeHTML(str){
+function escapeHTML(str) {
   var p = document.createElement("p");
   p.appendChild(document.createTextNode(str));
   return p.innerHTML;
 }
 
-async function sourceValidator( mediaType, id, season = null, eno = null) {
-  const { data }  = await fetchMetaData(mediaType,id,season)
+async function sourceValidator(mediaType, id, season = null, eno = null) {
+  const { data } = await fetchMetaData(mediaType, id, season)
   const episode = data.episodes.filter(ep => ep.episode_number === Number(eno))[0].episode_number
 
-  return { id : Number(id), season : data.season_number, episode }
+  return { id: Number(id), season: data.season_number, episode }
 }
 
 function scrollEpisodeIntoView(eno) {
@@ -637,17 +637,17 @@ function cropToFit() {
 
   // Handle fullscreen change events
   document.addEventListener('fullscreenchange', () => {
-      console.log('fullscreen');
-      if (!document.fullscreenElement) {
-        iframeExit.classList.remove('hidden');
-        console.log('exited fullscreen');
-      }
-      else {
-        wait('iframeExit', 3).then(() => {
-          iframeExit.classList.add('hidden');
-          console.log('button hidden');
-        });
-      }
+    console.log('fullscreen');
+    if (!document.fullscreenElement) {
+      iframeExit.classList.remove('hidden');
+      console.log('exited fullscreen');
+    }
+    else {
+      wait('iframeExit', 3).then(() => {
+        iframeExit.classList.add('hidden');
+        console.log('button hidden');
+      });
+    }
   });
 }
 
@@ -710,7 +710,7 @@ function whenInView(selector, callback) {
   }
 }
 
-function footerHTML () {
+function footerHTML() {
   const footer = document.querySelector('footer')
   footer ? footer.innerHTML = `
     <ul>
@@ -738,6 +738,26 @@ function footerHTML () {
 
 }
 
+function enableHorizontalWheelScroll(container, factor = 1) {
+  const gridContainers = document.querySelectorAll(container); // Select all matching elements
+
+  gridContainers.forEach(gridContainer => {
+    // Check if the container is overflowing horizontally
+    if (gridContainer.scrollWidth > gridContainer.clientWidth) {
+      const scrollEvent = (e) => {
+        e.preventDefault();
+        gridContainer.scrollLeft += e.deltaY * factor; // Adjust scroll speed if needed
+      };
+
+      // Remove previous listener to prevent duplicates
+      gridContainer.removeEventListener("wheel", scrollEvent);
+      gridContainer.addEventListener("wheel", scrollEvent);
+    }
+  });
+}
+
+
+
 function setActiveIcon(button) {
   if (button === '') return;
   const footer = document.querySelector('footer')
@@ -752,7 +772,7 @@ function isElementInView(element) {
   return rect.top >= 0 && rect.bottom <= window.innerHeight;
 }
 
-function backdropAnim(details,modalContent) {
+function backdropAnim(details, modalContent) {
   const scrollTop = details.scrollTop;
   const opacity = 0.8 - Math.min(scrollTop / 360, 0.8);
   modalContent.style.setProperty('--modal-backdrop-opacity', opacity);
@@ -784,10 +804,10 @@ window.addEventListener('scroll', () => {
         footer ? footer.style.bottom = '-4rem' : '';
       }, 500);
     }
-  } else if ( (window.scrollY <= lastScrollY) || end) {
+  } else if ((window.scrollY <= lastScrollY) || end) {
     isScrollingDown = false;
     clearTimeout(hideTimeout); // Cancel any pending hide
-    
+
     input.style.height = "2rem";
     nav.style.padding = isMobile() ? "0.8rem 0.6rem" : "0.8rem 1.4rem";
     header.style.height = isMobile() ? "3.6rem" : "4rem";
@@ -797,34 +817,34 @@ window.addEventListener('scroll', () => {
   lastScrollY = window.scrollY;
 });
 
-function getConfirm({ title, message, success, decline, state = 1 } = {}) {
-  
+function getConfirm({ title, message, success, decline, state = 1 , exitInterval = 700 } = {}) {
+
   let successIcon
   let declineIcon
   switch (state) {
-    case 1 :
+    case 1:
       successIcon = `<i class="fa-solid fa-circle-check"></i>`
       break;
   }
-  
+
   const overlay = document.createElement('div');
-  overlay.setAttribute('tabindex','0');
+  overlay.setAttribute('tabindex', '0');
   overlay.classList.add('dialog-overlay');
   overlay.innerHTML = `
     <div class="dialog">
-        <h2>${title || `Are you sure?`}</h2>
-        <div class="message-box">
-            <span class="icon">
-                <i class="fa-solid fa-triangle-exclamation"></i>
-            </span>
-            <span class="message">
-                <p>${message || `This action can not be undone.<br>Do you wish to proceed?`}</p>
-            </span>
-        </div>
-        <div class="dialog-buttons">
-            <button tabindex="0" id="decline">Cancel</button>
-            <button tabindex="0" id="accept"><i class="fa-solid fa-trash-can"></i>&nbsp;Delete</button>
-        </div>
+      <h2>${title || `Are you sure?`}</h2>
+      <div class="message-box">
+        <span class="icon">
+          <i class="fa-solid fa-triangle-exclamation"></i>
+        </span>
+        <span class="message">
+          <p>${message || `This action can not be undone. Do you wish to proceed?`}</p>
+        </span>
+      </div>
+      <div class="dialog-buttons">
+        <button tabindex="0" id="decline">Cancel</button>
+        <button tabindex="0" id="accept"><i class="fa-solid fa-trash-can"></i>&nbsp;Delete</button>
+      </div>
     </div>
   `;
   document.querySelector('main').appendChild(overlay);
@@ -838,10 +858,10 @@ function getConfirm({ title, message, success, decline, state = 1 } = {}) {
       const isEscapeKey = isKeydown && e.key === 'Escape';
       const isEnterKey = isKeydown && e.key === 'Enter';
       const isClick = e.type === 'click';
-    
+
       const messageBox = overlay.querySelector('.message-box');
       const dialogButtons = overlay.querySelector('.dialog-buttons');
-    
+
       // Ignore invalid clicks
       if (isClick && !isOverlayClick && !isDecline && !isAccept) return;
 
@@ -859,13 +879,13 @@ function getConfirm({ title, message, success, decline, state = 1 } = {}) {
       }
 
       if (isEscapeKey || isClick || isEnterKey) {
-        setTimeout(() => document.querySelector('main').removeChild(overlay), 700);
+        setTimeout(() => document.querySelector('main').removeChild(overlay), exitInterval);
         ['click', 'keydown'].forEach((type) =>
           overlay.removeEventListener(type, handleDialog)
         );
       }
     };
-    
+
     // Helper function to handle the cancel action
     const handleCancel = (dialogButtons, messageBox) => {
       dialogButtons.style.display = 'none';
@@ -874,16 +894,364 @@ function getConfirm({ title, message, success, decline, state = 1 } = {}) {
       messageBox.querySelector('.icon').innerHTML = declineIcon || successIcon;
       messageBox.querySelector('p').innerText = decline.message;
     };
-    
+
     // Helper function to handle the accept action
     const handleAccept = (dialogButtons, messageBox) => {
       dialogButtons.style.display = 'none';
       overlay.querySelector('h2').innerText = success.title;
       messageBox.querySelector('.icon').innerHTML = successIcon;
       messageBox.querySelector('p').innerText = success.message;
-    };    
-    
-    ['click','keydown'].forEach(type => overlay.addEventListener(type, handleDialog));
+    };
+
+    ['click', 'keydown'].forEach(type => overlay.addEventListener(type, handleDialog));
   });
+}
+
+function setupCheckboxListeners(sectionID) {
+
+  const container = document.querySelector(`#${sectionID} .grid-container`);
+  if (!container.querySelector('.grid-item')) return console.log('no data found for', sectionID)
+    console.log('data found for', sectionID)
+
+  if (container._cleanupCheckboxListeners) {
+    console.log("Cleaning up previous event listeners for", sectionID);
+    container._cleanupCheckboxListeners();
+  }
+
+  let selectedItems = [];
+
+  const selectAllBox = document.querySelector(
+    `#${sectionID} .select-action .selectable input[type="checkbox"]`
+  );
+  const checkboxes = container.querySelectorAll(
+    ".selectable input[type='checkbox']"
+  );
+
+  // --- Helper functions ---
+  const displayCount = () => {
+    const message = document.querySelector(
+      `#${sectionID} .selection-count p`
+    );
+    if (message) {
+      message.innerText = `${selectedItems.length} / ${checkboxes.length}`;
+    }
+  };
+
+  const setupSelectedItems = (checkbox) => {
+    const gridItem = checkbox.closest(".grid-item");
+    if (!gridItem) return;
+
+    const data = { ...gridItem.dataset };
+    if (checkbox.checked) {
+      if (!selectedItems.some((item) => item.index === data.index)) {
+        selectedItems.push(data);
+      }
+    } else {
+      selectedItems = selectedItems.filter((item) => item.index !== data.index);
+    }
+    displayCount();
+  };
+
+  const resetEditing = () => {
+    selectAllBox.checked = false;
+    checkboxes.forEach(cb => cb.checked = false);
+    selectedItems = [];
+    displayCount();
+  };
+
+  const toggleEditing = (section, gridItem) => {
+    const editBtn = section.querySelector(".edit-button");
+    editBtn.querySelectorAll("i").forEach((i) => i.classList.toggle("active"));
+
+    section.querySelector(".delete-button")?.classList.toggle("active");
+    section.querySelectorAll(".selectable").forEach((item) =>
+      item.classList.toggle("active")
+    );
+
+    resetEditing();
+
+    if (!gridItem) {
+      setTimeout(() => {
+        wasEditing = false;
+      }, 1000);
+      return;
+    }
+    wasEditing = true;
+    console.log(wasEditing);
+    const checkbox = gridItem.querySelector(".selectable input[type='checkbox']");
+    checkbox.checked = true;
+    setupSelectedItems(checkbox);
+  };
+
+  const selectAll = () => {
+    checkboxes.forEach((checkbox) => {
+      checkbox.checked = selectAllBox.checked;
+      setupSelectedItems(checkbox);
+    });
+  };
+
+  // --- End Helper functions ---
+
+  // Array to keep track of cleanup functions.
+  const cleanupFunctions = [];
+
+  // Attach change listeners to each checkbox.
+  checkboxes.forEach((checkbox) => {
+    const handler = function () {
+      setupSelectedItems(checkbox);
+      selectAllBox.checked = checkboxes.length == selectedItems.length;
+    };
+    checkbox.addEventListener("change", handler);
+    cleanupFunctions.push(() => {
+      checkbox.removeEventListener("change", handler);
+    });
+  });
+
+  // Action button click handler.
+  const onActionButtonClick = (e) => {
+    const section = e.target.closest("section");
+    if (e.target.closest(".edit-button")) {
+      toggleEditing(section);
+      e.stopPropagation();
+      return;
+    }
+    if (e.target.closest(".delete-button")) {
+      console.log("delete-button");
+      if (selectedItems.length < 1) return;
+      getConfirm({
+        title: `Delete ${selectedItems.length} items ? `,// from '${sectionID}'?`,
+        success: {
+          title: "Success!",
+          message: `${selectedItems.length} items removed.`,// from ${sectionID}.`,
+        },
+        decline: {
+          title: "Cancelled!",
+          message: "Items not removed.",
+        },
+        exitInterval : 2000,
+      }).then((confirmed) => {
+        console.log("exited", confirmed);
+        if (!confirmed) return;
+        const sectionId = section.id;
+        const logType = section.dataset.type;
+        console.log(section.dataset);
+        selectedItems.forEach((item) => {
+          const { id, mediaType, index, sno, eno } = item;
+          removeFromLocalStorage(logType, Number(id), mediaType, sno, eno, index)
+          console.log(id, mediaType, index, sno, eno);
+        });
+        console.log(sectionId, logType, "item removed");
+        loadUserContent(sectionId, logType);
+        toggleEditing(section);
+      });
+      e.stopPropagation();
+      return;
+    }
+  };
+
+  const actionButtons = document.querySelector(`#${sectionID} .actions`);
+  if (actionButtons) {
+    // Remove any previously attached listener (if stored).
+    if (actionButtons._onActionButtonClick) {
+      actionButtons.removeEventListener(
+        "click",
+        actionButtons._onActionButtonClick
+      );
+    }
+    actionButtons._onActionButtonClick = onActionButtonClick;
+    actionButtons.addEventListener("click", onActionButtonClick);
+    cleanupFunctions.push(() => {
+      actionButtons.removeEventListener("click", onActionButtonClick);
+      delete actionButtons._onActionButtonClick;
+    });
+  }
+
+  // Grid item mouse down handler.
+  const onGridItemMouseDown = (e) => {
+    const section = e.target.closest("section");
+    const item = e.target.closest(".grid-item");
+    if (!item) return;
+
+    let hold = false;
+    const timer = setTimeout(() => {
+      hold = true;
+      console.log("Element is being held");
+      const isActive = item.querySelector(".selectable.active");
+      wasEditing = true;
+      navigator.vibrate(200)
+      toggleEditing(section, !isActive ? item : "");
+    }, 500);
+    
+    const clearTimer = () => clearTimeout(timer);
+
+    ["mouseup", "mouseout", "touchend"].forEach((eventType) => {
+      item.addEventListener(eventType, clearTimer , { once: true });
+    });
+  };
+
+  ["mousedown", "touchstart"].forEach((eventType) => {
+    container.addEventListener(eventType, onGridItemMouseDown);
+    cleanupFunctions.push(() => {
+      container.removeEventListener(eventType, onGridItemMouseDown);
+    });
+  });
+
+  // Attach the select-all listener.
+  if (selectAllBox) {
+    selectAllBox.addEventListener("click", selectAll);
+    cleanupFunctions.push(() => {
+      selectAllBox.removeEventListener("click", selectAll);
+    });
+  }
+
+  // Store a cleanup function on the container so that the next time this function is called,
+  // it can remove all the listeners that were added during the previous call.
+  container._cleanupCheckboxListeners = () => {
+    cleanupFunctions.forEach((fn) => fn());
+    delete container._cleanupCheckboxListeners;
+    console.log("Cleaned up event listeners for", sectionID);
+  };
+}
+
+// function setupCheckboxListeners(sectionID) {
+  
+//   let selectedItems = [];
+//   const container = document.querySelector(`#${sectionID} .grid-container`);
+//   const selectAllBox = document.querySelector(`#${sectionID} .select-action .selectable input[type="checkbox"]`)
+
+//   const checkboxes = container.querySelectorAll('.selectable input[type="checkbox"]')
+//   checkboxes.forEach(checkbox => {
+//     console.log('checkbox found')
+//     checkbox.addEventListener('change', () => {
+//       setupSelectedItems(checkbox)
+//       selectAllBox.checked = checkboxes.length === selectedItems.length
+//     });
+//   });
+//   const onActionButtonClick = (e) => {
+//     console.log(e.target)
+//     const section = e.target.closest('section');
+//     if (e.target.closest('.edit-button')) {
+//       toggleEditing(section);
+//       e.stopPropagation()
+//       return;
+//     }
+//     if (e.target.closest('.delete-button')) {
+//       console.log('delete-button')
+
+//       if (selectedItems.length < 1) return
+//       getConfirm({
+//         title: `Delete ${selectedItems.length} items from ${sectionID}?`,
+//         success: { title: 'Success!', message: `${selectedItems.length} item removed from ${sectionID}.` },
+//         decline: { title: 'Canceled!', message: 'Item not removed. ' }
+//       }).then(confirmed => {
+//         console.log('exited', confirmed)
+//         if (!confirmed) return
+//         const sectionId = section.id
+//         const logType = section.dataset.type
+//         console.log(section.dataset)
+//         selectedItems.forEach(item => {
+//           const { id, mediaType, index, sno, eno } = item
+//           //removeFromLocalStorage(logType, Number(id), mediaType, sno, eno, index)
+//           console.log(id, mediaType, index, sno, eno)
+//         });
+//         console.log(sectionId, logType, 'item removed')
+//         loadUserContent(sectionId, logType);
+//         toggleEditing(section)
+//       });
+//       e.stopPropagation()
+//       return;
+//     }
+//   }
+
+//   const onGridItemMouseDown = (e) => {
+//     // console.log('grid mouse down')
+//     const section = e.target.closest('section')
+//     const item = e.target.closest('.grid-item');
+//     if (!item) return;
+
+//     let hold = false;
+
+//     const timer = setTimeout(() => {
+//       hold = true;
+//       console.log('Element is being held');
+//       const isActive = item.querySelector('.selectable.active')
+//       wasEditing = true
+//       return toggleEditing(section, !isActive ? item : '');
+//     }, 500);
+//     const clearTimer = () => clearTimeout(timer);
+//     ['mouseup', 'mouseout','touchend'].forEach(eventType => item.addEventListener(eventType, clearTimer, { once: true }))
+//   }
+
+//   const actionButtons = document.querySelector(`#${sectionID} .actions`);
+//   actionButtons.removeEventListener('click', onActionButtonClick);  
+//   actionButtons.addEventListener('click', onActionButtonClick);
+//   ['mousedown', 'touchstart'].forEach(eventType => container.addEventListener(eventType, onGridItemMouseDown));
+
+//   const toggleEditing = (section, gridItem) => {
+//     console.log('toggle editing')
+//     console.log(section)
+//     const editBtn = section.querySelector('.edit-button')
+//     editBtn.querySelectorAll('i').forEach(i => i.classList.toggle('active'))
+//     section.querySelector('.delete-button')?.classList.toggle('active');
+//     section.querySelectorAll('.selectable').forEach(item => item.classList.toggle('active'));
+
+//     resetEditing();
+    
+//     if (!gridItem) {
+//       setTimeout(() => {wasEditing = false}, 1000)
+//       return
+//     };
+//     wasEditing = true;
+//     console.log(wasEditing)
+//     const checkbox = gridItem.querySelector('.selectable input[type="checkbox"]');
+//     checkbox.checked = true;
+//     setupSelectedItems(checkbox);
+//   }
+
+//   const resetEditing = () => {
+//     selectAllBox.checked = false;
+//     selectedItems = [];
+//     displayCount()
+//     container.querySelectorAll('.selectable input[type="checkbox"]').forEach(cb => (cb.checked = false));
+//   }
+
+//   const setupSelectedItems = (checkbox) => {
+
+//     const gridItem = checkbox.closest('.grid-item');
+//     if (!gridItem) return;
+
+//     const data = { ...gridItem.dataset };
+
+//     if (checkbox.checked) {
+//       // console.log('checkbox checked')
+//       if (!selectedItems.some(item => item.index === data.index)) {
+//         selectedItems.push(data);
+//       }
+//     } else {
+//       selectedItems = selectedItems.filter(item => item.index !== data.index);
+//     }
+
+//     displayCount()
+//   }
+//   const displayCount = () => {
+//     const message = document.querySelector(`#${sectionID} .selection-count p`)
+//     message.innerText = `${selectedItems.length} / ${checkboxes.length}`
+//   }
+
+//   const selectAll = () => {
+//     checkboxes.forEach(checkbox => {
+//       selectAllBox.checked 
+//       ? checkbox.checked = true
+//       : checkbox.checked = false
+//       setupSelectedItems(checkbox)
+//     })
+//   }
+//   selectAllBox?.addEventListener('click', selectAll);
+// }
+
+async function waitForTrue(variable) {
+  while (!variable) {
+    await new Promise(resolve => setTimeout(resolve, 100)); // Wait 100 milliseconds
+  }
 }
 

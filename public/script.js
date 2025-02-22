@@ -166,6 +166,7 @@ document.addEventListener('DOMContentLoaded', () => {
       footerHTML();
       setActiveIcon('tv')
     } else if (path === '' || path === '/') {
+      
       window.onload = function() {
         footerHTML();
         setActiveIcon('home')
@@ -180,4 +181,3 @@ document.addEventListener('DOMContentLoaded', () => {
 
   window.addEventListener('popstate', handleRouting);
 });
-

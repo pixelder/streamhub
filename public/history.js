@@ -92,7 +92,7 @@ async function toggleBookmark(logType, id, mediaType, sno = null, eno = null, in
   contWatching = temp;
 }
 
-async function fetchHistoryItems(section, items) {
+async function fetchHistoryItems(section,sectionId, items) {
   const container = section.querySelector('.grid-container');
   const fragment = document.createDocumentFragment();
   const existingItems = new Map();
@@ -148,6 +148,7 @@ async function fetchHistoryItems(section, items) {
   });
 
   container.appendChild(fragment);
+  setupCheckboxListeners(sectionId);
 }
 
 function renderLogItems(data, item, tvData) {
@@ -158,9 +159,11 @@ function renderLogItems(data, item, tvData) {
 
   const image = !tvData
     ? data.backdrop_path
-      ? `${IMAGE_URL}${data.backdrop_path}`
+      ? (IMAGE_URL + data.backdrop_path)
       : 'https://placehold.co/440x661/383852/ccc?text=No+Image'
-    : (IMAGE_URL + epData.still_path);
+    : epData.still_path 
+      ? (IMAGE_URL + epData.still_path)
+      : (IMAGE_URL + data.backdrop_path);
   const name = (data.title || data.name);
   const info = `S${sno}:E${eno} ` + (epData?.name || '');
   const rating = truncate(!tvData ? data.vote_average : epData.vote_average, 1);
@@ -171,6 +174,13 @@ function renderLogItems(data, item, tvData) {
            data-id="${id}"  data-index="${index}" 
            data-media-type="${mediaType}" data-name="${name}"
            ${tvData ? `data-sno="${sno}" data-eno="${eno}"` : ''}>
+        <label class="selectable">
+          <input type="checkbox" />
+          <span class="checkbox-button">
+            <i class="fa-regular fa-square"></i>
+            <i class="fa-solid fa-square-check"></i>
+          </span>
+        </label>
         <div class="grid-actions">
           <div class="grid-options">
             <div tabindex="0" class="options-buttons">
@@ -212,14 +222,14 @@ function loadUserContent(sectionId,logType) {
       contWatching = true;
       section.style.display = "flex";
     }
-    fetchHistoryItems(section, tvData);
+    fetchHistoryItems(section,sectionId, tvData);
   } else {
     if (sectionId === 'continue-watching') {
       section.style.display = "none"; // Hide section if history is empty
       contWatching = false;
     }
     container.classList.add('empty')
-    fetchHistoryItems(section, tvData);
+    fetchHistoryItems(section,sectionId, tvData);
   }
 }
 
