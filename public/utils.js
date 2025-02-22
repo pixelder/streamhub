@@ -970,6 +970,7 @@ function setupCheckboxListeners(sectionID) {
     );
 
     resetEditing();
+    navigator.vibrate(80)
 
     if (!gridItem) {
       setTimeout(() => {
@@ -1075,7 +1076,6 @@ function setupCheckboxListeners(sectionID) {
 
     let hold = false;
     const timer = setTimeout(() => {
-      navigator.vibrate(50)
       hold = true;
       console.log("Element is being held");
       const isActive = item.querySelector(".selectable.active");
