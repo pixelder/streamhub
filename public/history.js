@@ -9,7 +9,7 @@ function getLogData(logType) {
 
 function fixLog() {
 
-  ['history','watching','bookmarks'].forEach(logType => {
+  ['history', 'watching', 'bookmarks'].forEach(logType => {
     const logData = getLogData(logType);
     const updatedLog = logData.map(item => {
       if (!item.hasOwnProperty('index')) {
@@ -50,7 +50,7 @@ async function logToLocalStorage(logType, id, mediaType, sno = null, eno = null)
       Number(log.id) === Number(id) &&
       log.mediaType === mediaType
     );
-    if (logs.length > 1) console.log('multiple log index exists for id',id)
+    if (logs.length > 1) console.log('multiple log index exists for id', id)
     // Pass the log’s index along so we only remove that specific entry.
     await removeFromLocalStorage(logType, id, mediaType, logs.data.sno, logs.data.eno, logs.index);
   }
@@ -65,10 +65,10 @@ async function removeFromLocalStorage(logType, id, mediaType, sno = null, eno = 
   const logs = getLogData(logType);
   const updatedLogs = logs.filter(log => {
     const isSameLog = Number(log.id) === Number(id) &&
-                      log.mediaType === mediaType &&
-                      String(log.data.sno) === String(sno) &&
-                      String(log.data.eno) === String(eno);
-    if (index) return !(Number(log.index) === Number(index)) 
+      log.mediaType === mediaType &&
+      String(log.data.sno) === String(sno) &&
+      String(log.data.eno) === String(eno);
+    if (index) return !(Number(log.index) === Number(index))
     return !isSameLog;
   });
 
@@ -92,7 +92,7 @@ async function toggleBookmark(logType, id, mediaType, sno = null, eno = null, in
   contWatching = temp;
 }
 
-async function fetchHistoryItems(section,sectionId, items) {
+async function fetchHistoryItems(section, sectionId, items) {
   const container = section.querySelector('.grid-container');
   const fragment = document.createDocumentFragment();
   const existingItems = new Map();
@@ -154,14 +154,14 @@ async function fetchHistoryItems(section,sectionId, items) {
 function renderLogItems(data, item, tvData) {
   const [id, mediaType] = [item.id, item.mediaType];
   const index = item.index || null;
-  const [sno, eno] = tvData ? [item.data.sno, item.data.eno] : ['',''];
+  const [sno, eno] = tvData ? [item.data.sno, item.data.eno] : ['', ''];
   const epData = tvData ? tvData?.episodes[eno - 1] : '';
 
   const image = !tvData
     ? data.backdrop_path
       ? (IMAGE_URL + data.backdrop_path)
       : 'https://placehold.co/440x661/383852/ccc?text=No+Image'
-    : epData.still_path 
+    : epData.still_path
       ? (IMAGE_URL + epData.still_path)
       : (IMAGE_URL + data.backdrop_path);
   const name = (data.title || data.name);
@@ -210,7 +210,7 @@ function renderLogItems(data, item, tvData) {
 }
 
 
-function loadUserContent(sectionId,logType) {
+function loadUserContent(sectionId, logType) {
   const section = document.getElementById(sectionId);
   const container = section?.querySelector('.grid-container')
   const tvData = getLogData(logType);
@@ -222,17 +222,17 @@ function loadUserContent(sectionId,logType) {
       contWatching = true;
       section.style.display = "flex";
     }
-    fetchHistoryItems(section,sectionId, tvData);
+    fetchHistoryItems(section, sectionId, tvData);
   } else {
     if (sectionId === 'continue-watching') {
       section.style.display = "none"; // Hide section if history is empty
       contWatching = false;
     }
     container.classList.add('empty')
-    fetchHistoryItems(section,sectionId, tvData);
+    fetchHistoryItems(section, sectionId, tvData);
   }
 }
 
-function resetHistory(logtype){
+function resetHistory(logtype) {
   localStorage.setItem(logtype, '');
 }

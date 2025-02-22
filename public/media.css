@@ -175,20 +175,22 @@
   section h2 {
     font-size: 1.25rem;
   }
+
   .section-header {
-    padding-top: 0.2rem;
+    padding-top: unset;
   }
+
   .select-action {
     font-size: 12px;
     height: 26px;
-    border-radius: var(--border-radius1); 
+    border-radius: var(--border-radius1);
   }
 
   .actions button {
     height: 26px;
     font-size: 12px;
     word-spacing: -1px;
-    border-radius: var(--border-radius1); 
+    border-radius: var(--border-radius1);
   }
 
   .actions .pagination-buttons button {
@@ -495,6 +497,7 @@
     .dialog-buttons {
       font-size: 12px;
       height: 30px;
+
       /* /* gap: var(--padding1); */
       button {
         padding: 0 2rem;

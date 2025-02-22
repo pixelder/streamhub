@@ -7,13 +7,13 @@ function loadExplorePage(mediaType) {
     document.querySelector('title').innerText = `Browse ${mediaType !== 'tv' ? mediaType : `serie`}s | Pixelstream`;
     console.log(loc());
     !loc().includes(`/${mediaType}`) ? window.history.pushState('', '', `/${mediaType}`) : '';
-    window.addEventListener('popstate', function() {
+    window.addEventListener('popstate', function () {
         console.log('active');
         window.location.href = `${loc()}`;
     });
     loc();
     isBrowsing = true;
-    isMovie = mediaType === 'movie' ? true : false; 
+    isMovie = mediaType === 'movie' ? true : false;
     const main = document.querySelector('main');
     const sectionTitle = mediaType === 'tv' ? 'Browse TV Series' : 'Browse Movies';
     main.innerHTML = `
@@ -102,16 +102,16 @@ function loadExplorePage(mediaType) {
     `;
 
     filterReset()
-    loadDiscoverContent( '', '', mediaType,`browse-${mediaType}s`);
-    
+    loadDiscoverContent('', '', mediaType, `browse-${mediaType}s`);
+
     fetchGenres(mediaType);
     fetchCountriesAndLanguages();
-    
+
     window.addEventListener("scroll", () => {
         if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 50) {
-            if ( !pageEnd ) {
-                console.log('loading page',currentPage)
-                loadDiscoverContent( '', '', mediaType,`browse-${mediaType}s`);
+            if (!pageEnd) {
+                console.log('loading page', currentPage)
+                loadDiscoverContent('', '', mediaType, `browse-${mediaType}s`);
             }
         }
     })
@@ -119,7 +119,7 @@ function loadExplorePage(mediaType) {
     filterParams();
 
     const filters = document.querySelector('.filters');
-    
+
     ['click', 'change'].forEach(eventType => {
         filters.removeEventListener(eventType, filterAddEventLister);
     });
@@ -143,12 +143,12 @@ function filterParams() {
     const countryFilter = document.getElementById("countryFilter")
     const languageFilter = document.getElementById("languageFilter")
     const genreContainer = document.getElementById("genreChips");
-    
+
     // New values
     sortBy.oninput = function () {
         sortMode = this.value
     }
-    
+
     yearPicker.oninput = function () {
         currentYear = this.value
     }
@@ -172,7 +172,7 @@ function filterParams() {
         minRateSlider.value = this.value
         minRate = this.value
     }
-    
+
     countryFilter.oninput = function () {
         selectedCountry = this.value
     }
@@ -205,7 +205,7 @@ function filterReset() {
     currentYear = null
     selectedCountry = '';
     selectedLanguage = '';
-    
+
     filterParams();
     resetSection();
     pageEnd = false;
@@ -244,10 +244,10 @@ async function fetchCountriesAndLanguages() {
     // Fetch countries
     const countryResponse = await fetch(`https://api.themoviedb.org/3/configuration/countries?language=en-US&api_key=${API_KEY}`);
     const countries = await countryResponse.json();
-    const counteryList = ['AS','US','AU', 'GB', 'IE', 'JP', 'KO', 'IN', 'RU', 'MX', 'FR', 'DE',];
+    const counteryList = ['AS', 'US', 'AU', 'GB', 'IE', 'JP', 'KO', 'IN', 'RU', 'MX', 'FR', 'DE',];
     const countrySelect = document.getElementById('countryFilter');
     countries.forEach(country => {
-        if ( counteryList.includes(country.iso_3166_1) ) {
+        if (counteryList.includes(country.iso_3166_1)) {
             const option = document.createElement('option');
             option.value = country.iso_3166_1;
             option.textContent = abbvText(country.english_name, 13);
@@ -258,7 +258,7 @@ async function fetchCountriesAndLanguages() {
     // Fetch languages
     const languageResponse = await fetch(`https://api.themoviedb.org/3/configuration/languages?api_key=${API_KEY}`);
     const languages = await languageResponse.json();
-    const languagelist = [ 'en', 'ja', 'ko', 'hi', 'as','ru','es', 'fr', 'de']
+    const languagelist = ['en', 'ja', 'ko', 'hi', 'as', 'ru', 'es', 'fr', 'de']
     const languageSelect = document.getElementById('languageFilter');
     languages.forEach(language => {
         if (languagelist.includes(language.iso_639_1)) {
@@ -312,15 +312,15 @@ function resetSection() {
     const gridContainer = document.querySelector(".grid-container")
     gridContainer.innerHTML = '';
     currentPage = 1;
-    loadDiscoverContent( '', '', mediaType,`browse-${mediaType}s`);
+    loadDiscoverContent('', '', mediaType, `browse-${mediaType}s`);
 }
 
 
 function filterAddEventLister(event) {
     const filterMenu = document.querySelector('.filter-menu');
     const filterOverlay = document.querySelector('.filter-overlay');
-    
-    if ( event.type === 'click' ) {
+
+    if (event.type === 'click') {
         if (event.target.closest('.filter-button')) {
             const isMenuVisible = filterMenu.style.display === 'flex';
             filterMenu.style.display = isMenuVisible ? 'none' : 'flex';
@@ -331,7 +331,7 @@ function filterAddEventLister(event) {
             filterOverlay.style.display = 'none';
             event.stopPropagation();
         };
-    } else if ( event.type === 'change') {
+    } else if (event.type === 'change') {
         resetSection();
         pageEnd = false
     }

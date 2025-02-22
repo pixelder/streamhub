@@ -381,6 +381,7 @@ section:has(.grid-item) .actions {
   display: flex;
   flex-direction: row;
   gap: 0.4rem;
+
   button {
     font-size: 12px;
   }
@@ -416,11 +417,11 @@ section:has(.grid-item) .actions {
 }
 
 section:has(.delete-button.active) .select-action {
-    scale: unset;
-    opacity: 1;
-    transition:  opacity 0.2s, scale 0.2s ease-in-out;
-    transition-delay: 0.1s;
-  }
+  scale: unset;
+  opacity: 1;
+  transition: opacity 0.2s, scale 0.2s ease-in-out;
+  transition-delay: 0.1s;
+}
 
 
 .select-action {
@@ -435,7 +436,7 @@ section:has(.delete-button.active) .select-action {
   border-radius: var(--border-radius2);
   border: 1px solid #3838528c;
   background: var(--color5) !important;
-  transition:  opacity 0.1s, scale 0.1s ease-in-out;
+  transition: opacity 0.1s, scale 0.1s ease-in-out;
   transition-delay: 0.1s;
 }
 
@@ -1074,7 +1075,7 @@ section:has(.delete-button.active) .select-action {
     font-size: 24px;
     line-break: normal;
     text-wrap: wrap;
-    /* padding: calc(var(--padding1) * 0.5); */ 
+    /* padding: calc(var(--padding1) * 0.5); */
   }
 
   .message-box {
@@ -1093,14 +1094,13 @@ section:has(.delete-button.active) .select-action {
     border-radius: var(--border-radius2);
     --bg-warn: rgba(166, 25, 46, 0.10);
     --bg-warn2: rgba(166, 25, 46, 0.30);
-    background: repeating-linear-gradient(
-      45deg,
-      var(--bg-warn),
-      var(--bg-warn) 5%,
-      var(--bg-warn2) 5%,
-      var(--bg-warn2) 10%
-    );
+    background: repeating-linear-gradient(45deg,
+        var(--bg-warn),
+        var(--bg-warn) 5%,
+        var(--bg-warn2) 5%,
+        var(--bg-warn2) 10%);
     background-size: cover;
+
     .icon {
       font-size: 20px;
       height: 2rem;
@@ -1146,9 +1146,11 @@ section:has(.delete-button.active) .select-action {
   button:hover {
     filter: brightness(1.2);
   }
+
   button:active {
     filter: brightness(1.3) saturate(1.4);
   }
+
   #accept {
     background: var(--error);
   }

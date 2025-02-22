@@ -818,7 +818,7 @@ window.addEventListener('scroll', () => {
   lastScrollY = window.scrollY;
 });
 
-function getConfirm({ title, message, success, decline, state = 1 , exitInterval = 700 } = {}) {
+function getConfirm({ title, message, success, decline, state = 1, exitInterval = 700 } = {}) {
 
   let successIcon
   let declineIcon
@@ -912,7 +912,7 @@ function setupCheckboxListeners(sectionID) {
 
   const container = document.querySelector(`#${sectionID} .grid-container`);
   if (!container.querySelector('.grid-item')) return console.log('no data found for', sectionID)
-    console.log('data found for', sectionID)
+  console.log('data found for', sectionID)
 
   if (container._cleanupCheckboxListeners) {
     console.log("Cleaning up previous event listeners for", sectionID);
@@ -1029,7 +1029,7 @@ function setupCheckboxListeners(sectionID) {
           title: "Cancelled!",
           message: "Items not removed.",
         },
-        exitInterval : 2000,
+        exitInterval: 2000,
       }).then((confirmed) => {
         console.log("exited", confirmed);
         if (!confirmed) return;
@@ -1082,11 +1082,11 @@ function setupCheckboxListeners(sectionID) {
       navigator.vibrate(200)
       toggleEditing(section, !isActive ? item : "");
     }, 500);
-    
+
     const clearTimer = () => clearTimeout(timer);
 
     ["mouseup", "mouseout", "touchend"].forEach((eventType) => {
-      item.addEventListener(eventType, clearTimer , { once: true });
+      item.addEventListener(eventType, clearTimer, { once: true });
     });
   };
 
@@ -1115,7 +1115,7 @@ function setupCheckboxListeners(sectionID) {
 }
 
 // function setupCheckboxListeners(sectionID) {
-  
+
 //   let selectedItems = [];
 //   const container = document.querySelector(`#${sectionID} .grid-container`);
 //   const selectAllBox = document.querySelector(`#${sectionID} .select-action .selectable input[type="checkbox"]`)
@@ -1197,7 +1197,7 @@ function setupCheckboxListeners(sectionID) {
 //     section.querySelectorAll('.selectable').forEach(item => item.classList.toggle('active'));
 
 //     resetEditing();
-    
+
 //     if (!gridItem) {
 //       setTimeout(() => {wasEditing = false}, 1000)
 //       return
