@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title>Your Lists | Pixelstream</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <meta property="og:title" content="Pixelstream" />
+  <meta property="og:image" content="https://pixelstream.vercel.app/meta/meta_dark.png">
+  <meta property="og:description" content="Watch your favorite movies and tv shows" />
+  <script src="https://kit.fontawesome.com/60a2eca232.js" crossorigin="anonymous" preload></script>
+
+  <link rel="icon" href="../assets/icons/favicon.png" type="image/png">
+
+  <!-- local files -->
+  <link rel="stylesheet" href="styles.css" type="text/css">
+  <!--<link rel="stylesheet" href="media.css" type="text/css">  -->
+  <script src="profile.js" defer></script>
+
+  <!-- Global files -->
+  <link rel="stylesheet" href="../styles.css" type="text/css">
+  <link rel="stylesheet" href="../media.css" type="text/css">
+  <script src="../utils.js" defer></script>
+  <script src="../history.js" defer></script>
+  <script src="../listeners.js" defer></script>
+
+</head>
+
+<body>
+  <script>0</script>
+  <!-- Top Navbar -->
+  <header id="header">
+    <nav>
+      <ul>
+        <li><a href="/"></a></li>
+        <li><a href="/movie">Movies</a></li>
+        <li><a href="/tv">TV Shows</a></li>
+        <li><a href="/#discover-streaming">What's Streaming</a></li>
+        <li><a href="#">Your Lists</a></li>
+        <form class="search-bar" onsubmit="return handleSearch(event)">
+          <input type="search" id="search-input" onsubmit="return handleSearch(event)" placeholder="Search" />
+          <i class="search-icon fa-solid fa-magnifying-glass"></i>
+          <button type="reset" class="x-icon" id="search-button"><!-- onclick="handleSearch(event)" -->
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+        </form>
+
+      </ul>
+    </nav>
+  </header>
+
+  <!-- Body Content -->
+  <main id="main-content">
+    <section id="continue-watching" data-type="watching">
+      <div class="section-header">
+        <h2>Continue Watching</h2>
+        <div class="select-action">
+          <label class="select-all selectable">
+              <input type="checkbox" />
+              <span class="checkbox-button">
+                <i class="fa-regular fa-square"></i>
+                <i class="fa-solid fa-square-check"></i>
+              </span>
+          </label>
+          <div class="v-separator"></div>
+          <div class="selection-count"><p></p></div>
+        </div>
+        <div class="actions">
+            <button class="delete-button">
+                <i class="fa-solid fa-trash-can"></i>
+            </button>
+            <button class="edit-button">
+                <i class="fa-solid fa-pencil active"></i>
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+      </div>
+      <div class="grid-container"></div>
+    </section>
+    <section id="history" data-type="history">
+      <div class="section-header">
+        <h2>History</h2>
+        <div class="select-action">
+          <label class="select-all selectable">
+              <input type="checkbox" />
+              <span class="checkbox-button">
+                <i class="fa-regular fa-square"></i>
+                <i class="fa-solid fa-square-check"></i>
+              </span>
+          </label>
+          <div class="v-separator"></div>
+          <div class="selection-count"><p></p></div>
+        </div>
+        <div class="actions">
+            <button class="delete-button">
+                <i class="fa-solid fa-trash-can"></i>
+            </button>
+            <button class="edit-button">
+                <i class="fa-solid fa-pencil active"></i>
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+      </div>
+      <div class="grid-container">
+        <div class="filler">
+          <div class="icon">
+            <i class="fa-solid fa-clock-rotate-left"></i>
+          </div>
+          <div class="message">
+            <h4>No History</h4>
+          </div>
+        </div>
+      </div>
+    </section>
+    <section id="bookmarks" data-type="bookmarks">
+      <div class="section-header">
+        <h2>Your Bookmarks</h2>
+      </div>
+      <div class="grid-container">
+        <div class="filler">
+          <div class="icon">
+            <i class="fa-solid fa-book-bookmark"></i>
+          </div>
+          <div class="message">
+            <h4>No bookmarks yet</h4>
+          </div>
+        </div>
+      </div>
+    </section>
+    <div class="modal-overlay"></div>
+    <div id="info-modal" class="modal">
+      <div class="modal-content">
+        <div tabindex="0" id="modal-details">
+          <!-- Dynamic content will be injected here -->
+        </div>
+      </div>
+    </div>
+  </main>
+  <footer>
+    <!-- Dynamic bootom bar -->
+  </footer>
+</body>
+
+</html>

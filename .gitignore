@@ -1,2 +1,5 @@
 /.vscode
 /favicon_io
+/node_modules
+.github
+/src

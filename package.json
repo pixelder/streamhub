@@ -1,10 +1,10 @@
 {
-    "name": "streamhub",
-    "version": "1.0.0",
-    "description": "A streaming site",
+    "name": "pixelstream",
+    "version": "2.5.0",
+    "description": "Watch your favorite movies and tv shows",
     "main": "server.js",
     "scripts": {
-        "start": "serve"
+        "start": "nodemon server.js"
     },
     "keywords": [
         "html",
@@ -13,9 +13,21 @@
     "author": "Ives van Hoorne",
     "license": "MIT",
     "devDependencies": {
-        "serve": "11.2.0"
+        "serve": "14.2.4"
     },
     "dependencies": {
-        "express": "^4.21.2"
-    }
+        "ejs": "^3.1.10",
+        "express": "^4.21.2",
+        "helmet": "^8.0.0",
+        "nodemon": "^3.1.9"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/pixelder/streamhub.git"
+    },
+    "type": "commonjs",
+    "bugs": {
+        "url": "https://github.com/pixelder/streamhub/issues"
+    },
+    "homepage": "https://github.com/pixelder/streamhub#readme"
 }
