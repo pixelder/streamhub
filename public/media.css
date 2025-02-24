@@ -370,7 +370,7 @@
 
     .genre-chips {
       width: calc(100vw - 1.2rem);
-      margin-bottom: 0.36rem;
+      margin-bottom: 2px;
     }
 
     .chip {
