@@ -361,6 +361,11 @@
         max-width: 16rem;
         margin-left: auto;
       }
+
+      .genre-counter {
+        font-size: 12px;
+        margin-bottom: 0.2rem;
+      }
     }
 
     .genre-chips {

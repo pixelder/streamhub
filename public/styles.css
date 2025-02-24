@@ -875,13 +875,23 @@ section:has(.delete-button.active) .select-action {
   }
 }
 
+.flow-row {
+  display: flex;
+  flex-direction: row;
+  gap: var(--padding1);
+}
+
+.filters:has(.chip) {
+  display: flex; 
+}
+
 .filters {
   /* 
   position: relative; */
-  display: flex;
+  display: none;
   flex-wrap: wrap;
   width: 100%;
-  margin-bottom: 12px;
+  margin: 6px 0 12px;
   gap: 12px;
 
   .form-group {
@@ -894,6 +904,16 @@ section:has(.delete-button.active) .select-action {
     margin-bottom: 0.4rem;
     font-size: 1rem;
     font-weight: 600;
+  }
+
+  .genre-counter {
+    display: inherit;
+    align-items: center;
+    font-size: 14px;
+    font-style: italic;
+    color: var(--font-color3);
+    width: fit-content;
+    margin-bottom: 0.4rem;
   }
 
 }

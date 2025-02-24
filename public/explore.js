@@ -18,10 +18,15 @@ function loadExplorePage(mediaType) {
     const sectionTitle = mediaType === 'tv' ? 'Browse TV Series' : 'Browse Movies';
     main.innerHTML = `
         <section id="browse-${mediaType}s" data-type="${mediaType}">
+            <div class="section-header">
             <h2>${sectionTitle}</h2>
+            </div>
             <div class="filters">
                 <div class="form-group">
+                    <div class="flow-row">
                     <label>Genre</label>
+                    <div class="genre-counter"><p></p></div>
+                    </div>
                     <div class="genre-chips" id="genreChips">
                     </div>
                 </div>
@@ -191,7 +196,7 @@ function filterParams() {
     countryFilter.value = selectedCountry
     languageFilter.value = selectedLanguage
 
-    updateChips(genreContainer)
+    updateSelectedGenres(genreContainer)
 }
 
 
@@ -295,16 +300,17 @@ function handleChipClick(genreId, type, genreContainer, mediaType) {
         }
     }
 
-    updateChips(genreContainer);
+    updateSelectedGenres(genreContainer);
     resetSection();
 }
 
-function updateChips(genreContainer) {
+function updateSelectedGenres(genreContainer) {
     genreContainer.querySelectorAll('.chip').forEach(chip => {
         const genreId = parseInt(chip.dataset.id);
         chip.classList.toggle('selected', selectedGenres.includes(genreId));
         chip.classList.toggle('excluded', excludedGenres.includes(genreId));
     });
+    document.querySelector('.genre-counter p').innerText = `${selectedGenres.length || '0'} selected • ${excludedGenres.length || '0'} excluded`
 }
 
 function resetSection() {
