@@ -1,13 +1,15 @@
 // Event listeners for the home page and anywhere there is grid-item
 
-['touchstart', 'mousedown', 'click', 'keydown'].forEach(eventType => {
+['click', 'keydown'].forEach(eventType => {
   document.removeEventListener(eventType, globalAddEventListener);
   document.addEventListener(eventType, globalAddEventListener);
 });
 
 let wasEditing = false
-function globalAddEventListener(event) {
-  const editing = event.target.closest('.selectable.active') || event.target.querySelector('.selectable.active')
+function globalAddEventListener (event) {
+  // if(event.type === '')
+  console.log(event.type)
+  const editing =  event.target.closest('.selectable.active') || event.target.querySelector('.selectable.active')
   if (editing) return
   const modal = document.getElementById('info-modal');
   const modalActive = modal.getAttribute('active') !== null ? true : false;
@@ -17,7 +19,7 @@ function globalAddEventListener(event) {
   if (gridItem && !modalActive) {
     const { mediaType, id, name, sno, eno, index } = gridItem.dataset;
     if ((event.type === 'click' && !watchingOrHistory ||
-      event.type === 'keydown' && event.key === 'Enter' && (!watchingOrHistory || event.shiftKey))) {
+        event.type === 'keydown' && event.key === 'Enter' && (!watchingOrHistory || event.shiftKey))) {
       if (!event.target.closest('.grid-options')) {
         openModal(event);
         event.stopPropagation();
@@ -25,30 +27,30 @@ function globalAddEventListener(event) {
         console.log('toggling bookmark')
         event.target.closest('.grid-options')?.classList.toggle('open');
         toggleBookmark('bookmarks', id, mediaType, sno, eno, index);
-        loadUserContent('bookmarks', 'bookmarks');
+        loadUserContent( 'bookmarks', 'bookmarks');
       }
     } else if ((watchingOrHistory) && (event.type === 'click' || event.type === 'keydown' && event.key === 'Enter')) {
-      if (!event.target.closest('.grid-actions') && !editing && !wasEditing) {
-        console.log(id, mediaType, sno, eno, null)
+      if ( !event.target.closest('.grid-actions') && !editing && !wasEditing) {
+        console.log(id, mediaType,sno, eno, null)
         window.location.href = `/watch/${mediaType}/${id}/${name}${sno && eno ? `/${sno}/${eno}` : ""}`;
         event.stopPropagation();
-      } else if (event.target.matches(".options-buttons")) {
+      } else if ( event.target.matches(".options-buttons")) {
         event.target.closest('.grid-options')?.classList.toggle('open');
         event.stopPropagation();
       } else if (event.target.closest('.options-menu button')) {
         event.preventDefault()
         getConfirm({
-          success: { title: 'Success!', message: 'Item removed from history.' },
-          decline: { title: 'Canceled!', message: 'Item not removed. ' }
-        }).then(confirmed => {
-          console.log('exited', confirmed)
+          success: {title : 'Success!', message : 'Item removed from history.'},
+          decline: {title : 'Canceled!', message : 'Item not removed. '}
+        }).then(confirmed => { 
+          console.log('exited',confirmed)
           if (confirmed) {
             const section = event.target.closest('section');
             const sectionId = section.id
             const logType = section.dataset.type
             removeFromLocalStorage(logType, Number(id), mediaType, sno, eno, index)
-            console.log(sectionId, logType, 'item removed')
-            loadUserContent(sectionId, logType);
+            console.log(sectionId,logType,'item removed')
+            loadUserContent( sectionId, logType);
           }
         });
         event.stopPropagation();
@@ -56,7 +58,7 @@ function globalAddEventListener(event) {
     }
   } else if (modalActive) {
     if (event.key === 'Escape' || event.target.matches('#info-modal')) {
-      modal.removeAttribute('active', '')
+      modal.removeAttribute('active','')
       event.stopPropagation();
     }
   }
