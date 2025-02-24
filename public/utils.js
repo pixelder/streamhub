@@ -1081,7 +1081,7 @@ function setupCheckboxListeners(sectionID) {
       wasEditing = true;
       navigator.vibrate(50)
       toggleEditing(section, !isActive ? item : "");
-    }, 500);
+    }, 750);
 
     const clearTimer = () => clearTimeout(timer);
 
