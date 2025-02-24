@@ -92,6 +92,11 @@ async function toggleBookmark(logType, id, mediaType, sno = null, eno = null, in
   contWatching = temp;
 }
 
+Array.prototype.sortDateDesc = function(desc = null) {
+  const n = desc ? (-1) : 1;
+  return this.sort((a,b) => (new Date(b.index) - new Date(a.index)) * n);
+}
+
 async function fetchHistoryItems(section, sectionId, items) {
   const container = section.querySelector('.grid-container');
   const fragment = document.createDocumentFragment();
@@ -104,13 +109,17 @@ async function fetchHistoryItems(section, sectionId, items) {
 
   const newItems = new Set(items.map(item => item.id + item.index));
 
-  const promises = items.slice().reverse().map(async (item) => {
-    const { id, mediaType, index, data: { sno, eno } } = item;
+  // Sort items in descending order by date
+  const sortedItems = items.slice().sortDateDesc(false);
 
+  // Process all items and collect results
+  const results = await Promise.allSettled(sortedItems.map(async (item) => {
+    const { id, mediaType, index, data: { sno, eno } } = item;
     const key = id + index;
     if (existingItems.has(key)) {
+      // Remove from existing items if already present and skip rendering
       existingItems.delete(key);
-      return;
+      return null;
     }
 
     try {
@@ -129,18 +138,23 @@ async function fetchHistoryItems(section, sectionId, items) {
       const wrapper = document.createElement("div");
       wrapper.innerHTML = content;
       const newElement = wrapper.firstElementChild;
-      newElement.dataset.id = id; // Set unique identifier for the item
-      // Also assign the data-index attribute so we can track this instance.
+      newElement.dataset.id = id;
       newElement.dataset.index = index;
-      fragment.appendChild(newElement);
+      return newElement;
     } catch (error) {
       console.error(`Error fetching data for item ID ${id}:`, error);
+      return null;
+    }
+  }));
+
+  // Append elements in the original sorted order
+  results.forEach(result => {
+    if(result.status === 'fulfilled' && result.value !== null) {
+      fragment.appendChild(result.value);
     }
   });
 
-  await Promise.allSettled(promises);
-
-  // Remove old items that are no longer in the `items` list (using the combined key)
+  // Remove old items that are no longer in the `items` list
   existingItems.forEach((el, key) => {
     if (!newItems.has(key)) {
       el.remove();
@@ -150,6 +164,7 @@ async function fetchHistoryItems(section, sectionId, items) {
   container.appendChild(fragment);
   setupCheckboxListeners(sectionId);
 }
+
 
 function renderLogItems(data, item, tvData) {
   const [id, mediaType] = [item.id, item.mediaType];
