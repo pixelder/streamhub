@@ -54,11 +54,14 @@ function loadWatchPage(mediaType, name = null, id, tvData = null) {
                   <p class="provider-name" data-source="6">111movies</p>
                 </div>
                 <div class="provider"> 
-                  <p class="provider-name" data-source="7">Multiembed</p>
+                  <p class="provider-name" data-source="7">Primewire</p>
                 </div>
                 <div class="provider"> 
-                  <p class="provider-name" data-source="8">AutoEmbed(Multi)</p>
+                  <p class="provider-name" data-source="8">Multiembed</p>
                 </div> 
+                <div class="provider"> 
+                  <p class="provider-name" data-source="9">AutoEmbed(Multi)</p>
+                </div>
               </div>
             </div>
             <div class="media-download">
@@ -216,9 +219,12 @@ function getSourceIframe(source, mediaType, id, season = null, episode = null, s
       src = `https://111movies.com/${urlPath}`;
       break;
     case 7:
-      src = `https://multiembed.mov/?video_id=${id}&tmdb=1${season && episode ? `&s=${season}&p=${episode}` : ''}`;
+      src = `https://primewire.tf/embed/${mediaType}?tmdb=${id}${season && episode ? `&season=${season}&episode=${episode}` : ''}`;
       break;
     case 8:
+      src = `https://multiembed.mov/?video_id=${id}&tmdb=1${season && episode ? `&s=${season}&e=${episode}` : ''}`;
+      break;
+    case 9:
       src = `https://hin.autoembed.cc/${urlPath}`;
       break;
     default:
