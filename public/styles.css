@@ -227,12 +227,13 @@ input[type="search"]::-webkit-search-results-decoration {
 input {
   font-family: var(--font-style2);
   width: 6rem;
+  max-height: 36px;
   outline: 0;
   border: 1px solid var(--color1);
   border-radius: var(--border-radius2);
   padding: 0.6rem 0.6rem;
   background-color: #30303d77;
-  font-size: 0.875rem;
+  font-size: 14px;
   color: var(--font-color1);
 }
 
@@ -285,10 +286,11 @@ select {
   box-shadow: 0 0 4px rgba(0, 0, 0, 0.3);
   padding: 0.6rem 12px;
   padding-right: 1.8rem;
-  font-size: 0.875rem;
+  font-size: 14px;
   border: 1px solid var(--color1);
   border-radius: var(--border-radius2);
   cursor: pointer;
+  box-sizing: border-box;
 }
 
 select:focus-visible {
@@ -333,7 +335,6 @@ section {
   margin-bottom: 1.4rem;
   gap: 0.6rem;
   min-height: 12rem;
-  scroll-snap-align: start;
 }
 
 .section-header {
@@ -522,13 +523,13 @@ section:has(.delete-button.active) .select-action {
   border-radius: var(--border-radius1);
   background-color: var(--color5);
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-  transition: scale 0.25s, border 0.25s, box-shadow 0.25s ease-in-out;
+  transition: scale 0.2s, border 0.2s, box-shadow 0.2s;
   /* box-shadow: 0 10px 24px rgba(0, 0, 0, 0.7); */
 }
 
 .grid-item:hover,
 .grid-item:focus-within {
-  scale: 1.0625;
+  scale: 1.03;
   box-shadow: 0 6px 15px rgb(8, 8, 22);
   border: 1px solid #383852e5;
   cursor: pointer;
@@ -883,17 +884,21 @@ section:has(.delete-button.active) .select-action {
 }
 
 .filters:has(.chip) {
-  display: flex; 
+  max-height: 1000px;
+  visibility: visible;
 }
 
 .filters {
-  /* 
-  position: relative; */
-  display: none;
+  /* position: relative; */
+  display: flex; 
+  overflow: auto;
+  visibility: hidden;
+  max-height: var(--padding1);
   flex-wrap: wrap;
   width: 100%;
   margin: 6px 0 12px;
   gap: 12px;
+  transition: max-height 0.2s ease-in-out;
 
   .form-group {
     display: inline-grid;
@@ -916,7 +921,12 @@ section:has(.delete-button.active) .select-action {
     width: fit-content;
     margin-bottom: 0.4rem;
   }
+}
 
+.form-group select {
+  padding: 0px 10px;
+  padding-right: 1.8rem;
+  height: 36px;
 }
 
 .genre-chips {
@@ -928,17 +938,19 @@ section:has(.delete-button.active) .select-action {
   gap: var(--padding1);
 
   .chip {
+    display: flex;
     width: fit-content;
-    text-wrap: nowrap;
-    scroll-snap-align: start;
-    user-select: none;
-    -webkit-tap-highlight-color: transparent;
+    align-items: center;
     padding: 8px 10px;
     font-size: 0.875rem;
+    text-wrap: nowrap;
     background-color: var(--color5);
     border: 1px solid var(--color3);
     border-radius: var(--border-radius2);
     cursor: pointer;
+    scroll-snap-align: start;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
     transition: background-color 0.2s, border 0.2s;
   }
 
@@ -960,12 +972,14 @@ section:has(.delete-button.active) .select-action {
 
 .filter-button,
 .reset-button {
+  height: 36px;
   gap: 0.6rem;
-  font-size: 0.875rem;
+  font-size: 14px;
   font-weight: 600;
   padding: 8px 10px;
   margin: auto 0 0 auto;
   border-radius: var(--border-radius2);
+  box-sizing: border-box;
 
   i {
     font-size: 12px;
@@ -973,7 +987,6 @@ section:has(.delete-button.active) .select-action {
 }
 
 .filter-button {
-  height: 1.45rem;
   background: #1A589E;
   box-shadow: 0 0 12px 4px #0d0d1bb7;
 }
@@ -983,26 +996,28 @@ section:has(.delete-button.active) .select-action {
 }
 
 .filter-menu {
+  --spacing: 1.6;
+  --padding: 18px;
   box-sizing: border-box;
   display: none;
   flex-direction: column;
-  gap: var(--padding1);
+  gap: calc(var(--padding1) * var(--spacing));
   position: fixed;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
   width: 90%;
   max-width: 28rem;
-  padding: calc(var(--padding1) * 2);
+  padding: var(--padding);
   background: var(--color5);
   border: 1px solid var(--color3);
   border-radius: var(--border-radius1);
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 5px 50px 25px rgba(0, 0, 0, 0.5);
   z-index: 1;
 
   h2 {
     margin: unset;
-    margin-bottom: auto;
+    margin-bottom: -6px;
   }
 
   .form-group {
@@ -1011,18 +1026,19 @@ section:has(.delete-button.active) .select-action {
 
   label {
     display: block;
-    margin-bottom: 0.4rem;
+    margin-bottom: 5px;
   }
 
   select {
-    max-width: 6rem;
+    max-width: 9rem;
   }
 
   .reset-button {
     width: 100%;
     border: none;
-    margin-top: 0.3rem;
-    padding: 0.68rem 1rem;
+    height: 40px;
+    margin-top: 4px;
+    /* padding: 0.68rem 1rem; */
     cursor: pointer;
     box-sizing: border-box;
   }
@@ -1039,7 +1055,8 @@ section:has(.delete-button.active) .select-action {
 
   input[type="number"] {
     height: 100%;
-    width: 4rem;
+    width: 4.2rem;
+    max-height: 36px;
   }
 
   input[type="range"] {
@@ -1057,9 +1074,16 @@ section:has(.delete-button.active) .select-action {
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.5);
+  opacity: 0;
   display: none;
   z-index: 1;
+  transition: opacity 0.25s ease-in-out;
+}
+
+body:has(.dialog) .dialog-overlay,
+body:has(.filter-menu) .filter-overlay {
+  opacity: 1;
+  backdrop-filter: blur(5px) brightness(0.4);
 }
 
 .dialog-overlay {
@@ -1068,10 +1092,11 @@ section:has(.delete-button.active) .select-action {
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.8);
+  /* background: rgba(0, 0, 0, 0.8); */
+  backdrop-filter: blur(5px) brightness(0.4);
   z-index: 2;
+  transition: opacity 0.25s ease-in-out;
 }
-
 
 .dialog {
   --spacing: 1.8;
@@ -1189,7 +1214,7 @@ section:has(.delete-button.active) .select-action {
     width: 100%;
     /* visibility: hidden; */
     display: grid;
-    grid-template-columns: repeat(5, minmax(0, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
     gap: 12px;
   }
 

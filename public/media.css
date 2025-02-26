@@ -173,7 +173,7 @@
   }
 
   section h2 {
-    font-size: 1.25rem;
+    font-size: 20px;
   }
 
   .section-header {
@@ -235,13 +235,10 @@
     /* box-shadow: 0 10px 24px rgba(0, 0, 0, 0.7); */
   }
 
-  .grid-item:hover {
-    scale: 0.9375;
-    box-shadow: 0 2px 5px rgb(8, 8, 22);
-  }
-
+  .grid-item:hover,
   .grid-item:focus-within {
-    scale: 0.9375;
+    scale: 0.97;
+    box-shadow: 0 2px 5px rgb(8, 8, 22);
   }
 
 
@@ -352,8 +349,8 @@
       }
 
       label {
-        margin-bottom: 0.36rem;
-        font-size: 0.875rem;
+        margin-bottom: 6px;
+        font-size: 14px;
       }
 
       .form-group:has(.min-rating) {
@@ -364,7 +361,19 @@
 
       .genre-counter {
         font-size: 12px;
-        margin-bottom: 6px;
+        margin-bottom: 4px;
+        padding: 0px 6px;
+      }
+    }
+    
+    .form-group {
+      select {
+        padding: 0px 6px;
+        padding-right: 1.2rem;
+        height: 30px;
+      }
+      input[type="number"] {
+        height: 30px;  
       }
     }
 
@@ -376,6 +385,7 @@
     .chip {
       padding: var(--padding1);
       font-size: 12px;
+      height: 30px;
     }
 
     .filter-button {
@@ -388,6 +398,7 @@
       height: 2.4rem;
       aspect-ratio: 1/1;
       border-radius: calc(var(--border-radius1) + 0.24rem);
+      box-sizing: content-box;
 
       i {
         font-size: 1rem;
@@ -395,15 +406,27 @@
     }
 
     .filter-menu {
-      width: calc(100% - (0.6rem * 4));
+      padding: 14px;
+      gap: 12px;
+      width: 90%;
+
+      h2 {
+        margin-bottom: -4px;
+      }
+
+      select {
+        max-width: 8rem;
+      }
+    
+      .reset-button {
+        margin-top: 4px;
+      }
+  
     }
+
 
     .vote-count {
       font-size: 12px;
-
-      input[type="number"] {
-        height: 100%;
-      }
 
       input[type="range"] {
         width: 45%;
@@ -416,7 +439,6 @@
 
       input[type="number"] {
         width: 2.2rem;
-        height: 100%;
       }
 
       input[type="range"] {
