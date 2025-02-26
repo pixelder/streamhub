@@ -59,10 +59,10 @@ function loadExplorePage(mediaType) {
                     <div class="form-group">
                         <label for="min-vote-slider">Minimum vote count</label>
                         <div class="vote-count">
-                            <input id="min-vote-number" type="number" value="200" min="0" step="10" max="500">
+                            <input id="min-vote-number" type="number" value="200" min="0" step="10" max="1000">
                             <p>0</p>
-                            <input id="min-vote-slider" type="range" value="200" min="0" step="35" max="500">
-                            <p>500</p>
+                            <input id="min-vote-slider" type="range" value="200" min="0" step="1" max="1000">
+                            <p>1000</p>
                         </div>
                     </div>
                     <div class="form-group">
@@ -77,9 +77,7 @@ function loadExplorePage(mediaType) {
                             <option value="">Any</option>
                         </select>
                     </div>
-                    <div class="form-group">
-                        <button class="reset-button" onclick=filterReset()>Reset</button>
-                    </div>
+                    <button class="reset-button" onclick=filterReset()>Reset</button>
                 </div>
             </div>
             <div class='grid-container'></div>
