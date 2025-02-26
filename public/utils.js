@@ -1082,7 +1082,11 @@ function setupCheckboxListeners(sectionID) {
       console.log("Element is being held");
       const isActive = item.querySelector(".selectable.active");
       wasEditing = true;
-      navigator.vibrate(50)
+      try {
+        navigator.vibrate(50)
+      } catch (err) {
+        console.log(err)
+      }
       toggleEditing(section, !isActive ? item : "");
     }, 750);
 
