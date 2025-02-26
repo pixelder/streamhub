@@ -24,20 +24,29 @@ function loadExplorePage(mediaType) {
             <div class="filters">
                 <div class="form-group">
                     <div class="flow-row">
-                    <label>Genre</label>
-                    <div class="genre-counter"><p></p></div>
+                        <label>Genre</label>
+                        <div class="genre-counter"><p></p></div>
                     </div>
                     <div class="genre-chips" id="genreChips">
                     </div>
                 </div>
                 <div class="form-group">
                     <label>Sort by</label>
-                    <select id="sort">
-                        <option value="popularity.desc" "selected">Popularity</option>
-                        <option value="vote_average.desc">Rating</option>
-                        <option value="${isMovie ? 'primary_release_date.desc' : 'first_air_date.desc'}">Date</option>
-                        <option value="${isMovie ? 'title.desc' : 'name.desc'}">Name</option>
-                    </select>
+                    <div class="flow-row">
+                        <select id="sort">
+                            <option value="popularity" "selected">Popular</option>
+                            <option value="vote_average">Rating</option>
+                            <option value="${isMovie ? 'primary_release_date' : 'first_air_date'}">Date</option>
+                            <option value="${isMovie ? 'title' : 'name'}">Name</option>
+                        </select>
+                        <label id="sort-order" class="selectable active">
+                            <input type="checkbox" />
+                            <span class="checkbox-button">
+                            <i class="fa-solid fa-arrow-down-short-wide active" title="Descending"></i> 
+                            <i class="fa-solid fa-arrow-up-wide-short passive" title="Ascending"></i>
+                            </span>
+                        </label>
+                    </div>
                 </div>
                 <div class="form-group">
                     <label>Year</label>
@@ -124,10 +133,10 @@ function loadExplorePage(mediaType) {
     const filters = document.querySelector('.filters');
 
     ['click', 'change'].forEach(eventType => {
-        filters.removeEventListener(eventType, filterAddEventLister);
+        filters.removeEventListener(eventType, filterEvents);
     });
     ['click', 'change'].forEach(eventType => {
-        filters.addEventListener(eventType, filterAddEventLister);
+        filters.addEventListener(eventType, filterEvents);
     });
 
     const msg = document.querySelector('.result-message');
@@ -142,6 +151,8 @@ function filterParams() {
     const minRateSlider = document.getElementById("min-rating-slider")
     const minRateNumber = document.getElementById("min-rating-number")
     const sortBy = document.getElementById("sort")
+    const sortOrderButton = document.getElementById("sort-order");
+    const checkbox = sortOrderButton.querySelector('input[type="checkbox"]')
     const yearPicker = document.getElementById("year-picker")
     const countryFilter = document.getElementById("countryFilter")
     const languageFilter = document.getElementById("languageFilter")
@@ -149,7 +160,12 @@ function filterParams() {
 
     // New values
     sortBy.oninput = function () {
+        checkbox.checked = false
         sortMode = this.value
+    }
+
+    sortOrderButton.onclick = function () {
+        sortOrder = checkbox.checked? 'asc' : 'desc'
     }
 
     yearPicker.oninput = function () {
@@ -186,6 +202,8 @@ function filterParams() {
 
     // On reset
     sortBy.value = sortMode
+    checkbox.checked = false;
+    sortOrder = 'desc'
     yearPicker.value = currentYear
     minVoteNumber.value = minVoteCount
     minVoteSlider.value = minVoteCount
@@ -202,7 +220,8 @@ function filterReset() {
     selectedGenres = []
     excludedGenres = []
     currentPage = 1
-    sortMode = 'popularity.desc'
+    sortMode = 'popularity'
+    sortOrder = 'desc'
     minVoteCount = 200
     minRate = 5
     currentYear = null
@@ -320,7 +339,7 @@ function resetSection() {
 }
 
 
-function filterAddEventLister(event) {
+function filterEvents(event) {
     const filterMenu = document.querySelector('.filter-menu');
     const filterOverlay = document.querySelector('.filter-overlay');
 

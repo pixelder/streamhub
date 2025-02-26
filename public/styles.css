@@ -225,16 +225,17 @@ input[type="search"]::-webkit-search-results-decoration {
 }
 
 input {
+  font-size: 14px;
   font-family: var(--font-style2);
   width: 6rem;
   max-height: 36px;
+  padding: 0.6rem 0.6rem;
   outline: 0;
   border: 1px solid var(--color1);
   border-radius: var(--border-radius2);
-  padding: 0.6rem 0.6rem;
-  background-color: #30303d77;
-  font-size: 14px;
   color: var(--font-color1);
+  background-color: #30303d77;
+  box-shadow: 0 0 4px rgba(0, 0, 0, 0.3);
 }
 
 input[type="range"] {
@@ -699,17 +700,26 @@ section:has(.delete-button.active) .select-action {
   font-size: 16px;
 
   /* color: #aaaae0; */
-  .fa-square-check {
+  .passive {
     position: absolute;
     opacity: 0;
     scale: 0;
     transition: all 0.2s ease-in-out;
   }
+  .active {
+    transition: all 0.2s ease-in-out;
+  }
 }
 
-.selectable input[type="checkbox"]:checked+.checkbox-button>i {
-  scale: unset;
-  opacity: 1;
+.selectable input[type="checkbox"]:checked+.checkbox-button {
+  .passive {
+    scale: unset;
+    opacity: 1;
+  }
+  .active {
+    scale: 0;
+    opacity: 0;
+  }
 }
 
 .selectable input[type="checkbox"] {
@@ -903,6 +913,7 @@ section:has(.delete-button.active) .select-action {
   transition: max-height 0.2s ease-in-out;
 
   .form-group {
+    position: relative;
     display: inline-grid;
     max-width: 100%;
   }
@@ -929,6 +940,36 @@ section:has(.delete-button.active) .select-action {
   padding: 0px 10px;
   padding-right: 1.8rem;
   height: 36px;
+}
+
+#sort {
+  background-image: none;
+  padding-right: 36px;
+}
+
+#sort-order {
+  position: absolute;
+  right: 0;
+  aspect-ratio: 1 / 1.15;
+  height: 36px;
+  width: unset;
+  padding: unset;
+  margin: unset;
+  background: unset;
+  backdrop-filter: unset;
+  z-index: unset;
+  border-left: 1px solid var(--color1);
+  border-radius: 0 var(--border-radius2) var(--border-radius2) 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  input[type="checkbox"] {
+    width: fit-content;
+  }
+  .checkbox-button {
+    font-size: 14px;
+  }
 }
 
 .genre-chips {

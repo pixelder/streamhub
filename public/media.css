@@ -377,6 +377,19 @@
       }
     }
 
+    #sort {
+      padding-right: 30px;
+    }
+    
+    #sort-order {
+      margin: unset;
+      height: 30px;
+
+      .checkbox-button {
+        font-size: 12px;
+      }
+    }
+
     .genre-chips {
       width: calc(100vw - 1.2rem);
       margin-bottom: 2px;
@@ -399,6 +412,7 @@
       aspect-ratio: 1/1;
       border-radius: calc(var(--border-radius1) + 0.24rem);
       box-sizing: content-box;
+      transition: bottom 0.3s;
 
       i {
         font-size: 1rem;
