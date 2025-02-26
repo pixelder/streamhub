@@ -284,7 +284,7 @@ function buildMediaDetailsHTML(data, mediaType, contentLogoHTML) {
       ${contentLogoHTML}
         <span class="ratings-genre">
           <i class="fa-solid fa-star"></i>
-          <p data-title="${data.vote_displayCount} votes">${truncate(data.vote_average, 1)}</p>
+          <p data-title="${data.vote_count} votes">${truncate(data.vote_average, 1)}</p>
           <span class="modal-genre">
             ${genresHTML}
           </span>
