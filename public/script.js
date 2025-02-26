@@ -17,7 +17,8 @@ let isFetching = {}; // Track fetching state per section to avoid multiple fetch
 let selectedGenres = []
 let excludedGenres = []
 let currentPage = 1
-let sortMode = 'popularity.desc'
+let sortMode = 'popularity'
+let sortOrder = 'desc'
 let minVoteCount = 200
 let minRate = 5
 let currentYear = null
@@ -44,7 +45,7 @@ async function loadDiscoverContent(networkId, providerId, mediaType, sectionId) 
     with_genres: selectedGenres.join(','),
     without_genres: excludedGenres.join(','),
     page: currentPage,
-    sort_by: sortMode,
+    sort_by: `${sortMode}.${sortOrder}`,
     primary_release_year: currentYear,
     first_air_date: currentYear,
     with_origin_country: selectedCountry,
@@ -57,6 +58,7 @@ async function loadDiscoverContent(networkId, providerId, mediaType, sectionId) 
 
   if (document.getElementById(sectionId)) {
     const url = `${BASE_URL}/discover/${mediaType}?api_key=${API_KEY}&${params}&watch_region=US&${OPTIONS}`;
+    console.log(params)
     storedData[sectionId] = [];
     pageNumbers[sectionId] = 1;
     fetchContent(sectionId, url);

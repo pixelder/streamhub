@@ -192,8 +192,8 @@ function renderLogItems(data, item, tvData) {
         <label class="selectable">
           <input type="checkbox" />
           <span class="checkbox-button">
-            <i class="fa-regular fa-square"></i>
-            <i class="fa-solid fa-square-check"></i>
+            <i class="fa-regular fa-square active"></i>
+            <i class="fa-solid fa-square-check passive"></i>
           </span>
         </label>
         <div class="grid-actions">
