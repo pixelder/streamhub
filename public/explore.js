@@ -42,8 +42,8 @@ function loadExplorePage(mediaType) {
                         <label id="sort-order" class="selectable active">
                             <input type="checkbox" />
                             <span class="checkbox-button">
-                            <i class="fa-solid fa-arrow-down-short-wide active" title="Descending"></i> 
-                            <i class="fa-solid fa-arrow-up-wide-short passive" title="Ascending"></i>
+                            <i class="fa-solid fa-arrow-down-wide-short active" title="Descending"></i> 
+                            <i class="fa-solid fa-arrow-up-short-wide passive" title="Ascending"></i>
                             </span>
                         </label>
                     </div>

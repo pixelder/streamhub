@@ -7,12 +7,12 @@
 
 let wasEditing = false
 function globalAddEventListener (event) {
-  // if(event.type === '')
-  console.log(event.type)
   const editing =  event.target.closest('.selectable.active') || event.target.querySelector('.selectable.active')
-  if (editing) return
   const modal = document.getElementById('info-modal');
-  const modalActive = modal.getAttribute('active') !== null ? true : false;
+  const modalActive = modal.getAttribute('active') !== null;
+  
+  if (editing && !modalActive) return
+  
   const watchingOrHistory = event.target.closest('#continue-watching .grid-item') || event.target.closest('#history .grid-item');
   //const bookmarks = event.target.closest('#bookmarks .grid-item');
   const gridItem = event.target.closest('.grid-item, .profile-item');

@@ -285,7 +285,7 @@ select {
   background-position: calc(100% - 0.36rem) 50%;
   background-color: #30303d77;
   box-shadow: 0 0 4px rgba(0, 0, 0, 0.3);
-  padding: 0.6rem 12px;
+  padding: 0 12px;
   padding-right: 1.8rem;
   font-size: 14px;
   border: 1px solid var(--color1);
@@ -293,6 +293,7 @@ select {
   cursor: pointer;
   display: flex;
   align-items: center;
+  height: 42px;
   box-sizing: border-box;
 }
 
@@ -1594,7 +1595,7 @@ body:has(.modal:is([active])) {
   background-size: 100% 100%;
   background-position: 0rem 0rem;
   mask-image: url(assets/images/mask.png);
-  mask-size: 110% 120%;
+  mask-size: 110% 118%;
   mask-position: calc(100% + 1.8rem) -2.6rem;
   mask-repeat: no-repeat;
   transition: opacity 0.15s ease-in-out;
@@ -1633,28 +1634,53 @@ body:has(.modal:is([active])) {
 .modal-actions {
   display: flex;
   flex-direction: row;
-  gap: 2rem;
+  gap: 12px;
   width: 100%;
   align-items: center;
   margin: 0 0;
   padding: 1rem 0 0;
 }
 
-.watch-btn {
-  padding: 0.6rem 1.2rem;
-  width: 11.5rem;
-  height: 1.4rem;
-  font-size: 1.12rem;
-  font-weight: 600;
-  background-color: #30303d77;
-  border: 1px solid var(--color1);
-  border-radius: var(--border-radius2);
-  cursor: pointer;
+.releasing-on {
+  width: 100%;
 }
 
-.watch-btn:hover {
-  transition: background-color 0.15s;
-  background-color: #4a4a69;
+.watch-btn, .play-trailer {
+  padding: 0.6rem 1.2rem;
+  width: 140px;
+  height: 42px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  box-sizing: border-box;
+  background: #30303d77 !important;
+  border: 1px solid var(--color1);
+  border-radius: var(--border-radius2);
+}
+
+.share, .bookmark {
+  background: var(--color3) !important;
+  border-radius: var(--border-radius2);
+}
+
+.watch-btn:hover, .play-trailer:hover, .share:hover, .bookmark:hover {
+  transition: background 0.15s;
+  background: var(--color5) !important;
+}
+
+.bookmark {
+  width: unset;
+  height: 42px;
+  backdrop-filter: unset !important;
+  position: relative;
+  aspect-ratio: 1 / 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  .checkbox-button {
+    font-size: 20px;
+  }
 }
 
 .share {

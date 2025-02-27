@@ -248,7 +248,6 @@ function displayModal(mediaType, data) {
   cappedOverview();
 }
 
-
 function getContentLogoHTML(data) {
   const name = data.name || data.title || data.original_title;
   const logoPath = data.images?.logos?.[0]?.file_path
@@ -308,14 +307,35 @@ function buildMediaDetailsHTML(data, mediaType, contentLogoHTML) {
   return detailsBodyHTML;
 }
 
-
 function insertMovieActions(data) {
   const name = data.name || data.title || data.original_title;
+  const releaseDate = data.release_date || data.first_air_date;
+  const releaseTimeStamp = new Date(releaseDate).getTime()
+  let released = true;
+  if (Date.now() < releaseTimeStamp) released = false;
+  const releaseInfo = `
+    <div class="releasing-on">
+      <p>Releasing on ${convertDate(releaseDate)}. </p>
+    </div>
+  `;
+
   const actionHTML = `
     <div class="modal-actions">
-      <button class="watch-btn" data-name="${name}" data-id="${data.id}">
-        Watch
+      ${ released 
+      ? `<button class="watch-btn" data-name="${name}" data-id="${data.id}">
+          Watch
+        </button>`
+      : releaseInfo }
+      <button class="play-trailer" data-name="${name}" data-id="${data.id}">
+          Trailer
       </button>
+      <label class="selectable active bookmark">
+          <input type="checkbox" />
+          <span class="checkbox-button">
+            <i class="options-icon fa-regular fa-bookmark active"></i>
+            <i class="options-x-icon fa-solid fa-bookmark passive"></i>
+          </span>
+      </label>
       <button tabindex="0" class="share">
         <i class="fa-solid fa-paper-plane"></i>
       </button>
