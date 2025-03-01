@@ -689,7 +689,7 @@ section:has(.delete-button.active) .select-action {
   background: #18182555;
   backdrop-filter: saturate(0.5);
   transition: background 0.2s ease-in-out;
-
+  cursor: pointer;
   .checkbox-button {
     scale: unset;
   }
@@ -1587,7 +1587,7 @@ body:has(.modal:is([active])) {
   z-index: -1;
   top: 0rem;
   right: 0rem;
-  height: 92%;
+  height: 94%;
   aspect-ratio: 16 / 9;
   opacity: var(--modal-backdrop-opacity);
   background-image: var(--modal-backdrop);
@@ -1611,6 +1611,7 @@ body:has(.modal:is([active])) {
 }
 
 #modal-details {
+  position: relative;
   display: flex;
   flex-direction: column;
   overflow-y: auto;
@@ -1621,6 +1622,69 @@ body:has(.modal:is([active])) {
   border-radius: var(--border-radius2);
 }
 
+.modal:has(#ytplayer) {
+  .modal-content::before {
+    width: 100%;
+    height: unset;
+    mask-image: url(assets/images/mask_mobile.png);
+    mask-position: 50% 33%;
+    mask-size: 111% 117%;
+    top: 15px;
+    scale: 1.03;
+  }
+}
+
+.modal-content:has(#ytplayer) {
+  width: 54%;
+  max-height: 90% !important;
+  overflow: hidden;
+
+  .modal-media {
+    gap: var(--padding1);
+    height: fit-content;
+  }
+  .modal-media > span {
+    width: 100%;
+  }
+
+  .modal-cover {
+    display: none;
+  }
+
+  .modal-info-logo img {
+    opacity: 0;
+    aspect-ratio: 16 / 9;
+    width: 100%;
+    max-width: unset;
+  }
+
+  .modal-info {
+    width: 100%;
+  }
+  
+}
+
+.trailer-container {
+  position: absolute;
+  right: 0;
+  visibility: hidden;
+  border-radius: var(--border-radius1);
+  overflow: hidden;
+  transition: height 0.2s;
+  z-index: 3;
+}
+
+.trailer-container:has(#ytplayer) {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  visibility: visible;
+  transition: height 0.2s;
+}
+
+#ytplayer {
+  width: 100%;
+  height: 100%;
+}
 
 .modal-media {
   display: flex;
@@ -1645,46 +1709,82 @@ body:has(.modal:is([active])) {
   width: 100%;
 }
 
+.watch-btn {
+  background: var(--font-color1);
+  color: var(--bg-color);
+}
+
 .watch-btn, .play-trailer {
-  padding: 0.6rem 1.2rem;
+  position: relative;
   width: 140px;
   height: 42px;
   font-size: 16px;
   font-weight: 600;
   cursor: pointer;
   box-sizing: border-box;
-  background: #30303d77 !important;
-  border: 1px solid var(--color1);
   border-radius: var(--border-radius2);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-wrap: nowrap;
+  gap: 8px;
+}
+
+.play-trailer {
+  border: 1px solid var(--color1);
+  background: var(--color3);
+}
+
+.play-trailer:hover {
+  background: var(--color5) !important;
+  transition: background 0.15s;
+}
+
+.item-actions {
+  display: flex;
+  border-radius: var(--border-radius1);
+  height: 42px;
+  padding: 3px;
+  gap: 3px;
 }
 
 .share, .bookmark {
-  background: var(--color3) !important;
-  border-radius: var(--border-radius2);
-}
-
-.watch-btn:hover, .play-trailer:hover, .share:hover, .bookmark:hover {
-  transition: background 0.15s;
-  background: var(--color5) !important;
-}
-
-.bookmark {
   width: unset;
-  height: 42px;
+  height: 100%;
+  background: unset !important;
+  border-radius: var(--border-radius1);
   backdrop-filter: unset !important;
   position: relative;
   aspect-ratio: 1 / 1;
   display: flex;
   justify-content: center;
   align-items: center;
-
-  .checkbox-button {
-    font-size: 20px;
-  }
 }
 
-.share {
-  display: none;
+.share:hover, .bookmark:hover {
+  background: var(--color3) !important;
+  transition: background 0.15s;
+}
+
+.share:active, .bookmark:active, .play-trailer:active {
+  background: var(--color1) !important;
+}
+
+.share, .bookmark .checkbox-button {
+  font-size: 16px;
+}
+
+.temp-message {
+  position: absolute;
+  text-wrap: nowrap;
+  background: var(--color5);
+  font-size: 12px;
+  padding: 8px;
+  z-index: 2;
+  border-radius: var(--border-radius2);
+  color: var(--font-color3);
+  text-shadow: none;
+  left: 40px;
 }
 
 .modal-cover {
@@ -1828,7 +1928,9 @@ p.tags {
 }
 
 .seasons-menu {
+  display: flex;
   padding: 12px 0;
+  gap: 12px;
 }
 
 .seasons-menu select {

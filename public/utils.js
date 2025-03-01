@@ -219,7 +219,7 @@ function displayModal(mediaType, data) {
   }
 
   if (mediaType === 'movie') {
-    insertMovieActions(data);
+    insertMovieActions(data, mediaType);
     modalContent.style.height = 'fit-content';
   }
 
@@ -230,13 +230,10 @@ function displayModal(mediaType, data) {
 
     tvContent(data, season, episode, 'modal');
 
-    if (!isMobile()) {
-      modalContent.style.height = '32rem';
-    } else {
-      modalContent.style.height = '70%';
-      const seasonDropdown = document.getElementById('season-dropdown');
-      seasonDropdown.insertAdjacentHTML('afterend', getShareButtonHTML());
-    }
+    modalContent.style.height = !isMobile() ? '32rem' : '70%';
+
+    const seasonDropdown = document.getElementById('season-dropdown');
+    seasonDropdown.insertAdjacentHTML('afterend', setUpModalActions(data, mediaType));
   }
 
   initializeModalListeners(mediaType, data, modalContent, details);
@@ -276,6 +273,7 @@ function buildMediaDetailsHTML(data, mediaType, contentLogoHTML) {
   const { rated } = getCountryCertification(data, mediaType);
 
   const detailsBodyHTML = `
+    <div class="trailer-container"></div>
     <div class="modal-media">
       <div class="modal-cover">
         <img src="${IMAGE_URL}${data.poster_path}" alt="${name}">
@@ -307,7 +305,7 @@ function buildMediaDetailsHTML(data, mediaType, contentLogoHTML) {
   return detailsBodyHTML;
 }
 
-function insertMovieActions(data) {
+function insertMovieActions(data, mediaType) {
   const name = data.name || data.title || data.original_title;
   const releaseDate = data.release_date || data.first_air_date;
   const releaseTimeStamp = new Date(releaseDate).getTime()
@@ -323,22 +321,14 @@ function insertMovieActions(data) {
     <div class="modal-actions">
       ${ released 
       ? `<button class="watch-btn" data-name="${name}" data-id="${data.id}">
-          Watch
+          <i class="fa-solid fa-play"></i>Watch
         </button>`
       : releaseInfo }
-      <button class="play-trailer" data-name="${name}" data-id="${data.id}">
-          Trailer
+      <button class="play-trailer">
+          <i class="fa-solid fa-video"></i>Trailer
       </button>
-      <label class="selectable active bookmark">
-          <input type="checkbox" />
-          <span class="checkbox-button">
-            <i class="options-icon fa-regular fa-bookmark active"></i>
-            <i class="options-x-icon fa-solid fa-bookmark passive"></i>
-          </span>
-      </label>
-      <button tabindex="0" class="share">
-        <i class="fa-solid fa-paper-plane"></i>
-      </button>
+      ${setUpModalActions(data, mediaType)}
+      </div>
     </div>
   `;
   // Insert action buttons immediately after the modal-media section.
@@ -348,27 +338,46 @@ function insertMovieActions(data) {
   }
 }
 
-function getShareButtonHTML() {
+function setUpModalActions(data, mediaType) {
+  const bookmark = logExists('bookmarks', data.id, mediaType)
   return `
-    <button class="share">
-      <i class="fa-solid fa-paper-plane"></i>
-    </button>
+    <div class="item-actions">
+      <label class="selectable active bookmark" data-id="${data.id}" data-media-type="${mediaType}">
+        <input type="checkbox" ${bookmark ? `checked` : ''}/>
+        <span class="checkbox-button">
+          <i class="options-icon fa-regular fa-bookmark active"></i>
+          <i class="options-x-icon fa-solid fa-bookmark passive"></i>
+        </span>
+      </label>
+      <button tabindex="0" class="share">
+        <i class="fa-solid fa-paper-plane"></i>
+      </button>
+    </div>
   `;
 }
 
 function initializeModalListeners(mediaType, data, modalContent, details) {
-  const id = data.id
-  const name = data.name || data.title || data.original_title
-
+  const id = data.id;
+  const name = data.name || data.title || data.original_title;
   shareItem(mediaType, id, name);
 
+  if (document.modalWatchHandler) {
+    ['click', 'keydown'].forEach(eventType => {
+      details.removeEventListener(eventType, document.modalWatchHandler);
+    });
+  }
+
+  const watchHandler = (e) => watchEventListeners(e, data);
+  document.modalWatchHandler = watchHandler;
+
   ['click', 'keydown'].forEach(eventType => {
-    document.removeEventListener(eventType, watchEventListeners);
-    document.addEventListener(eventType, watchEventListeners);
+    details.addEventListener(eventType, watchHandler);
   });
 
-  details.removeEventListener('scroll', () => backdropAnim(details, modalContent));
-  details.addEventListener('scroll', () => backdropAnim(details, modalContent));
+  // Create a named function for the scroll event
+  const backdropHandler = () => backdropAnim(details, modalContent);
+  details.removeEventListener('scroll', backdropHandler);
+  details.addEventListener('scroll', backdropHandler);
 }
 
 
@@ -448,7 +457,7 @@ async function tvContent(data, sno, eno, ref) {
 
 }
 
-function watchEventListeners(event) {
+function watchEventListeners(event, data) {
   console.log('i ran');
   if (event.type === 'click' || event.type === 'keydown' && event.key === 'Enter') {
     if (event.target.classList.contains("watch-btn")) {
@@ -466,6 +475,55 @@ function watchEventListeners(event) {
       //loadWatchPage(mediaType, name, id);
       window.location.href = `/watch/${mediaType}/${Number(id)}/${name}`;
       event.stopPropagation();
+    }
+
+    if (event.target.classList.contains("play-trailer")) {
+      console.log('trailer button')
+      event.stopPropagation();
+    
+      const container = document.querySelector('.trailer-container')
+      const trailerBtn = event.target.closest(".play-trailer");
+
+      const params = new URLSearchParams({
+        autoplay : 1,
+        controls : 0,
+        rel : 0,
+        color : 'white',
+        iv_load_policy : 3
+      });
+
+      const playTrailer = () => {
+        const key = getTrailerVideoKey(data.videos.results)
+        const trailerIframe = `
+          <iframe id="ytplayer" type="text/html"
+            src="https://www.youtube.com/embed/${key + `?` + params}"
+            frameborder="0" 
+            scrolling="no"
+          ></iframe>
+        `;
+        console.log(key)
+        if (!key) {
+            console.log('no trailer')
+            const noTrailer = document.createElement('div');
+            noTrailer.classList.add('temp-message')
+            noTrailer.innerText = `no trailer available`;
+            trailerBtn.appendChild(noTrailer)
+            setTimeout(() => { trailerBtn.removeChild(noTrailer) }, 2000);
+            return
+        }
+        container.innerHTML = trailerIframe
+        trailerBtn.innerHTML = `<i class="fa-solid fa-xmark"></i>Close Trailer`
+      }
+
+      const trailer = document.getElementById('ytplayer')
+
+      if (trailer) {
+        container.innerHTML = '';
+        trailerBtn.innerHTML = `<i class="fa-solid fa-video"></i>Trailer`
+        return
+      }
+
+      if (!trailer) playTrailer()
     }
 
     if (event.target.closest(".episode img")) {
@@ -508,7 +566,54 @@ function watchEventListeners(event) {
       }
       event.stopPropagation();
     }
+
+    const bookmark = event.target.closest(".bookmark")
+    if (bookmark) {
+      const { mediaType, id, sno, eno, index } = bookmark.dataset;
+      event.preventDefault()
+      const checkbox = bookmark.querySelector("input[type='checkbox']")
+      checkbox.checked = !checkbox.checked
+      toggleBookmark('bookmarks', id, mediaType, sno, eno, index);
+      console.log('toggling bookmark')
+      event.stopPropagation()
+    }
   }
+}
+
+function getTrailerVideoKey(data) {
+  if (data.length < 1) return null;
+
+  if (data.length === 1) {
+    return data[0].key || null;
+  }
+
+  // Strict parameters.
+  const candidates = data.filter(video =>
+    video.site.toLowerCase() === 'youtube' &&
+    video.iso_3166_1 === 'US' &&
+    video.iso_639_1 === 'en'
+  );
+
+  if (!candidates.length) return null;
+
+  // Optional parameters
+  candidates.sort((a, b) => {
+    const score = video => {
+      let s = 0;
+      if (video.name && typeof video.name === 'string') {
+        const lowerName = video.name.toLowerCase();
+        if (lowerName.includes('official')) s++;
+        if (lowerName.includes('trailer')) s++;
+        if (video.official === true ) s++;
+        if (video.type.toLowerCase() === 'trailer') s++
+      }
+      console.log(s)
+      return s;
+    };
+    return score(b) - score(a);
+  });
+
+  return candidates[0].key || null;
 }
 
 function escapeHTML(str) {
@@ -612,16 +717,25 @@ function cappedOverview() {
 function shareItem(mediaType, id, name) {
   const shareData = {
     text: `${name}`,
-    url: `https://pixelstream.vercel.app/watch/${mediaType}/${id}/${name}`,
+    url: `https://pixelstream.vercel.app/watch/${mediaType}/${id}/${encodeURIComponent(name)}`,
   };
 
   const btn = document.querySelector(".share");
+
+  const message = document.createElement('div')
+  message.classList.add('temp-message')
+  message.innerHTML = `<p>Copied link to clipboard!</p>`
 
   btn?.addEventListener("click", async () => {
     try {
       await navigator.share(shareData);
     } catch (err) {
-      console.log(`Error: ${err}`);
+      await navigator.clipboard.writeText(shareData.url);
+      console.log('Copied link to clipboard');
+      btn.appendChild(message)
+      setTimeout(() => {
+        btn.removeChild(message)
+      }, 2000);
     }
   });
 }
