@@ -607,7 +607,6 @@ function getTrailerVideoKey(data) {
         if (video.official === true ) s++;
         if (video.type.toLowerCase() === 'trailer') s++
       }
-      console.log(s)
       return s;
     };
     return score(b) - score(a);
