@@ -58,6 +58,7 @@ function globalAddEventListener (event) {
     }
   } else if (modalActive) {
     if (event.key === 'Escape' || event.target.matches('#info-modal')) {
+      document.getElementById('modal-details').innerHTML = '';
       modal.removeAttribute('active','')
       event.stopPropagation();
     }
