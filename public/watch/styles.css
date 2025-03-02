@@ -30,17 +30,12 @@
     all: unset;
     height: 100%;
     scroll-snap-align: start;
-    scale: 1;
-    transition: scale 0.2s ease-in-out;
   }
 
   .episode:hover, .episode:has(.episode-items img:focus-visible) {
-    scale: 0.9375;
-  }
-
-  .episode img {
-    border: 1px solid var(--color3);
-    transition: border 0.2s ;
+    .episode-items img {
+      scale: 0.97;
+    }
   }
 
   .episode.current {
@@ -76,15 +71,19 @@
     width: 100%;
     height: 90%;
     border-radius: 20%;
-    background: #30303d no-repeat center center / cover;
+    background: #30303d;
     filter: blur(30px) brightness(0.75);
     z-index: -1;
     transform: scale(0.7);
   }
 
   .episode-items img {
-    width: 15rem;
+    width: 100%;
     border-radius: var(--border-radius1);
+    border: 1px solid var(--color3);
+    transition: border 0.2s ;
+    scale: unset;
+    transition: scale 0.2s ease-in-out;
   }
 
   .episode-items img:focus-visible {
@@ -246,7 +245,10 @@ iframe.zoom {
   height: auto;
   width: 100%;
   padding: 0 8%;
-  margin-top: -12px;
+
+  .season-info {
+    margin: 12px 0;
+  }
 }
 
 /* Dropdown container */

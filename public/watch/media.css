@@ -12,7 +12,7 @@
     }
 
     .episode-items {
-      width: unset;
+      width: 9.2rem;
       min-height: unset;
     }
 
@@ -20,10 +20,6 @@
       top: 8%;
       height: 80%;
       filter: blur(10px) brightness(0.8);
-    }
-
-    .episode-items img {
-      width: 9.2rem;
     }
 
     .episode-items h3 {
@@ -135,27 +131,30 @@
     max-width: 100%;
     padding: 0.4rem 0.6rem;
     margin-top: unset;
-  }
+ 
+    .tv-actions {
+      margin: unset;
+    }
+    .seasons-menu {
+      padding: 0 0 0.4rem;
+    }
+    
+    .seasons-menu select {
+      border: none;
+      background-color: transparent;
+      box-shadow: none;
+      height: unset;
+      font-weight: 600;
+      font-size: 0.875rem;
+      font-weight: 500;
+      padding: 0rem 1rem 0rem 0rem;
+      background-size: 12px;
+      background-repeat: no-repeat;
+      background-position: 100% 50%;
+    }
 
-  .player-episodes .tv-actions {
-    margin: unset;
-  }
-
-  .player-episodes .seasons-menu {
-    padding: 0 0 0.4rem;
-  }
-
-  .player-episodes .seasons-menu select {
-    border: none;
-    background-color: transparent;
-    box-shadow: none;
-    height: unset;
-    font-weight: 600;
-    font-size: 0.875rem;
-    font-weight: 500;
-    padding: 0rem 1rem 0rem 0rem;
-    background-size: 12px;
-    background-repeat: no-repeat;
-    background-position: 100% 50%;
+    .season-info {
+      margin: unset ;
+    }
   }
 }

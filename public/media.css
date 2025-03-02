@@ -723,7 +723,7 @@
 
   .watch-btn, .play-trailer {
     width: 40%;
-    min-width: 25%;
+    min-width: 20%;
     height: 30px;
     font-size: 12px;
     padding: 0 12px;
@@ -739,6 +739,7 @@
   .item-actions {
     height: 30px;
     padding: unset;
+    margin-left: auto;
   }
    
   /* .play-trailer:hover, .share:hover, .bookmark:hover {
