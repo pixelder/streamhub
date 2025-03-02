@@ -233,6 +233,8 @@ function displayModal(mediaType, data) {
 
     const seasonMenu = document.querySelector('.seasons-menu');
     seasonMenu.insertAdjacentHTML('afterend', setUpModalActions(data, mediaType));
+    console.log(data)
+    if (releaseInfo(data) !== null) seasonMenu.insertAdjacentHTML('beforebegin', releaseInfo(data));
   }
 
   initializeModalListeners(mediaType, data, modalContent, details);
@@ -304,17 +306,22 @@ function buildMediaDetailsHTML(data, mediaType, contentLogoHTML) {
   return detailsBodyHTML;
 }
 
-function insertMovieActions(data, mediaType) {
-  const name = data.name || data.title || data.original_title;
-  const releaseDate = data.release_date || data.first_air_date;
+function releaseInfo(data) {
+  const releaseDate = data.release_date || data.seasons[0].air_date;
   const releaseTimeStamp = new Date(releaseDate).getTime()
-  let released = true;
-  if (Date.now() < releaseTimeStamp) released = false;
-  const releaseInfo = `
+  if (Date.now() > releaseTimeStamp) return null;
+
+  return `
     <div class="releasing-on">
       <p>Releasing on ${convertDate(releaseDate)}. </p>
     </div>
   `;
+}
+
+function insertMovieActions(data, mediaType) {
+  const name = data.name || data.title || data.original_title;
+  let released = true;
+  if (releaseInfo(data) !== null ) released = false
 
   const actionHTML = `
     <div class="modal-actions">
@@ -322,7 +329,7 @@ function insertMovieActions(data, mediaType) {
       ? `<button class="watch-btn" data-name="${name}" data-id="${data.id}">
           <i class="fa-solid fa-play"></i>Watch
         </button>`
-      : releaseInfo }
+      : releaseInfo(data) }
       ${setUpModalActions(data, mediaType)}
       </div>
     </div>
@@ -440,6 +447,7 @@ async function tvContent(data, sno, eno, ref) {
         }
       });
     }
+
     whenInView('.player-styling, .modal', () => {
       scrollEpisodeIntoView(eno);
     });
@@ -1255,142 +1263,6 @@ function setupCheckboxListeners(sectionID) {
     console.log("Cleaned up event listeners for", sectionID);
   };
 }
-
-// function setupCheckboxListeners(sectionID) {
-
-//   let selectedItems = [];
-//   const container = document.querySelector(`#${sectionID} .grid-container`);
-//   const selectAllBox = document.querySelector(`#${sectionID} .select-action .selectable input[type="checkbox"]`)
-
-//   const checkboxes = container.querySelectorAll('.selectable input[type="checkbox"]')
-//   checkboxes.forEach(checkbox => {
-//     console.log('checkbox found')
-//     checkbox.addEventListener('change', () => {
-//       setupSelectedItems(checkbox)
-//       selectAllBox.checked = checkboxes.length === selectedItems.length
-//     });
-//   });
-//   const onActionButtonClick = (e) => {
-//     console.log(e.target)
-//     const section = e.target.closest('section');
-//     if (e.target.closest('.edit-button')) {
-//       toggleEditing(section);
-//       e.stopPropagation()
-//       return;
-//     }
-//     if (e.target.closest('.delete-button')) {
-//       console.log('delete-button')
-
-//       if (selectedItems.length < 1) return
-//       getConfirm({
-//         title: `Delete ${selectedItems.length} items from ${sectionID}?`,
-//         success: { title: 'Success!', message: `${selectedItems.length} item removed from ${sectionID}.` },
-//         decline: { title: 'Canceled!', message: 'Item not removed. ' }
-//       }).then(confirmed => {
-//         console.log('exited', confirmed)
-//         if (!confirmed) return
-//         const sectionId = section.id
-//         const logType = section.dataset.type
-//         console.log(section.dataset)
-//         selectedItems.forEach(item => {
-//           const { id, mediaType, index, sno, eno } = item
-//           //removeFromLocalStorage(logType, Number(id), mediaType, sno, eno, index)
-//           console.log(id, mediaType, index, sno, eno)
-//         });
-//         console.log(sectionId, logType, 'item removed')
-//         loadUserContent(sectionId, logType);
-//         toggleEditing(section)
-//       });
-//       e.stopPropagation()
-//       return;
-//     }
-//   }
-
-//   const onGridItemMouseDown = (e) => {
-//     // console.log('grid mouse down')
-//     const section = e.target.closest('section')
-//     const item = e.target.closest('.grid-item');
-//     if (!item) return;
-
-//     let hold = false;
-
-//     const timer = setTimeout(() => {
-//       hold = true;
-//       console.log('Element is being held');
-//       const isActive = item.querySelector('.selectable.active')
-//       wasEditing = true
-//       return toggleEditing(section, !isActive ? item : '');
-//     }, 500);
-//     const clearTimer = () => clearTimeout(timer);
-//     ['mouseup', 'mouseout','touchend'].forEach(eventType => item.addEventListener(eventType, clearTimer, { once: true }))
-//   }
-
-//   const actionButtons = document.querySelector(`#${sectionID} .actions`);
-//   actionButtons.removeEventListener('click', onActionButtonClick);  
-//   actionButtons.addEventListener('click', onActionButtonClick);
-//   ['mousedown', 'touchstart'].forEach(eventType => container.addEventListener(eventType, onGridItemMouseDown));
-
-//   const toggleEditing = (section, gridItem) => {
-//     console.log('toggle editing')
-//     console.log(section)
-//     const editBtn = section.querySelector('.edit-button')
-//     editBtn.querySelectorAll('i').forEach(i => i.classList.toggle('active'))
-//     section.querySelector('.delete-button')?.classList.toggle('active');
-//     section.querySelectorAll('.selectable').forEach(item => item.classList.toggle('active'));
-
-//     resetEditing();
-
-//     if (!gridItem) {
-//       setTimeout(() => {wasEditing = false}, 1000)
-//       return
-//     };
-//     wasEditing = true;
-//     console.log(wasEditing)
-//     const checkbox = gridItem.querySelector('.selectable input[type="checkbox"]');
-//     checkbox.checked = true;
-//     setupSelectedItems(checkbox);
-//   }
-
-//   const resetEditing = () => {
-//     selectAllBox.checked = false;
-//     selectedItems = [];
-//     displayCount()
-//     container.querySelectorAll('.selectable input[type="checkbox"]').forEach(cb => (cb.checked = false));
-//   }
-
-//   const setupSelectedItems = (checkbox) => {
-
-//     const gridItem = checkbox.closest('.grid-item');
-//     if (!gridItem) return;
-
-//     const data = { ...gridItem.dataset };
-
-//     if (checkbox.checked) {
-//       // console.log('checkbox checked')
-//       if (!selectedItems.some(item => item.index === data.index)) {
-//         selectedItems.push(data);
-//       }
-//     } else {
-//       selectedItems = selectedItems.filter(item => item.index !== data.index);
-//     }
-
-//     displayCount()
-//   }
-//   const displayCount = () => {
-//     const message = document.querySelector(`#${sectionID} .selection-count p`)
-//     message.innerText = `${selectedItems.length} / ${checkboxes.length}`
-//   }
-
-//   const selectAll = () => {
-//     checkboxes.forEach(checkbox => {
-//       selectAllBox.checked 
-//       ? checkbox.checked = true
-//       : checkbox.checked = false
-//       setupSelectedItems(checkbox)
-//     })
-//   }
-//   selectAllBox?.addEventListener('click', selectAll);
-// }
 
 async function waitForTrue(variable) {
   while (!variable) {

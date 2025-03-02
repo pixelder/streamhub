@@ -676,6 +676,7 @@
   }
 
   #modal-details {
+    gap: 8px;
     scrollbar-width: none;
   }
 
@@ -713,14 +714,19 @@
   }
 
   .modal-actions {
-    margin-top: 0.6rem;
     padding: unset;
   }
 
+  .releasing-on {
+    font-size: 14px;
+  }
+
   .watch-btn, .play-trailer {
-    width: 100%;
+    width: 40%;
+    min-width: 25%;
     height: 30px;
     font-size: 12px;
+    padding: 0 12px;
   }
 
   .play-trailer .temp-message {
@@ -901,8 +907,6 @@
   .tv-actions {
     display: flex;
     align-items: center;
-    gap: 0.6rem;
-    margin: 0.6rem 0;
     flex-wrap: nowrap;
 
     .play-trailer {

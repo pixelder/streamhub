@@ -137,6 +137,10 @@
     margin-top: unset;
   }
 
+  .player-episodes .tv-actions {
+    margin: unset;
+  }
+  
   .player-episodes .seasons-menu {
     padding: 0 0 0.4rem;
   }
