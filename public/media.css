@@ -799,6 +799,7 @@
       opacity: 0;
       padding: unset;
       transition: scale 0.2s, opacity 0.5s ease-in-out;
+      margin-bottom: 20px;
     }
 
     .modal-info {
@@ -920,7 +921,6 @@
   }
 
   .seasons-menu select {
-    font-weight: 500;
     font-size: 12px;
     padding: 0 0.4rem;
     padding-right: 1.2rem;
