@@ -482,7 +482,7 @@ function watchEventListeners(event, data) {
       const trailerBtn = event.target.closest(".play-trailer");
 
       const params = new URLSearchParams({
-        autoplay : 0,
+        autoplay : 1,
         controls : 0,
         rel : 0,
         color : 'white',
