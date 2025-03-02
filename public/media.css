@@ -768,9 +768,15 @@
       top: 0;
     }
   }
+
+  .modal-content:has(.tv-player) {
+    height: fit-content !important;
+  }
+  
   .modal-content:has(#ytplayer) {
-    width: 92%;
+    width: 92% !important;
     max-height: 80% !important;
+    
     .modal-media {
       gap: unset;
       height: unset;
@@ -789,6 +795,9 @@
       transition: scale 0.2s, opacity 0.5s ease-in-out;
     }
 
+    .modal-info {
+      visibility: visible !important;
+    }
     .modal-info > h1 {
       margin-top: unset !important;
     }
@@ -889,8 +898,21 @@
 
   }
 
+  .tv-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin: 0.6rem 0;
+    flex-wrap: nowrap;
+
+    .play-trailer {
+      max-width: max-content;
+      padding: 0 12px;
+    }
+  }
+
   .seasons-menu {
-    padding: 0.6rem 0;
+    padding: unset;
   }
 
   .seasons-menu select {

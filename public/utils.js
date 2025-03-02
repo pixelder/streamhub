@@ -141,7 +141,7 @@ async function fetchMetaData(mediaType, id, season = null) {
     if (mediaType === "movie") {
       url = `${BASE_URL}/movie/${id}?api_key=${API_KEY}&language=en-US&append_to_response=videos,release_dates,credits,images&include_image_language=en`;
     } else if (mediaType === "tv") {
-      url = `${BASE_URL}/tv/${id}${season ? `/season/${season}` : ''}?api_key=${API_KEY}&language=en-US&append_to_response=content_ratings,credits,images&include_image_language=en`;
+      url = `${BASE_URL}/tv/${id}${season ? `/season/${season}` : ''}?api_key=${API_KEY}&language=en-US&append_to_response=videos,content_ratings,credits,images&include_image_language=en`;
     } else if (mediaType === "person") {
       url = `${BASE_URL}/person/${id}?api_key=${API_KEY}&language=en-US`;
     }
@@ -227,13 +227,12 @@ function displayModal(mediaType, data) {
     const userData = getLogData('watching')?.find(item => item.id === data.id)?.data;
     const season = userData?.sno;
     const episode = userData?.eno;
-
     tvContent(data, season, episode, 'modal');
 
     modalContent.style.height = !isMobile() ? '32rem' : '70%';
 
-    const seasonDropdown = document.getElementById('season-dropdown');
-    seasonDropdown.insertAdjacentHTML('afterend', setUpModalActions(data, mediaType));
+    const seasonMenu = document.querySelector('.seasons-menu');
+    seasonMenu.insertAdjacentHTML('afterend', setUpModalActions(data, mediaType));
   }
 
   initializeModalListeners(mediaType, data, modalContent, details);
@@ -324,9 +323,6 @@ function insertMovieActions(data, mediaType) {
           <i class="fa-solid fa-play"></i>Watch
         </button>`
       : releaseInfo }
-      <button class="play-trailer">
-          <i class="fa-solid fa-video"></i>Trailer
-      </button>
       ${setUpModalActions(data, mediaType)}
       </div>
     </div>
@@ -341,6 +337,9 @@ function insertMovieActions(data, mediaType) {
 function setUpModalActions(data, mediaType) {
   const bookmark = logExists('bookmarks', data.id, mediaType)
   return `
+    <button class="play-trailer" data-media-type="${mediaType}">
+          <i class="fa-solid fa-video"></i>Trailer
+    </button>
     <div class="item-actions">
       <label class="selectable active bookmark" data-id="${data.id}" data-media-type="${mediaType}">
         <input type="checkbox" ${bookmark ? `checked` : ''}/>
@@ -380,26 +379,24 @@ function initializeModalListeners(mediaType, data, modalContent, details) {
   details.addEventListener('scroll', backdropHandler);
 }
 
-
 async function tvContent(data, sno, eno, ref) {
   const seasons = data.seasons.reverse();
   const id = data.id
   sno === null ? sno = -1 : "";
   const containerClass = ref === "modal" ? "episode-wrap" : "episode-player";
   const tvInfo = `
-    <div class="season-info">
+    <div class="tv-actions">
       <div class="seasons-menu">
         <select tabindex="0" id="season-dropdown">
-           ${seasons
-      .map(season => `
-                <option value="${season.season_number}" 
-                ${season.season_number === Number(sno) ? "selected" : ""}>
-                Season ${season.season_number}
-                </option>
-              `)
-      .join("")}
+          ${seasons.map(season => `
+          <option value="${season.season_number}" 
+          ${season.season_number === Number(sno) ? "selected" : ""}
+          >Season ${season.season_number}</option>
+          `).join("")}
         </select>
       </div>
+    </div>
+    <div class="season-info">
     <div class="episode-container ${containerClass}" id="episode-container">
     </div>
     </div>
@@ -433,7 +430,7 @@ async function tvContent(data, sno, eno, ref) {
         </div>
       `)
       .join("");
-
+    document.querySelector('.play-trailer')?.setAttribute('data-sno',selectedSeason)
     if (ref != "modal") {
       document.getElementById('episode-container').classList.add('player-styling');
       document.querySelector('.now-playing > h4').innerHTML = `S${sno}:E${eno} ${seasonData.episodes.map(episode => episode.name)[eno - 1]}`;
@@ -485,7 +482,7 @@ function watchEventListeners(event, data) {
       const trailerBtn = event.target.closest(".play-trailer");
 
       const params = new URLSearchParams({
-        autoplay : 1,
+        autoplay : 0,
         controls : 0,
         rel : 0,
         color : 'white',
@@ -493,9 +490,12 @@ function watchEventListeners(event, data) {
       });
 
       const playTrailer = () => {
-        const key = getTrailerVideoKey(data.videos.results)
+        const { mediaType, sno } = event.target.dataset
+        const tvData = mediaType === 'tv' ? { sno } : null ;
+        console.log(tvData)
+        const key = getTrailerVideoKey(data.videos.results, tvData)
         const trailerIframe = `
-          <iframe id="ytplayer" type="text/html"
+          <iframe id="ytplayer" class="${mediaType}-trailer" type="text/html"
             src="https://www.youtube.com/embed/${key + `?` + params}"
             frameborder="0" 
             scrolling="no"
@@ -580,7 +580,8 @@ function watchEventListeners(event, data) {
   }
 }
 
-function getTrailerVideoKey(data) {
+function getTrailerVideoKey(data, tvData = null) {
+  console.log(data)
   if (data.length < 1) return null;
 
   if (data.length === 1) {
@@ -588,7 +589,7 @@ function getTrailerVideoKey(data) {
   }
 
   // Strict parameters.
-  const candidates = data.filter(video =>
+  const candidates = data.reverse().filter(video =>
     video.site.toLowerCase() === 'youtube' &&
     video.iso_3166_1 === 'US' &&
     video.iso_639_1 === 'en'
@@ -604,8 +605,9 @@ function getTrailerVideoKey(data) {
         const lowerName = video.name.toLowerCase();
         if (lowerName.includes('official')) s++;
         if (lowerName.includes('trailer')) s++;
+        if (tvData && lowerName.includes(`season ${tvData.sno}`)) s++;
         if (video.official === true ) s++;
-        if (video.type.toLowerCase() === 'trailer') s++
+        if (video.type.toLowerCase() === 'trailer') s++;
       }
       return s;
     };

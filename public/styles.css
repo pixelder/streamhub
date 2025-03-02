@@ -1634,6 +1634,16 @@ body:has(.modal:is([active])) {
   }
 }
 
+
+.modal-content:has(.tv-trailer) {
+  height: 90% !important;
+  width: 70% !important;
+  
+  .modal-info {
+    visibility: collapse;
+  }
+}
+
 .modal-content:has(#ytplayer) {
   width: 54%;
   max-height: 90% !important;
@@ -1927,10 +1937,12 @@ p.tags {
   font-weight: 600;
 }
 
-.seasons-menu {
+.tv-actions {
   display: flex;
-  padding: 12px 0;
-  gap: 12px;
+  align-items: center;
+  gap: 0.6rem;
+  margin: 12px 0;
+  flex-wrap: nowrap;
 }
 
 .seasons-menu select {
