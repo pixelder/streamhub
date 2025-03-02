@@ -1571,7 +1571,7 @@ body:has(.modal:is([active])) {
   position: relative;
   width: 58rem;
   height: fit-content;
-  max-height: 32rem;
+  max-height: 30rem;
   padding: 2rem;
   margin: auto;
   border-radius: var(--border-radius1);
@@ -1580,6 +1580,10 @@ body:has(.modal:is([active])) {
   backdrop-filter: brightness(0.2);
   background-color: #141427db;
   transition: width 0.2s;
+}
+
+.modal-content:has(.releasing-on) {
+  max-height: 32rem;
 }
 
 .modal-content::before {
@@ -1639,10 +1643,14 @@ body:has(.modal:is([active])) {
 
 .modal-content:has(.tv-trailer) {
   height: 90% !important;
-  width: 70% !important;
+  width: 69% !important;
   
   .modal-info {
     visibility: collapse;
+  }
+
+  .modal-media > span {
+    gap: unset; 
   }
 }
 
@@ -1657,7 +1665,6 @@ body:has(.modal:is([active])) {
   }
   .modal-media > span {
     width: 100%;
-    gap: unset;
   }
 
   .modal-cover {

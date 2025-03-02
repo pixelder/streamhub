@@ -246,6 +246,10 @@ iframe.zoom {
   width: 100%;
   padding: 0 8%;
 
+  .seasons-menu select {
+    background-color: #30303d77;
+  }
+
   .season-info {
     margin: 12px 0;
   }
