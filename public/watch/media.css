@@ -1,88 +1,89 @@
 @media (max-width: 767px) {
 
   .player-styling {
-      gap: 0.6rem;
-      width: 100%;
+    gap: 0.6rem;
+    width: 100%;
 
-      .episode.current {
-          .episode-items::before {
-              border-radius: 0%;
-              filter: blur(15px) brightness(1.8);   
-          }
-      }
-      .episode-items {
-          width: unset;
-          min-height: unset;
-      }
-  
+    .episode.current {
       .episode-items::before {
-          top: 8%;
-          height: 80%;
-          filter: blur(10px) brightness(0.8);
+        border-radius: 0%;
+        filter: blur(15px) brightness(1.8);
       }
+    }
 
-      .episode-items img {
-          width: 9.2rem;
-      }
+    .episode-items {
+      width: unset;
+      min-height: unset;
+    }
 
-      .episode-items h3 {
-          font-size: 0.75rem;
-          line-height: 12px;
-      }
+    .episode-items::before {
+      top: 8%;
+      height: 80%;
+      filter: blur(10px) brightness(0.8);
+    }
+
+    .episode-items img {
+      width: 9.2rem;
+    }
+
+    .episode-items h3 {
+      font-size: 0.75rem;
+      line-height: 12px;
+    }
   }
 
   .watch-page {
-      color: var(--font-color1);
-      padding: 0rem;
-      justify-content: flex-start;
-      gap: 0rem;
+    color: var(--font-color1);
+    padding: 0rem;
+    justify-content: flex-start;
+    gap: 0rem;
   }
 
   .watch-page .now-playing {
-      line-height: normal;
-      height: fit-content;
-      margin-left: 0;
-      padding: 12px 0 0 0.6rem;
+    line-height: normal;
+    height: fit-content;
+    margin-left: 0;
+    padding: 12px 0 0 0.6rem;
   }
 
   .now-playing h2 {
-      font-size: 1.18rem;
-      margin: 0;
-      align-content: flex-start;
+    font-size: 1.18rem;
+    margin: 0;
+    align-content: flex-start;
   }
 
   .now-playing h4 {
-      font-size: 0.875rem;
+    font-size: 0.875rem;
   }
 
   .player-container {
-      width: 100%;
-      margin: 0;
-      align-content: flex-start;
+    width: 100%;
+    margin: 0;
+    align-content: flex-start;
   }
 
   .player {
-      width: 100%;
-      aspect-ratio: 16 / 8;
-      min-height: 16.2rem;
-      max-height: 24rem;
-      border-radius: 0;
-      box-shadow: none;
+    width: 100%;
+    aspect-ratio: 16 / 8;
+    min-height: 16.2rem;
+    max-height: 24rem;
+    border-radius: 0;
+    box-shadow: none;
   }
 
   .iframe-container {
-      padding: 0.6rem 0;
+    padding: 0.6rem 0;
   }
 
   iframe {
-      width: calc(100% * 1.25);
-      height: calc(100% * 1.25);
-      zoom: 0.8;
-      transform: scale(0.8);
-      transform-origin: 0 0;
-      -moz-transform: scale(0.8);
-      -o-transform: scale(0.8);
-      -webkit-transform: scale(0.8);
+    width: calc(100% * 1.25);
+    height: calc(100% * 1.25);
+    zoom: 0.8;
+    transform: scale(0.8);
+    transform-origin: 0 0;
+    -moz-transform: scale(0.8);
+    -o-transform: scale(0.8);
+    -webkit-transform: scale(0.8);
   }
 
   iframe.zoom {
@@ -96,53 +97,60 @@
   }
 
   .loading {
-      height: calc(100% - 1.94em);
-      font-size: 1.2rem;
+    height: calc(100% - 1.94em);
+    font-size: 1.2rem;
   }
-  .providers {
-    width: 8rem;
-    max-height: 200px !important;
+
+  .provider-menu:hover,
+  .provider-menu:has(.provider-change:focus-within) {
+
+    .providers {
+      width: 8rem;
+      max-height: 200px;
+    }
   }
 
   .provider {
-      font-size: 0.7rem;
-      .provider-name {
-        margin: 0.2rem 0.25rem;
-      }
-   }
+    font-size: 0.7rem;
 
-   .provider-settings {
-        .switch {
-            height: 0.5rem;
-        }
-   }
+    .provider-name {
+      margin: 0.2rem 0.25rem;
+    }
+  }
+
+  .provider-settings {
+    .switch {
+      height: 0.5rem;
+    }
+  }
+
   .player-toolbar {
-      width: 100%;
-      border-radius: 0;
-      align-content: center;
+    width: 100%;
+    border-radius: 0;
+    align-content: center;
   }
 
   .player-episodes {
-      height: auto;
-      max-width: 100%;
-      padding: 0.4rem 0.6rem;
-      margin-top: unset;
+    height: auto;
+    max-width: 100%;
+    padding: 0.4rem 0.6rem;
+    margin-top: unset;
   }
 
   .player-episodes .seasons-menu {
-      padding: 0 0 0.4rem;
+    padding: 0 0 0.4rem;
   }
 
   .player-episodes .seasons-menu select {
-      border: none;
-      background-color: transparent;
-      box-shadow: none;
-      height: unset;
-      font-weight: 600;
-      font-size: 0.875rem;
-      padding: 0rem 1rem 0rem 0rem;
-      background-size: 12px;
-      background-repeat: no-repeat;
-      background-position: 100% 50%;
+    border: none;
+    background-color: transparent;
+    box-shadow: none;
+    height: unset;
+    font-weight: 600;
+    font-size: 0.875rem;
+    padding: 0rem 1rem 0rem 0rem;
+    background-size: 12px;
+    background-repeat: no-repeat;
+    background-position: 100% 50%;
   }
 }
