@@ -792,6 +792,7 @@
     .modal-media > span {
       width: unset;
       z-index: 0;
+      gap: unset;
     }
     .modal-info-logo {
       height: auto;

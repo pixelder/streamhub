@@ -278,7 +278,7 @@ function buildMediaDetailsHTML(data, mediaType, contentLogoHTML) {
     <div class="modal-media">
       <div class="modal-cover">
         <img src="${IMAGE_URL}${data.poster_path}" alt="${name}">
-      </div>
+      </div> 
       ${contentLogoHTML}
         <span class="ratings-genre">
           <i class="fa-solid fa-star"></i>
