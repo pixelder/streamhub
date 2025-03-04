@@ -134,14 +134,15 @@ function renderGridItems(items) {
 }
 
 //fetch Metadata
-async function fetchMetaData(mediaType, id, season = null) {
+async function fetchMetaData(mediaType = null, id = null, season = null) {
 
   try {
     let url;
+    const append = `videos,credits,images&include_image_language=en`
     if (mediaType === "movie") {
-      url = `${BASE_URL}/movie/${id}?api_key=${API_KEY}&language=en-US&append_to_response=videos,release_dates,credits,images&include_image_language=en`;
+      url = `${BASE_URL}/movie/${id}?api_key=${API_KEY}&language=en-US&append_to_response=${append},release_dates`;
     } else if (mediaType === "tv") {
-      url = `${BASE_URL}/tv/${id}${season ? `/season/${season}` : ''}?api_key=${API_KEY}&language=en-US&append_to_response=videos,content_ratings,credits,images&include_image_language=en`;
+      url = `${BASE_URL}/tv/${id}${season ? `/season/${season}` : ''}?api_key=${API_KEY}&language=en-US&append_to_response=${append},content_ratings`;
     } else if (mediaType === "person") {
       url = `${BASE_URL}/person/${id}?api_key=${API_KEY}&language=en-US`;
     }

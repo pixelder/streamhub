@@ -8,9 +8,6 @@ let contWatching = false
 
 async function getSearchResults(query) {
 
-  document.getElementById('search-input').value = query;
-  document.querySelector("title").innerText = query + ` - Pixelstream`
-
   const params = new URLSearchParams({
     api_key : API_KEY,
     query : encodeURIComponent(query)
@@ -50,6 +47,10 @@ async function getSearchResults(query) {
 
 // Display search results
 function displaySearchResults({ movie, tv, person }, query) {
+
+  document.getElementById('search-input').value = query;
+  document.querySelector("title").innerText = query + ` - Pixelstream`
+  
   const mainContent = document.querySelector('main');
   mainContent.innerHTML = `
     <div id=search-results>
