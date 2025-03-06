@@ -77,18 +77,12 @@ function populateSection(sectionId, items) {
   }
 
   currentPage++
-  const msg = document.querySelector('.result-message');
-  msg.classList.remove('show');
-  msg.querySelector('label').innerText = 'Loading...';
-  msg.style.display = 'flex';
   container.innerHTML += renderGridItems(items);
   if (items.length < 20) {
     pageEnd = true;
+    const msg = document.querySelector('.result-message');
+    msg.classList.remove('loading');
     msg.querySelector('label').innerText = 'No more results';
-    msg.classList.add('show');
-  } else {
-    msg.classList.remove('show');
-    msg.style.display = 'none';
   }
 }
 
@@ -234,7 +228,7 @@ function displayModal(mediaType, data) {
 
     const seasonMenu = document.querySelector('.seasons-menu');
     seasonMenu.insertAdjacentHTML('afterend', setUpModalActions(data, mediaType));
-    console.log(data)
+    // console.log(data)
     if (releaseInfo(data) !== null) seasonMenu.insertAdjacentHTML('beforebegin', releaseInfo(data));
   }
 
@@ -501,7 +495,6 @@ function watchEventListeners(event, data) {
       const playTrailer = () => {
         const { mediaType, sno } = event.target.dataset
         const tvData = mediaType === 'tv' ? { sno } : null ;
-        console.log(tvData)
         const key = getTrailerVideoKey(data.videos.results, tvData)
         const trailerIframe = `
           <iframe id="ytplayer" class="${mediaType}-trailer" type="text/html"
@@ -590,7 +583,7 @@ function watchEventListeners(event, data) {
 }
 
 function getTrailerVideoKey(data, tvData = null) {
-  console.log(data)
+  // console.log(data)
   if (data.length < 1) return null;
 
   if (data.length === 1) {
@@ -1222,7 +1215,7 @@ function setupCheckboxListeners(sectionID) {
 
     let hold = false;
     const timer = setTimeout(() => {
-      hold = true;
+      hold = !hold;
       console.log("Element is being held");
       const isActive = item.querySelector(".selectable.active");
       wasEditing = true;
@@ -1236,7 +1229,7 @@ function setupCheckboxListeners(sectionID) {
 
     const clearTimer = () => clearTimeout(timer);
 
-    ["mouseup", "mouseout", "touchend"].forEach((eventType) => {
+    ["mouseup", "mouseout", "touchcancel", "touchend"].forEach((eventType) => {
       item.addEventListener(eventType, clearTimer, { once: true });
     });
   };
