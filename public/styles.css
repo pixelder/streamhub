@@ -13,9 +13,7 @@
   @supports (-webkit-appearance:none) and (contain:paint) and (not (-moz-appearance:button)) {
     scrollbar-width: none;
   }
-
 }
-
 
 :root {
   color-scheme: dark;
@@ -43,6 +41,11 @@
   font-size: 100%;
   -webkit-tap-highlight-color: transparent;
 
+}
+
+::selection {
+  color: var(--bg-color);
+  background: var(--font-color1);
 }
 
 body {
@@ -165,7 +168,7 @@ nav ul li:nth-child(1) {
   cursor: pointer;
 }
 
-#search-input::placeholder {
+input::placeholder {
   font-family: var(--font-style2);
   color: var(--font-color2);
 }
@@ -187,8 +190,11 @@ nav ul li:nth-child(1) {
 .x-icon {
   font-size: 0.85rem;
   display: flex;
-  place-content: center;
+  justify-content: center;
+  align-items: center;
   position: absolute;
+  aspect-ratio: 1 / 1;
+  padding: 2px;
   right: 0.4rem;
   top: 50%;
   translate: 0 -50%;
@@ -296,6 +302,7 @@ select {
   align-items: center;
   height: 42px;
   box-sizing: border-box;
+  user-select: none;
 }
 
 select:focus-visible {
@@ -844,7 +851,7 @@ section:has(.delete-button.active) .select-action {
   }
 
   .result-message {
-    display: none;
+    display: flex;
     flex-direction: column;
     margin: 2rem auto 0rem;
     text-shadow: none;
@@ -883,31 +890,26 @@ section:has(.delete-button.active) .select-action {
   }
 }
 
-.result-message.show {
-
-  .message,
-  hr {
-    display: block;
+.result-message.loading {
+  background: var(--color5);
+  margin: 1.2rem 0rem !important;
+  .message, hr {
+    display: none;
   }
 }
+
 
 .flow-row {
   display: flex;
   flex-direction: row;
-  gap: var(--padding1);
-}
-
-.filters:has(.chip) {
-  max-height: 1000px;
-  visibility: visible;
+  gap: 16px;
 }
 
 .filters {
   /* position: relative; */
   display: flex; 
+  justify-content: center;
   overflow: auto;
-  visibility: hidden;
-  max-height: var(--padding1);
   flex-wrap: wrap;
   width: 100%;
   margin: 6px 0 12px;
@@ -923,7 +925,7 @@ section:has(.delete-button.active) .select-action {
   label {
     width: fit-content;
     margin-bottom: 0.4rem;
-    font-size: 1rem;
+    font-size: 18px;
     font-weight: 600;
   }
 
@@ -974,8 +976,13 @@ section:has(.delete-button.active) .select-action {
   }
 }
 
+.form-group:has(.genre-chips) {
+  min-width: 100%;
+}
+
 .genre-chips {
   width: 100%;
+  min-height: 36px;
   display: flex;
   overflow-x: auto;
   scrollbar-width: none;
@@ -1017,10 +1024,12 @@ section:has(.delete-button.active) .select-action {
 
 .filter-button,
 .reset-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   height: 36px;
-  gap: 0.6rem;
-  font-size: 14px;
-  font-weight: 600;
+  gap: 6px;
+  font-size: 16px;
   padding: 8px 10px;
   margin: auto 0 0 auto;
   border-radius: var(--border-radius2);
@@ -1052,13 +1061,15 @@ section:has(.delete-button.active) .select-action {
   left: 50%;
   transform: translate(-50%, -50%);
   width: 90%;
-  max-width: 28rem;
+  max-width: 30rem;
+  margin: auto 0;
   padding: var(--padding);
   background: var(--color5);
   border: 1px solid var(--color3);
   border-radius: var(--border-radius1);
   box-shadow: 0 5px 50px 25px rgba(0, 0, 0, 0.5);
   z-index: 1;
+  transition: top 0.2s ease-in-out;
 
   h2 {
     margin: unset;
@@ -1066,16 +1077,17 @@ section:has(.delete-button.active) .select-action {
   }
 
   .form-group {
+    width: 100%;
     margin-bottom: 0;
   }
 
   label {
-    display: block;
-    margin-bottom: 5px;
+    display: flex;
+    margin-bottom: 6px;
   }
 
   select {
-    max-width: 9rem;
+    width: 100%;
   }
 
   .reset-button {
@@ -1113,6 +1125,274 @@ section:has(.delete-button.active) .select-action {
   display: block;
 }
 
+.caution {
+  font-size: 12px;
+  color: var(--caution);
+  display: flex;
+  align-items: center;
+  margin-left: auto;
+  margin-bottom: 6px;
+  gap: 6px;
+}
+
+.search-container {
+  position: relative;
+  height: 36px;
+  width: 100%;
+  transition: height 0.2s ease-in-out;
+}
+
+.search-box {
+  .flow-row {
+    position: relative;
+    min-height: 100%;
+    width: 100%;
+    display: flex;
+    align-items: center;
+  }
+
+  .x-icon {
+    position: relative;
+    top: unset;
+    translate: unset;
+    right: auto;
+    font-size: inherit;
+  }
+
+  &:has(input:not(:placeholder-shown)) .x-icon {
+    pointer-events: all;
+    opacity: 1;
+    visibility: visible;
+  }
+}
+
+.search-box:focus-within {
+  background: var(--color3);
+}
+
+.search-box {
+  --spacing: 8px;
+	display: flex;
+	/* flex-wrap: wrap; */
+  flex-direction: column;
+	border: 1px solid #383852;
+	border-radius: var(--border-radius2);
+  background: #30303d77;
+	height: 36px;
+	width: 100% !important;
+  overflow: hidden;
+  padding: var(--spacing);
+  margin: unset !important;
+	gap: var(--spacing);
+	transition: height 0.2s, box-shadow 0.2s ease-in-out;
+
+	input {
+		border: 1px solid transparent;
+		border-radius: var(--border-radius2);
+		outline: none;
+		background: transparent;
+    box-shadow: none;
+    font-weight: 500;
+		display: flex;
+		flex: 1 0;
+		max-width: 100%;
+		width: 100%;
+    min-height: 100%;
+		padding: 0 0px;
+    /* margin: var(--spacing); */
+    transition: margin 0.2s ease-in-out;
+	}
+}
+
+
+.search-container:not([expanded]) {
+  &:has(.search-box:not(:focus-within)),
+  &:has(.search-box:has(.select-container:not(:active))),
+  &:has(.search-box:has(.result:not(:active))) {
+    .search-box {
+      position: relative;
+    }
+
+    .result-container {
+      visibility: collapse;
+      height: 0;
+    }
+  }
+}
+
+.search-container:is([expanded]) {
+	&:has(.result) {
+    /* .search-box:focus-within,
+    .search-box:hover,
+    .search-box:has(.select-container:active),
+    .search-box:has(.result-container:active),
+    .search-box:has(.result-container:hover) { */
+    .search-box {  
+      height: fit-content !important;
+      position: absolute;
+      z-index: 2;
+      box-shadow: 0 0 20px 4px rgba(0, 0, 0, 0.5);
+
+      input {
+        min-height: 30px;
+      }
+      .result-container {
+        visibility: visible !important;
+        display: unset;
+      }
+    }	
+	}
+}
+.search-container:has(.select-item) {
+    height: 72px;
+		.search-box {
+			height: fit-content !important;
+      input {
+       min-height: 24px !important;
+     }
+	}
+}
+
+
+
+.result-container {
+  visibility: hidden;
+  display: none;
+	position:relative;
+  overflow: hidden;
+  border-radius: var(--border-radius2);
+
+  .results {
+    /* position: absolute; */
+    /* z-index: 1; */
+    width: 100%;
+    max-height: 0px;
+    max-width: 100%;
+    display:grid;
+    grid-template-columns: repeat(auto-fill , minmax(120px, 1fr));
+    gap: var(--spacing);
+    visibility: collapse;
+    overflow-y: auto;
+    scroll-snap-type: y mandatory;
+    transition: max-height 0.2s ease-in-out;
+
+    &:has(.result) {
+      display: grid;
+      max-height: 150px;
+      visibility: visible;
+    }
+    .result {
+      background: var(--color4);
+      border: 1px solid #383852;
+      border-radius: var(--border-radius2);
+      text-wrap: nowrap;
+      cursor: pointer;
+      height: 60px;
+      padding: 4px;
+      scroll-snap-align: start;
+      display: flex;
+      gap: inherit;
+      animation: fadeIn 0.2s forwards;
+      
+      .img-container {
+        max-width: 30%;
+        min-width: 30%;
+        height: 100%;
+        border-radius: 4px;
+        overflow: hidden;
+        display: flex;
+      }
+
+      img {
+        object-fit: cover;
+        width: 100%;
+        background: RGB(128, 128, 128);
+        font-size: 8px;
+        white-space: wrap;
+      }
+
+      p {
+        display: flex;
+        align-items: center;
+        font-size: 12px;
+        white-space: wrap;
+      }
+    }
+  }
+}
+
+#search-with-company {
+  .result img {
+    object-fit: contain;
+  }
+}
+
+.select-container:has(.select-item) {
+	display: flex;
+}
+
+.select-container {
+  --spacing: 8px;
+	display: none;
+	width: 100%;
+	flex-wrap: wrap;
+  /* margin: 0 var(--spacing); */
+	gap: var(--spacing);
+  font-size: 12px;
+
+  .select-item {
+    border: 1px solid #4a4a69;
+    border-radius: 4px;
+    background: #383852;
+    display: flex;
+    align-items: center;
+    height: 28px;
+    padding: 0 var(--spacing);
+    white-space: nowrap;
+    opacity: 0;
+    cursor: pointer;
+    animation: appearing 0.2s forwards;
+  }
+}
+/* Fade-in and slide-in effect */
+@keyframes appearing {
+    from {
+        opacity: 0;
+        scale: 0.97;
+    }
+    to {
+        opacity: 1;
+        scale: unset;
+    }
+}
+
+/* Fade-out and slide-out effect */
+@keyframes disappearing {
+    from {
+        opacity: 1;
+    }
+    to {
+        opacity: 0;
+				scale: 0.97;
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+				transform: translateY(-30px);
+    }
+    to {
+        opacity: 1;
+				transform: unset;
+    }
+}
+
+/* Hide items with animation when removing */
+.removing {
+    animation: disappearing 0.2s forwards;
+}
+
 .filter-overlay {
   position: fixed;
   top: 0;
@@ -1125,10 +1405,17 @@ section:has(.delete-button.active) .select-action {
   transition: opacity 0.25s ease-in-out;
 }
 
-body:has(.dialog) .dialog-overlay,
-body:has(.filter-menu) .filter-overlay {
-  opacity: 1;
-  backdrop-filter: blur(5px) brightness(0.4);
+
+body:has(.filter-menu:is([active])) {
+  overflow: hidden;
+}
+
+body:has(.dialog) ,
+body:has(.filter-menu) {
+  .dialog-overlay, .filter-overlay {
+    opacity: 1;
+    backdrop-filter: blur(5px) brightness(0.4);
+  }
 }
 
 .dialog-overlay {
@@ -1647,6 +1934,7 @@ body:has(.modal:is([active])) {
   
   .modal-info {
     visibility: collapse;
+    height: 0px;
   }
 
   .modal-media > span {

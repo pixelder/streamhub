@@ -5,6 +5,12 @@
     --padding1: 0.4rem;
   }
 
+  body.keyboard {
+    .filter-menu {
+      top: 33%;
+    }
+  }
+
   header {
     height: 3.6rem;
   }
@@ -249,6 +255,7 @@
     aspect-ratio: 1 / 1.38;
     object-fit: cover;
     width: 100%;
+    font-size: 14px;
   }
 
   .grid-item-info {
@@ -394,6 +401,7 @@
 
     .genre-chips {
       width: calc(100vw - 1.2rem);
+      min-height: 30px;
       margin-bottom: 2px;
     }
 
@@ -422,23 +430,56 @@
     }
 
     .filter-menu {
-      padding: 14px;
+      padding: 12px;
       gap: 12px;
       width: 90%;
+      /* max-height: 80% ; */
 
+      .form-group {
+        flex: 1 0;
+      }
       h2 {
         margin-bottom: -4px;
       }
-
-      select {
-        max-width: 8rem;
-      }
     
       .reset-button {
-        margin-top: 4px;
+        margin-top: 0px;
+        height: 36px;
       }
-  
+      
+      .flow-row {
+        gap: 12px;
+      }
     }
+
+    .search-container {
+      height: 32px;
+      &:has(.select-item) {
+        height: 64px;
+        input {
+          min-height: 20px !important;
+        }
+      }
+
+    }
+
+    .search-box {
+      height: 32px;
+      --spacing: 6px;
+
+      input {
+        font-size: 12px;
+      }
+    }
+
+    .select-container {
+      font-size: 12px;
+
+      .select-item {
+        height: 24px;
+      } 
+    }
+
 
 
     .vote-count {
@@ -461,8 +502,13 @@
         width: 100%;
       }
     }
+
+    
   }
 
+  .caution {
+    font-size: 10px;
+  }
 
   #continue-watching,
   #history {
