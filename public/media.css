@@ -45,7 +45,7 @@
     font-size: 14px;
     height: 2rem;
     width: 2rem;
-    padding-left: 8px;
+    padding-left: 10px;
     border-radius: var(--border-radius1);
   }
 
@@ -57,6 +57,9 @@
   #search-input:focus,
   #search-input:not(:placeholder-shown) {
     width: 10rem;
+    &:not(:focus-visible) {
+      box-shadow: 0 0 0 0px var(--color3);
+    }
   }
 
   .search-icon,

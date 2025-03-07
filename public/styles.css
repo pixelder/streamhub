@@ -178,6 +178,12 @@ input::placeholder {
   width: 14rem;
   opacity: 1;
   cursor: text;
+
+  &:not(:focus-visible) {
+    filter: saturate(0.6);
+    color: var(--font-color2);
+    box-shadow: 0 0 0 1px var(--color3);
+  }
 }
 
 #search-input:focus-visible,
