@@ -155,15 +155,15 @@ nav ul li:nth-child(1) {
   height: 2rem;
   width: 2rem;
   font-family: var(--font-style2);
-  font-size: 0.8125rem;
-  font-weight: 400;
-  padding-left: 0.48rem;
+  font-size: 14px;
+  font-weight: 500;
+  padding-left: 12px;
   color: var(--font-color1);
-  background-color: var(--color1);
+  background-color: var(--color3);
   outline: none;
   box-shadow: none;
-  border: 2px solid transparent;
-  border-radius: var(--border-radius2);
+  border: 0px solid transparent;
+  border-radius: var(--border-radius1);
   transition: all 0.3s;
   cursor: pointer;
 }
@@ -182,19 +182,18 @@ input::placeholder {
 
 #search-input:focus-visible,
 #search-button:focus-visible {
-  box-shadow: 0 0 0 3px #30303d;
-  border: 2px solid var(--color2);
+  box-shadow: 0 0 0 2px var(--color3);
 }
 
 .search-icon,
 .x-icon {
-  font-size: 0.85rem;
+  font-size: 15px;
   display: flex;
   justify-content: center;
   align-items: center;
   position: absolute;
+  min-height: 50%;
   aspect-ratio: 1 / 1;
-  padding: 2px;
   right: 0.4rem;
   top: 50%;
   translate: 0 -50%;
@@ -204,22 +203,21 @@ input::placeholder {
   opacity: 0;
   pointer-events: none;
   visibility: hidden;
-  transition: all 0.25s;
-  transition-behavior: discreet;
+  transition: rotate 0.25s, scale 0.25s ease;
 }
 
 .search-bar:has(#search-input:placeholder-shown) .search-icon,
 .search-bar:has(#search-input:not(:placeholder-shown)) .x-icon {
   color: var(--font-color2);
   opacity: 1;
-  rotate: 0deg;
+  rotate: unset;
   pointer-events: all;
   visibility: visible;
 }
 
 .search-bar:has(#search-input:not(:focus)) .search-icon {
   pointer-events: none;
-  font-size: 1.2rem;
+  scale: 1.3;
   color: var(--font-color1);
 }
 
@@ -2158,8 +2156,8 @@ body:has(.modal:is([active])) {
   display: none;
 }
 
-.modal-info>h1 {
-  max-width: 80%;
+.modal-info > h1 {
+  max-width: 100%;
   margin: unset !important;
   font-weight: 700;
   font-size: 2.4rem !important;

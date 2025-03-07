@@ -42,16 +42,16 @@
   }
 
   #search-input {
-    font-size: 0.85rem;
+    font-size: 14px;
     height: 2rem;
     width: 2rem;
+    padding-left: 8px;
     border-radius: var(--border-radius1);
   }
 
   #search-input:focus-visible,
   #search-button:focus-visible {
-    box-shadow: 0 0 0 2px #30303d;
-    border: 2px solid var(--color2);
+    box-shadow: 0 0 0 0px var(--color3);
   }
 
   #search-input:focus,
@@ -61,7 +61,7 @@
 
   .search-icon,
   .x-icon {
-    font-size: 12px;
+    font-size: 14px;
   }
 
   input[type="number"],
