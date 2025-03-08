@@ -349,6 +349,10 @@
       }
     }
 
+    .flow-row {
+      gap: 12px;
+    }
+
     .filters {
       gap: 0.36rem;
       margin-bottom: 0.36rem;
@@ -374,7 +378,7 @@
       .genre-counter {
         font-size: 12px;
         margin-bottom: 4px;
-        padding: 0px 6px;
+        padding: 0px;
       }
     }
     
@@ -429,6 +433,7 @@
 
       i {
         font-size: 1rem;
+        position: absolute;
       }
     }
 
@@ -448,11 +453,9 @@
       .reset-button {
         margin-top: 0px;
         height: 36px;
+        font-size: 14px;
       }
       
-      .flow-row {
-        gap: 12px;
-      }
     }
 
     .search-container {
@@ -511,6 +514,7 @@
 
   .caution {
     font-size: 10px;
+    margin-bottom: 4px;
   }
 
   #continue-watching,
