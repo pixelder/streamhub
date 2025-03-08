@@ -1040,7 +1040,7 @@ section:has(.delete-button.active) .select-action {
   box-sizing: border-box;
 
   i {
-    font-size: 12px;
+    font-size: 14px;
   }
 }
 
@@ -1225,6 +1225,10 @@ section:has(.delete-button.active) .select-action {
 }
 
 .search-container:is([expanded]) {
+  .search-box {
+    background: var(--color3);
+  }
+
 	&:has(.result) {
     /* .search-box:focus-within,
     .search-box:hover,
@@ -1257,8 +1261,6 @@ section:has(.delete-button.active) .select-action {
 	}
 }
 
-
-
 .result-container {
   visibility: hidden;
   display: none;
@@ -1267,8 +1269,6 @@ section:has(.delete-button.active) .select-action {
   border-radius: var(--border-radius2);
 
   .results {
-    /* position: absolute; */
-    /* z-index: 1; */
     width: 100%;
     max-height: 0px;
     max-width: 100%;
@@ -1343,6 +1343,7 @@ section:has(.delete-button.active) .select-action {
   /* margin: 0 var(--spacing); */
 	gap: var(--spacing);
   font-size: 12px;
+  font-weight: 500;
 
   .select-item {
     border: 1px solid #4a4a69;

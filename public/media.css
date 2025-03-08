@@ -859,6 +859,7 @@
 
     .modal-info {
       visibility: visible !important;
+      height: auto;
     }
     .modal-info > h1 {
       margin-top: unset !important;
