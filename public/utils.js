@@ -76,8 +76,15 @@ function populateSection(sectionId, items) {
     return
   }
 
+  console.log(currentPage, container.innerHTML)
+  if ( currentPage === 1) {
+    container.innerHTML = '';
+    container.innerHTML = renderGridItems(items);
+  } else {
+    container.innerHTML += renderGridItems(items);
+  }
   currentPage++
-  container.innerHTML += renderGridItems(items);
+
   if (items.length < 20) {
     pageEnd = true;
     const msg = document.querySelector('.result-message');
@@ -720,7 +727,7 @@ function cappedOverview() {
 function shareItem(mediaType, id, name) {
   const shareData = {
     text: `${name}`,
-    url: `https://pixelstream.vercel.app/watch/${mediaType}/${id}/${encodeURIComponent(name)}`,
+    url: `https://pixelstream.vercel.app/watch/${mediaType}/${id}/${encodeURIComponent(name)}${mediaType === 'tv' ? '/1/1' : '' }`,
   };
 
   const btn = document.querySelector(".share");
