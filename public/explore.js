@@ -95,7 +95,7 @@ function loadExplorePage(mediaType) {
                         <div class="search-container" id="search-with-company" type="company">
                             <label for="company-input" class="search-box">
 															<form class="flow-row" action="javascript:void(0);">	
-																<input id="company-input" type="search" placeholder="eg. Studio Ghibli, A24">
+																<input id="company-input" type="search" placeholder="eg. Studio Ghibli, Marvel Studios">
 																<button type="reset" class="x-icon" >
 																	<i class="fa-solid fa-xmark" aria-hidden="true"></i>
 																</button>
@@ -486,7 +486,6 @@ function searchResultFunction(sectionId) {
 	let currentSearchResults = [] // Store the latest search results
 	let selectedSearchItems = [] // Store full item objects for selected items
 
-
 	searchBox.oninput = function () {
 		const term = this.value;
 		if (term.length < 1) resetResults()
@@ -521,7 +520,6 @@ function searchResultFunction(sectionId) {
 			resultsContainer.innerHTML = "No Results"
 			return
 		}
-
 		data.forEach((item) => {
 			const dataExists = selectedSearchItems.some(
 				(selected) => Number(selected.id) === item.id,
@@ -612,11 +610,11 @@ function searchResultFunction(sectionId) {
 			}, 200)
 		}
 		if (container) {
+			document.querySelectorAll('.search-container').forEach(item => item.removeAttribute('expanded',''))
 			section.setAttribute('expanded', '')
 			// searchBox.focus()
-		} else {
-			section.removeAttribute('expanded', '')			
 		}
+
 		if (clearBtn) {
 			console.log('clearing')
 			resetResults()
