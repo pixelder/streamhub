@@ -76,7 +76,7 @@ function populateSection(sectionId, items) {
     return
   }
 
-  console.log(currentPage, container.innerHTML)
+  // console.log(currentPage, container.innerHTML)
   if ( currentPage === 1) {
     container.innerHTML = '';
     container.innerHTML = renderGridItems(items);
@@ -266,13 +266,18 @@ function buildMediaDetailsHTML(data, mediaType, contentLogoHTML) {
   const releaseDate = data.release_date || data.first_air_date || data.air_date || '';
   const formattedDate = convertDate(releaseDate);
   const genresHTML = data.genres
-    .map(genre => `<a href="#">${genre.name}</a>`)
     .slice(0, 5)
+    .map(genre => `<a href="#">${genre.name}</a>`)
     .join(' ');
   const castHTML = (data.credits?.cast || [])
     .slice(0, 5)
     .map(cast => cast.name)
     .join(', ');
+  const companyHTML = (data.production_companies || [])
+    .slice(0, 4)
+    .map(item => item.name)
+    .join(', ')
+  console.log(companyHTML)
   const { rated } = getCountryCertification(data, mediaType);
 
   const detailsBodyHTML = `
@@ -294,7 +299,8 @@ function buildMediaDetailsHTML(data, mediaType, contentLogoHTML) {
             ${data.overview || 'No description available.'}
           </p>
         </div>
-        <p>Cast: ${castHTML}</p>
+        <p class="cast">Cast : ${castHTML}</p>
+        <!-- <p class="company">Studio : ${companyHTML}</p> -->
         <p class="tags">
           ${extractYear(formattedDate)} • 
           ${rated !== '' ? `${rated} • ` : ''} 
@@ -855,32 +861,60 @@ function whenInView(selector, callback) {
   }
 }
 
+// bottom nav
 function footerHTML() {
-  const footer = document.querySelector('footer')
-  footer ? footer.innerHTML = `
+  const navbar = document.querySelector('footer')
+  navbar ? navbar.innerHTML = `
     <ul>
-            <li><a href="/" id="home" onclick=setActiveIcon(this.id)>
+            <li><a href="/" id="home">
                 <i class="fa-solid fa-house"></i>
                 <p>Home</p>
                 </a>
             </li>
-            <li><a href="/movie" id="movie" onclick=setActiveIcon(this.id)>
+            <li><a href="javascript:void(0)" id="search" >
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <p>Search</p>
+                </a>
+            </li>
+            <li><a href="/movie" id="movie">
                     <i class="fa-solid fa-film"></i>
                     <p>Movies</p>
                 </a></li>
-            <li><a href="/tv" id="tv" onclick=setActiveIcon(this.id)>
+            <li><a href="/tv" id="tv">
                     <i class="fa-solid fa-display"></i>                    
                     <p>TV</p>
                 </a>
             </li>
-            <li><a href="/profile" id="profile" onclick=setActiveIcon(this.id)>
-                    <i class="fa-solid fa-user"></i>                    
-                    <p>You</p>
+            <li><a href="/library" id="library">
+                    <i class="fa-solid fa-folder-tree"></i>
+                    <p>Library</p>
                 </a>
             </li>
         </ul>
   ` : '';
 
+  // let lastActive = null
+  navbar.querySelectorAll('a').forEach(link => {
+    link.onclick = function () {
+      const id = this.id
+      if (id === 'search') {
+        const input = document.querySelector('#search-input')
+        this.classList.toggle('active')
+        this.classList.contains('active') ? input.focus() : input.blur();
+        // navbar.querySelector(`#${lastActive}`).classList.toggle('active');
+        return
+      }
+      setActiveIcon(id)
+    }
+  })
+}
+
+function setActiveIcon(button) {
+  if (button === '') return;
+  const footer = document.querySelector('footer')
+  footer.querySelectorAll('a').forEach(btn => btn.classList.remove('active'))
+  const active = document.getElementById(button);
+  active?.classList.add('active')
 }
 
 function enableHorizontalWheelScroll(container, factor = 1) {
@@ -899,16 +933,6 @@ function enableHorizontalWheelScroll(container, factor = 1) {
       gridContainer.addEventListener("wheel", scrollEvent);
     }
   });
-}
-
-
-
-function setActiveIcon(button) {
-  if (button === '') return;
-  const footer = document.querySelector('footer')
-  footer.querySelectorAll('a').forEach(btn => btn.classList.remove('active'))
-  const active = document.getElementById(button);
-  active?.classList.add('active')
 }
 
 // Helper function to get element's position
