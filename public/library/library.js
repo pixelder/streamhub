@@ -6,16 +6,16 @@ const OPTIONS = 'include_adult=false&include_null_first_air_dates=false&language
 
 let isBrowsing = false;
 
-function loadProfile() {
-  window.history.replaceState('','','/profile')
+function loadLibrary() {
+  window.history.replaceState('','','/library')
   loadUserContent('history', 'history')
   loadUserContent('continue-watching', 'watching')
   loadUserContent('bookmarks','bookmarks')
 }
 
 window.onload = function() {
-  loadProfile()
+  loadLibrary()
   footerHTML()
-  setActiveIcon('profile')
+  setActiveIcon('library')
   fixLog()
 }
