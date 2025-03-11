@@ -1864,7 +1864,7 @@ body:has(.modal:is([active])) {
   width: 58rem;
   height: fit-content;
   max-height: 30rem;
-  padding: 2rem;
+  padding: 32px;
   margin: auto;
   border-radius: var(--border-radius1);
   border: 1px solid var(--color1);
@@ -2011,7 +2011,7 @@ body:has(.modal:is([active])) {
 .modal-actions {
   display: flex;
   flex-direction: row;
-  gap: 8px;
+  gap: 12px;
   width: 100%;
   align-items: center;
   margin: 0 0;
@@ -2178,6 +2178,22 @@ body:has(.modal:is([active])) {
   text-shadow: 0 0 2px #000;
 }
 
+.company {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+.tags {
+  padding: 0rem 0 0rem 0;
+  color: var(--font-color3);
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
 .ratings-genre {
   position: relative;
   display: flex;
@@ -2235,13 +2251,6 @@ body:has(.modal:is([active])) {
   background-color: #222233;
   border: 1px solid var(--color2);
   border-radius: var(--border-radius2);
-}
-
-p.tags {
-  padding: 0rem 0 0rem 0;
-  color: var(--font-color3);
-  font-size: 0.875rem;
-  font-weight: 600;
 }
 
 .tv-actions {

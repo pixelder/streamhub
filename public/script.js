@@ -118,7 +118,7 @@ async function fetchContent(sectionId, url) {
     const media_type = url.includes('/movie') ? 'movie' : 'tv';
     storedData[sectionId] = data.results; // Reset stored data for a new page
     storedData[sectionId].forEach(res => res.media_type = media_type);
-    
+    // console.log(data.results.length)
     currentPage = data.page;
 
     const accumulatedResults = storedData[sectionId].slice(0, limit);
