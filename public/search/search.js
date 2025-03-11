@@ -83,6 +83,7 @@ function displaySearchResults({ movie, tv, person }, query) {
       </div> 
     </div>
   `;
+
 }
 
 function renderProfile(items) {
@@ -108,5 +109,5 @@ function renderProfile(items) {
 
 window.onload = function() {
   footerHTML()
-  setActiveIcon('')
+  setActiveIcon('search')
 }
