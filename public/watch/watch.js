@@ -201,7 +201,7 @@ function getSourceIframe(source, mediaType, id, season = null, episode = null, s
 
   switch (source) {
     case 1:
-      src = `https://vidlink.pro/${urlPath}&poster=false`;
+      src = `https://vidlink.pro/${urlPath}?poster=false`;
       break;
     case 2:
       src = `https://vidsrc.cc/v${version || 3}/embed/${urlPath}`;
