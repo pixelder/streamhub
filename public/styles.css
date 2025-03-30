@@ -46,6 +46,7 @@
 ::selection {
   color: var(--bg-color);
   background: var(--font-color1);
+  text-shadow: none;
 }
 
 body {
@@ -544,7 +545,7 @@ section:has(.delete-button.active) .select-action {
 }
 
 .grid-item:hover,
-.grid-item:focus-within {
+.grid-item:focus-visible {
   scale: 1.03;
   box-shadow: 0 6px 15px rgb(8, 8, 22);
   border: 1px solid #383852e5;
@@ -609,7 +610,7 @@ section:has(.delete-button.active) .select-action {
 
 .grid-item:is(:hover, :focus),
 .grid-item:has(.grid-options.open),
-.grid-item:has(.grid-options:focus-within) {
+.grid-item:has(.grid-options:focus-visible) {
   .grid-options {
     opacity: 1 !important;
     color: var(--font-color1);
@@ -670,7 +671,9 @@ section:has(.delete-button.active) .select-action {
 
 .grid-item:has(.selectable.active),
 .grid-item:has(.selectable.active):hover {
-  scale: unset !important;
+  .item-container {
+    scale: unset !important;
+  }
 
   .grid-actions {
     opacity: 0;
@@ -1033,7 +1036,7 @@ section:has(.delete-button.active) .select-action {
   justify-content: center;
   height: 36px;
   gap: 6px;
-  font-size: 16px;
+  font-size: 14px;
   padding: 8px 10px;
   margin: auto 0 0 auto;
   border-radius: var(--border-radius2);
@@ -1548,20 +1551,35 @@ body:has(.filter-menu) {
 #history {
 
   .grid-container {
-    width: 100%;
-    /* visibility: hidden; */
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    display: flex;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+    /* grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); */
+    justify-content: flex-start;
     gap: 12px;
+    mask-image: linear-gradient(to right, black 95%, #000000c4 97%, transparent);
   }
 
   .grid-item {
+    scroll-snap-align: start;
     position: relative;
-    overflow: hidden;
+    overflow: visible;
     z-index: 0;
     min-width: fit-content;
+    height: 140px;
+    aspect-ratio: 16 / 9;
     padding: 0;
     background: var(--bg-color);
+    border: none;
+  }
+
+  .item-container {
+    height: 100%;
+    border: 1px solid var(--color3);
+    border-radius: inherit;
+    transition: scale 0.2s, border 0.2s ease-in-out;
   }
 
   .grid-item img {
@@ -1570,6 +1588,15 @@ body:has(.filter-menu) {
     aspect-ratio: 16 / 9;
     height: 100%;
     mask-image: linear-gradient(to top, rgba(0, 0, 0, 0.1) 0%, black 40%, black 60%, rgba(0, 0, 0, 0.5) 100%);
+  }
+
+  .grid-item:hover,
+  .grid-item:focus-visible {
+    scale: unset;
+    .item-container {
+      scale: 0.97;
+      border: 1px solid #383852e5;
+    }
   }
 
   .grid-actions {
@@ -1958,6 +1985,16 @@ body:has(.modal:is([active])) {
   }
   .modal-media > span {
     width: 100%;
+
+    &:has(.modal-info > h1) {
+      .modal-info-logo {
+        aspect-ratio: 16 / 9;
+      }
+
+      .modal-info > h1 {
+        display: none;
+      }
+    }
   }
 
   .modal-cover {
@@ -2033,7 +2070,7 @@ body:has(.modal:is([active])) {
 
 .watch-btn, .play-trailer {
   position: relative;
-  width: 140px;
+  width: 128px;
   height: 42px;
   font-size: 16px;
   font-weight: 600;
@@ -2065,7 +2102,7 @@ body:has(.modal:is([active])) {
   gap: 3px;
 }
 
-.share, .bookmark {
+.share, .bookmark, .external {
   width: unset;
   height: 100%;
   background: unset !important;
@@ -2078,12 +2115,12 @@ body:has(.modal:is([active])) {
   align-items: center;
 }
 
-.share:hover, .bookmark:hover {
+.share:hover, .bookmark:hover, .external:hover {
   background: var(--color3) !important;
   transition: background 0.15s;
 }
 
-.share:active, .bookmark:active, .play-trailer:active {
+.share:active, .bookmark:active, .external:active, .play-trailer:active {
   background: var(--color1) !important;
 }
 
@@ -2097,11 +2134,12 @@ body:has(.modal:is([active])) {
   background: var(--color5);
   font-size: 12px;
   padding: 8px;
-  z-index: 2;
+  z-index: 3;
   border-radius: var(--border-radius2);
   color: var(--font-color3);
   text-shadow: none;
-  left: 40px;
+  left: 80px;
+  top: -30px;
 }
 
 .modal-cover {
@@ -2152,7 +2190,7 @@ body:has(.modal:is([active])) {
   flex-direction: column;
   width: 100%;
   max-height: 55%;
-  gap: 0.4rem;
+  gap: 8px;
 }
 
 .modal:has(.modal-info > h1) .modal-info {
@@ -2374,12 +2412,10 @@ option {
   display: -webkit-box;
   font-size: inherit;
   line-clamp: 3;
-  -webkit-line-clamp: 3;
-  /* Limits to 3 lines */
+  -webkit-line-clamp: 3;  /* Limits to 3 lines */
   -webkit-box-orient: vertical;
   overflow: hidden;
-  height: fit-content;
-  /* Ensure height matches 3 lines */
+  height: fit-content;  /* Ensure height matches 3 lines */
   margin: 0;
   padding: 0;
   cursor: pointer;
@@ -2394,10 +2430,9 @@ option {
   line-clamp: unset;
   -webkit-line-clamp: unset;
   -webkit-box-orient: unset;
-  overflow: visible;
-  height: none;
-  /* Allow full content to display */
+  overflow-y: auto;
+  height: auto;
+  max-height: 6rem;
   mask-image: none !important;
-  padding-bottom: 0 !important;
-
+  padding-bottom: 1px !important;
 }

@@ -899,6 +899,10 @@
     font-size: 1.8rem !important;
   }
 
+  .modal-info .overview {
+    padding-bottom: 1px;
+  }
+
   .modal-info-backdrop {
     width: 100%;
     display: flex;
