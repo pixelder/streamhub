@@ -141,13 +141,13 @@ async function fetchMetaData(mediaType = null, id = null, season = null) {
     let url;
     const append = `videos,credits,images&include_image_language=en`
     if (mediaType === "movie") {
-      url = `${BASE_URL}/movie/${id}?api_key=${API_KEY}&language=en-US&append_to_response=${append},release_dates`;
+      url = `${BASE_URL}/movie/${id}?api_key=${API_KEY}&language=en-US&append_to_response=release_dates,${append}`;
     } else if (mediaType === "tv") {
-      url = `${BASE_URL}/tv/${id}${season ? `/season/${season}` : ''}?api_key=${API_KEY}&language=en-US&append_to_response=${append},content_ratings`;
+      url = `${BASE_URL}/tv/${id}${season ? `/season/${season}` : ''}?api_key=${API_KEY}&language=en-US&append_to_response=content_ratings,${append}`;
     } else if (mediaType === "person") {
       url = `${BASE_URL}/person/${id}?api_key=${API_KEY}&language=en-US`;
     }
-    // console.log(url)
+    //console.log(url)
     const response = await fetch(url);
     const data = await response.json();
     return { data, mediaType };
@@ -184,9 +184,9 @@ function getCountryCertification(data, mediaType) {
     results = data.release_dates?.results || [];
     rating =
       results.find(item => item.iso_3166_1 === ORIGIN_COUNTRY)
-        ?.release_dates?.[0]?.certification ||
+        ?.release_dates?.filter(item=> item.certification !== '')[0]?.certification ||
       results.find(item => item.iso_3166_1 === DEFAULT_COUNTRY)
-        ?.release_dates?.[0]?.certification ||
+        ?.release_dates?.filter(item=> item.certification !== '')[0]?.certification ||
       "";
   } else {
     results = data.content_ratings?.results || [];
@@ -277,7 +277,8 @@ function buildMediaDetailsHTML(data, mediaType, contentLogoHTML) {
     .slice(0, 4)
     .map(item => item.name)
     .join(', ')
-  console.log(companyHTML)
+  //console.log(companyHTML)
+  //console.log(data)
   const { rated } = getCountryCertification(data, mediaType);
 
   const detailsBodyHTML = `
@@ -305,13 +306,18 @@ function buildMediaDetailsHTML(data, mediaType, contentLogoHTML) {
           ${extractYear(formattedDate)} • 
           ${rated !== '' ? `${rated} • ` : ''} 
           ${data.original_language.toUpperCase()} 
-          ${mediaType === 'movie' ? `• ${runtime(data.runtime)}` : ''}
+          ${mediaType === 'movie' ? `• ${runtime(data.runtime)}` : `• ${pluralResolver(data.number_of_seasons, 'season', 's')}`}
         </p>
       </div>
     </span>
   </div>
   `;
   return detailsBodyHTML;
+}
+
+function pluralResolver(count,str,suf) {
+  if (count !== 1) return `${count} ${str}${suf}`
+  return `${count} ${str}` 
 }
 
 function releaseInfo(data) {
@@ -334,7 +340,7 @@ function insertMovieActions(data, mediaType) {
   const actionHTML = `
     <div class="modal-actions">
       ${ released 
-      ? `<button class="watch-btn" data-name="${name}" data-id="${data.id}">
+      ? `<button class="watch-btn" title="watch movie" data-name="${name}" data-id="${data.id}">
           <i class="fa-solid fa-play"></i>Watch
         </button>`
       : releaseInfo(data) }
@@ -352,18 +358,25 @@ function insertMovieActions(data, mediaType) {
 function setUpModalActions(data, mediaType) {
   const bookmark = logExists('bookmarks', data.id, mediaType)
   return `
-    <button class="play-trailer" data-media-type="${mediaType}">
+    <button class="play-trailer" title="play trailer" data-media-type="${mediaType}">
           <i class="fa-solid fa-video"></i>Trailer
     </button>
+
     <div class="item-actions">
-      <label class="selectable active bookmark" data-id="${data.id}" data-media-type="${mediaType}">
+      <button class="external" title="visit tmdb page">
+        <a style="all:inherit" href="https://tmdb.org/${mediaType}/${data.id}" target="_blank" rel="noopener noreferrer">
+          <img style="width: ${isMobile() ? `24px` : `30px`}" 
+            src="./assets/icons/tmdb_short.svg">
+        </a>
+      </button>
+      <label class="selectable active bookmark" title="bookmark" data-id="${data.id}" data-media-type="${mediaType}">
         <input type="checkbox" ${bookmark ? `checked` : ''}/>
         <span class="checkbox-button">
           <i class="options-icon fa-regular fa-bookmark active"></i>
           <i class="options-x-icon fa-solid fa-bookmark passive"></i>
         </span>
       </label>
-      <button tabindex="0" class="share">
+      <button tabindex="0" class="share" title="share">
         <i class="fa-solid fa-paper-plane"></i>
       </button>
     </div>
@@ -428,6 +441,8 @@ async function tvContent(data, sno, eno, ref) {
     const selectedSeason = event.target.value;
     const { data: tvData } = await fetchMetaData('tv', id, selectedSeason);
     const seasonData = tvData
+    // console.log(seasonData)
+    localStorage.setItem('seasonData', JSON.stringify(seasonData));
     episodeContainer.innerHTML = seasonData.episodes
       .map(episode => `
         <div id="${episode.episode_number}" class="episode episode-width" data-name="${data.name}" data-id="${data.id}" data-season="${selectedSeason}" data-episode="${episode.episode_number}" data-epname="${episode.name}">
@@ -459,7 +474,7 @@ async function tvContent(data, sno, eno, ref) {
     whenInView('.player-styling, .modal', () => {
       scrollEpisodeIntoView(eno);
     });
-    enableHorizontalWheelScroll('.player-styling', 3)
+    enableHorizontalWheelScroll(episodeContainer, 3)
   }
 
 
@@ -507,8 +522,9 @@ function watchEventListeners(event, data) {
 
       const playTrailer = () => {
         const { mediaType, sno } = event.target.dataset
-        const tvData = mediaType === 'tv' ? { sno } : null ;
-        const key = getTrailerVideoKey(data.videos.results, tvData)
+        const seasonVideos = mediaType === 'tv' ? JSON.parse(localStorage.getItem('seasonData')).videos.results : '';
+        const results = [...data.videos.results, ...seasonVideos]
+        const key = getTrailerVideoKey(results, sno)
         const trailerIframe = `
           <iframe id="ytplayer" class="${mediaType}-trailer" type="text/html"
             src="https://www.youtube.com/embed/${key + `?` + params}"
@@ -516,7 +532,7 @@ function watchEventListeners(event, data) {
             scrolling="no"
           ></iframe>
         `;
-        console.log(key)
+        //console.log(key)
         if (!key) {
             console.log('no trailer')
             const noTrailer = document.createElement('div');
@@ -595,8 +611,9 @@ function watchEventListeners(event, data) {
   }
 }
 
-function getTrailerVideoKey(data, tvData = null) {
-  // console.log(data)
+function getTrailerVideoKey(data, sno) {
+  console.log(data, sno)
+
   if (data.length < 1) return null;
 
   if (data.length === 1) {
@@ -618,17 +635,29 @@ function getTrailerVideoKey(data, tvData = null) {
       let s = 0;
       if (video.name && typeof video.name === 'string') {
         const lowerName = video.name.toLowerCase();
-        if (lowerName.includes('official')) s++;
-        if (lowerName.includes('trailer')) s++;
-        if (tvData && lowerName.includes(`season ${tvData.sno}`)) s++;
+        const season = lowerName.includes(`season ${sno}`)
         if (video.official === true ) s++;
         if (video.type.toLowerCase() === 'trailer') s++;
+        if (sno && season) {
+          s=s+2;
+          if (season && lowerName.includes('official')) s++;
+          if (season && lowerName.includes('trailer')) s=s+5;
+          if (season && lowerName.includes('teaser')) s=s+3;
+          if (season && lowerName.includes('announcement')) s++;
+          //console.log(lowerName, s, sno)
+        }
+        if (sno) return;
+        console.log(`no sno`)
+        if (lowerName.includes('trailer')) s=s+5;
+        if (lowerName.includes('teaser')) s=s+3;
+        if (lowerName.includes('official')) s++;
+        //console.log(lowerName, s)
       }
       return s;
     };
     return score(b) - score(a);
   });
-
+  console.log(candidates[0].name, candidates[0].key)
   return candidates[0].key || null;
 }
 
@@ -689,23 +718,47 @@ function scrollEpisodeIntoView(eno) {
   // mask logic
   const scrollContainer = document.querySelector('.player-styling');
 
-  scrollContainer?.addEventListener('scroll', () => {
-    const maxScroll = scrollContainer.scrollWidth - scrollContainer.clientWidth;
-    const scrollLeft = scrollContainer.scrollLeft;
+  setupScrollEdgeMask(scrollContainer)
+}
+
+function setupScrollEdgeMask(container) {
+  if (!container) return;
+  // let isScrolling = false;
+  // let scrollTimeout;
+
+  const updateMask = () => {
+    const maxScroll = container.scrollWidth - container.clientWidth;
+    const scrollLeft = container.scrollLeft;
     const buffer = 20;
 
-    let maskGradient = scrollLeft <= buffer
-      ? 'linear-gradient(to right, black, black 98%, transparent)'
-      : scrollLeft >= maxScroll - buffer
-        ? 'linear-gradient(to right, black, black 2%, black)'
-        : 'linear-gradient(to right, black, black 98%, transparent)';
+    const defMask = (dir) => `linear-gradient(to ${dir}, black 95%, #000000c4 97%, transparent)`;
 
-    scrollContainer.style.maskImage = maskGradient;
-    scrollContainer.style.webkitMaskImage = maskGradient;
-  });
+    const getMask = () => {
+      if (scrollLeft >= maxScroll - buffer) return defMask("left")
+      // if (isScrolling) return 'linear-gradient(to right, transparent, #000000c4 3%, black 5%, black 95%, #000000c4 97%, transparent)'
+      return defMask("right")
+    }
+    const maskGradient = getMask()
 
+    container.style.maskImage = maskGradient;
+    container.style.webkitMaskImage = maskGradient;
+  };
 
+  const onScroll = () => {
+    // isScrolling = true;
+    updateMask();
+    // clearTimeout(scrollTimeout);
+    
+    // scrollTimeout = setTimeout(() => {
+      // isScrolling = false;
+      // updateMask();
+    // }, 100);
+  };
+
+  container.removeEventListener('scroll', onScroll);
+  container.addEventListener('scroll', onScroll);
 }
+
 
 let isListenerAttached = false; // Prevent multiple event listeners
 
@@ -918,21 +971,14 @@ function setActiveIcon(button) {
 }
 
 function enableHorizontalWheelScroll(container, factor = 1) {
-  const gridContainers = document.querySelectorAll(container); // Select all matching elements
-
-  gridContainers.forEach(gridContainer => {
-    // Check if the container is overflowing horizontally
-    if (gridContainer.scrollWidth > gridContainer.clientWidth) {
-      const scrollEvent = (e) => {
-        e.preventDefault();
-        gridContainer.scrollLeft += e.deltaY * factor; // Adjust scroll speed if needed
-      };
-
-      // Remove previous listener to prevent duplicates
-      gridContainer.removeEventListener("wheel", scrollEvent);
-      gridContainer.addEventListener("wheel", scrollEvent);
+  const scrollEvent = (e) => {
+    if (container.scrollWidth > container.clientWidth) {
+      e.preventDefault();
+      container.scrollLeft += e.deltaY * factor; 
     }
-  });
+  }
+  container.removeEventListener("wheel", scrollEvent);
+  container.addEventListener("wheel", scrollEvent);
 }
 
 // Helper function to get element's position
