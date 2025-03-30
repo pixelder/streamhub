@@ -39,6 +39,17 @@ async function getSearchResults(query) {
       ])
     )
 
+    const popularity = (person) => {
+      let workPopularity = 0
+      if (person.known_for) {
+        person.known_for.forEach((known) => (workPopularity += known.popularity))
+      }
+      return workPopularity * person.popularity
+    }
+
+    finalResults.person.sort((a, b) => popularity(b) - popularity(a))
+    finalResults.person = finalResults.person.filter(person => popularity(person) > 0.01)
+    
     displaySearchResults(finalResults, query);
   } catch (error) {
     console.error("Error fetching search results:", error);
