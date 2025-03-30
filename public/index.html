@@ -33,7 +33,7 @@
                 <li><a onclick="loadExplorePage('movie')">Movies</a></li>
                 <li><a onclick="loadExplorePage('tv')">TV Shows</a></li>
                 <li><a href="/#discover-streaming">What's Streaming</a></li>
-                <li><a href="library">Your Lists</a></li>
+                <li><a href="library">Library</a></li>
                 <form class="search-bar" onsubmit="return handleSearch(event)">
                     <input type="search" id="search-input" placeholder="Search" />
                     <i class="search-icon fa-solid fa-magnifying-glass"></i>
@@ -48,7 +48,7 @@
 
     <!-- Body Content -->
     <main id="main-content">
-        <section id="continue-watching" data-type="watching">
+        <section id="continue-watching" class="user-content" data-type="watching">
             <div class="section-header">
                 <h2>Continue Watching</h2>
                 <div class="select-action">
