@@ -189,36 +189,38 @@ function renderLogItems(data, item, tvData) {
            data-id="${id}"  data-index="${index}" 
            data-media-type="${mediaType}" data-name="${name}"
            ${tvData ? `data-sno="${sno}" data-eno="${eno}"` : ''}>
-        <label class="selectable">
-          <input type="checkbox" />
-          <span class="checkbox-button">
-            <i class="fa-regular fa-square active"></i>
-            <i class="fa-solid fa-square-check passive"></i>
-          </span>
-        </label>
-        <div class="grid-actions">
-          <div class="grid-options">
-            <div tabindex="0" class="options-buttons">
-              <i class="options-icon fa-solid fa-ellipsis-vertical"></i>
-              <i class="options-x-icon fa-solid fa-xmark"></i>
-            </div>
-            <div class="options-menu">
-              <button tabindex="0" role="button"><i class="fa-solid fa-trash-can"></i></button>
+        <div class="item-container">
+          <label class="selectable">
+            <input type="checkbox" />
+            <span class="checkbox-button">
+              <i class="fa-regular fa-square active"></i>
+              <i class="fa-solid fa-square-check passive"></i>
+            </span>
+          </label>
+          <div class="grid-actions">
+            <div class="grid-options">
+              <div tabindex="0" class="options-buttons">
+                <i class="options-icon fa-solid fa-ellipsis-vertical"></i>
+                <i class="options-x-icon fa-solid fa-xmark"></i>
+              </div>
+              <div class="options-menu">
+                <button tabindex="0" role="button"><i class="fa-solid fa-trash-can"></i></button>
+              </div>
             </div>
           </div>
-        </div>
-        <img src="${image}">
-        <div class="grid-item-info">
-          <span class="history-item-info">
-            <h3>${capString(name, 40)}</h3>
-            ${tvData ? `<p>${capString(info, 40)}</p>` : ""}
-          </span>
-          <span class="grid-rating">
-            <p class="rating">
-              <i class="fa-solid fa-star"></i>
-              ${rating}
-            </p>
-          </span>
+          <img src="${image}">
+          <div class="grid-item-info">
+            <span class="history-item-info">
+              <h3>${capString(name, 40)}</h3>
+              ${tvData ? `<p>${capString(info, 40)}</p>` : ""}
+            </span>
+            <span class="grid-rating">
+              <p class="rating">
+                <i class="fa-solid fa-star"></i>
+                ${rating}
+              </p>
+            </span>
+          </div>
         </div>
       </div>
   `;
@@ -246,6 +248,8 @@ function loadUserContent(sectionId, logType) {
     container.classList.add('empty')
     fetchHistoryItems(section, sectionId, tvData);
   }
+  enableHorizontalWheelScroll(container, 2)
+  setupScrollEdgeMask(container)
 }
 
 function resetHistory(logtype) {
