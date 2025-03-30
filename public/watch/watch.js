@@ -62,6 +62,9 @@ function loadWatchPage(mediaType, name = null, id, tvData = null) {
                 <div class="provider"> 
                   <p class="provider-name" data-source="9">AutoEmbed(Multi)</p>
                 </div>
+                <div class="provider"> 
+                  <p class="provider-name" data-source="10">VidSu</p>
+                </div>
               </div>
             </div>
             <div class="media-download">
@@ -156,6 +159,7 @@ function loadSources(source, mediaType, id, season = null, episode = null, setti
   document.querySelector(".loading").style.display = "flex";
   document.querySelector(".iframe-container").innerHTML = loadIframe;
 
+  //move this to only change when source does not send error
   const sourceSelector = document.querySelectorAll('.provider-name');
   sourceSelector.forEach(item => {
     if (item.dataset.source === String(source)) {
@@ -227,6 +231,9 @@ function getSourceIframe(source, mediaType, id, season = null, episode = null, s
     case 9:
       src = `https://hin.autoembed.cc/${urlPath}`;
       break;
+    case 10:
+      src = `https://vidsrc.su/embed/${urlPath}`;
+      break;  
     default:
       console.error("Invalid source selected");
       return;
