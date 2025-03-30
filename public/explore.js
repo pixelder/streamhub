@@ -61,7 +61,7 @@ function loadExplorePage(mediaType) {
                         <p>10</p>
                     </div>
                 </div>
-                <button class="filter-button"><i class="fa-solid fa-filter"></i>       Filter</button>
+                <button class="filter-button"><i class="fa-solid fa-filter"></i>Filters</button>
                 <div class="filter-overlay"></div>
                 <div class="filter-menu">
                     <h2>More Filters</h2>
@@ -338,7 +338,7 @@ async function fetchGenres(mediaType) {
 		genreContainer.appendChild(chip);
 	});
 
-	enableHorizontalWheelScroll('.genre-chips', 2)
+	enableHorizontalWheelScroll(genreContainer, 2)
 }
 
 async function fetchCountriesAndLanguages() {
@@ -456,7 +456,7 @@ async function fetchSearchResults(term, type) {
 	try {
 		const searchURL = `${BASE_URL}/search/${type}?`
 		const responses = await Promise.all(
-			["1", "2"].map(async (page) => {
+			["1", "2", "3"].map(async (page) => {
 				const params = new URLSearchParams({
 					api_key: API_KEY,
 					query: term,
@@ -471,7 +471,7 @@ async function fetchSearchResults(term, type) {
 		const data = responses.flat()
 		return data
 	} catch (e) {
-		console.log("error", e)
+		console.log(e)
 	}
 }
 
