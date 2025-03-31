@@ -776,7 +776,7 @@
   }
 
   .watch-btn, .play-trailer {
-    width: 40%;
+    width: 30%;
     min-width: 20%;
     height: 30px;
     font-size: 12px;
@@ -830,13 +830,15 @@
     }
   }
 
-  .modal-content:has(.tv-player) {
+  /* .modal-content:has(.tv-player) {
     height: fit-content !important;
-  }
+  } */
   
   .modal-content:has(#ytplayer) {
     width: 92% !important;
-    max-height: 80% !important;
+    height: auto !important;
+    max-height: 70% !important;
+    aspect-ratio: unset !important;
     
     .modal-media {
       gap: unset;
