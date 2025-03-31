@@ -543,7 +543,7 @@ function watchEventListeners(event, data) {
             return
         }
         container.innerHTML = trailerIframe
-        trailerBtn.innerHTML = `<i class="fa-solid fa-xmark"></i>Close Trailer`
+        trailerBtn.innerHTML = `<i class="fa-solid fa-xmark"></i>Close`
       }
 
       const trailer = document.getElementById('ytplayer')
@@ -612,7 +612,7 @@ function watchEventListeners(event, data) {
 }
 
 function getTrailerVideoKey(data, sno) {
-  //console.log(data, sno)
+  console.log(data, sno)
 
   if (data.length < 1) return null;
 
@@ -638,6 +638,9 @@ function getTrailerVideoKey(data, sno) {
         const season = lowerName.includes(`season ${sno}`)
         if (video.official === true ) s++;
         if (video.type.toLowerCase() === 'trailer') s++;
+        if (lowerName.includes('trailer')) s=s+5;
+        if (lowerName.includes('teaser')) s=s+3;
+        if (lowerName.includes('official')) s++;
         if (sno && season) {
           s=s+2;
           if (season && lowerName.includes('official')) s++;
@@ -645,19 +648,15 @@ function getTrailerVideoKey(data, sno) {
           if (season && lowerName.includes('teaser')) s=s+3;
           if (season && lowerName.includes('announcement')) s++;
           //console.log(lowerName, s, sno)
+          return s
         }
-        if (sno) return;
-        console.log(`no sno`)
-        if (lowerName.includes('trailer')) s=s+5;
-        if (lowerName.includes('teaser')) s=s+3;
-        if (lowerName.includes('official')) s++;
-        //console.log(lowerName, s)
+        console.log(lowerName, s, sno)
       }
       return s;
     };
     return score(b) - score(a);
   });
-  console.log(candidates[0].name, candidates[0].key)
+  console.log(candidates)//[0].name, candidates[0].key)
   return candidates[0].key || null;
 }
 

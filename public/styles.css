@@ -1957,9 +1957,10 @@ body:has(.modal:is([active])) {
     top: 15px;
     scale: 1.03;
   }
+
 }
 
-
+/* 
 .modal-content:has(.tv-trailer) {
   height: 90% !important;
   width: 69% !important;
@@ -1972,11 +1973,13 @@ body:has(.modal:is([active])) {
   .modal-media > span {
     gap: unset; 
   }
-}
+} */
 
 .modal-content:has(#ytplayer) {
-  width: 54%;
-  max-height: 90% !important;
+  height: 90% !important;
+  max-height: 90%;
+  width: auto !important;
+  aspect-ratio: 16 / 10.5 !important;
   overflow: hidden;
 
   .modal-media {
@@ -1997,6 +2000,16 @@ body:has(.modal:is([active])) {
     }
   }
 
+  .modal-media > span {
+    gap: unset; 
+  }
+
+  .modal-info {
+    visibility: collapse;
+    height: 0px;
+    width: 100%;
+  }
+
   .modal-cover {
     display: none;
   }
@@ -2007,11 +2020,10 @@ body:has(.modal:is([active])) {
     width: 100%;
     max-width: unset;
   }
-
-  .modal-info {
-    width: 100%;
-  }
   
+  .releasing-on {
+    display: none;
+  }
 }
 
 .trailer-container {
