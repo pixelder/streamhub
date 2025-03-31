@@ -366,7 +366,7 @@ function setUpModalActions(data, mediaType) {
       <button class="external" title="visit tmdb page">
         <a style="all:inherit" href="https://tmdb.org/${mediaType}/${data.id}" target="_blank" rel="noopener noreferrer">
           <img style="width: ${isMobile() ? `24px` : `30px`}" 
-            src="./assets/icons/tmdb_short.svg">
+            src="/assets/icons/tmdb_short.svg">
         </a>
       </button>
       <label class="selectable active bookmark" title="bookmark" data-id="${data.id}" data-media-type="${mediaType}">
