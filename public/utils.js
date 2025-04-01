@@ -14,6 +14,10 @@ function capString(str, maxLength) {
   return str;
 }
 
+function capFirstLetter(str) {
+  return str.charAt(0).toUpperCase() + str.slice(1);
+}
+
 function abbvText(text, limit) {
   const words = text.split(' ');
 
@@ -135,7 +139,7 @@ function renderGridItems(items) {
 }
 
 //fetch Metadata
-async function fetchMetaData(mediaType = null, id = null, season = null) {
+async function fetchMetaData(mediaType = null, id = null, season = null, credits = null) {
 
   try {
     let url;
@@ -145,7 +149,7 @@ async function fetchMetaData(mediaType = null, id = null, season = null) {
     } else if (mediaType === "tv") {
       url = `${BASE_URL}/tv/${id}${season ? `/season/${season}` : ''}?api_key=${API_KEY}&language=en-US&append_to_response=content_ratings,${append}`;
     } else if (mediaType === "person") {
-      url = `${BASE_URL}/person/${id}?api_key=${API_KEY}&language=en-US`;
+      url = `${BASE_URL}/person/${id}?api_key=${API_KEY}&language=en-US&append_to_response=${credits},external_ids`;
     }
     //console.log(url)
     const response = await fetch(url);
@@ -162,13 +166,14 @@ function openModal(event) {
   const id = gridItem?.dataset.id; // Get the ID of the item
   //const sectionId = gridItem?.closest('section')?.id; // Find the parent section's ID
   const mediaType = gridItem?.dataset?.mediaType ?? gridItem?.closest('section')?.dataset?.type;
+  const credits = mediaType === 'person' ? 'combined_credits' : null;
   console.log(mediaType, id)
   if (gridItem && !mediaType || !id) {
     console.error("Media type or ID not found");
     return;
   }
 
-  fetchMetaData(mediaType, id).then(({ mediaType, data }) => {
+  fetchMetaData(mediaType, id, null, credits).then(({ mediaType, data }) => {
     displayModal(mediaType, data);
   });
 }
@@ -214,11 +219,9 @@ function displayModal(mediaType, data) {
 
   const contentLogoHTML = getContentLogoHTML(data);
 
-  if (mediaType === 'person') {
-    details.innerHTML = inBeta();
-  } else {
-    details.innerHTML = buildMediaDetailsHTML(data, mediaType, contentLogoHTML);
-  }
+  mediaType !== 'person'
+   ? details.innerHTML = buildMediaDetailsHTML(data, mediaType, contentLogoHTML)
+   : details.innerHTML = buildPersonDetailsHTML(data);
 
   if (mediaType === 'movie') {
     insertMovieActions(data, mediaType);
@@ -237,6 +240,18 @@ function displayModal(mediaType, data) {
     seasonMenu.insertAdjacentHTML('afterend', setUpModalActions(data, mediaType));
     // console.log(data)
     if (releaseInfo(data) !== null) seasonMenu.insertAdjacentHTML('beforebegin', releaseInfo(data));
+  }
+
+  if (mediaType === 'person') {
+    modalContent.style.height = !isMobile() ? '32rem' : '70%';
+    const section = document.querySelectorAll('.credit-section')
+    // console.log(section)
+    section[0].classList.add('expanded')
+    section.forEach(item => {
+      item.querySelector('.section-header').addEventListener('click', () => {
+        item.classList.toggle('expanded');
+      })
+    })
   }
 
   initializeModalListeners(mediaType, data, modalContent, details);
@@ -313,6 +328,140 @@ function buildMediaDetailsHTML(data, mediaType, contentLogoHTML) {
   </div>
   `;
   return detailsBodyHTML;
+}
+
+function tmdbGenderResolver(id) {
+  if (id === 0) return `Not specified`
+  if (id === 1) return `Female`
+  if (id === 2) return `Male`
+  if (id === 3) return `Other`
+}
+
+function buildPersonDetailsHTML(data) {
+
+  const links = [
+    { id: data.id, url: `https://tmdb.org/person/${data.id}`, icon: "tmdb_short.svg", page: "tmdb" },
+    { id: data.imdb_id, url: `https://www.imdb.com/name/${data.imdb_id}`, icon: "imdb_short.png", page: "imdb" },
+    { id: data.external_ids?.wikidata_id, url: `https://www.wikidata.org/wiki/${data.external_ids?.wikidata_id}`, icon: "Wikidata-logo.svg", page: "wikidata" },
+    { id: data.external_ids?.instagram_id, url: `https://instagram.com/${data.external_ids?.instagram_id}`, icon: "Instagram_Glyph_Gradient.svg", page: "instagram" },
+    { id: data.external_ids?.twitter_id, url: `https://x.com/${data.external_ids?.twitter_id}`, icon: "twitter.svg", page: "twitter" },
+    { id: data.external_ids?.youtube_id, url: `https://www.youtube.com/${data.external_ids?.youtube_id}`, icon: "yt_full.png", page: "youtube" }
+  ];
+
+  return `
+    <div class="modal-media" ${isMobile() ? '' : `style="flex-direction:row"`}>
+      ${  data.profile_path ? `
+        <div class="modal-cover portrait" style="display:flex">
+            <img style="opacity:1" src="${IMAGE_URL + data.profile_path}">
+        </div>` : ''
+      }
+      <div id="person-details">
+        <h2 class="name">${data.name} ${data.birthday ? `<em>(${extractYear(data.birthday)} - ${data.deathday ? extractYear(data.deathday) : ''})
+          </em>` : ''}
+        </h2>
+        <div class="info">
+          <p class="department">Known-for: ${data.known_for_department}</p>
+          <p class="gender">Gender : ${tmdbGenderResolver(data.gender)}</p>
+          <div class="biography synopsis">
+            <p class="overview">${data.biography}</p>
+          </div>
+        </div>
+        <div class="item-actions">
+          ${links.filter(link => link.id).map(link => `
+            <button class="external" title="visit ${link.page} page">
+              <a style="all:inherit" href="${link.url}" target="_blank" rel="noopener noreferrer">
+                <img src="/assets/icons/${link.icon}">
+              </a>
+            </button>
+          `).join('')}
+        </div>
+      </div>
+    </div>
+    <div class="person-credits">
+      <h2>Credits </h2>
+        ${creditResolver(data)}
+    </div>
+    `
+}
+
+function creditResolver(data) {
+  const creditOrder = data.known_for_department === 'Acting' ? ['cast','crew'] : ['crew', 'cast'];
+  const crewCredits = data.combined_credits.crew
+  crewCredits.sort((a,b) => { // put known for on top
+    const score = (item) => {
+      let s = 0;
+      if (item.department === data.known_for_department) s++
+      return s
+    }
+    return score(b) - score(a)
+  })
+
+  const departments = [... new Set(crewCredits.map(item => item.department))]
+  
+  let HTML = ''
+  const sectionHTML = (data, type) => {
+    return `
+      <div class="credit-section">
+        <div class="section-header" style="padding-top: unset !important">
+          <p class="credit-type">${type === "cast" ? 'Cast' : type}</p>
+          <div class="expand-arrow"><i class="fa-solid fa-chevron-left"></i></div>
+        </div>
+        <div class="grid-container ${type}">
+            ${populateCreditSection(data,type)}
+        </div>
+      </div>
+    `
+  }
+
+  creditOrder.forEach(credit => {
+    if (credit === 'cast') {
+      HTML += sectionHTML(data,credit)
+    }
+    if (credit === 'crew') {
+      departments.forEach(dep => {
+        HTML += sectionHTML(data,dep)
+      })
+    }
+  })
+
+  return HTML
+}
+
+function populateCreditSection(data,type) {
+  let HTML = ''
+  const credits = data.combined_credits
+  // use  https://api.themoviedb.org/3/credit/{credit_id} to get appear date of a tv show
+
+  const itemHTML = (item,data) => {
+    const title = item.title || item.original_title || item.name || item.original_name;
+    const year = extractYear(item.release_date || item.first_air_date) || '';
+    const mediaType = item.media_type === 'tv' ? 'TV' : 'Movie';
+    return `<div class="grid-item" data-id="${item.id}" data-media-type="${item.media_type}">
+      <img src="${IMAGE_URL + (item.poster_path || data.profile_path)}">
+      <div class="credit-item-info">
+        <p class="credit-name">${item.job || item.character || `N/A`}</p>
+        <p class="credit-media-title"> ${title || 'Title not specified'} ${year ? `(${year})` : ''}</p>
+        <p>${mediaType}</p>
+      </div>
+    </div>
+    `
+  }
+
+  if (type === 'cast') {
+    credits.cast.map(item => {
+      HTML += itemHTML(item,data)
+      //console.log(item)
+    })
+  }
+
+  if (type !== 'cast') {
+    credits.crew.filter(item => item.department === type)
+    .map(item => {
+      HTML += itemHTML(item, data)
+      //console.log(item)
+    })
+  }
+  return HTML
 }
 
 function pluralResolver(count,str,suf) {

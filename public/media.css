@@ -245,6 +245,10 @@
     border-radius: var(--border-radius1);
     scroll-snap-align: center;
     /* box-shadow: 0 10px 24px rgba(0, 0, 0, 0.7); */
+
+    .grid-actions {
+      scale: 1.03 !important;
+    }
   }
 
   .grid-item:hover,
@@ -1027,4 +1031,67 @@
     line-height: 0.82rem;
   }
 
+  .biography {
+    .overview {
+      line-clamp: 6;
+      -webkit-line-clamp: 6;
+      max-height: 6rem;
+    }
+  }
+
+  #person-details {
+    gap: 4px;
+  
+    h2 {
+      font-size: 18px;
+    }
+
+    .info {
+      font-size: 12px;
+      gap: 4px;
+    }
+    
+    .item-actions {
+      margin-left: unset;
+    }
+  
+    .external img {
+      height: 22px;
+    }
+  }
+  
+  .person-credits {  
+    
+    h2 {
+      font-size: 18px ;
+    }
+  
+    .credit-section {
+      .expand-arrow {
+        scale: 0.8;
+      }
+    }
+    .credit-type {
+      font-size: 14px;
+      font-weight: bold;
+    }
+  
+    .grid-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fill,minmax(10rem,1fr));
+  
+      .grid-item {
+        height: 6rem;
+        max-width: unset;
+        gap: 8px;
+  
+        .credit-item-info {
+          p {
+            font-size: 12px;
+          }
+        }
+      }
+    }
+  }
 }
+
