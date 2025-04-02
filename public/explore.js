@@ -2,7 +2,6 @@ const GENRE_URL = `https://api.themoviedb.org/3/genre`
 
 let isMovie = null;
 
-
 function loadExplorePage(mediaType) {
 	document.querySelector('title').innerText = `Browse ${mediaType !== 'tv' ? mediaType : `serie`}s | Pixelstream`;
 	console.log(loc());
@@ -312,11 +311,9 @@ function filterReset() {
 	pageEnd = false;
 }
 
-async function fetchGenres(mediaType) {
+function fetchGenres(mediaType) {
 	const genreContainer = document.getElementById("genreChips");
-	const response = await fetch(`${GENRE_URL}/${mediaType}/list?api_key=${API_KEY}`);
-	const data = await response.json();
-	data.genres.forEach(genre => {
+	const createChip = (genre, genreContainer, mediaType) => {
 		const chip = document.createElement('div');
 		chip.classList.add('chip');
 		chip.textContent = genre.name;
@@ -335,40 +332,58 @@ async function fetchGenres(mediaType) {
 				}, 300);
 			}
 		});
+
 		genreContainer.appendChild(chip);
-	});
+	}
+	
+	const url = `${GENRE_URL}/${mediaType}/list?api_key=${API_KEY}`
+	fetchFromURL(url).then((data) => {
+		data.genres.forEach(genre => {
+				createChip(genre,genreContainer,mediaType)
+		});
+	})
 
 	enableHorizontalWheelScroll(genreContainer, 2)
 }
 
 async function fetchCountriesAndLanguages() {
 	// Fetch countries
-	const countryResponse = await fetch(`https://api.themoviedb.org/3/configuration/countries?language=en-US&api_key=${API_KEY}`);
-	const countries = await countryResponse.json();
+	const counteryURL = `${BASE_URL}/configuration/countries?language=en-US&api_key=${API_KEY}`
 	const counteryList = ['AS', 'US', 'AU', 'GB', 'IE', 'JP', 'KO', 'IN', 'RU', 'MX', 'FR', 'DE',];
-	const countrySelect = document.getElementById('countryFilter');
-	countries.forEach(country => {
-		if (counteryList.includes(country.iso_3166_1)) {
-			const option = document.createElement('option');
-			option.value = country.iso_3166_1;
-			option.textContent = abbvText(country.english_name, 13);
-			countrySelect.appendChild(option);
-		}
-	});
+	fetchFromURL(counteryURL).then((data) => {
+		const countries = data
+		const countrySelect = document.getElementById('countryFilter');
+		countries.forEach(country => {
+			if (counteryList.includes(country.iso_3166_1)) {
+				const option = document.createElement('option');
+				option.value = country.iso_3166_1;
+				option.textContent = abbvText(country.english_name, 13);
+				countrySelect.appendChild(option);
+			}
+		});
+	}).catch((e) => {
+		console.log(e)
+		notifyAlert(e)
+	})
 
 	// Fetch languages
-	const languageResponse = await fetch(`https://api.themoviedb.org/3/configuration/languages?api_key=${API_KEY}`);
-	const languages = await languageResponse.json();
+	const languageURL = `${BASE_URL}/configuration/languages?api_key=${API_KEY}`
 	const languagelist = ['en', 'ja', 'ko', 'hi', 'as', 'ru', 'es', 'fr', 'de']
-	const languageSelect = document.getElementById('languageFilter');
-	languages.forEach(language => {
-		if (languagelist.includes(language.iso_639_1)) {
-			const option = document.createElement('option');
-			option.value = language.iso_639_1;
-			option.textContent = language.english_name;
-			languageSelect.appendChild(option);
-		}
-	});
+	fetchFromURL(languageURL).then((data) => {
+		const languages = data;
+		const languageSelect = document.getElementById('languageFilter');
+		languages.forEach(language => {
+			if (languagelist.includes(language.iso_639_1)) {
+				const option = document.createElement('option');
+				option.value = language.iso_639_1;
+				option.textContent = language.english_name;
+				languageSelect.appendChild(option);
+			}
+		});
+	}).catch((e) => {
+		console.log(e)
+		notifyAlert(e)
+	})
 }
 
 function handleChipClick(genreId, type, genreContainer, mediaType) {
@@ -451,30 +466,6 @@ function filterEvents(event) {
 	}
 }
 
-async function fetchSearchResults(term, type) {
-	console.log("fetching results")
-	try {
-		const searchURL = `${BASE_URL}/search/${type}?`
-		const responses = await Promise.all(
-			["1", "2", "3"].map(async (page) => {
-				const params = new URLSearchParams({
-					api_key: API_KEY,
-					query: term,
-					page: page,
-				})
-				const url = `${searchURL}${params}&${OPTIONS}`
-				const response = await fetch(url)
-				const output = await response.json()
-				return output.results
-			}),
-		)
-		const data = responses.flat()
-		return data
-	} catch (e) {
-		console.log(e)
-	}
-}
-
 function searchResultFunction(sectionId) {
 	const section = document.querySelector(`${sectionId}`)
 	const type = section.getAttribute("type")
@@ -492,9 +483,9 @@ function searchResultFunction(sectionId) {
 		if (term.length < 3) return
 		clearTimeout(searchWait)
 		searchWait = setTimeout(() => {
-			fetchSearchResults(term, type).then((data) => {
+			fetchSearchResults(term, type, 5).then((data) => {
 				if (type === "person")
-					data.sort((a, b) => popularity(b) - popularity(a))
+					data.sort((a, b) => popularity(b, type) - popularity(a, type))
 				populateResults(data)
 				currentSearchResults = data
 			})
@@ -504,14 +495,6 @@ function searchResultFunction(sectionId) {
 	const resetResults = () => {
 		resultsContainer.innerHTML = ""
 		currentSearchResults = []
-	}
-
-	const popularity = (person) => {
-		let workPopularity = 0
-		if (person.known_for) {
-			person.known_for.forEach((known) => (workPopularity += known.popularity))
-		}
-		return workPopularity * person.popularity
 	}
 
 	const populateResults = function (data) {
