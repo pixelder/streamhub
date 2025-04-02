@@ -666,28 +666,37 @@
   #search-results {
     margin: 0.6rem 0 0 0;
     border: none;
+
+    .results-container {
+      padding: 8px 0.6rem 12px;
+      gap: 8px;
+    }
   }
 
-  #search-results>h1 {
+  #search-results h1 {
     font-size: 1.25rem;
     margin: 12px 0 0rem 0.6rem !important;
   }
 
-  #search-results>section {
-    margin: 8px 0 0;
-    gap: 6px;
+  #search-results section.expanded {
+    gap: 8px;
     justify-content: flex-start;
+    margin-bottom: 8px ;
   }
 
-  #search-results>section>h3 {
+  #search-results section h3 {
     font-size: 1rem;
     display: block;
     width: 100%;
   }
 
+  .profiles {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(10rem, 1fr));
+  }
+
   .profile-item {
-    height: 8rem;
-    min-width: fit-content;
+    height: 84px;
     border-radius: var(--border-radius1);
     /* box-shadow: 0 10px 24px rgba(0, 0, 0, 0.7); */
   }
@@ -707,10 +716,15 @@
   }
 
 
-  .profile-item-info p {
-    padding: 0 0.2rem;
-    font-size: 0.7rem;
-    line-height: 0.78rem;
+  .profile-item-info {
+    p {
+      padding: 0 0.2rem;
+      font-size: 12px;
+      line-height: 0.78rem;
+    }
+    .name {
+      font-size: 13px;
+    } 
   }
 
   .modal-content {
@@ -876,6 +890,10 @@
       width: unset;
       gap: 0.6rem;
     }
+
+    .releasing-on {
+      display: block;
+    }
   } 
   .modal-info-logo {
     width: unset;
@@ -1039,6 +1057,10 @@
     }
   }
 
+  .expand-arrow I {
+    scale: 0.8;
+  }
+
   #person-details {
     gap: 4px;
   
@@ -1065,12 +1087,7 @@
     h2 {
       font-size: 18px ;
     }
-  
-    .credit-section {
-      .expand-arrow {
-        scale: 0.8;
-      }
-    }
+
     .credit-type {
       font-size: 14px;
       font-weight: bold;
@@ -1086,6 +1103,9 @@
         gap: 8px;
   
         .credit-item-info {
+          .credit-name {
+            font-size: 13px;
+          }
           p {
             font-size: 12px;
           }

@@ -1,103 +1,115 @@
-
 const API_KEY = "213d830aae3a2f7b67e37f157405a42e";
 const BASE_URL = 'https://api.tmdb.org/3';
 const IMAGE_URL = 'https://image.tmdb.org/t/p/w500';
-const IMAGE_ORG = 'https://image.tmdb.org/t/p/original'
+const IMAGE_ORG = 'https://image.tmdb.org/t/p/original';
 
-let contWatching = false
+let contWatching = false;
+
+function buildSearchPage(query) {
+
+  const input = document.getElementById('search-input')
+  input.value = query;
+  input.closest('form').setAttribute('action', `javascript:void(0);`)
+  input.closest('form').removeAttribute('onsubmit', '')
+  input.closest('form').onsubmit = () => input.blur()
+
+  document.querySelector("title").innerText = query + ` - Pixelstream`
+
+  document.getElementById('main-content').innerHTML = `
+  <div id=search-results>
+    <h1 class="search-title">Searching Results for “${query}”</h1>
+    <div class="results-container"></div>
+    <div class="modal-overlay"></div>
+    <div id="info-modal" class="modal">
+        <div class="modal-content">
+          <div id="modal-details">
+          </div>
+        </div>
+    </div> 
+  </div>
+  `
+  const container = document.querySelector('.results-container')
+  container.addEventListener('click', (e) => {
+    const sectionHeader = e.target.closest('.section-header')
+    if (!sectionHeader) return;
+    sectionHeader.closest('section').classList.toggle('expanded');
+  })
+}
 
 async function getSearchResults(query) {
 
-  const params = new URLSearchParams({
-    api_key : API_KEY,
-    query : encodeURIComponent(query)
-  })
-  
-  const mediaType = [ 'movie', 'tv','person' ]
+  if (!document.getElementById('search-results')) {
+    buildSearchPage(query)
+  }
 
-  const searchUrls = Object.fromEntries(
-    mediaType.map( type => 
-      [ type, `${BASE_URL}/search/${type}?${params}`]
-    )
-  )
+  const mediaTypes = ["movie", "tv", "person"];
+  const pages = { movie: 3, tv: 3, person: 5 }
+
+  const finalResults = { movie: [], tv: [], person: [] };
 
   try {
-    const [movie, tv, person] = await Promise.all(
-      Object.values(searchUrls).map( url => fetch(url).then( res => res.json() ) )
-    );
-
-    const mediaType = { movie, tv, person }
-
-    Object.entries(mediaType).forEach(([mediaType,data]) => {
-      data.results.forEach(item => item.media_type = mediaType)
+    mediaTypes.forEach(async (type) => {
+      fetchSearchResults(query, type, pages[type]).then((data) => {
+        data.sort((a, b) => popularity(b, type) - popularity(a, type))
+        data.filter(item => popularity(item, type) > 0.01);
+        data.forEach(item => item.media_type = type)
+        finalResults[type] = data.slice(0, isMobile() ? 20 : 14);
+        if (type === 'person') finalResults[type] = data.slice(0, isMobile() ? 20 : 12)
+        updateSearchResultsUI(type, finalResults, query)
+      })
     })
+  } catch (e) {
+    console.error("Error fetching search results:", e);
+  }
 
-    const finalResults = Object.fromEntries(
-      Object.entries(mediaType).map(([mediaType,data]) => [
-        mediaType,
-        data.results.slice( 0, isMobile() ? 20 : 14)  
-      ])
-    )
-
-    const popularity = (person) => {
-      let workPopularity = 0
-      if (person.known_for) {
-        person.known_for.forEach((known) => (workPopularity += known.popularity))
-      }
-      return workPopularity * person.popularity
-    }
-
-    finalResults.person.sort((a, b) => popularity(b) - popularity(a))
-    finalResults.person = finalResults.person.filter(person => popularity(person) > 0.01)
-    
-    displaySearchResults(finalResults, query);
-  } catch (error) {
-    console.error("Error fetching search results:", error);
+  try {
+    document.querySelector(".results-container").innerHTML = ''
+  } catch (e) {
+    console.log(e)
   }
 }
 
-// Display search results
-function displaySearchResults({ movie, tv, person }, query) {
+function updateSearchResultsUI(type, results, query) {
 
-  document.getElementById('search-input').value = query;
+  const length = Object.keys(results).reduce((sum, key) => {
+    return sum + results[key].length;
+  }, 0);
+  const searchTitle = document.querySelector('.search-title')
+  searchTitle.innerText = `${length < 1 ? `No` : `Search`} Results for “${query}”`
+
   document.querySelector("title").innerText = query + ` - Pixelstream`
-  
-  const mainContent = document.querySelector('main');
-  mainContent.innerHTML = `
-    <div id=search-results>
-      <h1>Search Results for “${query}”</h1>
-      <section id="movie-results" data-type="movie">
-        <h3>Movies</h3>
-        <div class="grid-container">
-          ${renderGridItems(movie)}        
-        </div>
-      </section>
-      <section id="tv-results" data-type="tv">
-        <h3>TV Shows</h3>
-        <div class="grid-container">
-          ${renderGridItems(tv)}
-        </div>
-      </section>
-      <section id="person-results" data-type="person">
-      <h3>Person</h3>
-        <div class="grid-container profiles">
-        ${renderProfile(person)}  
-        </div>
-      </section>
-      <div class="modal-overlay"></div>
-      <div id="info-modal" class="modal">
-          <div class="modal-content">
-            <div id="modal-details">
-              <!-- Dynamic content will be injected here -->
-            </div>
-          </div>
-      </div> 
-    </div>
-  `;
+  window.history.replaceState('', '', `/search?q=${query}`)
 
+  const container = document.querySelector(".results-container")
+
+  if (length < 1) {
+    container.innerHTML = ""
+    return
+  }
+
+  let section = document.getElementById(`${type}-results`);
+
+  const populateResults = (type) => {
+    const resultType = type === 'tv' ? 'TV Shows' : type === 'person' ? 'People' : 'Movies'
+    container.innerHTML += `
+      <section id="${type}-results" data-type="${type}" class="expanded">
+        <div class="section-header" style="padding-top: unset !important">
+          <h3>${resultType}</h3>
+          <div class="expand-arrow"><i class="fa-solid fa-chevron-left"></i></div>
+        </div>
+        <div class="grid-container ${type === "person" ? "profiles" : ""}">
+          ${type === "person" ? renderProfile(results[type]) : renderGridItems(results[type])}
+        </div>
+      </section>
+    `;
+
+  }
+
+  if (!section) populateResults(type);
 }
 
 function renderProfile(items) {
+
   return items
     .map(item => {
       const name = item.name || item.original_name;
@@ -110,7 +122,8 @@ function renderProfile(items) {
             <img src="${image}" alt="${name}">
           </span>
           <div class="profile-item-info">
-            <p>${capString(name, 30)}</p>
+            <p class="name">${capString(name, 30)}</p>
+            <p><em>${item.known_for_department}</em><p>
           </div>
         </div>
       `;
@@ -118,7 +131,23 @@ function renderProfile(items) {
     .join('');
 }
 
-window.onload = function() {
+function activeSearchResults() {
+  const searchBar = document.querySelector('#search-input')
+  let searchWait
+
+  searchBar.oninput = function () {
+    const query = this.value
+    if (query.length < 3) return
+    clearTimeout(searchWait)
+    searchWait = setTimeout(() => {
+      getSearchResults(query)
+    }, 300)
+  }
+}
+
+window.onload = function () {
   footerHTML()
   setActiveIcon('search')
+  activeSearchResults()
 }
+
