@@ -81,7 +81,7 @@ function populateSection(sectionId, items) {
   }
 
   // console.log(currentPage, container.innerHTML)
-  if ( currentPage === 1) {
+  if (currentPage === 1) {
     container.innerHTML = '';
     container.innerHTML = renderGridItems(items);
   } else {
@@ -138,12 +138,73 @@ function renderGridItems(items) {
     .join('');
 }
 
+function notifyAlert(msg) {
+  const el = document.createElement('div');
+  el.classList.add('msg');
+  el.innerText = msg;
+  document.querySelector('main').appendChild(el)
+  setTimeout(() => { document.querySelector('main').removeChild(el) }, 3000)
+}
+
+function nthNaturalArray(n) {
+  if (n < 1) return [];
+  return Array.from({ length: n }, (_, i) => i + 1);
+}
+
+function popularity(item, type) {
+  if (type = 'person') {
+    let workPopularity = 1
+    if (type.known_for) {
+      type.known_for.forEach((known) => (workPopularity += known.popularity))
+    }
+    return workPopularity * item.popularity
+  }
+  return item.popularity
+}
+
+
+async function fetchSearchResults(term, type, pages) {
+  console.log("fetching results")
+  try {
+    const searchURL = `${BASE_URL}/search/${type}?`
+    const responses = await Promise.all(
+      nthNaturalArray(pages).map(async (page) => {
+        const params = new URLSearchParams({
+          api_key: API_KEY,
+          query: encodeURIComponent(term),
+          page: page,
+        })
+        const url = `${searchURL}${params}`
+        const response = await fetch(url)
+        const output = await response.json()
+        return output.results
+      }),
+    )
+    const data = responses.flat()
+    return data
+  } catch (e) {
+    console.log(e)
+  }
+}
+
+async function fetchFromURL(url) {
+  try {
+    const response = await fetch(url)
+    const data = await response.json()
+    return data
+  } catch (e) {
+    console.log(e)
+    notifyAlert(e)
+    return null;
+  }
+}
+
 //fetch Metadata
 async function fetchMetaData(mediaType = null, id = null, season = null, credits = null) {
 
   try {
     let url;
-    const append = `videos,credits,images&include_image_language=en`
+    const append = `external_ids,videos,credits,images&include_image_language=en`
     if (mediaType === "movie") {
       url = `${BASE_URL}/movie/${id}?api_key=${API_KEY}&language=en-US&append_to_response=release_dates,${append}`;
     } else if (mediaType === "tv") {
@@ -157,6 +218,7 @@ async function fetchMetaData(mediaType = null, id = null, season = null, credits
     return { data, mediaType };
   } catch (error) {
     console.error("Error fetching data:", error);
+    notifyAlert(error)
     return null;
   }
 }
@@ -189,9 +251,9 @@ function getCountryCertification(data, mediaType) {
     results = data.release_dates?.results || [];
     rating =
       results.find(item => item.iso_3166_1 === ORIGIN_COUNTRY)
-        ?.release_dates?.filter(item=> item.certification !== '')[0]?.certification ||
+        ?.release_dates?.filter(item => item.certification !== '')[0]?.certification ||
       results.find(item => item.iso_3166_1 === DEFAULT_COUNTRY)
-        ?.release_dates?.filter(item=> item.certification !== '')[0]?.certification ||
+        ?.release_dates?.filter(item => item.certification !== '')[0]?.certification ||
       "";
   } else {
     results = data.content_ratings?.results || [];
@@ -210,7 +272,6 @@ function displayModal(mediaType, data) {
   const modal = document.getElementById('info-modal');
   const modalContent = document.querySelector('.modal-content');
   const details = document.getElementById('modal-details');
-
   const backdropPath = data.backdrop_path
   document.documentElement.style.setProperty(
     '--modal-backdrop',
@@ -220,8 +281,8 @@ function displayModal(mediaType, data) {
   const contentLogoHTML = getContentLogoHTML(data);
 
   mediaType !== 'person'
-   ? details.innerHTML = buildMediaDetailsHTML(data, mediaType, contentLogoHTML)
-   : details.innerHTML = buildPersonDetailsHTML(data);
+    ? details.innerHTML = buildMediaDetailsHTML(data, mediaType, contentLogoHTML)
+    : details.innerHTML = buildPersonDetailsHTML(data);
 
   if (mediaType === 'movie') {
     insertMovieActions(data, mediaType);
@@ -349,18 +410,18 @@ function buildPersonDetailsHTML(data) {
   ];
 
   return `
-    <div class="modal-media" ${isMobile() ? '' : `style="flex-direction:row"`}>
-      ${  data.profile_path ? `
+    <div class="modal-media" ${isMobile() ? '' : `style="flex-direction:row ;justify-content: flex-start !important;"`}>
+      ${data.profile_path ? `
         <div class="modal-cover portrait" style="display:flex">
             <img style="opacity:1" src="${IMAGE_URL + data.profile_path}">
         </div>` : ''
-      }
+    }
       <div id="person-details">
         <h2 class="name">${data.name} ${data.birthday ? `<em>(${extractYear(data.birthday)} - ${data.deathday ? extractYear(data.deathday) : ''})
           </em>` : ''}
         </h2>
         <div class="info">
-          <p class="department">Known-for: ${data.known_for_department}</p>
+          <p class="department">Known For: ${data.known_for_department}</p>
           <p class="gender">Gender : ${tmdbGenderResolver(data.gender)}</p>
           <div class="biography synopsis">
             <p class="overview">${data.biography}</p>
@@ -385,9 +446,9 @@ function buildPersonDetailsHTML(data) {
 }
 
 function creditResolver(data) {
-  const creditOrder = data.known_for_department === 'Acting' ? ['cast','crew'] : ['crew', 'cast'];
+  const creditOrder = data.known_for_department === 'Acting' ? ['cast', 'crew'] : ['crew', 'cast'];
   const crewCredits = data.combined_credits.crew
-  crewCredits.sort((a,b) => { // put known for on top
+  crewCredits.sort((a, b) => { // put known for on top
     const score = (item) => {
       let s = 0;
       if (item.department === data.known_for_department) s++
@@ -397,7 +458,7 @@ function creditResolver(data) {
   })
 
   const departments = [... new Set(crewCredits.map(item => item.department))]
-  
+
   let HTML = ''
   const sectionHTML = (data, type) => {
     return `
@@ -407,7 +468,7 @@ function creditResolver(data) {
           <div class="expand-arrow"><i class="fa-solid fa-chevron-left"></i></div>
         </div>
         <div class="grid-container ${type}">
-            ${populateCreditSection(data,type)}
+            ${populateCreditSection(data, type)}
         </div>
       </div>
     `
@@ -415,11 +476,11 @@ function creditResolver(data) {
 
   creditOrder.forEach(credit => {
     if (credit === 'cast') {
-      HTML += sectionHTML(data,credit)
+      HTML += sectionHTML(data, credit)
     }
     if (credit === 'crew') {
       departments.forEach(dep => {
-        HTML += sectionHTML(data,dep)
+        HTML += sectionHTML(data, dep)
       })
     }
   })
@@ -427,12 +488,12 @@ function creditResolver(data) {
   return HTML
 }
 
-function populateCreditSection(data,type) {
+function populateCreditSection(data, type) {
   let HTML = ''
   const credits = data.combined_credits
   // use  https://api.themoviedb.org/3/credit/{credit_id} to get appear date of a tv show
 
-  const itemHTML = (item,data) => {
+  const itemHTML = (item, data) => {
     const title = item.title || item.original_title || item.name || item.original_name;
     const year = extractYear(item.release_date || item.first_air_date) || '';
     const mediaType = item.media_type === 'tv' ? 'TV' : 'Movie';
@@ -449,24 +510,24 @@ function populateCreditSection(data,type) {
 
   if (type === 'cast') {
     credits.cast.map(item => {
-      HTML += itemHTML(item,data)
+      HTML += itemHTML(item, data)
       //console.log(item)
     })
   }
 
   if (type !== 'cast') {
     credits.crew.filter(item => item.department === type)
-    .map(item => {
-      HTML += itemHTML(item, data)
-      //console.log(item)
-    })
+      .map(item => {
+        HTML += itemHTML(item, data)
+        //console.log(item)
+      })
   }
   return HTML
 }
 
-function pluralResolver(count,str,suf) {
+function pluralResolver(count, str, suf) {
   if (count !== 1) return `${count} ${str}${suf}`
-  return `${count} ${str}` 
+  return `${count} ${str}`
 }
 
 function releaseInfo(data) {
@@ -484,15 +545,15 @@ function releaseInfo(data) {
 function insertMovieActions(data, mediaType) {
   const name = data.name || data.title || data.original_title;
   let released = true;
-  if (releaseInfo(data) !== null ) released = false
+  if (releaseInfo(data) !== null) released = false
 
   const actionHTML = `
     <div class="modal-actions">
-      ${ released 
+      ${released
       ? `<button class="watch-btn" title="watch movie" data-name="${name}" data-id="${data.id}">
           <i class="fa-solid fa-play"></i>Watch
         </button>`
-      : releaseInfo(data) }
+      : releaseInfo(data)}
       ${setUpModalActions(data, mediaType)}
       </div>
     </div>
@@ -506,18 +567,23 @@ function insertMovieActions(data, mediaType) {
 
 function setUpModalActions(data, mediaType) {
   const bookmark = logExists('bookmarks', data.id, mediaType)
+  const links = [
+    { id: data.id, url: `https://tmdb.org/${mediaType}/${data.id}`, icon: "tmdb_short.svg", page: "tmdb" },
+    { id: (data.imdb_id || data.external_ids?.imdb_id), url: `https://www.imdb.com/title/${data.imdb_id || data.external_ids.imdb_id}`, icon: "imdb_short.png", page: "imdb" },
+  ]
   return `
     <button class="play-trailer" title="play trailer" data-media-type="${mediaType}">
           <i class="fa-solid fa-video"></i>Trailer
     </button>
 
     <div class="item-actions">
-      <button class="external" title="visit tmdb page">
-        <a style="all:inherit" href="https://tmdb.org/${mediaType}/${data.id}" target="_blank" rel="noopener noreferrer">
-          <img style="width: ${isMobile() ? `24px` : `30px`}" 
-            src="/assets/icons/tmdb_short.svg">
-        </a>
-      </button>
+      ${links.filter(link => link.id).map(link => `
+        <button class="external" title="visit ${link.page} page">
+          <a style="all:inherit" href="${link.url}" target="_blank" rel="noopener noreferrer">
+            <img src="/assets/icons/${link.icon}">
+          </a>
+        </button>
+      `).join('')}
       <label class="selectable active bookmark" title="bookmark" data-id="${data.id}" data-media-type="${mediaType}">
         <input type="checkbox" ${bookmark ? `checked` : ''}/>
         <span class="checkbox-button">
@@ -609,7 +675,7 @@ async function tvContent(data, sno, eno, ref) {
         </div>
       `)
       .join("");
-    document.querySelector('.play-trailer')?.setAttribute('data-sno',selectedSeason)
+    document.querySelector('.play-trailer')?.setAttribute('data-sno', selectedSeason)
     if (ref != "modal") {
       document.getElementById('episode-container').classList.add('player-styling');
       document.querySelector('.now-playing > h4').innerHTML = `S${sno}:E${eno} ${seasonData.episodes.map(episode => episode.name)[eno - 1]}`;
@@ -657,16 +723,16 @@ function watchEventListeners(event, data) {
     if (event.target.classList.contains("play-trailer")) {
       console.log('trailer button')
       event.stopPropagation();
-    
+
       const container = document.querySelector('.trailer-container')
       const trailerBtn = event.target.closest(".play-trailer");
 
       const params = new URLSearchParams({
-        autoplay : 1,
-        controls : 0,
-        rel : 0,
-        color : 'white',
-        iv_load_policy : 3
+        autoplay: 1,
+        controls: 0,
+        rel: 0,
+        color: 'white',
+        iv_load_policy: 3
       });
 
       const playTrailer = () => {
@@ -683,13 +749,13 @@ function watchEventListeners(event, data) {
         `;
         //console.log(key)
         if (!key) {
-            console.log('no trailer')
-            const noTrailer = document.createElement('div');
-            noTrailer.classList.add('temp-message')
-            noTrailer.innerText = `no trailer available`;
-            trailerBtn.appendChild(noTrailer)
-            setTimeout(() => { trailerBtn.removeChild(noTrailer) }, 2000);
-            return
+          console.log('no trailer')
+          const noTrailer = document.createElement('div');
+          noTrailer.classList.add('temp-message')
+          noTrailer.innerText = `no trailer available`;
+          trailerBtn.appendChild(noTrailer)
+          setTimeout(() => { trailerBtn.removeChild(noTrailer) }, 2000);
+          return
         }
         container.innerHTML = trailerIframe
         trailerBtn.innerHTML = `<i class="fa-solid fa-xmark"></i>Close`
@@ -761,7 +827,7 @@ function watchEventListeners(event, data) {
 }
 
 function getTrailerVideoKey(data, sno) {
-  console.log(data, sno)
+  //console.log(data, sno)
 
   if (data.length < 1) return null;
 
@@ -785,27 +851,27 @@ function getTrailerVideoKey(data, sno) {
       if (video.name && typeof video.name === 'string') {
         const lowerName = video.name.toLowerCase();
         const season = lowerName.includes(`season ${sno}`)
-        if (video.official === true ) s++;
+        if (video.official === true) s++;
         if (video.type.toLowerCase() === 'trailer') s++;
-        if (lowerName.includes('trailer')) s=s+5;
-        if (lowerName.includes('teaser')) s=s+3;
+        if (lowerName.includes('trailer')) s = s + 5;
+        if (lowerName.includes('teaser')) s = s + 3;
         if (lowerName.includes('official')) s++;
         if (sno && season) {
-          s=s+2;
+          s = s + 2;
           if (season && lowerName.includes('official')) s++;
-          if (season && lowerName.includes('trailer')) s=s+5;
-          if (season && lowerName.includes('teaser')) s=s+3;
+          if (season && lowerName.includes('trailer')) s = s + 5;
+          if (season && lowerName.includes('teaser')) s = s + 3;
           if (season && lowerName.includes('announcement')) s++;
           //console.log(lowerName, s, sno)
           return s
         }
-        console.log(lowerName, s, sno)
+        //console.log(lowerName, s, sno)
       }
       return s;
     };
     return score(b) - score(a);
   });
-  console.log(candidates)//[0].name, candidates[0].key)
+  //console.log(candidates)//[0].name, candidates[0].key)
   return candidates[0].key || null;
 }
 
@@ -896,10 +962,10 @@ function setupScrollEdgeMask(container) {
     // isScrolling = true;
     updateMask();
     // clearTimeout(scrollTimeout);
-    
+
     // scrollTimeout = setTimeout(() => {
-      // isScrolling = false;
-      // updateMask();
+    // isScrolling = false;
+    // updateMask();
     // }, 100);
   };
 
@@ -934,7 +1000,7 @@ function cappedOverview() {
 function shareItem(mediaType, id, name) {
   const shareData = {
     text: `${name}`,
-    url: `https://pixelstream.vercel.app/watch/${mediaType}/${id}/${encodeURIComponent(name)}${mediaType === 'tv' ? '/1/1' : '' }`,
+    url: `https://pixelstream.vercel.app/watch/${mediaType}/${id}/${encodeURIComponent(name)}${mediaType === 'tv' ? '/1/1' : ''}`,
   };
 
   const btn = document.querySelector(".share");
@@ -1122,7 +1188,7 @@ function enableHorizontalWheelScroll(container, factor = 1) {
   const scrollEvent = (e) => {
     if (container.scrollWidth > container.clientWidth) {
       e.preventDefault();
-      container.scrollLeft += e.deltaY * factor; 
+      container.scrollLeft += e.deltaY * factor;
     }
   }
   container.removeEventListener("wheel", scrollEvent);
