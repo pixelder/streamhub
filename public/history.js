@@ -142,7 +142,8 @@ async function fetchHistoryItems(section, sectionId, items) {
       newElement.dataset.index = index;
       return newElement;
     } catch (error) {
-      console.error(`Error fetching data for item ID ${id}:`, error);
+      const msg = `Error fetching data for item ID ${id} : ${error}`
+      notifyAlert(msg)
       return null;
     }
   }));
