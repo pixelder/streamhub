@@ -107,7 +107,7 @@ function renderGridItems(items) {
       const rating = truncate(item.vote_average, 1);
       const year = extractYear(item.release_date || item.first_air_date);
       const image = item.poster_path
-        ? `${IMAGE_URL}${item.poster_path}`
+        ? `${IMAGE_URL + item.poster_path}`
         : 'https://placehold.co/440x661/383852/ccc?text=No+Image';
       return `
          <div tabindex="0" class="grid-item" id="grid-item" data-id="${item.id}" data-media-type="${mediaType}">
@@ -120,7 +120,7 @@ function renderGridItems(items) {
                 </div>
               </div>
             </div>
-             <img src="${image}" alt="${title}">
+             <img src="${image}" loading="lazy" alt="${title}">
            </div>
            <div class="grid-item-info">
              <p>${capString(title, 40)}</p>
@@ -139,11 +139,18 @@ function renderGridItems(items) {
 }
 
 function notifyAlert(msg) {
+  console.error(msg)
+  let container = document.querySelector('.notifications')
+  if (!container) {
+    container = document.createElement('div')
+    container.classList.add('notifications')
+    document.querySelector('main').appendChild(container)
+  }
   const el = document.createElement('div');
   el.classList.add('msg');
   el.innerText = msg;
-  document.querySelector('main').appendChild(el)
-  setTimeout(() => { document.querySelector('main').removeChild(el) }, 3000)
+  container.appendChild(el)
+  setTimeout(() => { container.removeChild(el) }, 3000)
 }
 
 function nthNaturalArray(n) {
@@ -193,8 +200,8 @@ async function fetchFromURL(url) {
     const data = await response.json()
     return data
   } catch (e) {
-    console.log(e)
-    notifyAlert(e)
+    const msg = `Error fetching from url ${url}: ${e}`
+    notifyAlert(msg)
     return null;
   }
 }
@@ -217,9 +224,7 @@ async function fetchMetaData(mediaType = null, id = null, season = null, credits
     const data = await response.json();
     return { data, mediaType };
   } catch (error) {
-    console.error("Error fetching data:", error);
-    notifyAlert(error)
-    return null;
+    return error;
   }
 }
 
@@ -235,9 +240,14 @@ function openModal(event) {
     return;
   }
 
-  fetchMetaData(mediaType, id, null, credits).then(({ mediaType, data }) => {
-    displayModal(mediaType, data);
-  });
+  fetchMetaData(mediaType, id, null, credits)
+    .then(({ mediaType, data }) => {
+      displayModal(mediaType, data);
+    })
+    .catch((error) => {
+      const msg = `Error fetching data for ${mediaType} id:${id}: ${error}`
+      notifyAlert(msg)
+    })
 }
 
 function getCountryCertification(data, mediaType) {
@@ -272,10 +282,9 @@ function displayModal(mediaType, data) {
   const modal = document.getElementById('info-modal');
   const modalContent = document.querySelector('.modal-content');
   const details = document.getElementById('modal-details');
-  const backdropPath = data.backdrop_path
   document.documentElement.style.setProperty(
     '--modal-backdrop',
-    `url(${backdropPath ? IMAGE_ORG + data.backdrop_path : ''})`
+    `url(${data.backdrop_path ? IMAGE_ORG + data.backdrop_path : ''})`
   );
 
   const contentLogoHTML = getContentLogoHTML(data);
@@ -293,20 +302,20 @@ function displayModal(mediaType, data) {
     const userData = getLogData('watching')?.find(item => item.id === data.id)?.data;
     const season = userData?.sno;
     const episode = userData?.eno;
-    tvContent(data, season, episode, 'modal');
-
     modalContent.style.height = !isMobile() ? '32rem' : '70%';
-
-    const seasonMenu = document.querySelector('.seasons-menu');
-    seasonMenu.insertAdjacentHTML('afterend', setUpModalActions(data, mediaType));
-    // console.log(data)
-    if (releaseInfo(data) !== null) seasonMenu.insertAdjacentHTML('beforebegin', releaseInfo(data));
+    tvContent(data, season, episode, 'modal')
+      .then(() => {
+        const seasonMenu = document.querySelector('.seasons-menu');
+        seasonMenu?.insertAdjacentHTML('afterend', setUpModalActions(data, mediaType));
+        if (releaseInfo(data) !== null) seasonMenu.insertAdjacentHTML('beforebegin', releaseInfo(data));
+      })
+      .catch((e) => console.log(e))
   }
 
   if (mediaType === 'person') {
     modalContent.style.height = !isMobile() ? '32rem' : '70%';
     const section = document.querySelectorAll('.credit-section')
-    // console.log(section)
+
     section[0].classList.add('expanded')
     section.forEach(item => {
       item.querySelector('.section-header').addEventListener('click', () => {
@@ -320,7 +329,6 @@ function displayModal(mediaType, data) {
   modal.setAttribute('active', '')
   // modal.classList.add('active');
   details.focus();
-
   cappedOverview();
 }
 
@@ -623,46 +631,24 @@ function initializeModalListeners(mediaType, data, modalContent, details) {
 }
 
 async function tvContent(data, sno, eno, ref) {
-  const seasons = data.seasons.reverse();
-  const id = data.id
-  sno === null ? sno = -1 : "";
+  const id = data.id;
+  const seasons = [...data.seasons].reverse();
   const containerClass = ref === "modal" ? "episode-wrap" : "episode-player";
-  const tvInfo = `
-    <div class="tv-actions">
-      <div class="seasons-menu">
-        <select tabindex="0" id="season-dropdown">
-          ${seasons.map(season => `
-          <option value="${season.season_number}" 
-          ${season.season_number === Number(sno) ? "selected" : ""}
-          >Season ${season.season_number}</option>
-          `).join("")}
-        </select>
-      </div>
-    </div>
-    <div class="season-info">
-    <div class="episode-container ${containerClass}" id="episode-container">
-    </div>
-    </div>
-    `;
-  //modal
-  document.querySelector(".modal-media")?.insertAdjacentHTML('afterend', tvInfo);
-  //player
-  ref !== "modal" ? document.querySelector(".player-episodes").innerHTML = tvInfo : "";
+  const season = sno || data.number_of_seasons
+  const { data: seasonData } = await fetchMetaData('tv', id, season);
 
-  //episode info
-  const episodeContainer = document.getElementById('episode-container');
-
-  const displaySeasonInfo = async (event) => {
-    const selectedSeason = event.target.value;
-    const { data: tvData } = await fetchMetaData('tv', id, selectedSeason);
-    const seasonData = tvData
-    // console.log(seasonData)
-    localStorage.setItem('seasonData', JSON.stringify(seasonData));
-    episodeContainer.innerHTML = seasonData.episodes
-      .map(episode => `
-        <div id="${episode.episode_number}" class="episode episode-width" data-name="${data.name}" data-id="${data.id}" data-season="${selectedSeason}" data-episode="${episode.episode_number}" data-epname="${episode.name}">
+  const generateEpisodesHTML = (episodes, season) => {
+    let HTML = ''
+    episodes.map(episode => {
+      const IMAGE = episode.still_path
+        ? IMAGE_URL + episode.still_path
+        : 'https://placehold.co/500x281?text=No+Image+Available';
+      HTML += `
+        <div id="${episode.episode_number}" class="episode episode-width" 
+          data-name="${data.name}" data-id="${id}" 
+          data-season="${season}" data-episode="${episode.episode_number}" data-epname="${episode.name}">
           <div class="episode-items">
-            <img tabindex="0" src="${episode.still_path ? IMAGE_URL + episode.still_path : 'https://placehold.co/500x281?text=No+Image+Available'}" alt="Episode ${episode.episode_number}">
+            <img tabindex="0" src="${IMAGE}" loading="lazy" alt="Episode ${episode.episode_number}">
             <div class="episode-info">
               <h3>${episode.episode_number}. ${episode.name}</h3>
               <p>Rated: ${episode.vote_average.toFixed(1)}</p>
@@ -673,31 +659,56 @@ async function tvContent(data, sno, eno, ref) {
             </div>
           </div>
         </div>
-      `)
-      .join("");
-    document.querySelector('.play-trailer')?.setAttribute('data-sno', selectedSeason)
-    if (ref != "modal") {
-      document.getElementById('episode-container').classList.add('player-styling');
-      document.querySelector('.now-playing > h4').innerHTML = `S${sno}:E${eno} ${seasonData.episodes.map(episode => episode.name)[eno - 1]}`;
-      document.querySelectorAll('.episode').forEach(item => {
-        if (item.dataset.episode === String(episode)) {
-          item.classList.add('current');
-        }
-      });
-    }
-
-    whenInView('.player-styling, .modal', () => {
-      scrollEpisodeIntoView(eno);
+      `
     });
-    enableHorizontalWheelScroll(episodeContainer, 3)
+    return HTML;
   }
 
+  sno = sno ?? -1
 
-  const seasonDropdown = document.getElementById('season-dropdown');
-  seasonDropdown.removeEventListener('change', displaySeasonInfo);
-  seasonDropdown.addEventListener('change', displaySeasonInfo);
-  seasonDropdown.dispatchEvent(new Event('change'));
+  const tvInfo = `
+    <div class="tv-actions">
+      <div class="seasons-menu">
+        <select tabindex="0" id="season-dropdown">
+          ${seasons.map(season => `
+            <option value="${season.season_number}" ${season.season_number === Number(sno) ? "selected" : ""}>
+              Season ${season.season_number}
+            </option>`).join("")}
+        </select>
+      </div>
+    </div>
+    <div class="season-info">
+      <div class="episode-container ${containerClass}" id="episode-container">
+        ${generateEpisodesHTML(seasonData.episodes, season)}
+      </div>
+    </div>`;
 
+  if (ref === "modal") {
+    document.querySelector(".modal-media")?.insertAdjacentHTML('afterend', tvInfo);
+  } else {
+    document.querySelector('.now-playing > h4').innerText = `S${sno}:E${eno} ${seasonData.episodes[eno - 1]?.name || ""}`;
+
+    document.querySelector(".player-episodes").innerHTML = tvInfo;
+    const episodeContainer = document.getElementById('episode-container')
+    episodeContainer.classList.add('player-styling');
+    whenInView('.player-styling', () => scrollEpisodeIntoView(eno));
+    enableHorizontalWheelScroll(episodeContainer, 3);
+
+    document.querySelectorAll('.episode').forEach(item => {
+      if (item.dataset.episode === String(eno)) item.classList.add('current');
+    });
+  }
+
+  document.getElementById('season-dropdown')?.addEventListener('change', async (event) => {
+    const selectedSeason = event.target.value;
+    const { data: tvData } = selectedSeason !== sno
+      ? await fetchMetaData('tv', id, selectedSeason)
+      : { data: seasonData };
+
+    document.getElementById('episode-container').innerHTML = generateEpisodesHTML(tvData.episodes, selectedSeason);
+    localStorage.setItem('seasonData', JSON.stringify(tvData));
+    document.querySelector('.play-trailer')?.setAttribute('data-sno', selectedSeason);
+  });
 }
 
 function watchEventListeners(event, data) {
@@ -786,7 +797,6 @@ function watchEventListeners(event, data) {
       const { name, id, season, episode, epname } = sanitizedData;
       //console.log( id, season, episode)
       //sourceValidator(mediaType, id, season, episode)
-
 
       const title = `${mediaType === "movie" ? name : `S${season}:E${episode} ${name}`}`;
       const info = `<h2>${name}</h2>
