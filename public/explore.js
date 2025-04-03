@@ -521,7 +521,7 @@ function searchResultFunction(sectionId) {
 		let IMG
 		if (type === `person` &&  item.profile_path ) IMG = `${IMAGE_URL + item.profile_path}`
 		if (type === `company` &&  item.logo_path ) IMG = `${IMAGE_URL + item.logo_path}`
-		result.innerHTML = `<div class="img-container"><img src='${IMG}' alt="No image available"></div><p>${item.name}</p>`
+		result.innerHTML = `<div class="img-container"><img src='${IMG}' loading="lazy" alt="No image available"></div><p>${item.name}</p>`
 		return result
 	}
 

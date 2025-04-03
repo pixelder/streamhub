@@ -209,7 +209,7 @@ function renderLogItems(data, item, tvData) {
               </div>
             </div>
           </div>
-          <img src="${image}">
+          <img src="${image}" loading="lazy">
           <div class="grid-item-info">
             <span class="history-item-info">
               <h3>${capString(name, 40)}</h3>
