@@ -338,7 +338,7 @@ function getContentLogoHTML(data) {
   return `
     <span>
       <div class="modal-info-logo">
-        ${logoPath ? `<img src="${IMAGE_URL}${logoPath}" alt="Logo">` : ''}
+        ${logoPath ? `<img src="${IMAGE_URL}${logoPath}" loading="lazy" alt="Logo">` : ''}
       </div>
       <div class="modal-info">
         ${!logoPath ? `<h1>${name.toUpperCase()}</h1>` : ''}
@@ -369,7 +369,7 @@ function buildMediaDetailsHTML(data, mediaType, contentLogoHTML) {
     <div class="trailer-container"></div>
     <div class="modal-media">
       <div class="modal-cover">
-        <img src="${IMAGE_URL}${data.poster_path}" alt="${name}">
+        <img src="${IMAGE_URL + data.poster_path}" loading="lazy" alt="${name}">
       </div> 
       ${contentLogoHTML}
         <span class="ratings-genre">
@@ -421,7 +421,7 @@ function buildPersonDetailsHTML(data) {
     <div class="modal-media" ${isMobile() ? '' : `style="flex-direction:row ;justify-content: flex-start !important;"`}>
       ${data.profile_path ? `
         <div class="modal-cover portrait" style="display:flex">
-            <img style="opacity:1" src="${IMAGE_URL + data.profile_path}">
+            <img style="opacity:1" loading="lazy" src="${IMAGE_URL + data.profile_path}">
         </div>` : ''
     }
       <div id="person-details">
@@ -439,7 +439,7 @@ function buildPersonDetailsHTML(data) {
           ${links.filter(link => link.id).map(link => `
             <button class="external" title="visit ${link.page} page">
               <a style="all:inherit" href="${link.url}" target="_blank" rel="noopener noreferrer">
-                <img src="/assets/icons/${link.icon}">
+                <img loading="lazy" src="/assets/icons/${link.icon}">
               </a>
             </button>
           `).join('')}
@@ -506,7 +506,7 @@ function populateCreditSection(data, type) {
     const year = extractYear(item.release_date || item.first_air_date) || '';
     const mediaType = item.media_type === 'tv' ? 'TV' : 'Movie';
     return `<div class="grid-item" data-id="${item.id}" data-media-type="${item.media_type}">
-      <img src="${IMAGE_URL + (item.poster_path || data.profile_path)}">
+      <img loading="lazy" src="${IMAGE_URL + (item.poster_path || data.profile_path)}">
       <div class="credit-item-info">
         <p class="credit-name">${item.job || item.character || `N/A`}</p>
         <p class="credit-media-title"> ${title || 'Title not specified'} ${year ? `(${year})` : ''}</p>
