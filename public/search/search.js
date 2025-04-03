@@ -114,12 +114,12 @@ function renderProfile(items) {
     .map(item => {
       const name = item.name || item.original_name;
       const image = item.profile_path
-        ? `${IMAGE_URL}${item.profile_path}`
+        ? `${IMAGE_URL + item.profile_path}`
         : 'https://placehold.co/480x551/383852/ccc?text=No+Image';
       return `
         <div tabindex="0" class="profile-item" data-id="${item.id}" data-media-type="person">
           <span>
-            <img src="${image}" alt="${name}">
+            <img src="${image}" loading="lazy" alt="${name}">
           </span>
           <div class="profile-item-info">
             <p class="name">${capString(name, 30)}</p>
