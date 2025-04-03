@@ -2627,18 +2627,32 @@ option {
   }
 }
 
-.msg {
-  position: absolute;
+.notifications {
+  display: flex;
+  flex-direction: column;
   max-width: 60%;
   height: fit-content;
+  gap: var(--padding1);
+  align-items: end;
   padding: var(--padding1);
   margin: var(--padding1);
-  z-index: 1;
+  position: fixed;
   top: 4rem;
   right: 0;
-  background: var(--color3);
+  z-index: 1;
+}
+
+.msg {
+  display: flex;
+  width: fit-content;
+  height: fit-content;
+  min-height: 3rem;
+  align-items: center;
+  padding: var(--padding1);
+  background: var(--color4);
   border: 1px solid var(--color3);
   border-radius: var(--border-radius1);
-  font-size: 12px;
+  font-size: 14px;
   line-break: anywhere;
+  box-shadow: 0px 0px 16px 4px var(--color5);
 }
