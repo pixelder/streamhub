@@ -765,6 +765,17 @@
     aspect-ratio: 16 / 9;
     visibility: visible;
     transition: height 0.2s;
+
+    iframe {
+      width: calc(100% * 1.25);
+      height: calc(100% * 1.25);
+      zoom: 0.8;
+      transform: scale(0.8);
+      transform-origin: 0 0;
+      -moz-transform: scale(0.8);
+      -o-transform: scale(0.8);
+      -webkit-transform: scale(0.8);
+    }
   }
 
   .close-btn {
