@@ -6,109 +6,150 @@ const IMAGE_URL = 'https://image.tmdb.org/t/p/w500';
 let currentSeason = null;
 let currentEpisode = null;
 
-function loadWatchPage(mediaType, name = null, id, tvData = null) {
-  season = tvData?.season;
-  episode = tvData?.episode;
+async function loadWatchPage(mediaType, NAME = null, id, tvData = null) {
+  //console.log('loading watchpage')
+  const season = tvData?.season;
+  const episode = tvData?.episode;
   currentSeason = season;
   currentEpisode = episode;
 
-  const watchPage = document.querySelector("main");
-
-  watchPage.innerHTML = `
-    <div class="watch-page">
-      <div class="player-container">
-        <div class="player">
-          <!-- Placeholder until iframe loads -->
-          <div class="loading">Loading player...</div>
-          <div class="iframe-container">
+  const buildWatchPage = () => {
+    const providers = [
+      { ds: "100", name: "Anime", hiddenOn: 'movie',
+        settings: [
+          {
+            type: "format",
+            label: [
+              { active: false, value: "SUB" },
+              { active: true, value: "DUB" }
+            ],
+            switches: [
+              { value: "0", active: false},
+              { value: "1", active: true}
+            ]
+          }
+        ]
+      },
+      { ds: "1", name: "Vidlink" },
+      { ds: "2", name: "VidPlay",
+        settings: [
+          {
+            type: "version",
+            label: [
+              { active: true, value:  "v3" },
+              { active: false, value: "v2" }
+            ],
+            switches: [
+              { value: "2", active: false },
+              { value: "3", active: true }
+            ]
+          }
+        ]
+      },
+      { ds: "3", name: "Vidsrc" },
+      { ds: "4", name: "Whvx", hidden: 'true'},
+      { ds: "5", name: "Videasy", hiddenOn: 'tv' },
+      { ds: "6", name: "111movies" },
+      { ds: "7", name: "Primewire" },
+      { ds: "8", name: "Multiembed" },
+      { ds: "9", name: "AutoEmbed(Multi)" },
+      { ds: "10", name: "VidSu" }
+    ];
+  
+    const generateSettingsHTML = (settingsArray,ds) => {
+      if (!settingsArray || !Array.isArray(settingsArray)) return '';
+      return settingsArray
+        .map(({ type, label, switches }) => {
+          const switchesHTML = switches.map(sw => {
+              const activeClass = sw.active ? ' active' : '';
+              return `<button class="switch${activeClass}" data-type=${type} data-${type}="${sw.value}"></button>`;
+          }).join('');
+          return `
+            <span class="provider-settings" data-source="${ds}">
+              <p class="type ${type}" data-status="${label.find(item => item.active).active}">${label.find(item => item.active).value}</p>
+              <div class="switch-buttons" data-active=${label.find(item => item.active).value} data-inactive=${label.find(item => !item.active).value} >
+                ${switchesHTML}
+              </div>
+            </span>
+          `;
+        })
+        .join('');
+    };
+  
+    // Generate provider HTML dynamically.
+    const providersHTML = providers
+      .map(({ ds, name, settings, hiddenOn, hidden}) => {
+        // Conditionally hide providers for TV.
+        const styleAttr = (mediaType === `${hiddenOn}` || hidden === 'true') ? "style='display:none'" : "";
+        const settingsHTML = generateSettingsHTML(settings, ds);
+        return `
+          <div class="provider" ${styleAttr}>
+            <p class="provider-name" data-source="${ds}">${name}</p>
+            ${settingsHTML}
           </div>
-          <div class="player-toolbar">
-            <div class="provider-menu">
-              <button class="provider-change">
-                <i class="fa-solid fa-server"></i>
-              </button>
-              <div class="providers">
-                <div class="provider">
-                  <p class="provider-name" data-source="1">Vidlink</p>
-                </div>
-                <div class="provider">                
-                  <p class="provider-name" data-source="2">VidPlay</p>
-                  <span class="provider-settings">
-                    <p class="version">v3</p>
-                    <div class="switch-buttons">
-                      <button class="switch" data-version="2"></button>
-                      <button class="switch active" data-version="3"></button>
-                    </div>
-                  </span>
-                </div>
-                <div class="provider">                
-                  <p class="provider-name" data-source="3">Vidsrc</p>
-                </div>
-                <div class="provider"> 
-                  <p class="provider-name" data-source="4">Whvx</p>
-                </div>
-                <div class="provider" ${mediaType === 'tv' ? `style='display:none'` : ''}> 
-                  <p class="provider-name" data-source="5">Videasy</p>
-                </div>
-                <div class="provider"> 
-                  <p class="provider-name" data-source="6">111movies</p>
-                </div>
-                <div class="provider"> 
-                  <p class="provider-name" data-source="7">Primewire</p>
-                </div>
-                <div class="provider"> 
-                  <p class="provider-name" data-source="8">Multiembed</p>
-                </div> 
-                <div class="provider"> 
-                  <p class="provider-name" data-source="9">AutoEmbed(Multi)</p>
-                </div>
-                <div class="provider"> 
-                  <p class="provider-name" data-source="10">VidSu</p>
+        `;
+      })
+      .join('');
+  
+    return `
+      <div class="watch-page">
+        <div class="player-container">
+          <div class="player">
+            <!-- Placeholder until iframe loads -->
+            <div class="loading">Loading player...</div>
+            <div class="iframe-container"></div>
+            <div class="player-toolbar">
+              <div class="provider-menu">
+                <button class="provider-change">
+                  <i class="fa-solid fa-server"></i>
+                </button>
+                <div class="providers">
+                  ${providersHTML}
                 </div>
               </div>
-            </div>
-            <div class="media-download">
-              <button class="download">Download</button>
-              <div class="get-dwnload">
+              <div class="media-download">
+                <button class="download">Download</button>
+                <div class="get-dwnload"></div>
               </div>
-            </div>
-            <div class="go-fullscreen">
-              <button class="iframefullscreen" title="Go fullscreen">
-                <i class="fa-solid fa-up-right-and-down-left-from-center"></i>
-              </button>
+              <div class="go-fullscreen">
+                <button class="iframefullscreen" title="Go fullscreen">
+                  <i class="fa-solid fa-up-right-and-down-left-from-center"></i>
+                </button>
+              </div>
             </div>
           </div>
         </div>
+        <div class="now-playing"></div>
+        <div class="player-episodes"></div>
       </div>
-      <div class="now-playing">
-      </div>
-      <div class="player-episodes">
-      </div>
-    </div>
-  `;
+    `;
+  };
 
-  //display metadata on watch page
-  fetchMetaData(mediaType, id).then(({ data }) => {
-    
-    const name = data.title ?? data.name
+  document.querySelector("#main-content").innerHTML = buildWatchPage()
 
-    const title = `${mediaType === "movie" ? name : `S${season}:E${episode} ${name}`} - PixelStream`;
-    const info = `<h2>${name}</h2> ${mediaType === "movie" ? ""
-      : `<h4>S${season}:E${episode} ${tvData?.epname}</h4>`}`;
+  const {data} = await fetchMetaData(mediaType, id)
+  const name = data.title ?? data.name
 
-    document.querySelector("title").innerText = title;
-    document.querySelector(".now-playing").innerHTML = info;
-    
-    history.replaceState('','',`/watch/${mediaType}/${id}/${name}${mediaType === 'tv' ? `/${season}/${episode}` : ''}`)
+  const title = `${mediaType === "movie" 
+    ? `${name} - PixelStream`
+    : `S${season}:E${episode} ${name}`} - PixelStream`;
+  const info = `<h2>${name}</h2> ${mediaType === "tv" 
+    ? `<h4>S${season}:E${episode} ${tvData?.epname}</h4>`
+    : "" }`;
+
+  document.querySelector("title").innerText = title;
+  document.querySelector(".now-playing").innerHTML = info;
+
+  history.replaceState('','',`/watch/${mediaType}/${id}/${name}${mediaType === 'tv' ? `/${season}/${episode}` : ''}`)
   
-    if (mediaType == 'tv') {
-      const sno = season;
-      const eno = episode;
-      tvContent(data, sno, eno, ref = "player");
-    }
-  });
+  if (mediaType == 'tv') {
+    await tvContent(data, season, episode, ref = "player");
+    ['click','keydown'].forEach(eventType => {
+      document.removeEventListener(eventType, watchEventListeners)  
+      document.addEventListener(eventType, watchEventListeners)
+    });
+  }
 
-  // set default source and load Iframe
   let source = getLoggedSource(id) || 1;
   loadSources(source, mediaType, id, season, episode);
 
@@ -118,43 +159,82 @@ function loadWatchPage(mediaType, name = null, id, tvData = null) {
     item.addEventListener('click', (e) => {
       const provider = item.querySelector('.provider-name')
       const lastSource = provider.classList.contains('selected');
-      const settingsChange = e.target.closest('.provider-settings > .switch-buttons')
+      const settingsChanged = !!e.target.closest('.provider-settings > .switch-buttons')
       source = Number(provider.getAttribute('data-source'));
       let settings = getProviderSettings(item) || [ null ]
-      if (settingsChange) settings = setProviderSettings(item);
-      console.log(source, settings)
-      if (!lastSource || settingsChange) loadSources(source, mediaType, id, currentSeason, currentEpisode, settings);
+      if (settingsChanged) settings = setProviderSettings(item);
+      if (!lastSource || settingsChanged) {
+        loadSources(source, mediaType, id, currentSeason, currentEpisode, settings);
+      }
     });
   });
+}
 
-  // load utils
-  cropToFit();
+async function animeEpisodeCounter(metadata, tvData) {
+  //console.log('counting anime ep no.')
+  if (document.querySelectorAll('.episode')[0]?.dataset.id > Number(tvData.eno)) return tvData.eno
 
-  if ( mediaType === "movie" ) return;
+  let epCount = 0
+  const { sno , eno } = tvData
+  if (!metadata.season) return epCount
+  metadata?.seasons.forEach(season => {
+    //console.log(season.season_number, Number(sno), Number(eno) )
+    if ( season.season_number === 0 || season.season_number > Number(sno) ) return
+    if ( season.season_number === Number(sno)) {
+      epCount += Number(eno)
+    } else {
+      epCount += season.episode_count
+    }
+  })
 
-  ['click','keydown'].forEach(eventType => {
-    document.removeEventListener(eventType, watchEventListeners)  
-    document.addEventListener(eventType, watchEventListeners)
+  return epCount
+}
+
+async function resolveSource(source,mediaType,id, tvData ) {
+  //console.log('resolving source')
+  if (source === 100) {
+    const { data, ep } = await animeResolver(mediaType,id, tvData);
+    console.log('AniID: ',data.id);
+    return { ID : data.id, ep };
+  }
+  return { ID : id };
+}
+
+async function animeResolver(mediaType,id, tvData) {
+  //console.log('fetching ani list id ')
+  const { data: metadata}  = await fetchMetaData(mediaType,id)
+  const ep = await animeEpisodeCounter(metadata, tvData)
+  const title = metadata.original_name || metadata.original_title || metadata.name || metadata.title
+  //console.log(title)
+  const query = `
+    query {
+      Media(search: "${title}", type: ANIME) {
+        id
+        idMal
+        title {
+          romaji
+          english
+        }
+      }
+    }
+  `;
+  
+  const response = await fetch("https://graphql.anilist.co", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ query }),
   });
+
+  const data = await response.json();
+  return { data : data.data.Media , ep}
 }
 
-function setProviderSettings(item) {
-  item.querySelectorAll('.switch').forEach(btn => btn.classList.toggle('active'));
-  return getProviderSettings(item)
-}
-
-function getProviderSettings(item) {
-  const btn = item.querySelector('.switch.active')
-  const settings = btn?.dataset
-  if (!settings) return
-  item.querySelector('.version').innerText = `v${settings.version}`
-  return settings
-}
-
-// Sources
-function loadSources(source, mediaType, id, season = null, episode = null, settings = [ null ]) {
+async function loadSources(source, mediaType, id, season = null, episode = null, settings = [ null ], ) {
   loc();
-  const loadIframe = getSourceIframe(source, mediaType, id, season, episode, settings)
+  //console.log('loading source ifram')
+  const loadIframe = await getSourceIframe(source, mediaType, id, season, episode, settings)
   // indicicate loading...
   document.querySelector(".loading").style.display = "flex";
   document.querySelector(".iframe-container").innerHTML = loadIframe;
@@ -197,13 +277,42 @@ function loadSources(source, mediaType, id, season = null, episode = null, setti
     });
 }
 
-function getSourceIframe(source, mediaType, id, season = null, episode = null, settings = [ null ]) {
+function setProviderSettings(item) {
+  item.querySelectorAll('.switch').forEach(btn =>{
+    btn.classList.toggle('active');
+  })
+  const label = item.querySelector(".type")
+  const button = item.querySelector(".switch-buttons")
+  const status = label.dataset.status
+  label.innerText = `${button.dataset[status === 'true' ? 'inactive' : 'active']}`
+  label.setAttribute('data-status', `${status === 'true' ? '' : 'true'}` )
+  return getProviderSettings(item)
+}
+
+function getProviderSettings(item) {
+  const btn = item.querySelector('.switch.active')
+  if (!btn) return
+  const { type }  = btn.dataset
+  const settings = {[type]: btn.dataset[type]}
+  //console.log(settings[type])
+  if (!settings) return
+  return settings
+}
+
+async function getSourceIframe(source, mediaType, id, season = null, episode = null, settings = [ null ]) {
   let src = "";
-  const urlPath = `${mediaType}/${id}${season && episode ? `/${season}/${episode}` : ''}`
+  //console.log('generating source iframe')
   
-  const { version } = settings ? settings : [ null ];
+  const tvData = { sno: season, eno: episode}
+  const { ID : ID , ep } = await resolveSource(source,mediaType,id,tvData)
+  const urlPath = `${mediaType}/${ID}${season && episode ? `/${season}/${episode}` : ''}`
+
+  const { version, format } = settings ? settings : [ null ];
 
   switch (source) {
+    case 100:
+      src = `https://vidsrc.icu/embed/anime/${ID}/${ep}/${format || '1'}`
+      break;
     case 1:
       src = `https://vidlink.pro/${urlPath}?poster=false`;
       break;
@@ -223,10 +332,10 @@ function getSourceIframe(source, mediaType, id, season = null, episode = null, s
       src = `https://111movies.com/${urlPath}`;
       break;
     case 7:
-      src = `https://primewire.tf/embed/${mediaType}?tmdb=${id}${season && episode ? `&season=${season}&episode=${episode}` : ''}`;
+      src = `https://primewire.tf/embed/${mediaType}?tmdb=${ID}${season && episode ? `&season=${season}&episode=${episode}` : ''}`;
       break;
     case 8:
-      src = `https://multiembed.mov/?video_id=${id}&tmdb=1${season && episode ? `&s=${season}&e=${episode}` : ''}`;
+      src = `https://multiembed.mov/?video_id=${ID}&tmdb=1${season && episode ? `&s=${season}&e=${episode}` : ''}`;
       break;
     case 9:
       src = `https://hin.autoembed.cc/${urlPath}`;
@@ -238,8 +347,6 @@ function getSourceIframe(source, mediaType, id, season = null, episode = null, s
       console.error("Invalid source selected");
       return;
   }
-
-  //  referrerpolicy="origin"
 
   const iframeHTML = `
     <button class="iframe-exit">
@@ -261,11 +368,13 @@ function getSourceIframe(source, mediaType, id, season = null, episode = null, s
 }
 
 function getLoggedSource(id) {
+  //console.log('getting logged source id')
   return Number(localStorage.getItem(id))
 }
 
 function showIframe(iframe) {
-  //console.log(iframe)
+  //console.log('source iframe is loaded')
   iframe.style.display = "block";
   document.querySelector(".loading").style.display = "none";
+  cropToFit()
 }
