@@ -798,7 +798,7 @@ function watchEventListeners(event, data) {
       const mediaType = "tv";
 
       const { name, id, season, episode, epname } = sanitizedData;
-      console.log( id, season, episode)
+      //console.log( id, season, episode)
       //sourceValidator(mediaType, id, season, episode)
 
       const title = `${mediaType === "movie" ? name : `S${season}:E${episode} ${name}`}`;
