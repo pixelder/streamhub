@@ -632,17 +632,18 @@ function initializeModalListeners(mediaType, data, modalContent, details) {
 
 async function tvContent(data, sno, eno, ref) {
   const id = data.id;
+  const backdrop = data.backdrop_path
   const seasons = [...data.seasons].reverse();
   const containerClass = ref === "modal" ? "episode-wrap" : "episode-player";
   const season = sno || data.number_of_seasons
   const { data: seasonData } = await fetchMetaData('tv', id, season);
-
+  // console.log(seasonData)
   const generateEpisodesHTML = (episodes, season) => {
     let HTML = ''
     episodes.map(episode => {
       const IMAGE = episode.still_path
         ? IMAGE_URL + episode.still_path
-        : 'https://placehold.co/500x281?text=No+Image+Available';
+        : backdrop ? IMAGE_URL + backdrop : 'https://placehold.co/500x281?text=No+Image+Available';
       HTML += `
         <div id="${episode.episode_number}" class="episode episode-width" 
           data-name="${data.name}" data-id="${id}" 
@@ -686,7 +687,9 @@ async function tvContent(data, sno, eno, ref) {
   if (ref === "modal") {
     document.querySelector(".modal-media")?.insertAdjacentHTML('afterend', tvInfo);
   } else {
-    document.querySelector('.now-playing > h4').innerText = `S${sno}:E${eno} ${seasonData.episodes[eno - 1]?.name || ""}`;
+    const epName = seasonData.episodes.find(episode => episode.episode_number === Number(eno))?.name
+    const title = `S${sno}:E${eno} ${epName || ""}`
+    document.querySelector('.now-playing > h4').innerText = title;
 
     document.querySelector(".player-episodes").innerHTML = tvInfo;
     const episodeContainer = document.getElementById('episode-container')
@@ -795,7 +798,7 @@ function watchEventListeners(event, data) {
       const mediaType = "tv";
 
       const { name, id, season, episode, epname } = sanitizedData;
-      //console.log( id, season, episode)
+      console.log( id, season, episode)
       //sourceValidator(mediaType, id, season, episode)
 
       const title = `${mediaType === "movie" ? name : `S${season}:E${episode} ${name}`}`;
@@ -827,9 +830,17 @@ function watchEventListeners(event, data) {
     if (bookmark) {
       const { mediaType, id, sno, eno, index } = bookmark.dataset;
       event.preventDefault()
+      const manageBookmark = (mediaType, id) => {
+        document.querySelectorAll('.grid-item').forEach(item => {
+          if (item.dataset.id === id && item.dataset.mediaType === mediaType) {
+            item.querySelector('.grid-options').classList.toggle('open')
+          }
+        })
+      }
       const checkbox = bookmark.querySelector("input[type='checkbox']")
       checkbox.checked = !checkbox.checked
       toggleBookmark('bookmarks', id, mediaType, sno, eno, index);
+      manageBookmark(mediaType,id)
       console.log('toggling bookmark')
       event.stopPropagation()
     }
@@ -1035,6 +1046,7 @@ function shareItem(mediaType, id, name) {
 
 
 function cropToFit() {
+  console.log('setting up crop to fit functionality')
   const iframeFullscreen = document.querySelector(".iframefullscreen");
   const iframeExit = document.querySelector(".iframe-exit");
   const iframeElement = document.querySelector(".iframe-container");
