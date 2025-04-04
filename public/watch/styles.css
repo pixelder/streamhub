@@ -300,7 +300,7 @@ iframe.zoom {
   align-items: center;
   justify-content: space-between;
   margin: 0.25rem;
-  .version {
+  .type {
     font-size: inherit;
     margin-right: 0.25rem;
   }
