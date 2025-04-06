@@ -31,14 +31,14 @@
     scroll-snap-align: start;
   }
 
-  .episode:hover, .episode:has(.episode-items img:focus-visible) {
-    .episode-items img {
+  .episode:hover, .episode:has(.episode-items .img-container:focus-visible) {
+    .episode-items .img-container {
       scale: 0.97;
     }
   }
 
   .episode.current {
-    img {
+    .img-container {
       border: 1px solid var(--color1);
     }
 
@@ -76,7 +76,7 @@
     transform: scale(0.7);
   }
 
-  .episode-items img {
+  .episode-items .img-container {
     width: 100%;
     border-radius: var(--border-radius1);
     border: 1px solid var(--color3);
@@ -85,7 +85,7 @@
     transition: scale 0.2s ease-in-out;
   }
 
-  .episode-items img:focus-visible {
+  .episode-items .img-container:focus-visible {
     outline: 2px inset var(--font-color1);
   }
 
@@ -98,6 +98,10 @@
  .episode-items p {
     all: unset;
     display: none;
+  }
+
+  .episode-info {
+    margin-top: 8px;
   }
 
  .episode-overview {
@@ -326,12 +330,12 @@ iframe.zoom {
 .provider-menu:has(.provider-change:focus-within) {
 
   .providers {
-    opacity: 1;
+    opacity: 1 !important;
     outline: 1px solid var(--color2);
     max-height: 1000px;
 
     .provider {
-      opacity: 1;
+      opacity: 1 !important;
     }
 
     .provider:hover,

@@ -26,6 +26,10 @@
       font-size: 0.75rem;
       line-height: 12px;
     }
+
+    .episode-info {
+      margin-top: 6px;
+    }
   }
 
   .watch-page {
