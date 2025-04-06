@@ -29,21 +29,30 @@ function fixLog() {
 }
 
 // Modified logToLocalStorage to assign a unique index to each log entry
-async function logToLocalStorage(logType, id, mediaType, sno = null, eno = null) {
-  let existingLogs = getLogData(logType);
-
+async function logToLocalStorage(logType, id, mediaType, sno = null, eno = null, progress = null) {
+  console.log('logging', logType, id, mediaType, sno, eno, progress)
   const newLog = {
     id: Number(id),
     mediaType,
+    progress: progress,
     index: Date.now(),
     data: { sno: String(sno), eno: String(eno) }
   };
 
   if (logType === 'history') {
-    existingLogs.push(newLog);
-    localStorage.setItem(logType, JSON.stringify(existingLogs));
+    const data = getLogData('lastStored')
+    if (logExists('lastStored', id, mediaType, sno, eno)) {
+      removeFromLocalStorage('history', Number(id), mediaType, sno, eno, data[0].index)
+    }
+    let historyLogs = getLogData(logType);
+    historyLogs.push(newLog);
+    localStorage.setItem(logType, JSON.stringify(historyLogs));
+    localStorage.setItem('lastStored', JSON.stringify([newLog]))
+
     return;
   }
+
+  let existingLogs = getLogData(logType);
 
   if (logExists(logType, id, mediaType)) {
     const logs = existingLogs.find(log =>
@@ -62,6 +71,7 @@ async function logToLocalStorage(logType, id, mediaType, sno = null, eno = null)
 
 
 async function removeFromLocalStorage(logType, id, mediaType, sno = null, eno = null, index = null) {
+  console.log('removing', logType, index)
   const logs = getLogData(logType);
   const updatedLogs = logs.filter(log => {
     const isSameLog = Number(log.id) === Number(id) &&
@@ -76,10 +86,19 @@ async function removeFromLocalStorage(logType, id, mediaType, sno = null, eno = 
 }
 
 
-function logExists(logType, id, mediaType) {
+function logExists(logType, id, mediaType, season = null, episode = null, progress = null) {
   const logs = getLogData(logType);
-  return logs.some(log => Number(log.id) === Number(id) && log.mediaType === mediaType);
+  return logs.some(log => {
+    const idMatch = Number(log.id) === Number(id);
+    const typeMatch = log.mediaType === mediaType;
+
+    const seasonMatch = season === null || String(log.data.sno) === String(season);
+    const episodeMatch = episode === null || String(log.data.eno) === String(episode);
+    const progressMatch = progress === null || Number(log.progress) === Number(progress)
+    return idMatch && typeMatch && seasonMatch && episodeMatch && progressMatch;
+  });
 }
+
 
 async function toggleBookmark(logType, id, mediaType, sno = null, eno = null, index = null) {
   let temp = contWatching;
@@ -92,9 +111,9 @@ async function toggleBookmark(logType, id, mediaType, sno = null, eno = null, in
   contWatching = temp;
 }
 
-Array.prototype.sortDateDesc = function(desc = null) {
+Array.prototype.sortDateDesc = function (desc = null) {
   const n = desc ? (-1) : 1;
-  return this.sort((a,b) => (new Date(b.index) - new Date(a.index)) * n);
+  return this.sort((a, b) => (new Date(b.index) - new Date(a.index)) * n);
 }
 
 async function fetchHistoryItems(section, sectionId, items) {
@@ -142,7 +161,7 @@ async function fetchHistoryItems(section, sectionId, items) {
       newElement.dataset.index = index;
       return newElement;
     } catch (error) {
-      const msg = `Error fetching data for item ID ${id} : ${error}`
+      const msg = `Error fetching data for item ID ${id} for ${sectionId} : ${error}`
       notifyAlert(msg)
       return null;
     }
@@ -150,7 +169,7 @@ async function fetchHistoryItems(section, sectionId, items) {
 
   // Append elements in the original sorted order
   results.forEach(result => {
-    if(result.status === 'fulfilled' && result.value !== null) {
+    if (result.status === 'fulfilled' && result.value !== null) {
       fragment.appendChild(result.value);
     }
   });
@@ -171,8 +190,10 @@ function renderLogItems(data, item, tvData) {
   const [id, mediaType] = [item.id, item.mediaType];
   const index = item.index || null;
   const [sno, eno] = tvData ? [item.data.sno, item.data.eno] : ['', ''];
-  const epData = tvData ? tvData?.episodes[eno - 1] : '';
-
+  const epData = tvData ? tvData?.episodes.find(ep => ep.episode_number === Number(eno)) : '';
+  const progress = Number(item.progress) || 0;
+  //console.log()
+  
   const image = !tvData
     ? data.backdrop_path
       ? (IMAGE_URL + data.backdrop_path)
@@ -221,6 +242,7 @@ function renderLogItems(data, item, tvData) {
                 ${rating}
               </p>
             </span>
+            ${watchProgress(progress)}
           </div>
         </div>
       </div>
@@ -231,23 +253,23 @@ function renderLogItems(data, item, tvData) {
 function loadUserContent(sectionId, logType) {
   const section = document.getElementById(sectionId);
   const container = section?.querySelector('.grid-container')
-  const tvData = getLogData(logType);
+  const logData = getLogData(logType);
   console.log(`loading user content for ${sectionId}`)
   if (!section) return
 
-  if (tvData.length > 0) {
+  if (logData.length > 0) {
     if (sectionId === 'continue-watching') {
       contWatching = true;
       section.style.display = "flex";
     }
-    fetchHistoryItems(section, sectionId, tvData);
+    fetchHistoryItems(section, sectionId, logData);
   } else {
     if (sectionId === 'continue-watching') {
       section.style.display = "none"; // Hide section if history is empty
       contWatching = false;
     }
     container.classList.add('empty')
-    fetchHistoryItems(section, sectionId, tvData);
+    fetchHistoryItems(section, sectionId, logData);
   }
   enableHorizontalWheelScroll(container, 2)
   setupScrollEdgeMask(container)
