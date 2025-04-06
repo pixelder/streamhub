@@ -272,7 +272,7 @@ function loadUserContent(sectionId, logType) {
     container.classList.add('empty')
     fetchHistoryItems(section, sectionId, logData);
   }
-  enableHorizontalWheelScroll(container, 2)
+  enableHorizontalWheelScroll(container, 5)
   setupScrollEdgeMask(container)
 }
 

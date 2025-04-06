@@ -267,7 +267,7 @@
 
   .grid-item img {
     border-radius: var(--border-radius2);
-    aspect-ratio: 1 / 1.35;
+    aspect-ratio: 1 / 1.38;
     object-fit: cover;
     width: 100%;
     font-size: 14px;
