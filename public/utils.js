@@ -98,11 +98,17 @@ function populateSection(sectionId, items) {
 }
 
 function renderGridItems(items) {
+  let logs = getLogData('history');
   return items
     .map(item => {
       const id = item.id;
       const mediaType = item.media_type;
       const bookmark = logExists('bookmarks', id, mediaType);
+      const watched = logExists('history', id, mediaType, null, null, 100)
+      const LOG = logs && !watched ? logs.filter(log => {
+        return Number(log.id) === Number(id) && log.mediaType === 'movie'
+      }) : '';
+      const progress = watched ? 100 : Number(LOG[0]?.progress) || 0;
       const title = item.title || item.name;
       const rating = truncate(item.vote_average, 1);
       const year = extractYear(item.release_date || item.first_air_date);
@@ -111,7 +117,7 @@ function renderGridItems(items) {
         : 'https://placehold.co/440x661/383852/ccc?text=No+Image';
       return `
          <div tabindex="0" class="grid-item" id="grid-item" data-id="${item.id}" data-media-type="${mediaType}">
-           <div>
+           <div class="img-container">
             <div class="grid-actions">
               <div class="grid-options ${bookmark ? 'open' : ''}">
                 <div tabindex="0" class="options-buttons">
@@ -120,7 +126,8 @@ function renderGridItems(items) {
                 </div>
               </div>
             </div>
-             <img src="${image}" loading="lazy" alt="${title}">
+            <img src="${image}" loading="lazy" alt="${title}">
+            ${watchProgress(progress)}
            </div>
            <div class="grid-item-info">
              <p>${capString(title, 40)}</p>
@@ -630,6 +637,42 @@ function initializeModalListeners(mediaType, data, modalContent, details) {
   details.addEventListener('scroll', backdropHandler);
 }
 
+function watchProgress(progress) {
+  if (progress < 5) return ''
+  return `
+    <div class="progress-bar">
+      <div class="progress" style="width:${progress}%;"></div>
+    </div>
+  `
+}
+
+function updateWatchProgress(type, ID, MEDEATYPE, sno, eno) {
+  if (type === 'watched') {
+    document.querySelectorAll('.episode').forEach(item => {
+      const { id, mediaType, season, episode } = item.dataset
+      if (Number(id) === Number(id) && mediaType === MEDEATYPE
+        && Number(season) === Number(sno) && Number(episode) === Number(eno)
+      ) {
+        item.querySelector('.img-container').innerHTML += watchProgress(100)
+      }
+    })
+  }
+}
+
+async function markItemAs(type, item) {
+  const { id, mediaType, sno, eno } = item.dataset
+  if (type === 'watched') {
+    logToLocalStorage('history', Number(id), mediaType, sno, eno, 100)
+    removeFromLocalStorage('watching', Number(id), mediaType, sno, eno)
+    loadUserContent('continue-watching', 'watching')
+    loadUserContent('history', 'history')
+  }
+  if (type === 'unwatched') {
+    removeFromLocalStorage('history', Number(id), mediaType, sno, eno)
+    logToLocalStorage('watching', Number(id), mediaType, sno, eno, 0)
+  }
+}
+
 async function tvContent(data, sno, eno, ref) {
   const id = data.id;
   const backdrop = data.backdrop_path
@@ -640,16 +683,30 @@ async function tvContent(data, sno, eno, ref) {
   // console.log(seasonData)
   const generateEpisodesHTML = (episodes, season) => {
     let HTML = ''
+    let epCount = 0;
+    let logs = getLogData('history');
     episodes.map(episode => {
+      const epLog = logs ? logs.filter(log => {
+        return Number(log.id) === Number(id) && log.mediaType === 'tv' &&
+          String(log.data.sno) === String(episode.season_number) &&
+          String(log.data.eno) === String(episode.episode_number)
+      }) : '';
+
+      const progress = Number(epLog[0]?.progress) || 0;
+
       const IMAGE = episode.still_path
         ? IMAGE_URL + episode.still_path
         : backdrop ? IMAGE_URL + backdrop : 'https://placehold.co/500x281?text=No+Image+Available';
+      epCount++
       HTML += `
-        <div id="${episode.episode_number}" class="episode episode-width" 
+        <div id="${epCount}" class="episode episode-width" 
           data-name="${data.name}" data-id="${id}" 
           data-season="${season}" data-episode="${episode.episode_number}" data-epname="${episode.name}">
           <div class="episode-items">
-            <img tabindex="0" src="${IMAGE}" loading="lazy" alt="Episode ${episode.episode_number}">
+            <div class="img-container">
+              <img tabindex="0" src="${IMAGE}" loading="lazy" alt="Episode ${episode.episode_number}">
+              ${watchProgress(progress)}
+            </div>
             <div class="episode-info">
               <h3>${episode.episode_number}. ${episode.name}</h3>
               <p>Rated: ${episode.vote_average.toFixed(1)}</p>
@@ -811,7 +868,7 @@ function watchEventListeners(event, data) {
         currentEpisode = episode;
         const source = getLoggedSource(Number(id)) || 1;
 
-        loadSources(source, mediaType, Number(id), Number(season), Number(episode));
+        setUpPlayer(source, mediaType, Number(id), Number(season), Number(episode));
 
         window.history.pushState({}, '', `/watch/${mediaType}/${Number(id)}/${name}${season && episode ? `/${Number(season)}/${Number(episode)}` : ''}`);
         document.querySelector("title").innerText = title;
@@ -840,7 +897,7 @@ function watchEventListeners(event, data) {
       const checkbox = bookmark.querySelector("input[type='checkbox']")
       checkbox.checked = !checkbox.checked
       toggleBookmark('bookmarks', id, mediaType, sno, eno, index);
-      manageBookmark(mediaType,id)
+      manageBookmark(mediaType, id)
       console.log('toggling bookmark')
       event.stopPropagation()
     }
@@ -1042,6 +1099,24 @@ function shareItem(mediaType, id, name) {
       }, 2000);
     }
   });
+}
+
+async function getNextEpisode(id, sno, eno) {
+  const { data: currentSeason } = await fetchMetaData('tv', id, sno)
+  const currentIndex = currentSeason.episodes.findIndex(
+    ep => ep.episode_number === Number(eno)
+  );
+
+  if (currentIndex !== -1 && currentIndex + 1 < currentSeason.episodes.length) {
+    return currentSeason.episodes[currentIndex + 1];
+  }
+
+  const { data: nextSeason } = await fetchMetaData('tv', id, sno + 1)
+  if (nextSeason && nextSeason.episodes && nextSeason.episodes.length > 0) {
+    //console.log(nextSeason.episodes[0].air_date)
+    return nextSeason.episodes[0];
+  }
+  return null;
 }
 
 
