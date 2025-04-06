@@ -190,10 +190,11 @@ function renderLogItems(data, item, tvData) {
   const [id, mediaType] = [item.id, item.mediaType];
   const index = item.index || null;
   const [sno, eno] = tvData ? [item.data.sno, item.data.eno] : ['', ''];
-  const epData = tvData ? tvData?.episodes.find(ep => ep.episode_number === Number(eno)) : '';
+  const epData = tvData ? tvData?.episodes?.find(ep => ep.episode_number === Number(eno)) : '';
   const progress = Number(item.progress) || 0;
-  //console.log()
-  
+  //console.log() 
+  // add fake data to through error then create function to prompt to delete that data
+  // should be done on above function
   const image = !tvData
     ? data.backdrop_path
       ? (IMAGE_URL + data.backdrop_path)
