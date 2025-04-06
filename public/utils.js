@@ -108,7 +108,7 @@ function renderGridItems(items) {
       const LOG = logs && !watched ? logs.filter(log => {
         return Number(log.id) === Number(id) && log.mediaType === 'movie'
       }) : '';
-      const progress = watched ? 100 : Number(LOG[0]?.progress) || 0;
+      const progress = watched ? 100 : Number(LOG.sortDateDesc(false)[0]?.progress) || 0;
       const title = item.title || item.name;
       const rating = truncate(item.vote_average, 1);
       const year = extractYear(item.release_date || item.first_air_date);
@@ -692,7 +692,7 @@ async function tvContent(data, sno, eno, ref) {
           String(log.data.eno) === String(episode.episode_number)
       }) : '';
 
-      const progress = Number(epLog[0]?.progress) || 0;
+      const progress = Number(epLog.sortDateDesc(false)[0]?.progress) || 0;
 
       const IMAGE = episode.still_path
         ? IMAGE_URL + episode.still_path
