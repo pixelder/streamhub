@@ -383,13 +383,9 @@ function setupLogging(id, mediaType) {
 
     wait(taskId, duration)
       .then(() => {
-        logToLocalStorage('watching', Number(id), mediaType, currentSeason, currentEpisode);
-        const data = getLogData('lastStored')
-        console.log(data)
-        if (logExists('lastStored', id, mediaType, currentSeason, currentEpisode)) {
-          removeFromLocalStorage('history', Number(id), mediaType, currentSeason, currentEpisode, data[0].index)
-        }
-        logToLocalStorage('history', Number(id), mediaType, currentSeason, currentEpisode);
+        ['watching', 'history'].forEach(logType => {
+          logToLocalStorage(logType, Number(id), mediaType, currentSeason, currentEpisode, null);
+        })
         localStorage.setItem(id, newSource);
       })
       .catch((err) => {
@@ -403,12 +399,12 @@ function setupLogging(id, mediaType) {
 
   defaultLogWait = setTimeout(() => {
     defLoggingSys(20, id, mediaType)
-  }, 10000)
+  }, 100000)
 
   let logFlag = false;
   setInterval(function () {
     logFlag = true;
-  }, 5000);
+  }, 10000);
 
   const postMsgLogging = (e) => {
     if (e) clearTimeout(defaultLogWait)
@@ -419,10 +415,6 @@ function setupLogging(id, mediaType) {
     if (e.data.data.event !== 'timeupdate') return
     const progress = truncate(100 * (e.data.data.currentTime / e.data.data.duration), 2)
     if (5 < progress && progress < 85) {
-      const data = getLogData('lastStored')
-      if (logExists('lastStored', id, mediaType, currentSeason, currentEpisode)) {
-        removeFromLocalStorage('history', Number(id), mediaType, currentSeason, currentEpisode, data[0].index)
-      }
 
       ['watching', 'history'].forEach(logType => {
         logToLocalStorage(logType, Number(id), mediaType, currentSeason, currentEpisode, progress);
