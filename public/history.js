@@ -71,7 +71,7 @@ async function logToLocalStorage(logType, id, mediaType, sno = null, eno = null,
 
 
 async function removeFromLocalStorage(logType, id, mediaType, sno = null, eno = null, index = null) {
-  console.log('removing', logType, index)
+  console.log('removing', logType, id, mediaType, sno, eno, index)
   const logs = getLogData(logType);
   const updatedLogs = logs.filter(log => {
     const isSameLog = Number(log.id) === Number(id) &&
@@ -91,7 +91,7 @@ function logExists(logType, id, mediaType, season = null, episode = null, progre
   return logs.some(log => {
     const idMatch = Number(log.id) === Number(id);
     const typeMatch = log.mediaType === mediaType;
-
+    //optional params
     const seasonMatch = season === null || String(log.data.sno) === String(season);
     const episodeMatch = episode === null || String(log.data.eno) === String(episode);
     const progressMatch = progress === null || Number(log.progress) === Number(progress)
