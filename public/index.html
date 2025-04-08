@@ -48,7 +48,7 @@
 
     <!-- Body Content -->
     <main id="main-content">
-        <section id="continue-watching" class="user-content" data-type="watching">
+        <section id="continue-watching" class="user-content hr-grid-view expandable" data-type="watching">
             <div class="section-header">
                 <h2>Continue Watching</h2>
                 <div class="select-action">
@@ -72,23 +72,33 @@
                         <i class="fa-solid fa-pencil active"></i>
                         <i class="fa-solid fa-xmark"></i>
                     </button>
+                    <div class="expand-arrow">
+                        <i class="fa-solid fa-chevron-left"></i>
+                    </div>
+                    <div class="close-window">
+                        <i class="fa-solid fa-xmark"></i>
+                    </div>
                 </div>
             </div>
             <div class="grid-container">
             </div>
         </section>
-        <section id="trending-movies">
+        <section id="trending-movies" class="expandable">
             <div class="section-header">
                 <h2>Trending Movies</h2>
                 <div class="actions">
-                    <div class="pagination-buttons">
+                    <div class="expand-arrow"><i class="fa-solid fa-chevron-left"></i></div>
+                    <div class="close-window">
+                        <i class="fa-solid fa-xmark"></i>
+                    </div>
+                    <!-- <div class="pagination-buttons">
                         <button class="prev-page">
                             <i class="fa-solid fa-chevron-left"></i>
                         </button>
                         <button class="next-page">
                             <i class="fa-solid fa-chevron-right"></i>
                         </button>
-                    </div>
+                    </div> -->
                 </div>
             </div>
             <div class="grid-container loading">
@@ -99,18 +109,24 @@
                 </div>
             </div>
         </section>
-        <section id="trending-series">
-            <div class="section-header">
+        <section id="trending-series" class="expandable">
+            <div class="section-header" >
                 <h2>Trending Series</h2>
                 <div class="actions">
-                    <div class="pagination-buttons">
+                    <div class="expand-arrow">
+                        <i class="fa-solid fa-chevron-left"></i>
+                    </div>
+                    <div class="close-window">
+                        <i class="fa-solid fa-xmark"></i>
+                    </div>
+                    <!-- <div class="pagination-buttons">
                         <button class="prev-page">
                             <i class="fa-solid fa-chevron-left"></i>
                         </button>
                         <button class="next-page">
                             <i class="fa-solid fa-chevron-right"></i>
                         </button>
-                    </div>
+                    </div> -->
                 </div>
             </div>
             <div class="grid-container loading">
@@ -121,8 +137,17 @@
                 </div>
             </div>
         </section>
-        <section id="discover-streaming">
-            <h2>Discover what's streaming</h2>
+        <section id="discover-streaming" class="expandable">
+            <div class="section-header" >
+                <h2>Discover what's streaming</h2>
+                <div class="actions">
+                    <div class="expand-arrow"><i class="fa-solid fa-chevron-left"></i></div>
+                    <div class="close-window">
+                        <i class="fa-solid fa-xmark"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="streaming-container">
             <div class="tab-menu">
                 <button class="tab active" data-network="213" data-provider="8">Netflix</button>
                 <button class="tab" data-network="1024" data-provider="2100">Amazon Prime</button>
@@ -136,14 +161,14 @@
                     <button class="media-tab" data-type="tv">TV Shows</button>
                 </div>
                 <div class="actions">
-                    <div class="pagination-buttons">
+                    <!-- <div class="pagination-buttons">
                         <button class="prev-page">
                             <i class="fa-solid fa-chevron-left"></i>
                         </button>
                         <button class="next-page">
                             <i class="fa-solid fa-chevron-right"></i>
                         </button>
-                    </div>
+                    </div> -->
                 </div>
                 <div class="grid-container loading">
                     <div class="filler">
@@ -152,6 +177,8 @@
                         </div>
                     </div>
                 </div>
+            </div>
+
             </div>
         </section>
         <div class="modal-overlay"></div>

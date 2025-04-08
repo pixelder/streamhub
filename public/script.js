@@ -6,11 +6,12 @@ const OPTIONS = 'include_adult=false&include_null_first_air_dates=false&language
 
 let isLoading = false;
 let isBrowsing = false;
+let sectionFetching = false
 let contWatching = false;
 let pageEnd = false;
 
-let pageNumbers = {}; // Track the current page number for each section
-let storedData = {}; // Store data for each section for persistent pagination
+// let pageNumbers = {}; // Track the current page number for each section
+// let storedData = {}; // Store data for each section for persistent pagination
 let isFetching = {}; // Track fetching state per section to avoid multiple fetches
 
 // parameters for discover call
@@ -27,16 +28,22 @@ let currentYear = null
 let selectedCountry = ''
 let selectedLanguage = ''
 
-function loadSections() {
+const sectionURLs = {
+  'trending-movies': `${BASE_URL}/trending/movie/week?api_key=${API_KEY}`,
+  'trending-series': `${BASE_URL}/trending/tv/week?api_key=${API_KEY}`,
+};
 
-  const sections = {
-    'trending-movies': `${BASE_URL}/trending/movie/week?api_key=${API_KEY}`,
-    'trending-series': `${BASE_URL}/trending/tv/week?api_key=${API_KEY}`,
-  };
+function loadSections() {
   
-  Object.entries(sections).forEach(([sectionId, url]) => {
-      fetchContent(sectionId, url);
-    });
+  Object.entries(sectionURLs).forEach(([sectionId, url]) => {
+    fetchContent(sectionId, url).then(() => {
+      document.querySelectorAll(`#${sectionId} .grid-container`)
+        .forEach(container => {
+          enableHorizontalWheelScroll(container,5)
+          setupScrollEdgeMask(container)
+      })
+    })
+  });
 
   discoverStreaming()
 }
@@ -49,7 +56,7 @@ async function loadDiscoverContent(networkId, providerId, mediaType, sectionId) 
     page: currentPage,
     sort_by: `${sortMode}.${sortOrder}`,
     primary_release_year: currentYear,
-    first_air_date: currentYear,
+    first_air_date_year: currentYear,
     with_cast: selectedCast,
     with_people: selectedCast,
     with_companies: selectedCompany,
@@ -63,68 +70,65 @@ async function loadDiscoverContent(networkId, providerId, mediaType, sectionId) 
 
   if (document.getElementById(sectionId)) {
     const url = `${BASE_URL}/discover/${mediaType}?api_key=${API_KEY}&${params}&watch_region=US&${OPTIONS}`;
-    storedData[sectionId] = [];
-    pageNumbers[sectionId] = 1;
+    // storedData[sectionId] = [];
+    // pageNumbers[sectionId] = 1;
     fetchContent(sectionId, url);
   }
 }
 
 function discoverStreaming() {
   loadDiscoverContent( 213, 8, 'movie', 'discover-streaming');
+  const container = document.querySelector('#discover-streaming .grid-container')
+  enableHorizontalWheelScroll(container,5)
+  setupScrollEdgeMask(container)
 
   document.querySelectorAll(".tab-menu .tab").forEach(tab => {
     tab.addEventListener("click", () => {
+      container.scrollTo({ top: 0});
+      currentPage = 1
       document.querySelector(".tab-menu .active").classList.remove("active");
       tab.classList.add("active");
       const mediaType = document.querySelector(".media-switch .active").dataset.type;
-      const networkId = tab.dataset.network;
-      const providerId = tab.dataset.provider;
+      const { network, provider } = tab.dataset
       minVoteCount = 60
-      console.log(mediaType, networkId, providerId);
-      loadDiscoverContent(networkId, providerId, mediaType, 'discover-streaming');
+      console.log(mediaType, network, provider);
+      loadDiscoverContent(network, provider, mediaType, 'discover-streaming');
     });
   });
 
   document.querySelectorAll(".media-tab").forEach(button => {
     button.addEventListener("click", () => {
+      container.scrollTo({ top: 0});
+      currentPage = 1
       document.querySelector(".media-tab.active").classList.remove("active");
       button.classList.add("active");
       const mediaType = button.dataset.type;
-      const networkId = document.querySelector(".tab-menu .active").dataset.network;
-      const providerId = document.querySelector(".tab-menu .active").dataset.provider;
+      const { network, provider } = document.querySelector(".tab-menu .active").dataset;
       minVoteCount = 60
-      console.log(mediaType, networkId, providerId);
-      loadDiscoverContent(networkId, providerId, mediaType, 'discover-streaming');
+      console.log(mediaType, network, provider);
+      loadDiscoverContent(network, provider, mediaType, 'discover-streaming');
     });
   });
 }
 
-
 async function fetchContent(sectionId, url) {
-  const limit = (isMobile() || isBrowsing) ? 20 : 14; // Set limit based on device size
+  //const limit = (isMobile() || isBrowsing) ? 20 : 14; // Set limit based on device size
   //const limit = 20;
-  if (!pageNumbers[sectionId]) pageNumbers[sectionId] = 1; // Initialize page number if not set
+  // if (!pageNumbers[sectionId]) pageNumbers[sectionId] = 1; // Initialize page number if not set
   if (!isFetching[sectionId]) isFetching[sectionId] = false; // Initialize fetching state
 
-  // Prevent multiple fetch requests while one is ongoing
-  if (isFetching[sectionId]) return;
+  if (isFetching[sectionId]) return;  // Prevent multiple fetch requests while one is ongoing
   
   try {
     isFetching[sectionId] = true; // fetching for the sectionID
-
-    const pageUrl = `${url}${ !isBrowsing ? `&page=${pageNumbers[sectionId]}` : ''}`;
-    const response = await fetch(pageUrl);
+    console.log(`fetching page `, currentPage, sectionId)
+    const response = await fetch(url)//pageUrl);
     const data = await response.json();
     const media_type = url.includes('/movie') ? 'movie' : 'tv';
-    storedData[sectionId] = data.results; // Reset stored data for a new page
-    storedData[sectionId].forEach(res => res.media_type = media_type);
-    // console.log(data.results.length)
+    data.results.forEach(res => res.media_type = media_type )
     currentPage = data.page;
 
-    const accumulatedResults = storedData[sectionId].slice(0, limit);
-
-    populateSection(sectionId, accumulatedResults);
-    addPaginationButtons(sectionId, url);
+    populateSection(sectionId, data.results);
 
   } catch (error) {
     console.error(`Error fetching data for ${sectionId}:`, error);
@@ -177,6 +181,7 @@ document.addEventListener('DOMContentLoaded', () => {
         setActiveIcon('home')
         loadSections()
         loadUserContent('continue-watching','watching');
+        setUpExpandableSection()
         fixLog()
         loc();
       }

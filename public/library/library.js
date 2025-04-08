@@ -11,6 +11,7 @@ function loadLibrary() {
   loadUserContent('history', 'history')
   loadUserContent('continue-watching', 'watching')
   loadUserContent('bookmarks','bookmarks')
+  setUpExpandableSection()
 }
 
 window.onload = function() {

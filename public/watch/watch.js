@@ -8,57 +8,59 @@ let currentEpisode = null;
 let lastSource = 1
 let newSource = 1
 
+const providers = [
+  { ds: "1", name: "Vidlink" },
+  {
+    ds: "2", name: "VidPlay",
+    settings: [
+      {
+        type: "version",
+        label: [
+          { active: true, value: "v3" },
+          { active: false, value: "v2" }
+        ],
+        switches: [
+          { value: "2", active: false },
+          { value: "3", active: true }
+        ]
+      }
+    ]
+  },
+  {
+    ds: "100", name: "Anime", hiddenOn: 'movie',
+    settings: [
+      {
+        type: "format",
+        label: [
+          { active: false, value: "SUB" },
+          { active: true, value: "DUB" }
+        ],
+        switches: [
+          { value: "0", active: false },
+          { value: "1", active: true }
+        ]
+      }
+    ]
+  },
+  { ds: "8", name: "VidFast" },
+  { ds: "6", name: "111movies" },
+  { ds: "10", name: "VidSu" },
+  { ds: "3", name: "Vidsrc" },
+  { ds: "4", name: "Whvx", hidden: 'true' },
+  { ds: "5", name: "Videasy", hiddenOn: 'tv' },
+  { ds: "7", name: "Primewire" },
+  { ds: "9", name: "AutoEmbed+" }
+];
+
+
 async function loadWatchPage(mediaType, NAME = null, id, tvData = null) {
   //console.log('loading watchpage')
   const season = tvData?.season;
   const episode = tvData?.episode;
-  currentSeason = season;
+  currentSeason = Number(season);
   currentEpisode = episode;
 
   const buildProviderHTML = () => {
-    const providers = [
-      {
-        ds: "100", name: "Anime", hiddenOn: 'movie',
-        settings: [
-          {
-            type: "format",
-            label: [
-              { active: false, value: "SUB" },
-              { active: true, value: "DUB" }
-            ],
-            switches: [
-              { value: "0", active: false },
-              { value: "1", active: true }
-            ]
-          }
-        ]
-      },
-      { ds: "1", name: "Vidlink" },
-      {
-        ds: "2", name: "VidPlay",
-        settings: [
-          {
-            type: "version",
-            label: [
-              { active: true, value: "v3" },
-              { active: false, value: "v2" }
-            ],
-            switches: [
-              { value: "2", active: false },
-              { value: "3", active: true }
-            ]
-          }
-        ]
-      },
-      { ds: "3", name: "Vidsrc" },
-      { ds: "4", name: "Whvx", hidden: 'true' },
-      { ds: "5", name: "Videasy", hiddenOn: 'tv' },
-      { ds: "6", name: "111movies" },
-      { ds: "7", name: "Primewire" },
-      { ds: "8", name: "VidFast" },
-      { ds: "9", name: "AutoEmbed+" },
-      { ds: "10", name: "VidSu" }
-    ];
 
     const generateSettingsHTML = (settingsArray, ds) => {
       if (!settingsArray || !Array.isArray(settingsArray)) return '';
@@ -142,7 +144,7 @@ async function loadWatchPage(mediaType, NAME = null, id, tvData = null) {
 
   document.querySelector("title").innerText = title;
   document.querySelector(".now-playing").innerHTML = info;
-
+  localStorage.setItem('current-media-title',name);
   history.replaceState('', '', `/watch/${mediaType}/${id}/${name}${mediaType === 'tv' ? `/${season}/${episode}` : ''}`)
 
   if (mediaType == 'tv') {
@@ -325,7 +327,7 @@ async function getSourceIframe(source, mediaType, id, season = null, episode = n
     //   src = `https://multiembed.mov/?video_id=${ID}&tmdb=1${season && episode ? `&s=${season}&e=${episode}` : ''}`;
     //   break;
     case 8:
-      src = `https://vidfast.pro/${urlPath}?poster=false`
+      src = `https://vidfast.pro/${urlPath}?poster=false&nextButton=false`
       break;
     case 9:
       src = `https://hin.autoembed.cc/${urlPath}`;
@@ -406,11 +408,49 @@ function setupLogging(id, mediaType) {
     logFlag = true;
   }, 10000);
 
+  // let updateEpisode = false
+  const updatePageStatus = (progress) => {
+    // const seasonSelector = document.querySelector('#season-dropdown')
+    // seasonSelector.querySelector('option').forEach(item => {
+    //   if (item.value === currentSeason ) {
+    //     item.setAttribute('selected', '')
+    //   } else {
+    //     item.removeAttribute('selected','')
+    //   }
+    // })
+    console.log('updateing', currentSeason, currentEpisode)
+    const currentEp = document.querySelector('.episode.current')
+    updateWatchProgress('playing', currentEp, progress)
+    // if (currentEp.dataset.episode === String(currentEpisode)) return
+    // const episodeSelector = document.querySelectorAll('.episode');
+    // episodeSelector.forEach(item => {
+    //   if (item.dataset.episode === String(currentEpisode)) {
+    //     item.classList.add('current');
+    //     const name = localStorage.getItem('current-media-title')
+    //     history.replaceState('', '', `/watch/tv/${id}/${name}/${currentSeason}/${currentEpisode}`)
+    //     updateEpisode = false;
+    //   } else {
+    //     item.classList.remove('current');
+    //   }
+    // });
+
+  }
+
   const postMsgLogging = (e) => {
+    // console.log(e.data.type, e.data.data)
+    // return
     if (e) clearTimeout(defaultLogWait)
     if (!logFlag || e.data.type === 'MEDIA_DATA') return
     console.log(e.origin)
     logFlag = false
+    // const { season, episode} = e.data.data
+    // console.log(season , currentSeason, episode, currentEpisode)
+    // if ((Number(season) !== Number(currentSeason)) || (Number(episode) !== Number(currentEpisode) )) {
+    //   if (!season || !episode) return
+    //   currentSeason = season
+    //   currentEpisode = episode
+    //   updatePageStatus()
+    // }
 
     if (e.data.data.event !== 'timeupdate') return
     const progress = truncate(100 * (e.data.data.currentTime / e.data.data.duration), 2)
@@ -437,6 +477,7 @@ function setupLogging(id, mediaType) {
         logToLocalStorage('watching', Number(id), 'tv', ep.season_number, ep.episode_number)
       })
     }
+    updatePageStatus(progress)
   }
 
   window.removeEventListener('message', postMsgLogging)

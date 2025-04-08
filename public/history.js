@@ -30,7 +30,7 @@ function fixLog() {
 
 // Modified logToLocalStorage to assign a unique index to each log entry
 async function logToLocalStorage(logType, id, mediaType, sno = null, eno = null, progress = null) {
-  console.log('logging', logType, id, mediaType, sno, eno, progress)
+  //console.log('logging', logType, id, mediaType, sno, eno, progress)
   const newLog = {
     id: Number(id),
     mediaType,
@@ -71,7 +71,7 @@ async function logToLocalStorage(logType, id, mediaType, sno = null, eno = null,
 
 
 async function removeFromLocalStorage(logType, id, mediaType, sno = null, eno = null, index = null) {
-  console.log('removing', logType, id, mediaType, sno, eno, index)
+  //console.log('removing', logType, id, mediaType, sno, eno, index)
   const logs = getLogData(logType);
   const updatedLogs = logs.filter(log => {
     const isSameLog = Number(log.id) === Number(id) &&
@@ -249,7 +249,6 @@ function renderLogItems(data, item, tvData) {
       </div>
   `;
 }
-
 
 function loadUserContent(sectionId, logType) {
   const section = document.getElementById(sectionId);
