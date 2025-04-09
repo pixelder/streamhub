@@ -376,39 +376,28 @@ function showIframe(iframe) {
 }
 
 function setupLogging(id, mediaType) {
-
   let defaultLogWait;
+  let logInterval;
+  let logFlag = false;
+  const taskId = "logHistory";
 
-  const defLoggingSys = (duration, id, mediaType) => {
-    const taskId = "logHistory";
+  const defLoggingSys = (duration) => {
     cancel(taskId);
 
     wait(taskId, duration)
       .then(() => {
         ['watching', 'history'].forEach(logType => {
           logToLocalStorage(logType, Number(id), mediaType, currentSeason, currentEpisode, null);
-        })
+        });
         localStorage.setItem(id, newSource);
       })
       .catch((err) => {
-        if (err.message.includes("Wait canceled")) {
-          console.log("Wait was canceled before completion.");
-        } else {
+        if (!err.message.includes("Wait canceled")) {
           console.error("Error:", err.message);
         }
       });
-  }
+  };
 
-  defaultLogWait = setTimeout(() => {
-    defLoggingSys(20, id, mediaType)
-  }, 100000)
-
-  let logFlag = false;
-  setInterval(function () {
-    logFlag = true;
-  }, 10000);
-
-  // let updateEpisode = false
   const updatePageStatus = (progress) => {
     // const seasonSelector = document.querySelector('#season-dropdown')
     // seasonSelector.querySelector('option').forEach(item => {
@@ -419,8 +408,8 @@ function setupLogging(id, mediaType) {
     //   }
     // })
     console.log('updateing', currentSeason, currentEpisode)
-    const currentEp = document.querySelector('.episode.current')
-    updateWatchProgress('playing', currentEp, progress)
+    const currentEp = document.querySelector('.episode.current');
+    updateWatchProgress('playing', currentEp, progress);
     // if (currentEp.dataset.episode === String(currentEpisode)) return
     // const episodeSelector = document.querySelectorAll('.episode');
     // episodeSelector.forEach(item => {
@@ -434,15 +423,12 @@ function setupLogging(id, mediaType) {
     //   }
     // });
 
-  }
+  };
 
   const postMsgLogging = (e) => {
-    // console.log(e.data.type, e.data.data)
-    // return
-    if (e) clearTimeout(defaultLogWait)
-    if (!logFlag || e.data.type === 'MEDIA_DATA') return
-    console.log(e.origin)
-    logFlag = false
+    if (e) clearTimeout(defaultLogWait);
+    if (!logFlag || e.data.type === 'MEDIA_DATA') return;
+    logFlag = false;
     // const { season, episode} = e.data.data
     // console.log(season , currentSeason, episode, currentEpisode)
     // if ((Number(season) !== Number(currentSeason)) || (Number(episode) !== Number(currentEpisode) )) {
@@ -451,35 +437,62 @@ function setupLogging(id, mediaType) {
     //   currentEpisode = episode
     //   updatePageStatus()
     // }
+    const event = e.data.event || e.data.data?.event;
+    if (event !== 'timeupdate') return;
 
-    if (e.data.data.event !== 'timeupdate') return
-    const progress = truncate(100 * (e.data.data.currentTime / e.data.data.duration), 2)
+    const progress = truncate(100 * (e.data.data.currentTime / e.data.data.duration), 2);
+
     if (5 < progress && progress < 85) {
-
       ['watching', 'history'].forEach(logType => {
         logToLocalStorage(logType, Number(id), mediaType, currentSeason, currentEpisode, progress);
-      })
-
+      });
       localStorage.setItem(id, newSource);
     }
 
-    if (90 < progress) {
-
+    if (progress > 90) {
       logToLocalStorage('history', Number(id), mediaType, currentSeason, currentEpisode, 100);
-
       if (mediaType === 'movie') {
-        removeFromLocalStorage('watching', Number(id), mediaType)
-        return
+        removeFromLocalStorage('watching', Number(id), mediaType);
+      } else {
+        getNextEpisode(id, currentSeason, currentEpisode).then((ep) => {
+          if (ep) {
+            logToLocalStorage('watching', Number(id), 'tv', ep.season_number, ep.episode_number);
+          }
+        });
       }
-      getNextEpisode(id, currentSeason, currentEpisode).then((ep) => {
-        if (!ep) return
-        //log the next episode
-        logToLocalStorage('watching', Number(id), 'tv', ep.season_number, ep.episode_number)
-      })
     }
-    updatePageStatus(progress)
-  }
+    updatePageStatus(progress);
+  };
 
-  window.removeEventListener('message', postMsgLogging)
+  // Cleanup existing listeners/intervals if any
+  cleanupLogging();
+
+  // Start initial log delay
+  defaultLogWait = setTimeout(() => {
+    defLoggingSys(20);
+  }, 100000);
+
+  // Set up logging interval
+  logInterval = setInterval(() => {
+    logFlag = true;
+  }, 10000);
+
+  // Attach listener
   window.addEventListener('message', postMsgLogging);
+
+  // Attach cleanup to global store (or return function to call later)
+  window._loggingCleanup = () => {
+    clearTimeout(defaultLogWait);
+    clearInterval(logInterval);
+    cancelAll();
+    window.removeEventListener('message', postMsgLogging);
+    console.log('🧼 Logging cleaned up.');
+  };
+}
+
+function cleanupLogging() {
+  if (typeof window._loggingCleanup === 'function') {
+    window._loggingCleanup();
+    delete window._loggingCleanup;
+  }
 }

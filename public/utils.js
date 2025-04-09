@@ -105,7 +105,7 @@ function renderGridItems(items) {
       const mediaType = item.media_type;
       const bookmark = logExists('bookmarks', id, mediaType);
       const watched = logExists('history', id, mediaType, null, null, 100)
-      const LOG = logs && !watched ? logs.filter(log => {
+      const LOG = logs && mediaType === 'tv' && !watched ? logs.filter(log => {
         return Number(log.id) === Number(id) && log.mediaType === 'movie'
       }) : '';
       const progress = watched ? 100 : Number(LOG.sortDateDesc(false)[0]?.progress) || 0;
@@ -1191,10 +1191,9 @@ function cropToFit() {
 }
 
 function waitTimeout() {
-  const waitInstances = new Map(); // Map to track each wait instance by unique ID
+  const waitInstances = new Map();
 
   const wait = (id, duration) => {
-    console.log(`wait initiated for ID: ${id}`);
     return new Promise((resolve, reject) => {
       if (waitInstances.has(id)) {
         clearTimeout(waitInstances.get(id).timeoutId);
@@ -1223,16 +1222,18 @@ function waitTimeout() {
       clearTimeout(instance.timeoutId);
       instance.isCanceled = true;
       waitInstances.delete(id);
-      console.log(`Wait canceled for ID: ${id}`);
-    } else {
-      console.log(`No active wait found for ID: ${id}`);
     }
   };
 
-  return { wait, cancel };
+  const cancelAll = () => {
+    waitInstances.forEach(instance => clearTimeout(instance.timeoutId));
+    waitInstances.clear();
+  };
+
+  return { wait, cancel, cancelAll };
 }
 
-const { wait, cancel } = waitTimeout();
+const { wait, cancel, cancelAll } = waitTimeout();
 
 function whenInView(selector, callback) {
   const observer = new IntersectionObserver((entries) => {
