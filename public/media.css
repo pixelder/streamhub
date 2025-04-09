@@ -199,6 +199,15 @@
     border-radius: var(--border-radius1);
   }
 
+  section:has(.delete-button.active) {
+    h2 {
+      display: none;
+    }
+    .select-action {
+      margin-right: auto ;
+    }
+  }
+
   .actions {
     gap: 0.4rem;
   }
@@ -594,7 +603,7 @@
     .grid-item {
       aspect-ratio: 16 / 9 !important;
       max-width: unset;
-      height: 6.4rem;
+      height: 6.6rem;
     }
     .item-container {
       display: flex;
@@ -640,14 +649,6 @@
   }
 
   .user-content.hr-grid-view.expandable.expanded {
-    &:has(.delete-button.active) {
-      h2 {
-        display: none;
-      }
-      .select-action {
-        margin-right: auto ;
-      }
-    }
 
     .grid-container {
       grid-template-columns: repeat(auto-fill, minmax(11rem, 1fr)) !important;

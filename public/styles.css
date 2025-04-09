@@ -379,6 +379,9 @@ section h2 {
   margin-right: auto;
   text-align: left;
   text-wrap: nowrap;
+  overflow: hidden;
+  mask-image: linear-gradient(to right, black 95%, rgba(0, 0, 0, 0.77) 97%, transparent);
+  padding-right: 1rem;
 }
 
 .actions {
@@ -1004,6 +1007,7 @@ body:has(.expandable.expanded) {
   flex-direction: row;
   padding-left: 1.2rem;
   margin: 0rem;
+  overflow-x: auto;
 }
 
 .tab {
