@@ -214,17 +214,17 @@ async function fetchFromURL(url) {
 }
 
 //fetch Metadata
-async function fetchMetaData(mediaType = null, id = null, season = null, credits = null) {
+async function fetchMetaData(mediaType = null, id = null, season = null, credits = null, options = 1) {
 
   try {
     let url;
     const append = `external_ids,videos,credits,images&include_image_language=en`
     if (mediaType === "movie") {
-      url = `${BASE_URL}/movie/${id}?api_key=${API_KEY}&language=en-US&append_to_response=release_dates,${append}`;
+      url = `${BASE_URL}/movie/${id}?api_key=${API_KEY}&language=en-US${options ? `&append_to_response=release_dates,${append}`:''}`;
     } else if (mediaType === "tv") {
-      url = `${BASE_URL}/tv/${id}${season ? `/season/${season}` : ''}?api_key=${API_KEY}&language=en-US&append_to_response=content_ratings,${append}`;
+      url = `${BASE_URL}/tv/${id}${season ? `/season/${season}` : ''}?api_key=${API_KEY}&language=en-US${options ? `&append_to_response=content_ratings,${append}`:''}`;
     } else if (mediaType === "person") {
-      url = `${BASE_URL}/person/${id}?api_key=${API_KEY}&language=en-US&append_to_response=${credits},external_ids`;
+      url = `${BASE_URL}/person/${id}?api_key=${API_KEY}&language=en-US${options ? `&append_to_response=${credits},external_ids`:''}`;
     }
     //console.log(url)
     const response = await fetch(url);
@@ -650,7 +650,7 @@ function watchProgress(progress) {
 }
 
 function updateWatchProgress(type, item, progress) {
-  const { id, mediaType, sno, eno} = item.dataset
+  const { id, mediaType, sno, eno} = item?.dataset
   if (type === 'watched' || type === 'playing') {
     if (mediaType === 'tv') {
       const progressBar = item.querySelector('.progress')
@@ -1025,11 +1025,6 @@ function scrollEpisodeIntoView(eno) {
     behavior: 'smooth',
   });
 
-  //
-  // mask logic
-  const scrollContainer = document.querySelector('.player-styling');
-
-  setupScrollEdgeMask(scrollContainer)
 }
 
 function setupScrollEdgeMask(container) {

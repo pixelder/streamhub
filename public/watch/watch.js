@@ -148,7 +148,11 @@ async function loadWatchPage(mediaType, NAME = null, id, tvData = null) {
   history.replaceState('', '', `/watch/${mediaType}/${id}/${name}${mediaType === 'tv' ? `/${season}/${episode}` : ''}`)
 
   if (mediaType == 'tv') {
-    await tvContent(data, season, episode, ref = "player");
+    tvContent(data, season, episode, ref = "player")
+      .then(() => {
+        const container = document.getElementById('episode-container')
+        setupScrollEdgeMask(container)
+      });
     ['click', 'keydown'].forEach(eventType => {
       document.removeEventListener(eventType, watchEventListeners)
       document.addEventListener(eventType, watchEventListeners)
@@ -461,6 +465,7 @@ function setupLogging(id, mediaType) {
         });
       }
     }
+    if (mediaType === 'movie') return
     updatePageStatus(progress);
   };
 
