@@ -105,10 +105,10 @@ function renderGridItems(items) {
       const mediaType = item.media_type;
       const bookmark = logExists('bookmarks', id, mediaType);
       const watched = logExists('history', id, mediaType, null, null, 100)
-      const LOG = logs && mediaType === 'movie' && !watched ? logs.filter(log => {
+      const LOG = logs && !watched ? logs.filter(log => {
         return Number(log.id) === Number(id) && log.mediaType === 'movie'
       }) : null;
-      const progress = watched ? 100 : Number(LOG?.sortDateDesc(false)[0]?.progress) || 0;
+      const progress = watched && mediaType === 'movie' ? 100 : Number(LOG?.sortDateDesc(false)[0]?.progress) || 0;
       const title = item.title || item.name;
       const rating = truncate(item.vote_average, 1);
       const year = extractYear(item.release_date || item.first_air_date);
