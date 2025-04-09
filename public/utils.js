@@ -105,7 +105,7 @@ function renderGridItems(items) {
       const mediaType = item.media_type;
       const bookmark = logExists('bookmarks', id, mediaType);
       const watched = logExists('history', id, mediaType, null, null, 100)
-      const LOG = logs && mediaType === 'tv' && !watched ? logs.filter(log => {
+      const LOG = logs && mediaType === 'movie' && !watched ? logs.filter(log => {
         return Number(log.id) === Number(id) && log.mediaType === 'movie'
       }) : '';
       const progress = watched ? 100 : Number(LOG.sortDateDesc(false)[0]?.progress) || 0;
