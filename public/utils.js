@@ -112,6 +112,8 @@ function renderGridItems(items) {
       const title = item.title || item.name;
       const rating = truncate(item.vote_average, 1);
       const year = extractYear(item.release_date || item.first_air_date);
+      const releaseDate = new ReleaseDate(item.release_date || item.first_air_date)
+      const upcoming = releaseDate?.isUpcoming()
       const image = item.poster_path
         ? `${IMAGE_URL + item.poster_path}`
         : 'https://placehold.co/440x661/383852/ccc?text=No+Image';
@@ -128,6 +130,7 @@ function renderGridItems(items) {
             </div>
             <img src="${image}" loading="lazy" alt="${title}">
             ${watchProgress(progress)}
+            ${upcoming ? `<div class="upcoming">Upcoming</div>` : ''}
            </div>
            <div class="grid-item-info">
              <p>${capString(title, 40)}</p>
@@ -314,7 +317,7 @@ function displayModal(mediaType, data) {
       .then((season) => {
         const seasonMenu = document.querySelector('.seasons-menu');
         seasonMenu?.insertAdjacentHTML('afterend', setUpModalActions(data, mediaType, season));
-        if (releaseInfo(data) !== null) seasonMenu.insertAdjacentHTML('beforebegin', releaseInfo(data));
+        if (releaseInfo(data, mediaType) !== null) seasonMenu.insertAdjacentHTML('beforebegin', releaseInfo(data, mediaType));
       })
       .catch((e) => console.log(e))
   }
@@ -545,30 +548,95 @@ function pluralResolver(count, str, suf) {
   return `${count} ${str}`
 }
 
-function releaseInfo(data) {
-  const releaseDate = data.release_date || data.seasons[0].air_date;
-  const releaseTimeStamp = new Date(releaseDate).getTime()
-  if (Date.now() > releaseTimeStamp) return null;
+class ReleaseDate {
+  constructor(dateString) {
+    this.releaseDate = new Date(dateString);
+  }
 
-  return `
-    <div class="releasing-on">
-      <p>Releasing on ${convertDate(releaseDate)}. </p>
-    </div>
-  `;
+  isUpcoming() {
+    const now = new Date();
+    return this.releaseDate > now;
+  }
+
+  getCountDown() {
+    const now = new Date();
+    let diff = this.releaseDate - now;
+
+    if (diff <= 0) return "Released";
+    if (diff < 1000 * 60 * 60 * 24) return "Tomorrow";
+
+    const daysTotal = Math.floor(diff / (1000 * 60 * 60 * 24));
+    const months = Math.floor(daysTotal / 30);
+    const days = daysTotal % 30;
+
+    const parts = [];
+    if (months > 0) parts.push(`${months}M`);
+    if (days > 0 || months > 0) parts.push(`${days}D`);
+
+    return parts.join(' ');
+  }
+
+  getFormattedDate(locale = 'en-US', options = { year: 'numeric', month: 'long', day: 'numeric' }) {
+    return new Intl.DateTimeFormat(locale, options).format(this.releaseDate);
+  }
+}
+
+function isFreshRelease(tvData) {
+  if (!tvData || !Array.isArray(tvData.seasons)) return false;
+
+  const today = new Date();
+  const airedSeasons = tvData.seasons.filter(season => {
+    if ( season.season_number === 0 || !season.air_date ) {
+      return false;
+    }
+    const airDate = new Date(season.air_date);
+    return airDate instanceof Date && !isNaN(airDate) && airDate < today;
+  });
+
+  return airedSeasons.length === 0;
+}
+
+function releaseInfo(data, mediaType) {
+  const tvAirDate = data.seasons?.sort((a, b) => (new Date(b.air_date) - new Date(a.air_date)))[0].air_date
+  let releaseDate = new ReleaseDate(data.release_date || tvAirDate);
+  const nextEpisode = new ReleaseDate(data.next_episode_to_air?.air_date)
+  const running = releaseDate.isUpcoming() ? false :  nextEpisode.isUpcoming() ? true: false;
+  releaseDate = running ? nextEpisode : releaseDate ;
+
+  if (!releaseDate.isUpcoming()) return null;
+  // console.log('upcoming')
+  let HTML = ''
+  const string = releaseDate.getCountDown() === 'Tomorrow' ? "Tomorrow" : `on ${releaseDate.getFormattedDate()}`
+  if (mediaType === 'movie') {
+    HTML = `
+      <div class="releasing-on">
+        <p>Releasing ${string}.</p>
+      </div>
+    `;
+  }
+
+  if (mediaType === 'tv') {
+    HTML =  `
+      <div class="releasing-on">
+        <p>${running ? 'Next Episode' : isFreshRelease(data) ? 'Airing' : 'New season'} ${string}.<p>
+      </div>
+    `;
+  }
+  // console.log(mediaType, HTML)
+  return HTML
 }
 
 function insertMovieActions(data, mediaType) {
   const name = data.name || data.title || data.original_title;
   let released = true;
-  if (releaseInfo(data) !== null) released = false
-
+  if (releaseInfo(data, mediaType) !== null) released = false
   const actionHTML = `
     <div class="modal-actions">
       ${released
       ? `<button class="watch-btn" title="watch movie" data-name="${name}" data-id="${data.id}">
           <i class="fa-solid fa-play"></i>Watch
         </button>`
-      : releaseInfo(data)}
+      : releaseInfo(data, mediaType)}
       ${setUpModalActions(data, mediaType)}
       </div>
     </div>
