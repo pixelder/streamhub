@@ -1747,27 +1747,10 @@ function setUpExpandableSection() {
     const section = e.target.closest('.expandable');
     const container = section.querySelector('.grid-container');
     const expanded = section.classList.contains('expanded');
+    const windowBtns = e.target.closest('.close-window, .maximize')
     // const collapsed = section.classList.contains('collapsed')
 
-    if (e.target.closest('.expand-arrow')) {
-      const scroll = localStorage.getItem(`LAST_Y_POSSITION-${section.id}`);
-      if (!scroll) {
-        localStorage.setItem(`LAST_Y_POSSITION-${section.id}`, window.scrollY);
-      }
-      window.scrollTo({ top: scroll, behavior: 'smooth' });
-      section.classList.remove('expanded')
-      section.classList.toggle('collapsed')
-
-      if (!section.classList.contains('user-content')) {
-        container.querySelectorAll('.grid-item').forEach((item, index) => {
-          if (index >= 20) item.remove();
-        });
-      }
-
-      return
-    }
-
-    if (!expanded) {
+    if (windowBtns && !expanded) {
       if ( window.innerWidth < 400 && section.classList.contains('user-content') ) return
       sectionFetching = true;
       currentPage = 1;
@@ -1814,9 +1797,10 @@ function setUpExpandableSection() {
       }
   
       document.getElementById('header').classList.add('hidden');
+      return
     }
   
-    if (expanded) {
+    if (windowBtns && expanded) {
       const handler = scrollHandlers.get(container);
       if (handler) container.removeEventListener("scroll", handler);
   
@@ -1832,6 +1816,25 @@ function setUpExpandableSection() {
         });
       }
       document.getElementById('header').classList.remove('hidden');
+      return
+    }
+
+    if (e.target.closest('.section-header')) {
+      const scroll = localStorage.getItem(`LAST_Y_POSSITION-${section.id}`);
+      if (!scroll) {
+        localStorage.setItem(`LAST_Y_POSSITION-${section.id}`, window.scrollY);
+      }
+      window.scrollTo({ top: scroll, behavior: 'smooth' });
+      section.classList.remove('expanded')
+      section.classList.toggle('collapsed')
+
+      if (!section.classList.contains('user-content')) {
+        container.querySelectorAll('.grid-item').forEach((item, index) => {
+          if (index >= 20) item.remove();
+        });
+      }
+
+      return
     }
   }
 

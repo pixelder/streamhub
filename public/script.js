@@ -137,32 +137,6 @@ async function fetchContent(sectionId, url) {
   }
 }
 
-function addPaginationButtons(sectionId, url) {
-  const prevButton = document.querySelector(`#${sectionId} .prev-page`);
-  const nextButton = document.querySelector(`#${sectionId} .next-page`);
-
-  // Remove previous event listeners to avoid duplication
-  prevButton?.replaceWith(prevButton.cloneNode(true)); // Reset the "previous" button
-  nextButton?.replaceWith(nextButton.cloneNode(true)); // Reset the "next" button
-
-  const updatedPrevButton = document.querySelector(`#${sectionId} .prev-page`);
-  const updatedNextButton = document.querySelector(`#${sectionId} .next-page`);
-
-  // Previous page button functionality
-  updatedPrevButton?.addEventListener('click', () => {
-    if (pageNumbers[sectionId] > 1) {
-      pageNumbers[sectionId]--; // Decrement the page number
-      fetchContent(sectionId, url); // Fetch the previous page
-    }
-  });
-
-  // Next page button functionality
-  updatedNextButton?.addEventListener('click', () => {
-    pageNumbers[sectionId]++; // Increment the page number
-    fetchContent(sectionId, url); // Fetch the next page
-  });
-}
-
 document.addEventListener('DOMContentLoaded', () => {
 
   function handleRouting() {

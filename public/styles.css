@@ -389,7 +389,7 @@ section h2 {
   /* flex-direction: row-reverse; */
   justify-content: flex-end;
   align-items: center;
-  gap: 0.6rem;
+  gap: 8px;
   /* margin-bottom: 0.6rem; */
 }
 
@@ -399,33 +399,30 @@ section:has(.grid-item) .actions {
 
 .actions button {
   font-size: 14px;
-  height: 30px;
-  aspect-ratio: 1 / 1;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  box-sizing: border-box;
-  text-shadow: none;
-  border-radius: var(--border-radius2);
-  border: 1px solid #3838528c;
-  background: var(--color5);
+  /* border: 1px solid #3838528c; */
 }
 
-.actions div {
-  height: 30px;
-  aspect-ratio: 1 / 1;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+
+.actions {
+  button, div {
+    height: 30px;
+    aspect-ratio: 1/1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 4px;
+    background: var(--color5);
+    box-sizing: border-box;
+  }
 }
 
 .close-window {
-  background:#a6192e4d;
-  border-radius: 50%;
+  background:#a6192e4d !important;
+  border-radius: 50% !important;
 }
 
 .close-window:hover {
-  background: var(--error);
+  background: var(--error) !important;
 }
 
 .actions .pagination-buttons {
@@ -485,7 +482,7 @@ section:has(.delete-button.active) .select-action {
   text-wrap: nowrap;
   font-size: 14px;
   border-radius: var(--border-radius2);
-  border: 1px solid #3838528c;
+  /* border: 1px solid #3838528c; */
   background: var(--color5) !important;
   transition: opacity 0.1s, scale 0.1s ease-in-out;
   transition-delay: 0.1s;
@@ -592,6 +589,10 @@ body:has(.expandable.expanded) {
     transform: rotate(90deg);
   }
 
+  .maximize {
+    display: none;
+  }
+
   .close-window {
     display: flex;
   }
@@ -625,12 +626,17 @@ body:has(.expandable.expanded) {
     overflow: initial;
     
     .expand-arrow {
+      display: flex !important;
       visibility: visible !important;
       transform: rotate(0deg);
     }
 
-    .actions {
-      visibility: hidden;
+    .actions,
+    .select-action {
+      button, div {
+        visibility: hidden;
+        display: none;
+      }
     }
   }
 
@@ -652,7 +658,7 @@ body:has(.expandable.expanded) {
   margin: 4px;
   font-size: 14px;
   width: 94%;
-  backdrop-filter: blur(5px) brightness(0.7);
+  backdrop-filter: blur(2px) brightness(0.7);
 }
 
 .grid-container {
@@ -2067,7 +2073,7 @@ body:has(.filter-menu) {
     display: flex;
     flex-direction: column;
     gap: 1.4rem;
-    padding: 0.6rem 1.4rem 0 1.4rem;
+    padding: 0.6rem 1.4rem 1.4rem 1.4rem;
   }
 }
 
@@ -2815,7 +2821,7 @@ option {
   -webkit-box-orient: unset;
   overflow-y: auto;
   height: auto;
-  max-height: 6rem;
+  max-height: 4.2rem;
   mask-image: none !important;
   padding-bottom: 1px !important;
 }
@@ -2864,6 +2870,7 @@ option {
   justify-content: center;
   align-items: center;
   transition: transform 0.2s ease;
+  background: unset !important;
 }
 
 .expanded .expand-arrow {

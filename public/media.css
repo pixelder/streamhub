@@ -212,11 +212,13 @@
     gap: 0.4rem;
   }
 
-  .actions button {
-    height: 26px;
-    font-size: 12px;
-    word-spacing: -1px;
-    border-radius: var(--border-radius1);
+  .actions {
+    button, div {
+      height: 26px;
+      font-size: 14px;
+      /* word-spacing: -1px; */
+      border-radius: var(--border-radius1);
+    }
   }
 
   .actions .pagination-buttons button {
@@ -288,6 +290,11 @@
     justify-content: flex-start;
     padding: 0 0 0rem 0rem !important;
     /* mask-image: unset !important; */
+  }
+
+  .upcoming {
+    font-size: 12px;
+    padding: 2px 4px;
   }
 
   .grid-container.loading {
