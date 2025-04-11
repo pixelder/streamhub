@@ -413,6 +413,7 @@ section:has(.grid-item) .actions {
     border-radius: 4px;
     background: var(--color5);
     box-sizing: border-box;
+    cursor: pointer;
   }
 }
 
@@ -466,6 +467,7 @@ section:has(.grid-item) .actions {
 
 section:has(.delete-button.active) .select-action {
   scale: unset;
+  width: auto;
   opacity: 1;
   transition: opacity 0.2s, scale 0.2s ease-in-out;
   transition-delay: 0.1s;
@@ -476,7 +478,7 @@ section:has(.delete-button.active) .select-action {
   display: flex;
   scale: 0;
   opacity: 0;
-  width: fit-content;
+  width: 0;
   height: 30px;
   align-items: center;
   text-wrap: nowrap;
@@ -519,6 +521,10 @@ body:has(.expandable.expanded) {
 }
 
 .expandable {
+  .section-header {
+    cursor: pointer;
+  }
+
   .grid-container {
     display: flex !important;
     justify-content: flex-start !important;
@@ -543,7 +549,9 @@ body:has(.expandable.expanded) {
 }
 
 .expandable:has(.section-header:active) {
-  background: var(--color4);
+  &:not(:has(.section-header > *:active)) {
+    background: var(--color4);
+  }
 }
 
 .expandable.expanded {
@@ -747,6 +755,7 @@ body:has(.expandable.expanded) {
   overflow: hidden;
   border-radius: var(--border-radius2);
   margin-bottom: 6px;
+  border: 1px solid #38385240;
 
   .progress-bar {
     --margin: 8px;
@@ -774,6 +783,7 @@ body:has(.expandable.expanded) {
   text-align: left;
   padding-top: 0rem;
   height: 2.625rem;
+  gap: 6px;
 }
 
 .grid-item-info p {
@@ -792,9 +802,16 @@ body:has(.expandable.expanded) {
   -webkit-box-orient: vertical;
 }
 
+.nostar {
+  all: unset !important;
+  height: 14px !important;
+  aspect-ratio: 1/1 !important;
+}
+
 .grid-rating {
   display: flex;
   text-align: center;
+  align-items: center;
   gap: 0.1rem;
   color: goldenrod;
   font-weight: bold;
@@ -805,6 +822,7 @@ body:has(.expandable.expanded) {
     line-height: 0.5rem;
     font-size: 0.7rem;
   }
+
 }
 
 .grid-item-info>p:nth-last-child(1) {
@@ -2022,8 +2040,7 @@ body:has(.filter-menu) {
     justify-content: flex-end;
     gap: 0.1rem;
     text-shadow: 0 0 5px #000;
-    width: 80%;
-
+    flex: 1 1;
   }
 
   .history-item-info h3 {
@@ -2038,7 +2055,7 @@ body:has(.filter-menu) {
 
   .grid-rating {
     text-wrap: nowrap;
-    width: 20%;
+    max-width: 20%;
     margin-top: auto;
     justify-content: flex-end;
     align-items: flex-end !important;
@@ -2621,6 +2638,9 @@ body:has(.modal:is([active])) {
   font-weight: 700;
   padding-right: 0.4rem;
   border-right: 1px solid var(--color2);
+  display: flex;
+  align-items: center;
+  gap: inherit;
 }
 
 .ratings-genre p[data-title]:hover:after {

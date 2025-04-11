@@ -116,7 +116,8 @@ function renderGridItems(items) {
       const upcoming = releaseDate?.isUpcoming()
       const image = item.poster_path
         ? `${IMAGE_URL + item.poster_path}`
-        : 'https://placehold.co/440x661/383852/ccc?text=No+Image';
+        : 'assets/images/no-image.png ';
+        //: 'https://placehold.co/440x661/383852/ccc?text=No+Image';
       return `
          <div tabindex="0" class="grid-item" id="grid-item" data-id="${item.id}" data-media-type="${mediaType}">
            <div class="img-container">
@@ -136,8 +137,11 @@ function renderGridItems(items) {
              <p>${capString(title, 40)}</p>
              <span class="grid-rating">
               <p class="rating">
-                <i class="fa-solid fa-star"></i>
-                ${rating}
+                ${rating && !upcoming
+                ? `<i class="fa-solid fa-star"></i>
+                  ${rating}`
+                : `<img class="nostar" src="assets/icons/nostar.svg">`
+                }
               </p>
              </span>
              <p>${year}</p>
@@ -374,6 +378,7 @@ function buildMediaDetailsHTML(data, mediaType, contentLogoHTML) {
   //console.log(companyHTML)
   //console.log(data)
   const { rated } = getCountryCertification(data, mediaType);
+  const rating = truncate(data.vote_average, 1)
 
   const detailsBodyHTML = `
     <div class="trailer-container"></div>
@@ -383,8 +388,13 @@ function buildMediaDetailsHTML(data, mediaType, contentLogoHTML) {
       </div> 
       ${contentLogoHTML}
         <span class="ratings-genre">
-          <i class="fa-solid fa-star"></i>
-          <p data-title="${data.vote_count} votes">${truncate(data.vote_average, 1)}</p>
+          <p data-title="${data.vote_count} votes">
+          ${rating 
+            ? `<i class="fa-solid fa-star"></i>
+              ${rating}`
+            : `<img class="nostar" src="assets/icons/nostar.svg">`
+          }
+          </p>
           <span class="modal-genre">
             ${genresHTML}
           </span>
@@ -776,12 +786,13 @@ async function tvContent(data, sno, eno, ref) {
           String(log.data.sno) === String(episode.season_number) &&
           String(log.data.eno) === String(episode.episode_number)
       }) : '';
-
+      const airDate = new ReleaseDate(episode.air_date)
+      const upcoming = airDate.isUpcoming()
       const progress = Number(epLog.sortDateDesc(false)[0]?.progress) || 0;
-
+      const rating = truncate(episode.vote_average, 1)
       const IMAGE = episode.still_path
         ? IMAGE_URL + episode.still_path
-        : backdrop ? IMAGE_URL + backdrop : 'https://placehold.co/500x281?text=No+Image+Available';
+        : backdrop ? IMAGE_URL + backdrop : 'assets/images/no-image-hr.svg';
       epCount++
       HTML += `
         <div id="${epCount}" class="episode episode-width" 
@@ -794,7 +805,10 @@ async function tvContent(data, sno, eno, ref) {
             </div>
             <div class="episode-info">
               <h3>${episode.episode_number}. ${episode.name}</h3>
-              <p>Rated: ${episode.vote_average.toFixed(1)}</p>
+              <p>${ rating && !upcoming
+                ? `Rated: ${rating}`
+                : `Not yet rated`}
+              </p>
               <p>${convertDate(episode.air_date)}</p>
             </div>
             <div class="synopsis">

@@ -341,7 +341,8 @@
 
   .grid-item-info {
     padding-top: 0rem;
-    height: 2.36rem;
+    height: 2.3rem;
+    gap: 2px;
   }
 
   .grid-item-info p {
@@ -353,6 +354,7 @@
     -webkit-box-orient: vertical;
     overflow: hidden;
     text-overflow: ellipsis;
+    height: fit-content;
   }
 
   .grid-item-info>p:nth-child(1) {
@@ -363,13 +365,20 @@
     margin-bottom: auto;
     order: 1;
   }
-
-
+  
+  .nostar {
+    height: 12px;
+  }
+  
   .grid-rating {
     order: 2;
     padding: unset;
     padding-top: 0.1rem;
     height: 12px;
+
+    .nostar {
+      height: 11px !important;
+    }
   }
 
   .grid-rating .rating {
