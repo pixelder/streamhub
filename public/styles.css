@@ -2053,7 +2053,6 @@ body:has(.filter-menu) {
   .history-item-info p {
     font-weight: 600;
     display: -webkit-box;
-    font-size: inherit;
     line-clamp: 2;
     -webkit-line-clamp: 2;
     /* Limits to 3 lines */
