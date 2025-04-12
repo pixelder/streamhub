@@ -235,7 +235,7 @@ function renderLogItems(data, item, tvData) {
           <div class="grid-item-info">
             <span class="history-item-info">
               <h3>${capString(name, 40)}</h3>
-              ${tvData ? `<p>${capString(info, 40)}</p>` : ""}
+              ${tvData ? `<p>${info}</p>` : ""}
             </span>
             <span class="grid-rating">
               <p class="rating">
