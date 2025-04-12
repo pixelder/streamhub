@@ -937,7 +937,8 @@
   }
 
   .releasing-on {
-    font-size: 14px;
+    font-size: 12px;
+    padding: 2px 4px;
   }
 
   .watch-btn,

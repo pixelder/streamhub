@@ -321,7 +321,7 @@ function displayModal(mediaType, data) {
       .then((season) => {
         const seasonMenu = document.querySelector('.seasons-menu');
         seasonMenu?.insertAdjacentHTML('afterend', setUpModalActions(data, mediaType, season));
-        if (releaseInfo(data, mediaType) !== null) seasonMenu.insertAdjacentHTML('beforebegin', releaseInfo(data, mediaType));
+        // if (releaseInfo(data, mediaType) !== null) seasonMenu.insertAdjacentHTML('beforebegin', releaseInfo(data, mediaType));
       })
       .catch((e) => console.log(e))
   }
@@ -379,6 +379,8 @@ function buildMediaDetailsHTML(data, mediaType, contentLogoHTML) {
   //console.log(data)
   const { rated } = getCountryCertification(data, mediaType);
   const rating = truncate(data.vote_average, 1)
+  let released = true;
+  if (releaseInfo(data, mediaType) !== null) released = false
 
   const detailsBodyHTML = `
     <div class="trailer-container"></div>
@@ -415,6 +417,7 @@ function buildMediaDetailsHTML(data, mediaType, contentLogoHTML) {
       </div>
     </span>
   </div>
+  ${released ? '' : releaseInfo(data, mediaType)}
   `;
   return detailsBodyHTML;
 }
@@ -646,15 +649,15 @@ function insertMovieActions(data, mediaType) {
       ? `<button class="watch-btn" title="watch movie" data-name="${name}" data-id="${data.id}">
           <i class="fa-solid fa-play"></i>Watch
         </button>`
-      : releaseInfo(data, mediaType)}
+      : ''}
       ${setUpModalActions(data, mediaType)}
       </div>
     </div>
   `;
   // Insert action buttons immediately after the modal-media section.
-  const modalMedia = document.querySelector('.modal-media');
-  if (modalMedia) {
-    modalMedia.insertAdjacentHTML('afterend', actionHTML);
+  const details = document.querySelector('#modal-details');
+  if (details) {
+    details.innerHTML += actionHTML
   }
 }
 
@@ -770,9 +773,10 @@ async function markItemAs(type, item) {
 async function tvContent(data, sno, eno, ref) {
   const id = data.id;
   const backdrop = data.backdrop_path
-  const seasons = [...data.seasons].reverse();
+  const seasons = [...data.seasons].sort((a, b) => a.season_number - b.season_number).reverse();
   const containerClass = ref === "modal" ? "episode-wrap" : "episode-player";
   const season = sno || data.number_of_seasons
+  sno = sno ?? -1
   const { data: seasonData } = await fetchMetaData('tv', id, season);
   localStorage.setItem('seasonData', JSON.stringify(seasonData));
   // console.log(seasonData)
@@ -821,8 +825,6 @@ async function tvContent(data, sno, eno, ref) {
     return HTML;
   }
 
-  sno = sno ?? -1
-
   const tvInfo = `
     <div class="tv-actions">
       <div class="seasons-menu">
@@ -841,7 +843,7 @@ async function tvContent(data, sno, eno, ref) {
     </div>`;
 
   if (ref === "modal") {
-    document.querySelector(".modal-media")?.insertAdjacentHTML('afterend', tvInfo);
+    document.querySelector("#modal-details").innerHTML += tvInfo;
   } else {
     const epName = seasonData.episodes.find(episode => episode.episode_number === Number(eno))?.name
     const title = `S${sno}:E${eno} ${epName || ""}`

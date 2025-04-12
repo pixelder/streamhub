@@ -2032,6 +2032,7 @@ body:has(.filter-menu) {
     z-index: 1;
     height: fit-content;
     width: 100%;
+    gap: 0;
   }
 
   .history-item-info {
@@ -2439,7 +2440,13 @@ body:has(.modal:is([active])) {
 }
 
 .releasing-on {
-  width: 100%;
+  width: fit-content;
+  border: 1px dashed green;
+  padding: 4px;
+  /* background: #0080003E; */
+  background: rgba(25, 166, 46, 0.12) ;
+  border-radius: var(--border-radius2);
+  font-size: 14px;
 }
 
 .watch-btn {
