@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Download link generator | Pixelstream</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      font-family: sans-serif;
+      color: lavender;
+      padding: 20px;
+      max-width: 700px;
+      margin: auto;
+      background: #141427;
+    }
+    input, select, button {
+      width: 100%;
+      padding: 8px;
+      margin: 6px 0;
+      background: #191930;
+      color: lavender;
+      border: 1px solid #383852;
+    }
+    pre {
+      background: #191930;
+      padding: 10px;
+      overflow-x: auto;
+    }
+    /* .result-card {
+      background: #1d1d34;
+      padding: 12px;
+      margin-bottom: 10px;
+      border: 1px solid #383852;
+    }
+    .result-card button {
+      margin-top: 6px;
+      background-color: #3a3a5c;
+      cursor: pointer;
+    } */
+
+    .results-table {
+      width: 100%;
+      border: 1px solid #383852;
+      border-radius: 6px;
+      overflow: hidden;
+    }
+    
+    .results-table table {
+      border-collapse: collapse;
+      table-layout: fixed;
+      width: 100%;
+      background: #1c1c30;
+      overflow: hidden;
+    }
+
+    .results-table th, .results-table td {
+      padding: 10px;
+      border-bottom: 1px solid #383852;
+      text-align: left;
+    }
+
+    .results-table tr:nth-last-child(1) td {
+      border-bottom: none;
+    }
+
+    .results-table td {
+      color: #ccc;
+    }
+
+    .results-table th {
+      background: #242448;
+      color: lavender;
+      text-transform: uppercase;
+      font-size: 0.9em;
+      letter-spacing: 1px;
+    }
+
+    .results-table td a button {
+      width: fit-content;
+      aspect-ratio: 1/1;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      background-color: #292955;
+      padding: 6px;
+      cursor: pointer;
+      transition: 0.2s ease;
+    }
+
+    .results-table td a button:hover {
+      background-color: #35357a;
+    }
+
+    .file-cell {
+      width: 100%;
+    }
+
+    .file-name {
+      font-size: 14px;
+      overflow-x: auto;
+      overflow-y: hidden;
+      text-overflow: ellipsis;
+      display: block;
+      max-width: 100%;
+    }
+
+    .file-flags {
+      font-size: 12px;
+      color: #aaa;
+    }
+
+    .action-cell {
+      width: 60px;
+      text-align: right;
+    }
+
+    #status-info {
+      margin-bottom: 10px;
+    }
+
+    .raw-output {
+      margin: 16px 0;
+    }
+  </style>
+</head>
+<body>
+  <h2>Get Download Links</h2>
+
+  <label>Media Type</label>
+  <select id="mediaType" onchange="toggleFields()">
+    <option value="tv">TV</option>
+    <option value="movie">Movie</option>
+  </select>
+
+  <label>Name</label>
+  <input type="text" id="name" placeholder="e.g., Silo or Dune">
+
+  <!-- These fields are initially hidden for 'movie' type -->
+  <div id="tv-input">
+    <label>Season (TV only)</label>
+    <input type="number" id="season" placeholder="e.g., 1">
+
+    <label>Episode (TV only, optional)</label>
+    <input type="number" id="episode" placeholder="e.g., 2">
+  </div>
+
+  <!-- This field is initially hidden for 'tv' type -->
+  <div id="year-input">
+    <label>Year (for movies)</label>
+    <input type="number" id="year" placeholder="e.g., 2021">
+  </div>
+
+
+  <button id="scrape" onclick="scrape()">Generate</button>
+  
+  <h3>Links</h3>
+  <div id="status-info"></div> 
+  <div id="results" class="results-table"></div>
+
+  <details class="raw-output">
+    <summary>Raw Response</summary>
+    <pre id="output"></pre>
+  </details>  
+
+  <script>   
+    function toggleFields() {
+      const mediaType = document.getElementById("mediaType").value;
+      const tvinfo = document.getElementById("tv-input");
+      const yearinfo = document.getElementById("year-input");
+
+      // Show and hide fields based on media type
+      if (mediaType === "tv") {
+        tvinfo.style.display = "block";
+        yearinfo.style.display = "none";
+      } else {
+        tvinfo.style.display = "none";
+        yearinfo.style.display = "block";
+      }
+    }
+
+    // Initialize the fields on page load
+    window.onload = function() {
+      toggleFields(); // Ensure fields are correctly set on initial load
+    };
+    async function scrape() {
+      const btn = document.getElementById("scrape");
+      const output = document.getElementById("output");
+      const resultsDiv = document.getElementById("results");
+      const status = document.getElementById("status-info");
+
+      // Reset the status info and results before starting the fetch process
+      status.innerHTML = ""; 
+      resultsDiv.innerHTML = "";
+
+      // Disable UI elements during loading
+      btn.disabled = true;
+      btn.textContent = "loading links...";
+      status.innerText = "fetching data..."
+      output.textContent = "";
+
+      const payload = {
+        mediaType: document.getElementById("mediaType").value,
+        name: document.getElementById("name").value.trim(),
+        year: document.getElementById("year").value,
+        season: document.getElementById("season").value,
+        episode: document.getElementById("episode").value
+      };
+
+      // Remove any empty fields from the payload
+      for (let key in payload) {
+        if (payload[key] === "" || payload[key] === null) {
+          delete payload[key];
+        }
+      }
+
+      const server = "https://alpha-scraper.onrender.com"
+      //const server = "http://localhost:3000"; // Use your live server in production
+
+      try {
+        const res = await fetch(`${server}/fetch`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        });
+
+        const data = await res.json();
+        output.textContent = JSON.stringify(data, null, 2);
+
+        const files = Array.isArray(data.results) ? data.results : data.result?.available_files || [];
+
+        // Clear previous status info
+        status.innerHTML = "";
+
+        // Check the response status and update the message accordingly
+        if (data.status === 1) {
+          // Show successful result message
+          const infoMessage = document.createElement("div");
+          infoMessage.innerHTML = `Results for ${data.name} ${data.tvinfo ? `- ${data.tvinfo}` : ""}.`;
+          status.appendChild(infoMessage);
+        } else if (data.status === 0) {
+          // Show error message
+          const errorMessage = document.createElement("div");
+          errorMessage.style.color = "orange";
+          errorMessage.textContent = `⚠️ ${data.error} — showing available data instead.`;
+          status.appendChild(errorMessage);
+        }
+
+        // No results found
+        if (files.length === 0) {
+          status.innerHTML = "<p>No results found.</p>";
+          return;
+        }
+
+        // Render files in a table format
+        let tableHTML = `
+          <table>
+            <tbody>
+        `;
+
+        for (const file of files) {
+          tableHTML += `
+            <tr>
+              <td class="file-cell">
+                <div class="file-name">${file.file_name}</div>
+                <div class="file-flags">Size: ${file.size} | Quality: ${file.quality || "Unknown"}</div>
+              </td>
+              <td class="action-cell">
+                <a href="${file.url}" target="_blank">
+                  <button>
+                    <svg xmlns="http://www.w3.org/2000/svg" 
+                      width="20" height="20" 
+                      viewBox="0 0 24 24" 
+                      fill="none" 
+                      stroke="currentColor" 
+                      stroke-width="2" 
+                      stroke-linecap="round" 
+                      stroke-linejoin="round">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                    <polyline points="7 10 12 15 17 10"/>
+                    <line x1="12" y1="15" x2="12" y2="3"/>
+                  </svg>
+                  </button>
+                </a>
+              </td>
+            </tr>
+          `;
+        }
+
+        tableHTML += `</tbody></table>`;
+        resultsDiv.innerHTML += tableHTML;
+
+      } catch (err) {
+        output.textContent = `Error: ${err.message}`;
+      } finally {
+        // Re-enable UI elements after completion
+        btn.disabled = false;
+        btn.textContent = "Generate";
+      }
+    }
+  </script>
+</body>
+</html>

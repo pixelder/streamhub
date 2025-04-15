@@ -782,7 +782,7 @@ body:has(.expandable.expanded) {
   justify-content: space-between;
   text-align: left;
   padding-top: 0rem;
-  height: 2.625rem;
+  height: 2.725rem;
   gap: 6px;
 }
 
@@ -800,6 +800,7 @@ body:has(.expandable.expanded) {
   line-clamp: 2;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
+  padding: 1px 0pxki;
 }
 
 .nostar {
