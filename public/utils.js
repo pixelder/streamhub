@@ -374,7 +374,7 @@ function buildMediaDetailsHTML(data, mediaType, contentLogoHTML) {
   const companyHTML = (data.production_companies || [])
     .slice(0, 2)
     .map(item => item.name)
-    .join(', ')
+    .join(' • ')
   //console.log(companyHTML)
   //console.log(data)
   const { rated } = getCountryCertification(data, mediaType);
@@ -407,7 +407,7 @@ function buildMediaDetailsHTML(data, mediaType, contentLogoHTML) {
           </p>
         </div>
         ${castHTML ? `<p class="cast">Cast : ${castHTML} </p>` : `<p><em>No cast information available</em></p>`}
-        ${companyHTML ? `<p class="company">Studio : ${companyHTML}</p>` : ''}
+        ${companyHTML ? `<p class="company">${companyHTML}</p>` : ''}
         <p class="tags">
           ${extractYear(formattedDate)} • 
           ${rated !== '' ? `${rated} • ` : ''} 
