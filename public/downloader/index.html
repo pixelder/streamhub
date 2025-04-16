@@ -43,7 +43,7 @@
 
     .input-form label {
       font-weight: 600;
-      font-size: 16px;
+      font-size: 15px;
     }
 
     .input-form .form-group {
@@ -67,10 +67,30 @@
         border-radius: 6px !important;
         box-sizing: border-box;
         font-size: 14px !important;
+        padding: 0 10px;
       }
     }
 
+    .number-control {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      width: 100%;
+    }
+
+    .number-control input {
+      flex: 1;
+    }
+
+    .number-control button {
+      width: auto !important;
+      aspect-ratio: 1/1;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
     #scrape {
+      font-size: 15px !important;
       font-weight: 600;
       background: var(--color1) !important;
     }
@@ -98,14 +118,10 @@
 
     /* .result-card {
       background: #1d1d34;
-      padding: 12px;
-      margin-bottom: 10px;
       border: 1px solid #383852;
     }
     .result-card button {
-      margin-top: 6px;
       background-color: #3a3a5c;
-      cursor: pointer;
     } */
 
     .results-table {
@@ -154,13 +170,14 @@
 
     .results-table td a button {
       width: fit-content;
-      height: 36px;
+      height: 14px;
       aspect-ratio: 1/1;
       border-radius: 6px;
       background: var(--color1) !important;
       display: flex;
       align-items: center;
       justify-content: center;
+      padding: 8px;
       margin: unset;
       cursor: pointer;
       transition: 0.2s ease;
@@ -175,7 +192,7 @@
     }
 
     .file-name {
-      font-size: 12px;
+      font-size: 14px;
       overflow-x: auto;
       overflow-y: hidden;
       text-overflow: ellipsis;
@@ -217,7 +234,7 @@
   </header>
 
   <main id="main-content">
-    <h2>Get Download Links</h2>
+    <h2 style="margin: auto;">Get Download Links</h2>
   
     <div class="input-form">
       <div class="form-group">
@@ -237,22 +254,38 @@
       <div id="tv-input">
         <div class="form-group">
           <label>Season (required)</label>
-          <input type="number" id="season" placeholder="e.g., 1">
+          <div class="number-control">
+            <button type="button" onclick="changeValue('season', -1)">−</button>
+            <button type="button" onclick="changeValue('season', 1)">+</button>
+            <input id="season" placeholder="e.g., 1" min="0">
+          </div>
         </div>
     
         <div class="form-group">
           <label>Episode (optional)</label>
-          <input type="number" id="episode" placeholder="e.g., 2">
+          <div class="number-control">
+            <button type="button" onclick="changeValue('episode', -1)">−</button>
+            <button type="button" onclick="changeValue('episode', 1)">+</button>
+            <input id="episode" placeholder="e.g., 2" min="0">
+          </div>
         </div>
       </div>
     
       <!-- This field is initially hidden for 'tv' type -->
       <div id="year-input" class="form-group">
         <label>Year (for movies)</label>
-        <input type="number" id="year" placeholder="e.g., 2021">
+        <div class="number-control">
+          <button type="button" onclick="changeValue('year', -1)">−</button>
+          <button type="button" onclick="changeValue('year', 1)">+</button>
+          <input id="year" placeholder="e.g., 2021" min="0">
+        </div>
       </div>
     
-      <button id="scrape" onclick="scrape()">Generate</button>
+      <div style="display: flex; gap: 10px;">
+        <button id="scrape" onclick="scrape()">Generate</button>
+        <button onclick="resetForm()" style="background: var(--color5);">Reset</button>
+      </div>
+      
     </div>
   
     <h3>Links</h3>
@@ -293,6 +326,26 @@
       btn.style.filter = 'unset'
       btn.textContent = "Generate";
     }
+
+    function changeValue(id, delta) {
+      const input = document.getElementById(id);
+      let value = parseInt(input.value) || 0;
+      value = Math.max(0, value + delta); // Prevent negative numbers
+      input.value = value;
+    }
+
+    function resetForm() {
+      document.getElementById("name").value = "";
+      document.getElementById("season").value = "";
+      document.getElementById("episode").value = "";
+      document.getElementById("year").value = "";
+      document.getElementById("output").textContent = "";
+      document.getElementById("status-info").innerHTML = "";
+      document.getElementById("results").innerHTML = "";
+      toggleFields();
+      resetUI();
+    }
+
 
     async function scrape() {
       const btn = document.getElementById("scrape");
@@ -348,8 +401,8 @@
         }
       }
 
-      const server = "https://alpha-scraper.onrender.com"
-      //const server = "http://192.168.29.122:3000"; // Use your live server in production
+      //const server = "https://alpha-scraper.onrender.com"
+      const server = "http://192.168.29.122:3000"; // Use your live server in production
 
       try {
         const res = await fetch(`${server}/fetch`, {
