@@ -1,33 +1,88 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
-  <title>Download link generator | Pixelstream</title>
+  <title>Link scrapper | Pixelstream</title>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <meta property="og:title" content="Pixelstream" />
+  <meta property="og:image" content="https://pixelstream.vercel.app/assets/meta/meta_dark.png">
+  <meta property="og:description" content="Watch your favorite movies and tv shows" />
+
+  <script src="https://kit.fontawesome.com/60a2eca232.js" crossorigin="anonymous" defer></script>
+
+  <!-- local items -->
+  <link rel="stylesheet" href="../styles.css" type="text/css">
+  <link rel="stylesheet" href="../media.css" type="text/css">
+  <link rel="icon" href="../assets/icons/favicon.png" type="image/png">
+
   <style>
-    * {
-      box-sizing: border-box;
-    }
-    body {
-      font-family: sans-serif;
-      color: lavender;
+
+    main {
       padding: 20px;
-      max-width: 700px;
-      margin: auto;
-      background: #141427;
+      padding-top: 5rem;
+      align-items: start;
+      gap: 8px;
     }
-    input, select, button {
-      width: 100%;
-      padding: 8px;
+
+    .input-form {
+      display: grid;
+      gap: 8px;
+      padding: 16px;
+      background: var(--color5);
+      border-radius: 8px;
+      margin: 16px auto;
+    }
+
+    .input-form label {
+      font-weight: 600;
+    }
+
+    input,
+    select,
+    button {
+      width: 100% !important;
+      height: 36px;
       margin: 6px 0;
-      background: #191930;
+      background-color: #30305577;
       color: lavender;
       border: 1px solid #383852;
+      border-radius: 4px;
+      box-sizing: border-box;
+      font-size: 14px !important;
     }
+
+    #scrape {
+      font-weight: 600;
+    }
+
+    #tv-input {
+      display: flex;
+      gap: 8px;
+    }
+
+    #status-info {
+      margin-bottom: 10px;
+    }
+
+    .raw-output {
+      width: 100%;
+      margin: 16px 0;
+    }
+
     pre {
       background: #191930;
       padding: 10px;
+      margin: 8px 0;
       overflow-x: auto;
+      border-radius: 8px;
+      font-size: 12px;
+      line-break: anywhere;
+      white-space: break-spaces;
     }
+
     /* .result-card {
       background: #1d1d34;
       padding: 12px;
@@ -46,7 +101,7 @@
       border-radius: 6px;
       overflow: hidden;
     }
-    
+
     .results-table table {
       border-collapse: collapse;
       table-layout: fixed;
@@ -55,18 +110,25 @@
       overflow: hidden;
     }
 
-    .results-table th, .results-table td {
+    .results-table th,
+    .results-table td {
       padding: 10px;
       border-bottom: 1px solid #383852;
       text-align: left;
     }
 
+    .results-table tr {
+      display: flex;
+    }
     .results-table tr:nth-last-child(1) td {
       border-bottom: none;
     }
 
     .results-table td {
       color: #ccc;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
     }
 
     .results-table th {
@@ -79,12 +141,15 @@
 
     .results-table td a button {
       width: fit-content;
+      height: 36px;
       aspect-ratio: 1/1;
       border-radius: 6px;
       display: flex;
       align-items: center;
+      justify-content: center;
       background-color: #292955;
-      padding: 6px;
+      padding: 8px;
+      margin: unset;
       cursor: pointer;
       transition: 0.2s ease;
     }
@@ -102,7 +167,6 @@
       overflow-x: auto;
       overflow-y: hidden;
       text-overflow: ellipsis;
-      display: block;
       max-width: 100%;
     }
 
@@ -112,59 +176,83 @@
     }
 
     .action-cell {
-      width: 60px;
       text-align: right;
-    }
-
-    #status-info {
-      margin-bottom: 10px;
-    }
-
-    .raw-output {
-      margin: 16px 0;
     }
   </style>
 </head>
+
 <body>
-  <h2>Get Download Links</h2>
+  <header id="header">
+    <nav>
+        <ul>
+            <li><a href="/"></a></li>
+            <li><a onclick="loadExplorePage('movie')">Movies</a></li>
+            <li><a onclick="loadExplorePage('tv')">TV Shows</a></li>
+            <li><a href="/#discover-streaming">What's Streaming</a></li>
+            <li><a href="library">Library</a></li>
+            <form class="search-bar" onsubmit="return handleSearch(event)">
+                <input type="search" id="search-input" placeholder="Search" />
+                <i class="search-icon fa-solid fa-magnifying-glass"></i>
+                <button type="reset" class="x-icon" id="search-button"><!-- onclick="handleSearch(event)" -->
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </form>
 
-  <label>Media Type</label>
-  <select id="mediaType" onchange="toggleFields()">
-    <option value="tv">TV</option>
-    <option value="movie">Movie</option>
-  </select>
+        </ul>
+    </nav>
+  </header>
 
-  <label>Name</label>
-  <input type="text" id="name" placeholder="e.g., Silo or Dune">
-
-  <!-- These fields are initially hidden for 'movie' type -->
-  <div id="tv-input">
-    <label>Season (TV only)</label>
-    <input type="number" id="season" placeholder="e.g., 1">
-
-    <label>Episode (TV only, optional)</label>
-    <input type="number" id="episode" placeholder="e.g., 2">
-  </div>
-
-  <!-- This field is initially hidden for 'tv' type -->
-  <div id="year-input">
-    <label>Year (for movies)</label>
-    <input type="number" id="year" placeholder="e.g., 2021">
-  </div>
-
-
-  <button id="scrape" onclick="scrape()">Generate</button>
+  <main id="main-content">
+    <h2>Get Download Links</h2>
   
-  <h3>Links</h3>
-  <div id="status-info"></div> 
-  <div id="results" class="results-table"></div>
+    <div class="input-form">
+      <div class="form-group">
+        <label>Media Type</label>
+        <select id="mediaType" onchange="toggleFields()">
+          <option value="tv">TV</option>
+          <option value="movie">Movie</option>
+        </select>
+      </div>
+  
+      <div class="form-group">
+        <label>Name</label>
+        <input type="text" id="name" placeholder="e.g., Silo or Dune">
+      </div>
+    
+      <!-- These fields are initially hidden for 'movie' type -->
+      <div id="tv-input">
+        <div class="form-group">
+          <label>Season (required)</label>
+          <input type="number" id="season" placeholder="e.g., 1">
+        </div>
+    
+        <div class="form-group">
+          <label>Episode (optional)</label>
+          <input type="number" id="episode" placeholder="e.g., 2">
+        </div>
+      </div>
+    
+      <!-- This field is initially hidden for 'tv' type -->
+      <div id="year-input" class="form-group">
+        <label>Year (for movies)</label>
+        <input type="number" id="year" placeholder="e.g., 2021">
+      </div>
+    
+      <button id="scrape" onclick="scrape()">Generate</button>
+    </div>
+  
+    <h3>Links</h3>
+    <div id="status-info"></div>
+    <div id="results" class="results-table"></div>
+  
+    <details class="raw-output">
+      <summary>Raw Response</summary>
+      <pre id="output"></pre>
+    </details>
+  </main>
 
-  <details class="raw-output">
-    <summary>Raw Response</summary>
-    <pre id="output"></pre>
-  </details>  
 
-  <script>   
+  <script>
     function toggleFields() {
       const mediaType = document.getElementById("mediaType").value;
       const tvinfo = document.getElementById("tv-input");
@@ -172,7 +260,7 @@
 
       // Show and hide fields based on media type
       if (mediaType === "tv") {
-        tvinfo.style.display = "block";
+        tvinfo.style.display = "flex";
         yearinfo.style.display = "none";
       } else {
         tvinfo.style.display = "none";
@@ -181,9 +269,17 @@
     }
 
     // Initialize the fields on page load
-    window.onload = function() {
+    window.onload = function () {
       toggleFields(); // Ensure fields are correctly set on initial load
     };
+
+    function resetUI() {
+      const btn = document.getElementById("scrape");
+      btn.disabled = false;
+      btn.style.filter = 'unset'
+      btn.textContent = "Generate";
+    }
+
     async function scrape() {
       const btn = document.getElementById("scrape");
       const output = document.getElementById("output");
@@ -191,22 +287,45 @@
       const status = document.getElementById("status-info");
 
       // Reset the status info and results before starting the fetch process
-      status.innerHTML = ""; 
+      status.innerHTML = "";
       resultsDiv.innerHTML = "";
 
       // Disable UI elements during loading
       btn.disabled = true;
-      btn.textContent = "loading links...";
-      status.innerText = "fetching data..."
+      btn.style.filter = 'saturate(0.2)';
+      btn.textContent = "Loading...";
+      status.innerText = "Fetching data..."
       output.textContent = "";
 
-      const payload = {
-        mediaType: document.getElementById("mediaType").value,
-        name: document.getElementById("name").value.trim(),
-        year: document.getElementById("year").value,
-        season: document.getElementById("season").value,
-        episode: document.getElementById("episode").value
-      };
+      const mediaType =  document.getElementById("mediaType").value;
+      const name =  document.getElementById("name").value.trim();
+      const year = document.getElementById("year").value;
+      const season = document.getElementById("season").value;
+      const episode = document.getElementById("episode").value;
+
+        // Input validation
+      if (mediaType === "movie") {
+        if (!name || !year) {
+          status.innerHTML = `<span style="color: orange;">⚠️ Movie requires both <b>Name</b> and <b>Year</b>.</span>`;
+          resetUI();
+          return;
+        }
+      } else if (mediaType === "tv") {
+        if (!name || !season) {
+          status.innerHTML = `<span style="color: orange;">⚠️ TV Show requires both <b>Name</b> and <b>Season</b>.</span>`;
+          resetUI();
+          return;
+        }
+      }
+
+      const payload = { mediaType, name };
+
+      if (mediaType === "movie") {
+        payload.year = year;
+      } else {
+        payload.season = season;
+        if (episode) payload.episode = episode;
+      }
 
       // Remove any empty fields from the payload
       for (let key in payload) {
@@ -228,37 +347,33 @@
         const data = await res.json();
         output.textContent = JSON.stringify(data, null, 2);
 
-        const files = Array.isArray(data.results) ? data.results : data.result?.available_files || [];
-
-        // Clear previous status info
+        // Reset status
         status.innerHTML = "";
 
-        // Check the response status and update the message accordingly
-        if (data.status === 1) {
-          // Show successful result message
-          const infoMessage = document.createElement("div");
-          infoMessage.innerHTML = `Results for ${data.name} ${data.tvinfo ? `- ${data.tvinfo}` : ""}.`;
-          status.appendChild(infoMessage);
-        } else if (data.status === 0) {
-          // Show error message
+        if (!res.ok || data.error) {
           const errorMessage = document.createElement("div");
-          errorMessage.style.color = "orange";
-          errorMessage.textContent = `⚠️ ${data.error} — showing available data instead.`;
+          errorMessage.style.color = "crimson";
+          errorMessage.textContent = `❌ ${data.error || 'Something went wrong.'}`;
           status.appendChild(errorMessage);
+          return;
         }
 
-        // No results found
+        const files = Array.isArray(data.results)
+          ? data.results
+          : data.result?.available_files || [];
+
         if (files.length === 0) {
           status.innerHTML = "<p>No results found.</p>";
           return;
         }
 
-        // Render files in a table format
-        let tableHTML = `
-          <table>
-            <tbody>
-        `;
+        // Show info message
+        const infoMessage = document.createElement("div");
+        infoMessage.innerHTML = `Results for ${data.name} ${data.tvinfo ? `- ${data.tvinfo}` : ""}`;
+        status.appendChild(infoMessage);
 
+        // Render files
+        let tableHTML = `<table><tbody>`;
         for (const file of files) {
           tableHTML += `
             <tr>
@@ -269,36 +384,32 @@
               <td class="action-cell">
                 <a href="${file.url}" target="_blank">
                   <button>
-                    <svg xmlns="http://www.w3.org/2000/svg" 
-                      width="20" height="20" 
-                      viewBox="0 0 24 24" 
-                      fill="none" 
-                      stroke="currentColor" 
-                      stroke-width="2" 
-                      stroke-linecap="round" 
-                      stroke-linejoin="round">
-                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-                    <polyline points="7 10 12 15 17 10"/>
-                    <line x1="12" y1="15" x2="12" y2="3"/>
-                  </svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" 
+                        viewBox="0 0 24 24" fill="none" stroke="currentColor" 
+                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                      <polyline points="7 10 12 15 17 10"/>
+                      <line x1="12" y1="15" x2="12" y2="3"/>
+                    </svg>
                   </button>
                 </a>
               </td>
-            </tr>
-          `;
+            </tr>`;
         }
-
         tableHTML += `</tbody></table>`;
         resultsDiv.innerHTML += tableHTML;
 
       } catch (err) {
         output.textContent = `Error: ${err.message}`;
+        const errorMessage = document.createElement("div");
+        errorMessage.style.color = "crimson";
+        errorMessage.textContent = `❌ ${err.message}`;
+        status.appendChild(errorMessage);
       } finally {
-        // Re-enable UI elements after completion
-        btn.disabled = false;
-        btn.textContent = "Generate";
+        resetUI()
       }
     }
   </script>
 </body>
+
 </html>
