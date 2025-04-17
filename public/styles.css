@@ -787,7 +787,7 @@ body:has(.expandable.expanded) {
 }
 
 .grid-item-info p {
-  font-size: 0.8125rem;
+  font-size: 13px;
   line-height: 14px;
 }
 
@@ -820,8 +820,14 @@ body:has(.expandable.expanded) {
   height: fit-content;
 
   i {
-    line-height: 0.5rem;
-    font-size: 0.7rem;
+    /* line-height: 0.5rem; */
+    font-size: 11px;
+  }
+
+  .rating {
+    display: flex;
+    align-items: center;
+    gap: 3px;
   }
 
 }
@@ -2065,8 +2071,6 @@ body:has(.filter-menu) {
     text-wrap: nowrap;
     max-width: 20%;
     margin-top: auto;
-    justify-content: flex-end;
-    align-items: flex-end !important;
     height: 100%;
   }
 }

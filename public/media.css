@@ -373,25 +373,24 @@
   .grid-rating {
     order: 2;
     padding: unset;
-    padding-top: 0.1rem;
     height: 12px;
 
     .nostar {
       height: 11px !important;
     }
-  }
 
-  .grid-rating .rating {
-    font-size: 0.62rem !important;
-  }
-
-  .grid-rating .fa-star {
-    font-size: 0.6rem;
+    .rating {
+      font-size: 10px;
+    }
+    i {
+      font-size: 9px;
+      padding-bottom: 1px;
+    }
   }
 
   .grid-item-info>p:nth-last-child(1) {
     order: 3;
-    font-size: 0.62rem;
+    font-size: 10px;
     max-width: 100%;
     width: unset;
     height: 0.68rem;

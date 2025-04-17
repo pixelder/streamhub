@@ -23,7 +23,7 @@
 
     main {
       padding: 10px;
-      padding-top: 5.6rem;
+      padding-top: 4.4rem;
       align-items: start;
       gap: 8px;
       max-width: 700px;
@@ -32,7 +32,7 @@
 
     .input-form {
       display: grid;
-      gap: 10px;
+      gap: 8px;
       padding: 14px;
       /* background: #191930; */
       background: var(--color3);
@@ -84,8 +84,10 @@
 
     .number-control button {
       width: auto !important;
-      aspect-ratio: 1/1;
-      font-weight: bold;
+      aspect-ratio: 1 / 1;
+      padding: unset;
+      font-size: 18px !important;
+      /* font-weight: bold; */
       cursor: pointer;
     }
 
@@ -234,9 +236,9 @@
   </header>
 
   <main id="main-content">
-    <h2 style="margin: auto;">Get Download Links</h2>
-  
+    
     <div class="input-form">
+      <h3>Get Download Links</h3>
       <div class="form-group">
         <label>Media Type</label>
         <select id="mediaType" onchange="toggleFields()">
@@ -281,7 +283,7 @@
         </div>
       </div>
     
-      <div style="display: flex; gap: 10px;">
+      <div style="display: flex; gap: 8px;">
         <button id="scrape" onclick="scrape()">Generate</button>
         <button onclick="resetForm()" style="background: var(--color5);">Reset</button>
       </div>
