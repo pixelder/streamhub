@@ -311,10 +311,6 @@
     border-radius: var(--border-radius1);
     scroll-snap-align: start;
     /* box-shadow: 0 10px 24px rgba(0, 0, 0, 0.7); */
-
-    .grid-actions {
-      scale: 1.03 !important;
-    }
   }
 
   .grid-item:hover,
@@ -643,21 +639,32 @@
 
     }
 
-    .grid-options {
-      width: 2.2rem;
-      height: 2.2rem;
-      border-radius: var(--border-radius1);
+    .grid-actions {
+      padding: 2px;
+    }
 
+    .grid-options {
+      border-radius: var(--border-radius1);
+      padding: 2px;
+      gap: 2px;
+      h4 {
+        margin: 2px;
+      }
       .options-buttons {
-        font-size: 1rem;
-        border-radius: var(--border-radius1);
+        height: 20px;
+        font-size: 12px;
+        border-radius: var(--border-radius2);
       }
     }
 
     .grid-options.open {
 
+      .options-menu {
+        gap: 2px;
+      }
       .options-menu button {
-        font-size: 0.875rem;
+        height: 20px;
+        font-size: 10px;
         border-radius: var(--border-radius1);
       }
     }

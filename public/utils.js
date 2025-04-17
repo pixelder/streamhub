@@ -756,13 +756,23 @@ function updateWatchProgress(type, item, progress) {
   }
 }
 
-async function markItemAs(type, item) {
+async function markItemAs(type, item, section = null) {
+  const sectionID = section?.id || null;
+  const logType = section?.dataset.type || null;
   const { id, mediaType, sno, eno } = item.dataset
   if (type === 'watched') {
     logToLocalStorage('history', Number(id), mediaType, sno, eno, 100)
     removeFromLocalStorage('watching', Number(id), mediaType, sno, eno)
-    loadUserContent('continue-watching', 'watching')
-    loadUserContent('history', 'history')
+    if (sectionID === 'continue-watching' && mediaType === 'tv') {
+      getNextEpisode(id, sno, eno).then((ep) => {
+        if (ep) {
+          logToLocalStorage('watching', Number(id), 'tv', ep.season_number, ep.episode_number);
+        }
+      if (section) loadUserContent( sectionID, logType)
+      });
+    } else if (section) {
+        loadUserContent( sectionID, logType)
+    }
   }
   if (type === 'unwatch') {
     removeFromLocalStorage('history', Number(id), mediaType, sno, eno)

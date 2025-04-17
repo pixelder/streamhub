@@ -37,23 +37,31 @@ function globalAddEventListener (event) {
       } else if ( event.target.matches(".options-buttons")) {
         event.target.closest('.grid-options')?.classList.toggle('open');
         event.stopPropagation();
-      } else if (event.target.closest('.options-menu button')) {
-        event.preventDefault()
-        getConfirm({
-          success: {title : 'Success!', message : 'Item removed from history.'},
-          decline: {title : 'Canceled!', message : 'Item not removed. '}
-        }).then(confirmed => { 
-          console.log('exited',confirmed)
-          if (confirmed) {
-            const section = event.target.closest('section');
-            const sectionId = section.id
-            const logType = section.dataset.type
-            removeFromLocalStorage(logType, Number(id), mediaType, sno, eno, index)
-            console.log(sectionId,logType,'item removed')
-            loadUserContent( sectionId, logType);
-          }
-        });
-        event.stopPropagation();
+      } else if (event.target.closest('.options-menu')) {
+        const section = event.target.closest('section');
+        if (event.target.closest('.remove')) {
+          getConfirm({
+            success: {title : 'Success!', message : 'Item removed from history.'},
+            decline: {title : 'Canceled!', message : 'Item not removed. '}
+          }).then(confirmed => { 
+            console.log('exited',confirmed)
+            if (confirmed) {
+              const sectionId = section.id
+              const logType = section.dataset.type
+              removeFromLocalStorage(logType, Number(id), mediaType, sno, eno, index)
+              console.log(sectionId,logType,'item removed')
+              loadUserContent( sectionId, logType);
+            }
+          });
+          event.preventDefault()
+        }
+        if (event.target.closest('.view-details')) {
+          openModal(event)
+          event.stopPropagation();
+        }
+        if (event.target.closest('.mark-item')) {
+          markItemAs('watched', gridItem, section)
+        }
       }
     }
   } else if (modalActive) {

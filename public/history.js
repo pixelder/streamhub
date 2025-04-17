@@ -222,12 +222,27 @@ function renderLogItems(data, item, tvData) {
           </label>
           <div class="grid-actions">
             <div class="grid-options">
-              <div tabindex="0" class="options-buttons">
-                <i class="options-icon fa-solid fa-ellipsis-vertical"></i>
-                <i class="options-x-icon fa-solid fa-xmark"></i>
+              <div class="flow-row">
+                <h4>Options</h4>
+                <div tabindex="0" class="options-buttons">
+                  <i class="options-icon fa-solid fa-ellipsis-vertical"></i>
+                  <i class="options-x-icon fa-solid fa-xmark"></i>
+                </div>
               </div>
+              <hr>
               <div class="options-menu">
-                <button tabindex="0" role="button"><i class="fa-solid fa-trash-can"></i></button>
+                <div class="flow-row mark-item">
+                  <button tabindex="0" role="button"><i class="fa-solid fa-eye"></i></button>
+                  <p>Mark As Watched</p>
+                </div>
+                <div class="flow-row view-details">
+                  <button tabindex="0" role="button"><i class="fa-solid fa-square-arrow-up-right"></i></button>
+                  <p>Details</p>
+                </div>
+                <div class="flow-row remove">
+                  <button tabindex="0" role="button"><i class="fa-solid fa-trash-can"></i></button>
+                  <p>Remove</p>
+                </div>
               </div>
             </div>
           </div>
