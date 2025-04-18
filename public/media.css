@@ -649,6 +649,11 @@
         font-size: 14px;
         margin: 2px;
       }
+
+      .flow-row {
+        gap: 4px;
+      }
+
       .options-buttons {
         height: 24px;
         font-size: 12px;
