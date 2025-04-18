@@ -1708,26 +1708,34 @@ function setupCheckboxListeners(sectionID) {
     });
   }
 
-  // Grid item mouse down handler.
+  let isScrolling = false;
+  let scrollTimeout;
+  
   const onGridItemMouseDown = (e) => {
-    const section = e.target.closest("section");
     const item = e.target.closest(".grid-item");
-    if (!item) return;
+    const section = e.target.closest("section");
+  
+    if (!item || isScrolling) return;
+  
+    let timer = null;
+    let isHeld = false;
 
-    let hold = false;
-    const timer = setTimeout(() => {
-      hold = !hold;
+    timer = setTimeout(() => {
+      if (isScrolling) return;
+      isHeld = true;
       console.log("Element is being held");
+  
       const isActive = item.querySelector(".selectable.active");
       wasEditing = true;
+  
       try {
-        navigator.vibrate(50)
+        navigator.vibrate(50);
       } catch (err) {
-        console.log(err)
+        console.warn("Vibrate error:", err);
       }
       toggleEditing(section, !isActive ? item : "");
     }, 750);
-
+  
     const clearTimer = () => clearTimeout(timer);
 
     ["mouseup", "mouseout", "touchcancel", "touchend"].forEach((eventType) => {
@@ -1735,13 +1743,22 @@ function setupCheckboxListeners(sectionID) {
     });
   };
 
+  container.addEventListener('scroll', () => {
+    isScrolling = true;
+    clearTimeout(scrollTimeout);
+    scrollTimeout = setTimeout(() => {
+      isScrolling = false;
+    }, 500);
+  });
+
   ["mousedown", "touchstart"].forEach((eventType) => {
     container.addEventListener(eventType, onGridItemMouseDown);
     cleanupFunctions.push(() => {
       container.removeEventListener(eventType, onGridItemMouseDown);
     });
   });
-
+  
+  
   // Attach the select-all listener.
   if (selectAllBox) {
     selectAllBox.addEventListener("click", selectAll);
