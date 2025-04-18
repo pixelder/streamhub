@@ -784,7 +784,7 @@ body:has(.expandable.expanded) {
 
 .grid-item-info p {
   font-size: 13px;
-  line-height: 14px;
+  line-height: 15px;
 }
 
 .grid-item-info>p:nth-child(1) {
