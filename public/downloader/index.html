@@ -375,13 +375,13 @@
         // Input validation
       if (mediaType === "movie") {
         if (!name || !year) {
-          status.innerHTML = `<span style="color: orange;">⚠️ Movie requires both <b>Name</b> and <b>Year</b>.</span>`;
+          status.innerHTML = `<span style="color: orange; text-shadow: none;">⚠️ Movie requires both <b>Name</b> and <b>Year</b>.</span>`;
           resetUI();
           return;
         }
       } else if (mediaType === "tv") {
         if (!name || !season) {
-          status.innerHTML = `<span style="color: orange;">⚠️ TV Show requires both <b>Name</b> and <b>Season</b>.</span>`;
+          status.innerHTML = `<span style="color: orange; text-shadow: none;">⚠️ TV Show requires both <b>Name</b> and <b>Season</b>.</span>`;
           resetUI();
           return;
         }
@@ -391,11 +391,12 @@
 
       if (mediaType === "movie") {
         payload.year = year;
-      } else {
+      } 
+      if (mediaType === 'tv') {
+        payload.year = '';
         payload.season = season;
-        if (episode) payload.episode = episode;
+        payload.episode = episode || '';
       }
-
       // Remove any empty fields from the payload
       for (let key in payload) {
         if (payload[key] === "" || payload[key] === null) {
@@ -404,8 +405,7 @@
       }
 
       const server = "https://alpha-scraper.onrender.com"
-      //const server = "http://192.168.29.122:3000"; // Use your live server in production
-
+      //const server = "http://192.168.29.122:3000";
       try {
         const res = await fetch(`${server}/fetch`, {
           method: "POST",
@@ -421,10 +421,10 @@
 
         if (!res.ok || data.error) {
           const errorMessage = document.createElement("div");
-          errorMessage.style.color = "crimson";
+          errorMessage.style = "color: crimson; text-shadow: none;";
           errorMessage.textContent = `❌ ${data.error || 'Something went wrong.'}`;
+          status.innerHTML = ''
           status.appendChild(errorMessage);
-          return;
         }
 
         const files = Array.isArray(data.results)
@@ -438,8 +438,15 @@
 
         // Show info message
         const infoMessage = document.createElement("div");
-        infoMessage.innerHTML = `Results for ${data.name} ${data.tvinfo ? `- ${data.tvinfo}` : ""}`;
-        status.appendChild(infoMessage);
+        if ( !data.error ) {
+          infoMessage.textContent = `Results for ${data.name} ${data.tvinfo ? `- ${data.tvinfo}` : ""}`;
+          status.innerHTML = ''
+          status.appendChild(infoMessage);
+        } else {
+          infoMessage.textContent = `${data.error} — showing available data instead for ${data.result.name}.`;
+          status.innerHTML = ''
+          status.appendChild(infoMessage);
+        }
 
         // Render files
         let tableHTML = `<table><tbody>`;
@@ -471,8 +478,9 @@
       } catch (err) {
         output.textContent = `Error: ${err.message}`;
         const errorMessage = document.createElement("div");
-        errorMessage.style.color = "crimson";
+        errorMessage.style = "color: crimson; text-shadow: none;";
         errorMessage.textContent = `❌ ${err.message}`;
+        status.innerHTML = ''
         status.appendChild(errorMessage);
       } finally {
         resetUI()
