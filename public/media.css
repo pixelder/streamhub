@@ -644,28 +644,23 @@
     }
 
     .grid-options {
-      border-radius: var(--border-radius1);
       padding: 2px;
-      gap: 2px;
       h4 {
+        font-size: 14px;
         margin: 2px;
       }
       .options-buttons {
-        height: 20px;
+        height: 24px;
         font-size: 12px;
-        border-radius: var(--border-radius2);
       }
     }
 
     .grid-options.open {
 
-      .options-menu {
-        gap: 2px;
-      }
       .options-menu button {
-        height: 20px;
-        font-size: 10px;
-        border-radius: var(--border-radius1);
+        height: 24px;
+        font-size: 12px;
+        border-radius: var(--border-radius2);
       }
     }
   }

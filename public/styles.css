@@ -1942,13 +1942,13 @@ body:has(.filter-menu) {
     background: transparent;
     border: 1px solid transparent;
     padding: 4px;
-    gap: 4px;
-    border-radius: var(--border-radius2);
+    gap: 2px;
+    border-radius: var(--border-radius1);
     transition: width 0.25s, opacity 0.25s, color 0.25s ease-in-out;
 
     h4 {
+      color: #96a1c3;
       display: none;
-      font-size: 14px;
       margin: 4px;
     }
 
@@ -1956,14 +1956,15 @@ body:has(.filter-menu) {
       justify-content: space-between;
       align-items: center;
       gap: 8px;
+      padding: 2px;
     }
 
     hr {
       display: none;
       height: 1px;
       border: none;
-      width: 100%;
-      background: var(--color2);
+      margin: 0px 2px;
+      background: #383852e5;
     }
 
     .options-menu {
@@ -1985,7 +1986,7 @@ body:has(.filter-menu) {
       display: flex;
       font-size: 1rem;
       aspect-ratio: 1 / 1;
-      height: 24px;
+      height: 30px;
       border-radius: var(--border-radius2);
       align-items: center;
       justify-content: center;
@@ -2030,14 +2031,14 @@ body:has(.filter-menu) {
 
     .options-menu {
       all: unset;
-      display: flex;
-      place-content: center;
+      /* display: flex;
+      place-content: center; */
+      display: grid;
+      grid-template-columns: repeat(2,1fr);
       opacity: 1;
       width: 100%;
-      flex-direction: column;
       text-shadow: none;
-      padding-right: 4px;
-      gap: 4px;
+      padding-right: 6px;
     }
 
     .options-menu {
@@ -2046,11 +2047,11 @@ body:has(.filter-menu) {
         display: flex;
         justify-content: center;
         align-items: center;
-        font-size: 0.875rem;
+        font-size: 14px;
         pointer-events: all;
-        height: 24px;
+        height: 30px;
         aspect-ratio: 1 / 1;
-        background: var(--color5);
+        background: var(--color3);
         /* border: 1px solid #383852e5; */
         border-radius: var(--border-radius2);
       }
@@ -2060,6 +2061,13 @@ body:has(.filter-menu) {
         background-color: var(--color3);
       }
       
+      .mark-item {
+        grid-column: span 2;
+      }
+
+      .remove, .view-details {
+        grid-column: span 1;
+      }
       .remove {
         color: #ff2c2c;
       }
