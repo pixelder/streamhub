@@ -645,9 +645,11 @@
 
     .grid-options {
       padding: 2px;
+      gap: 2px;
+
       h4 {
         font-size: 14px;
-        margin: 2px;
+        margin: 0px 2px;
       }
 
       .flow-row {
@@ -655,12 +657,16 @@
       }
 
       .options-buttons {
-        height: 24px;
-        font-size: 12px;
+        height: 20px;
+        font-size: 14px;
       }
     }
 
     .grid-options.open {
+
+      .options-menu {
+        gap: 0px;  
+      }
 
       .options-menu button {
         height: 24px;

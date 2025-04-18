@@ -1942,14 +1942,14 @@ body:has(.filter-menu) {
     background: transparent;
     border: 1px solid transparent;
     padding: 4px;
-    gap: 2px;
+    gap: 4px;
     border-radius: var(--border-radius1);
     transition: width 0.25s, opacity 0.25s, color 0.25s ease-in-out;
 
     h4 {
       color: #96a1c3;
       display: none;
-      margin: 4px;
+      margin: 0px 4px;
     }
 
     .flow-row {
@@ -1986,7 +1986,7 @@ body:has(.filter-menu) {
       display: flex;
       font-size: 1rem;
       aspect-ratio: 1 / 1;
-      height: 30px;
+      height: 24px;
       border-radius: var(--border-radius2);
       align-items: center;
       justify-content: center;
@@ -2019,7 +2019,8 @@ body:has(.filter-menu) {
 
   .grid-options.open {
     border: 1px solid #383852e5;
-    background-color: #0d0d1bee;
+    /* background-color: #0d0d1bee; */
+    background: linear-gradient(60deg, var(--bg-color) 30%, var(--color3) 100%);
 
     h4, hr {
       display: block;
@@ -2036,9 +2037,9 @@ body:has(.filter-menu) {
       display: grid;
       grid-template-columns: repeat(2,1fr);
       opacity: 1;
-      width: 100%;
       text-shadow: none;
       padding-right: 6px;
+      gap: 2px;
     }
 
     .options-menu {
