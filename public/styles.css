@@ -1354,7 +1354,7 @@ body:has(.expandable.expanded) {
   display: none;
   flex-direction: column;
   gap: calc(var(--padding1) * var(--spacing));
-  position: absolute;
+  position: fixed;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
