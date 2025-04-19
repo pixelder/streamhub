@@ -231,10 +231,16 @@ function renderLogItems(data, item, tvData) {
               </div>
               <hr>
               <div class="options-menu">
-                <div class="flow-row mark-item">
+                ${progress < 99 ? `
+                <div class="flow-row mark-item" data-type="watched">
                   <button tabindex="0" role="button"><i class="fa-solid fa-eye"></i></button>
                   <p>Mark As Watched</p>
-                </div>
+                </div>` 
+                : `
+                <div class="flow-row mark-item" data-type="unwatch">
+                  <button tabindex="0" role="button"><i class="fa-solid fa-eye-slash"></i></button>
+                  <p>Mark Unwatched</p>
+                </div>`}
                 <div class="flow-row view-details">
                   <button tabindex="0" role="button"><i class="fa-solid fa-square-arrow-up-right"></i></button>
                   <p>Details</p>
@@ -268,7 +274,7 @@ function renderLogItems(data, item, tvData) {
   `;
 }
 
-function loadUserContent(sectionId, logType) {
+async function loadUserContent(sectionId, logType) {
   const section = document.getElementById(sectionId);
   const container = section?.querySelector('.grid-container')
   const logData = getLogData(logType);

@@ -16,7 +16,7 @@ function loadLibrary() {
 
 window.onload = function() {
   loadLibrary()
-  footerHTML()
+  bottomNavBar()
   setActiveIcon('library')
   fixLog()
 }

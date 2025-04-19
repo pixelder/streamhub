@@ -13,31 +13,31 @@
 
   header {
     height: 3.6rem;
-  }
-
-  nav ul {
-    padding: 12px 0.6rem;
-  }
-
-  nav ul li {
-    display: none;
-
-    a {
-      font-size: 1rem;
+  
+    nav ul {
+      padding: 12px 0.6rem;
     }
-  }
-
-  nav ul li:nth-child(1) {
-    display: flex;
-
-    a:after {
-      font-size: 1.12rem;
-      font-weight: 600;
-      font-family: var(--font-style1);
+  
+    nav ul li {
+      display: none;
+  
+      a {
+        font-size: 1rem;
+      }
     }
-
-    a:before {
-      height: 1.6rem;
+  
+    nav ul li:nth-child(1) {
+      display: flex;
+  
+      a:after {
+        font-size: 1.12rem;
+        font-weight: 600;
+        font-family: var(--font-style1);
+      }
+  
+      a:before {
+        height: 1.6rem;
+      }
     }
   }
 
@@ -95,7 +95,7 @@
     outline: unset !important;
   }
 
-  footer {
+  .bottom-bar {
     display: flex;
     position: fixed;
     bottom: 0rem;
@@ -501,23 +501,19 @@
       height: 30px;
     }
 
-    .filter-button {
+    .button-container {
       position: fixed;
-      z-index: 2;
-      bottom: 5rem;
+      bottom: 5.4rem;
       right: 1rem;
-      font-size: 0px;
-      padding: var(--padding1);
-      height: 2.4rem;
-      aspect-ratio: 1/1;
-      border-radius: calc(var(--border-radius1) + 0.24rem);
-      box-sizing: content-box;
+      z-index: 1;
+      margin: unset;
       transition: bottom 0.3s;
+    }
 
-      i {
-        font-size: 1rem;
-        position: absolute;
-      }
+    .filter-button {
+      /* font-size: 0px; */
+      /* height: 2.4rem; */
+      box-shadow: 0 0 12px 4px #0d0d1bb7;
     }
 
     .filter-menu {

@@ -143,15 +143,15 @@ document.addEventListener('DOMContentLoaded', () => {
     const path = window.location.pathname;
     if (path === '/movie') {
       loadExplorePage('movie');
-      footerHTML();
+      bottomNavBar();
       setActiveIcon('movie')
     } else if (path === '/tv') {
       loadExplorePage('tv');
-      footerHTML();
+      bottomNavBar();
       setActiveIcon('tv')
     } else if (path === '' || path === '/') {
       window.onload = function() {
-        footerHTML();
+        bottomNavBar();
         setActiveIcon('home')
         loadSections()
         loadUserContent('continue-watching','watching');

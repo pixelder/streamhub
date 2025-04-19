@@ -36,7 +36,7 @@
       padding: 14px;
       /* background: #191930; */
       background: var(--color3);
-      border-radius: 8px;
+      border-radius: 12px;
       margin: 16px 0;
       width: 100%;
     }
@@ -94,7 +94,11 @@
     #scrape {
       font-size: 15px !important;
       font-weight: 600;
-      background: var(--color1) !important;
+      background: var(--color2) !important;
+    }
+
+    #reset {
+      background: var(--error) !important;
     }
 
     #tv-input {
@@ -219,10 +223,10 @@
         <ul>
             <li><a href="/"></a></li>
             <li><a href="/movie">Movies</a></li>
-            <li><a href="/tv")">TV Shows</a></li>
+            <li><a href="/tv">TV Shows</a></li>
             <li><a href="/#discover-streaming">What's Streaming</a></li>
+            <li><a href="#">Tools</a></li>
             <li><a href="/library">Library</a></li>
-            <li><a href="/downloader">Downloader</a></li>
             <form class="search-bar" onsubmit="return handleSearch(event)">
                 <input type="search" id="search-input" placeholder="Search" />
                 <i class="search-icon fa-solid fa-magnifying-glass"></i>
@@ -285,7 +289,7 @@
     
       <div style="display: flex; gap: 8px;">
         <button id="scrape" onclick="scrape()">Generate</button>
-        <button onclick="resetForm()" style="background: var(--color5);">Reset</button>
+        <button id="reset" onclick="resetForm()" style="background: var(--color5);">Reset</button>
       </div>
       
     </div>
@@ -300,6 +304,9 @@
     </details>
   </main>
 
+  <nav class="bottom-bar">
+
+  </nav>
 
   <script>
     function toggleFields() {
@@ -320,6 +327,7 @@
     // Initialize the fields on page load
     window.onload = function () {
       toggleFields(); // Ensure fields are correctly set on initial load
+      bottomNavBar()
     };
 
     function resetUI() {

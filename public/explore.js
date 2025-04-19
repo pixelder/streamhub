@@ -60,7 +60,10 @@ function loadExplorePage(mediaType) {
                         <p>10</p>
                     </div>
                 </div>
-                <button class="filter-button"><i class="fa-solid fa-filter"></i>Filters</button>
+								<div class="form-group button-container">
+									<button class="go-up"><i class="fa-solid fa-angles-up"></i></button>
+									<button class="filter-button"><i class="fa-solid fa-filter"></i></button>
+								</div>
                 <div class="filter-overlay"></div>
                 <div class="filter-menu">
                     <h2>More Filters</h2>
@@ -167,6 +170,11 @@ function loadExplorePage(mediaType) {
 	let pageWait
 
 	window.addEventListener("scroll", () => {
+		if (window.scrollY > 260) {
+			document.querySelector('.button-container').classList.add('detach')
+		} else {
+			document.querySelector('.button-container').classList.remove('detach')			
+		}
 		if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 250) {
 			console.log('hit border', currentPage)
 			if (!pageEnd) {
@@ -447,6 +455,9 @@ function filterEvents(event) {
 			filterMenu.toggleAttribute('active')
 			filterOverlay.style.display = isMenuVisible ? 'none' : 'flex';
 			event.stopPropagation();
+		}
+		if (event.target.closest('.go-up')) {
+			window.scrollTo({top : 0})
 		}
 		if (event.target.closest('.filter-overlay')) {
 			filterMenu.style.display = 'none';

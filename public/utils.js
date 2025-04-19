@@ -776,7 +776,10 @@ async function markItemAs(type, item, section = null) {
   }
   if (type === 'unwatch') {
     removeFromLocalStorage('history', Number(id), mediaType, sno, eno)
-    logToLocalStorage('watching', Number(id), mediaType, sno, eno, 0)
+    if (sectionID === 'continue-watching') {
+      logToLocalStorage('watching', Number(id), mediaType, sno, eno, 0)
+    }
+    loadUserContent( sectionID, logType)
   }
 }
 
@@ -1340,8 +1343,8 @@ function whenInView(selector, callback) {
 }
 
 // bottom nav
-function footerHTML() {
-  const navbar = document.querySelector('footer')
+function bottomNavBar() {
+  const navbar = document.querySelector('.bottom-bar')
   navbar ? navbar.innerHTML = `
     <ul>
             <li><a href="/" id="home">
@@ -1389,8 +1392,8 @@ function footerHTML() {
 
 function setActiveIcon(button) {
   if (button === '') return;
-  const footer = document.querySelector('footer')
-  footer.querySelectorAll('a').forEach(btn => btn.classList.remove('active'))
+  const bottomBar = document.querySelector('.bottom-bar')
+  bottomBar.querySelectorAll('a').forEach(btn => btn.classList.remove('active'))
   const active = document.getElementById(button);
   active?.classList.add('active')
 }
@@ -1424,9 +1427,9 @@ let hideTimeout;
 window.addEventListener('scroll', () => {
 
   const header = document.querySelector('header');
-  const footer = document.querySelector('footer');
+  const bottomBar = document.querySelector('.bottom-bar');
   const nav = document.querySelector("#header > nav > ul");
-  const filter = document.querySelector('.filter-button');
+  const filter = document.querySelector('.button-container');
   const input = document.getElementById('search-input');
 
   let end = ((window.scrollY + 10 + window.innerHeight) >= (document.body.scrollHeight)) || window.scrollY <= 40;
@@ -1441,8 +1444,8 @@ window.addEventListener('scroll', () => {
       clearTimeout(hideTimeout);
       hideTimeout = setTimeout(() => {
         header.classList.add('hidden');
-        footer ? footer.style.bottom = '-4rem' : '';
-        (isMobile && filter) ? filter.style.bottom = '1rem' : '';
+        (isMobile() && bottomBar) ? bottomBar.style.bottom = '-4rem' : '';
+        (isMobile() && filter) ? filter.style.bottom = '1.4rem' : '';
       }, 500);
     }
   } else if ((window.scrollY <= lastScrollY) || end) {
@@ -1453,8 +1456,8 @@ window.addEventListener('scroll', () => {
     nav.style.padding = isMobile() ? "0.8rem 0.6rem" : "0.8rem 1.4rem";
     header.style.height = isMobile() ? "3.6rem" : "4rem";
     header.classList.remove('hidden');
-    footer ? footer.style.bottom = '0rem' : '';
-    (isMobile && filter) ? filter.style.bottom = '5rem' : '';
+    (isMobile() && bottomBar) ? bottomBar.style.bottom = '0rem' : '';
+    (isMobile() && filter) ? filter.style.bottom = '5rem' : '';
   }
   lastScrollY = window.scrollY;
 });
@@ -1659,6 +1662,7 @@ function setupCheckboxListeners(sectionID) {
     }
     if (e.target.closest(".delete-button")) {
       console.log("delete-button");
+      e.stopPropagation();
       if (selectedItems.length < 1) return;
       getConfirm({
         title: `Delete ${selectedItems.length} items ? `,// from '${sectionID}'?`,
@@ -1686,7 +1690,6 @@ function setupCheckboxListeners(sectionID) {
         loadUserContent(sectionId, logType);
         toggleEditing(section);
       });
-      e.stopPropagation();
       return;
     }
   };

@@ -146,7 +146,7 @@ function activeSearchResults() {
 }
 
 window.onload = function () {
-  footerHTML()
+  bottomNavBar()
   setActiveIcon('search')
   activeSearchResults()
 }

@@ -29,15 +29,22 @@ function globalAddEventListener (event) {
         toggleBookmark('bookmarks', id, mediaType, sno, eno, index);
         loadUserContent( 'bookmarks', 'bookmarks');
       }
-    } else if ((watchingOrHistory) && (event.type === 'click' || event.type === 'keydown' && event.key === 'Enter')) {
+      return;
+    }
+
+    if ((watchingOrHistory) && (event.type === 'click' || event.type === 'keydown' && event.key === 'Enter')) {
       if ( !event.target.closest('.grid-actions') && !editing && !wasEditing) {
         console.log(id, mediaType,sno, eno, null)
         window.location.href = `/watch/${mediaType}/${id}/${name}${sno && eno ? `/${sno}/${eno}` : ""}`;
         event.stopPropagation();
-      } else if ( event.target.matches(".options-buttons")) {
+        return;
+      }
+      if ( event.target.matches(".options-buttons")) {
         event.target.closest('.grid-options')?.classList.toggle('open');
         event.stopPropagation();
-      } else if (event.target.closest('.options-menu')) {
+        return;
+      }
+      if (event.target.closest('.options-menu')) {
         const section = event.target.closest('section');
         if (event.target.closest('.remove')) {
           getConfirm({
@@ -60,15 +67,21 @@ function globalAddEventListener (event) {
           event.stopPropagation();
         }
         if (event.target.closest('.mark-item')) {
-          markItemAs('watched', gridItem, section)
+          const type = event.target.closest('.mark-item').dataset.type
+          console.log(type, section)
+          markItemAs(type, gridItem, section)
         }
       }
+      return;
     }
-  } else if (modalActive) {
+    return;
+  }
+  if (modalActive) {
     if (event.key === 'Escape' || event.target.matches('#info-modal')) {
       document.getElementById('modal-details').innerHTML = '';
       modal.removeAttribute('active','')
       event.stopPropagation();
     }
+    return;
   }
 }
