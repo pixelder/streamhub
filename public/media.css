@@ -70,11 +70,11 @@
 
   input[type="number"],
   input {
-    width: 4rem;
+    width: 72px;
     outline: 0;
     border: 1px solid var(--color1);
     border-radius: var(--border-radius2);
-    padding: 0.4rem;
+    padding: 6px 8px;
     background-color: #30303d77;
     font-size: 12px;
     color: var(--font-color1);
@@ -88,7 +88,7 @@
     padding-right: 1.2rem;
     height: 30px;
     background-size: 12px;
-    background-position: calc(100% - 0.2rem) 50%;
+    background-position: calc(100% - 6px) 50%;
   }
 
   select:focus-visible {
@@ -447,7 +447,7 @@
       }
 
       label {
-        margin-bottom: 6px;
+        margin-bottom: 4px;
         font-size: 14px;
       }
 
@@ -466,7 +466,7 @@
 
     .form-group {
       select {
-        padding: 0px 6px;
+        padding: 0px 8px;
         padding-right: 1.2rem;
         height: 30px;
       }
@@ -505,7 +505,7 @@
       position: fixed;
       bottom: 5.4rem;
       right: 1rem;
-      z-index: 1;
+      z-index: 2;
       margin: unset;
       transition: bottom 0.3s;
     }
@@ -527,14 +527,13 @@
         flex: 1 0;
       }
 
-      h2 {
-        margin-bottom: -4px;
+      h3 {
+        font-size: 18px;
       }
 
-      .reset-button {
-        margin-top: 0px;
-        height: 36px;
-        font-size: 14px;
+      .menu-buttons button {
+        height: 30px;
+        font-size: 12px;
       }
 
     }
@@ -571,10 +570,6 @@
 
     .vote-count {
       font-size: 12px;
-
-      input[type="range"] {
-        width: 45%;
-      }
     }
 
     .min-rating {
@@ -923,12 +918,10 @@
   }
 
   .close-btn {
-    text-align: center;
-    font-size: 1.4rem;
-    right: 0px;
-    top: 0px;
-    background-color: #222233;
-    width: 1rem;
+    right: 6px;
+    top: 6px;
+    padding: 4px;
+    width: 30px;
   }
 
   .modal-media {
@@ -1168,10 +1161,7 @@
 
   .seasons-menu select {
     font-size: 12px;
-    padding: 0 0.4rem;
-    padding-right: 1.2rem;
     background-size: 12px;
-    background-position: calc(100% - 0.2rem) 50%;
   }
 
   .modal #season-dropdown {
