@@ -152,8 +152,9 @@ function renderGridItems(items) {
     .join('');
 }
 
-function notifyAlert(msg) {
-  console.error(msg)
+function notifyAlert(msg, type = null, data = null, actions = null) {
+  if ( type === "error" ) console.error(msg)
+  if ( !type ) console.log(msg)
   let container = document.querySelector('.notifications')
   if (!container) {
     container = document.createElement('div')
@@ -163,8 +164,32 @@ function notifyAlert(msg) {
   const el = document.createElement('div');
   el.classList.add('msg');
   el.innerText = msg;
+  
+  if (actions) {
+    const msgAction = document.createElement('div')
+    msgAction.classList.add('msg-actions')
+    actions?.push({name : "Ignore"})
+    actions?.forEach(act => {
+      const action = document.createElement('button')
+      action.classList.add("action-btn")
+      act.task === 'remove' ? action.classList.add("remove") : "";
+      action.textContent = `${act.name}`
+      if (act.task === 'remove') {
+        const { logType, id, mediaType, sno, eno, index} = data
+        action.onclick = () => {
+          removeFromLocalStorage(logType, id,mediaType, sno, eno , index).then(() => {
+            notifyAlert("Item removed successfully")
+          })
+        }
+      }
+      msgAction.appendChild(action)
+    })
+    el.appendChild(msgAction)
+  }
+
   container.appendChild(el)
-  setTimeout(() => { container.removeChild(el) }, 3000)
+  el.onclick = () => { container.removeChild(el) }
+  setTimeout(() => { container.removeChild(el) }, 5000)
 }
 
 function nthNaturalArray(n) {
@@ -1805,7 +1830,7 @@ function setUpExpandableSection() {
       localStorage.setItem(`LAST_Y_POSSITION-${section.id}`, window.scrollY);
       
       const y = section.getBoundingClientRect().top + window.scrollY - 10;
-      window.scrollTo({ top: y, behavior: 'smooth' });
+      window.scrollTo({ top: y, behavior: 'smooth' });  
   
       let pageWait;
       const loadPageOnScroll = () => {

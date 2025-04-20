@@ -532,14 +532,14 @@
       }
 
       .menu-buttons button {
-        height: 30px;
+        height: 32px;
         font-size: 12px;
       }
 
     }
 
     .search-container {
-      height: 32px;
+      height: 30px;
 
       &:has(.select-item) {
         height: 64px;

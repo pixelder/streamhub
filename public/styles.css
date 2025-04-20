@@ -263,7 +263,7 @@ input[type="range"] {
 }
 
 input[type="range"]::-moz-range-thumb {
-  width: 10px;
+  width: 12px;
   height: 24px;
   border: 1px solid var(--color1);
   border-radius: var(--border-radius2);
@@ -278,7 +278,7 @@ input[type="range"]::-moz-range-thumb:active {
 input[type="range"]::-webkit-slider-thumb {
   -webkit-appearance: none;
   appearance: none;
-  width: 10px;
+  width: 12px;
   height: 24px;
   border: 1px solid var(--color1);
   border-radius: var(--border-radius2);
@@ -523,7 +523,11 @@ body:has(.expandable.expanded) {
   overflow: hidden;
 }
 
+
 .expandable {
+  border: 0px solid transparent;
+  transition: width 0.2s, height 0.2s, border 0.2s, margin 0.2s;
+
   .section-header {
     cursor: pointer;
   }
@@ -533,7 +537,7 @@ body:has(.expandable.expanded) {
     justify-content: flex-start !important;
     overflow-x: auto;
     padding: 4px;
-    transition: all 0.3s ease-in-out;
+    transition: all 0.5s ease-out;
     /* scroll-snap-type: x mandatory; */
     
     .grid-item {
@@ -569,6 +573,7 @@ body:has(.expandable.expanded) {
   padding-right: unset;
   padding-left: unset;
   padding-top: 58px;
+  transition: unset;
 
   .section-header {
     height: fit-content;
@@ -1392,7 +1397,7 @@ body:has(.expandable.expanded) {
   max-width: 30rem;
   margin: auto 0;
   padding: var(--padding);
-  background: var(--bg-color);
+  background: linear-gradient(60deg, var(--bg-color) 50%, #1f2233 100%);
   border: 1px solid var(--color3);
   border-radius: 12px;
   box-shadow: 0 5px 50px 25px rgba(0, 0, 0, 0.5);
@@ -1417,20 +1422,20 @@ body:has(.expandable.expanded) {
 
   .search-box {
     background: var(--color5);
-    border: none;
+    border: 1px solid var(--color3);
     border-radius: 6px;
     transition: background 0.3s;
   }
 
   .vote-count input {
-    border: none;
+    border: 1px solid var(--color3);
     border-radius: 6px;
     background: var(--color5);
   }
 
   select {
     width: 100%;
-    border: none;
+    border: 1px solid var(--color3);
     border-radius: 6px;
     background-color: var(--color5);
     box-shadow: none;
@@ -1505,7 +1510,23 @@ body:has(.expandable.expanded) {
   transition: height 0.2s ease-in-out;
 }
 
+.search-box:focus-within {
+  background: var(--color3);
+}
+
 .search-box {
+  --spacing: 8px;
+  display: flex;
+  /* flex-wrap: wrap; */
+  flex-direction: column;
+  height: 36px;
+  width: 100% !important;
+  overflow: hidden;
+  padding: var(--spacing);
+  margin: unset !important;
+  gap: var(--spacing);
+  transition: height 0.2s, box-shadow 0.2s ease-in-out;
+
   .flow-row {
     position: relative;
     min-height: 100%;
@@ -1528,24 +1549,6 @@ body:has(.expandable.expanded) {
     opacity: 1;
     visibility: visible;
   }
-}
-
-.search-box:focus-within {
-  background: var(--color3);
-}
-
-.search-box {
-  --spacing: 8px;
-  display: flex;
-  /* flex-wrap: wrap; */
-  flex-direction: column;
-  height: 36px;
-  width: 100% !important;
-  overflow: hidden;
-  padding: var(--spacing);
-  margin: unset !important;
-  gap: var(--spacing);
-  transition: height 0.2s, box-shadow 0.2s ease-in-out;
 
   input {
     border: 1px solid transparent;
