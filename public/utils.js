@@ -1827,6 +1827,7 @@ function setUpExpandableSection() {
       currentPage = 1;
       section.classList.add('expanded');
       section.classList.remove('collapsed')
+      localStorage.removeItem(`LAST_Y_POSSITION-${section.id}`)
       localStorage.setItem(`LAST_Y_POSSITION-${section.id}`, window.scrollY);
       
       const y = section.getBoundingClientRect().top + window.scrollY - 10;
