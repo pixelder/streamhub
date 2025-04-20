@@ -66,7 +66,12 @@ function loadExplorePage(mediaType) {
 								</div>
                 <div class="filter-overlay"></div>
                 <div class="filter-menu">
-                    <h2>More Filters</h2>
+                    <h3>More Filters</h3>
+										<button class="close-btn">
+											<svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="32" height="32" viewBox="0,0,256,256">
+											<g fill="#e6e6fa" fill-rule="nonzero" stroke="none" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="10" stroke-dasharray="" stroke-dashoffset="0" font-family="none" font-weight="none" font-size="none" text-anchor="none" style="mix-blend-mode: normal"><g transform="scale(8,8)"><path d="M7.21875,5.78125l-1.4375,1.4375l8.78125,8.78125l-8.78125,8.78125l1.4375,1.4375l8.78125,-8.78125l8.78125,8.78125l1.4375,-1.4375l-8.78125,-8.78125l8.78125,-8.78125l-1.4375,-1.4375l-8.78125,8.78125z"></path></g></g>
+											</svg>
+										</button>
                     <div class="form-group">
                         <div class="flow-row">
 													<label for="search-with-cast">Cast</label>
@@ -76,7 +81,7 @@ function loadExplorePage(mediaType) {
 													</div>
 												</div>
                         <div class="search-container" id="search-with-cast" type="person">
-                            <label for="cast-input" class="search-box">
+                            <div class="search-box">
 															<form class="flow-row" action="javascript:void(0);">
 																<input id="cast-input" type="search" placeholder="eg. Hugh Jackman, Tom Cruise">
 																<button type="reset" class="x-icon" >
@@ -89,13 +94,13 @@ function loadExplorePage(mediaType) {
 																	<div class="results">
 																	</div>
 															</div>
-														</label>
+														</div>
                         </div>
                     </div>
                     <div class="form-group">
                         <label for="search-with-company">Production Company</label>
                         <div class="search-container" id="search-with-company" type="company">
-                            <label for="company-input" class="search-box">
+                            <div class="search-box">
 															<form class="flow-row" action="javascript:void(0);">	
 																<input id="company-input" type="search" placeholder="eg. Studio Ghibli, Marvel Studios">
 																<button type="reset" class="x-icon" >
@@ -108,8 +113,22 @@ function loadExplorePage(mediaType) {
 																	<div class="results">
 																	</div>
 															</div>
-														</label>
+														</div>
                         </div>
+                    </div>
+                    <div class="flow-row">
+											<div class="form-group">
+													<label for="countryFilter">Country</label>
+													<select id="countryFilter">
+															<option value="">Any</option>
+													</select>
+											</div>
+											<div class="form-group">
+													<label for="languageFilter">Language</label>
+													<select id="languageFilter">
+															<option value="">Any</option>
+													</select>
+											</div>
                     </div>
                     <div class="form-group">
                         <label for="min-vote-slider">Minimum vote count</label>
@@ -120,21 +139,10 @@ function loadExplorePage(mediaType) {
                             <p>1000</p>
                         </div>
                     </div>
-                    <div class="flow-row">
-                    <div class="form-group">
-                        <label for="countryFilter">Country</label>
-                        <select id="countryFilter">
-                            <option value="">Any</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="languageFilter">Language</label>
-                        <select id="languageFilter">
-                            <option value="">Any</option>
-                        </select>
-                    </div>
-                    </div>
-                    <button class="reset-button" onclick=filterReset()>Reset</button>
+										<div class="form-group menu-buttons">
+											<button class="continue">Continue</button>
+											<button class="reset-button" onclick=filterReset()>Reset</button>
+										</div>
                 </div>
             </div>
             <div class='grid-container'></div>
@@ -222,7 +230,7 @@ function loadExplorePage(mediaType) {
 }
 
 
-function filterParams() {
+function filterParams(reset = null) {
 	const minVoteSlider = document.getElementById("min-vote-slider")
 	const minVoteNumber = document.getElementById("min-vote-number")
 	const minRateSlider = document.getElementById("min-rating-slider")
@@ -235,6 +243,30 @@ function filterParams() {
 	const languageFilter = document.getElementById("languageFilter")
 	const genreContainer = document.getElementById("genreChips");
 	const searchBox = document.querySelectorAll(".search-box input")
+
+	if (reset) {
+		// On reset
+		sortBy.value = sortMode
+		checkbox.checked = false;
+		sortOrder = 'desc'
+		yearPicker.value = currentYear
+		minVoteNumber.value = minVoteCount
+		minVoteSlider.value = minVoteCount
+		minRateNumber.value = minRate
+		minRateSlider.value = minRate
+		countryFilter.value = selectedCountry
+		languageFilter.value = selectedLanguage
+	
+		searchBox.forEach(box => {
+			box.value = '';
+			const section = box.closest('.search-container')
+			section.querySelector('.select-container').innerHTML = ''
+			section.querySelector('.results').innerHTML = ''
+		})
+	
+		updateSelectedGenres(genreContainer)
+		return
+	}
 
 	// New values
 	sortBy.oninput = function () {
@@ -278,26 +310,6 @@ function filterParams() {
 		selectedLanguage = this.value
 	}
 
-	// On reset
-	sortBy.value = sortMode
-	checkbox.checked = false;
-	sortOrder = 'desc'
-	yearPicker.value = currentYear
-	minVoteNumber.value = minVoteCount
-	minVoteSlider.value = minVoteCount
-	minRateNumber.value = minRate
-	minRateSlider.value = minRate
-	countryFilter.value = selectedCountry
-	languageFilter.value = selectedLanguage
-
-	searchBox.forEach(box => {
-		box.value = '';
-		const section = box.closest('.search-container')
-		section.querySelector('.select-container').innerHTML = ''
-		section.querySelector('.results').innerHTML = ''
-	})
-
-	updateSelectedGenres(genreContainer)
 }
 
 function filterReset() {
@@ -314,7 +326,7 @@ function filterReset() {
 	selectedCountry = '';
 	selectedLanguage = '';
 
-	filterParams();
+	filterParams(1);
 	resetSection();
 	pageEnd = false;
 }
@@ -433,15 +445,20 @@ function updateSelectedGenres(genreContainer) {
 }
 
 function resetSection() {
-	const mediaType = isMovie ? 'movie' : 'tv';
-	const gridContainer = document.querySelector(".grid-container")
-	const msg = document.querySelector('.result-message');
-	msg.querySelector('label').innerText = 'Loading...'
-	msg.classList.add('loading')
-	gridContainer.innerHTML = '';
-	currentPage = 1;
-
-	loadDiscoverContent('', '', mediaType, `browse-${mediaType}s`);
+	try {
+		const mediaType = isMovie ? 'movie' : 'tv';
+		const gridContainer = document.querySelector(".grid-container")
+		const msg = document.querySelector('.result-message');
+		msg.querySelector('label').innerText = 'Loading...'
+		msg.classList.add('loading')
+		gridContainer.innerHTML = '';
+		currentPage = 1;
+	
+		loadDiscoverContent('', '', mediaType, `browse-${mediaType}s`);
+	} catch (e) {
+		console.log(e)
+		notifyAlert(e)
+	}
 }
 
 
@@ -459,12 +476,17 @@ function filterEvents(event) {
 		if (event.target.closest('.go-up')) {
 			window.scrollTo({top : 0})
 		}
-		if (event.target.closest('.filter-overlay')) {
+		if (event.target.closest('.filter-overlay, .close-btn, .continue')) {
 			filterMenu.style.display = 'none';
 			filterMenu.toggleAttribute('active')
 			filterOverlay.style.display = 'none';
 			event.stopPropagation();
 		};
+
+		if (event.target.closest('.continue')) {
+			resetSection();
+			pageEnd = false
+		}
 
 		if (!event.target.closest('.search-box')) {
 			document.querySelectorAll('.search-container').forEach(el => {
@@ -606,7 +628,7 @@ function searchResultFunction(sectionId) {
 		if (container) {
 			document.querySelectorAll('.search-container').forEach(item => item.removeAttribute('expanded',''))
 			section.setAttribute('expanded', '')
-			// searchBox.focus()
+			searchBox.focus()
 		}
 
 		if (clearBtn) {
@@ -616,6 +638,19 @@ function searchResultFunction(sectionId) {
 			selectedSearchItems = []
 			updateSelectItems()
 		}
+
+		// if (clearBtn) {
+		// 	selectedSearchItems.pop();
+		// 	updateSelectItems()
+		// 	selectedContainer.lastChild.classList.add('removing')
+		// 	setTimeout(() => {
+		// 		selectedContainer.lastChild.remove() // Remove after animation
+		// 		const item = currentSearchResults.find((item) => item.id == selectedContainer.lastChild)
+		// 		if (!item) return
+		// 		const newResultEl = resultHTML(item)
+		// 		insertResultInOrder(newResultEl, item)
+		// 	}, 200)
+		// }
 	}
 	const form = section.closest('.form-group')
 	form.removeEventListener("click", sectionEventListener)
