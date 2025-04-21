@@ -1205,10 +1205,11 @@ function cappedOverview() {
   if (!isListenerAttached) {
     document.addEventListener('click', (e) => {
       const container = e.target.closest('.synopsis');
-      if (container) {
-        container.classList.toggle('expanded');
-        e.stopPropagation();
-      }
+      const textField = container?.querySelector('.overview')
+      if (!container) return
+      textField.scrollTo({top:0})
+      container.classList.toggle('expanded');
+      e.stopPropagation();
     });
 
     isListenerAttached = true;
@@ -1755,14 +1756,14 @@ function setupCheckboxListeners(sectionID) {
   
       const isActive = item.querySelector(".selectable.active");
       wasEditing = true;
-  
+      item.blur()
       try {
         navigator.vibrate(50);
       } catch (err) {
         console.warn("Vibrate error:", err);
       }
       toggleEditing(section, !isActive ? item : "");
-    }, 750);
+    }, 500);
   
     const clearTimer = () => clearTimeout(timer);
 
@@ -1776,7 +1777,7 @@ function setupCheckboxListeners(sectionID) {
     clearTimeout(scrollTimeout);
     scrollTimeout = setTimeout(() => {
       isScrolling = false;
-    }, 500);
+    }, 200);
   });
 
   ["mousedown", "touchstart"].forEach((eventType) => {
@@ -1892,9 +1893,12 @@ function setUpExpandableSection() {
     }
 
     if (e.target.closest('.section-header')) {
-      const scroll = localStorage.getItem(`LAST_Y_POSSITION-${section.id}`);
+      let scroll = localStorage.getItem(`LAST_Y_POSSITION-${section.id}`);
       if (!scroll) {
         localStorage.setItem(`LAST_Y_POSSITION-${section.id}`, window.scrollY);
+        scroll = window.scrollY
+      } else {
+        localStorage.removeItem(`LAST_Y_POSSITION-${section.id}`)
       }
       window.scrollTo({ top: scroll, behavior: 'smooth' });
       section.classList.remove('expanded')
