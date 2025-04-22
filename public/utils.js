@@ -1207,7 +1207,7 @@ function cappedOverview() {
       const container = e.target.closest('.synopsis');
       const textField = container?.querySelector('.overview')
       if (!container) return
-      textField.scrollTo({top:0})
+      textField.scrollTo({top:0, behavior: 'instant'})
       container.classList.toggle('expanded');
       e.stopPropagation();
     });
@@ -1466,7 +1466,7 @@ window.addEventListener('scroll', () => {
       isScrollingDown = true;
       input.style.height = "1.8rem";
       nav.style.padding = isMobile() ? "0.4rem 0.6rem" : "0.4rem 1.4rem";
-      header.style.height = isMobile() ? "3rem" : "2.8rem";
+      header.style.height = "3rem"//isMobile() ? "3rem" : "2.8rem";
       clearTimeout(hideTimeout);
       hideTimeout = setTimeout(() => {
         header.classList.add('hidden');
@@ -1896,11 +1896,11 @@ function setUpExpandableSection() {
       let scroll = localStorage.getItem(`LAST_Y_POSSITION-${section.id}`);
       if (!scroll) {
         localStorage.setItem(`LAST_Y_POSSITION-${section.id}`, window.scrollY);
-        scroll = window.scrollY
+        // scroll = window.scrollY
       } else {
         localStorage.removeItem(`LAST_Y_POSSITION-${section.id}`)
+        window.scrollTo({ top: scroll, behavior: 'smooth' });
       }
-      window.scrollTo({ top: scroll, behavior: 'smooth' });
       section.classList.remove('expanded')
       section.classList.toggle('collapsed')
 
@@ -1920,5 +1920,3 @@ function setUpExpandableSection() {
     })
   )
 }
-
-
