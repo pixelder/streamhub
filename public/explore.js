@@ -83,7 +83,7 @@ function loadExplorePage(mediaType) {
                         <div class="search-container" id="search-with-cast" type="person">
                             <div class="search-box">
 															<form class="flow-row" action="javascript:void(0);">
-																<input id="cast-input" type="search" placeholder="eg. Hugh Jackman, Tom Cruise">
+																<input id="cast-input" type="search" placeholder="eg. Tom Cruise">
 																<button type="reset" class="x-icon" >
 																	<i class="fa-solid fa-xmark" aria-hidden="true"></i>
 																</button>
@@ -102,7 +102,7 @@ function loadExplorePage(mediaType) {
                         <div class="search-container" id="search-with-company" type="company">
                             <div class="search-box">
 															<form class="flow-row" action="javascript:void(0);">	
-																<input id="company-input" type="search" placeholder="eg. Studio Ghibli, Marvel Studios">
+																<input id="company-input" type="search" placeholder="eg. Studio Ghibli">
 																<button type="reset" class="x-icon" >
 																	<i class="fa-solid fa-xmark" aria-hidden="true"></i>
 																</button>
@@ -140,7 +140,7 @@ function loadExplorePage(mediaType) {
                         </div>
                     </div>
 										<div class="form-group menu-buttons">
-											<button class="continue">Continue</button>
+											<button class="apply">Apply</button>
 											<button class="reset-button" onclick=filterReset()>Reset</button>
 										</div>
                 </div>
@@ -476,14 +476,14 @@ function filterEvents(event) {
 		if (event.target.closest('.go-up')) {
 			window.scrollTo({top : 0})
 		}
-		if (event.target.closest('.filter-overlay, .close-btn, .continue')) {
+		if (event.target.closest('.filter-overlay, .close-btn, .apply')) {
 			filterMenu.style.display = 'none';
 			filterMenu.toggleAttribute('active')
 			filterOverlay.style.display = 'none';
 			event.stopPropagation();
 		};
 
-		if (event.target.closest('.continue')) {
+		if (event.target.closest('.apply')) {
 			resetSection();
 			pageEnd = false
 		}
