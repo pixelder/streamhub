@@ -526,7 +526,7 @@ body:has(.expandable.expanded) {
 
 .expandable {
   border: 0px solid transparent;
-  transition: width 0.2s, height 0.2s, border 0.2s, margin 0.2s;
+  transition: width 0.2s, height 0.2s, border 0.2s, margin 0.5s, padding 0.5s;
 
   .section-header {
     cursor: pointer;
