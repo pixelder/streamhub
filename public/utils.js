@@ -325,6 +325,8 @@ function displayModal(mediaType, data) {
     '--modal-backdrop',
     `url(${data.backdrop_path ? IMAGE_ORG + data.backdrop_path : ''})`
   );
+  
+  modalContent.style.setProperty('--modal-backdrop-opacity', 1);
 
   const contentLogoHTML = getContentLogoHTML(data);
 
