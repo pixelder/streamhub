@@ -118,6 +118,7 @@ Array.prototype.sortDateDesc = function (desc = null) {
 
 async function fetchHistoryItems(section, sectionId, items) {
   const container = section.querySelector('.grid-container');
+  const logType = section.dataset.type;
   const fragment = document.createDocumentFragment();
   const existingItems = new Map();
 
@@ -129,43 +130,46 @@ async function fetchHistoryItems(section, sectionId, items) {
   const newItems = new Set(items.map(item => item.id + item.index));
 
   // Sort items in descending order by date
-  const sortedItems = items.slice().sortDateDesc(false);
+  const SORTED_ITEMS = items.slice().sortDateDesc(false);
 
   // Process all items and collect results
-  const results = await Promise.allSettled(sortedItems.map(async (item) => {
-    const { id, mediaType, index, data: { sno, eno } } = item;
-    const key = id + index;
-    if (existingItems.has(key)) {
-      // Remove from existing items if already present and skip rendering
-      existingItems.delete(key);
-      return null;
-    }
-
-    try {
-      const { data } = await fetchMetaData(mediaType, id);
-      let content;
-      if (section.dataset.type !== 'bookmarks' && mediaType === "tv") {
-        const { data: tvData } = await fetchMetaData(mediaType, id, sno);
-        content = renderLogItems(data, item, tvData);
-      } else {
-        data.media_type = mediaType;
-        content = section.dataset.type !== "bookmarks"
-          ? renderLogItems(data, item)
-          : renderGridItems([data]);
+  const results = await Promise.allSettled(SORTED_ITEMS
+    .map(async (item) => {
+      const { id, mediaType, index, data: { sno, eno } } = item;
+      const key = id + index; // unique key consisting id and index
+      if (existingItems.has(key)) { //search and remove or skip rendering if data with key exists
+        existingItems.delete(key);
+        return null;
       }
 
-      const wrapper = document.createElement("div");
-      wrapper.innerHTML = content;
-      const newElement = wrapper.firstElementChild;
-      newElement.dataset.id = id;
-      newElement.dataset.index = index;
-      return newElement;
-    } catch (error) {
-      const msg = `Error fetching data for item ID ${id} for ${sectionId} : ${error}`
-      notifyAlert(msg)
-      return null;
-    }
-  }));
+      try {
+        const { data } = await fetchMetaData(mediaType, id);
+        let content;
+        if (logType !== 'bookmarks' && mediaType === "tv") {
+          const { data: tvData } = await fetchMetaData(mediaType, id, sno);
+          content = renderLogItems(data, item, tvData);
+        } else {
+          data.media_type = mediaType;
+          content = logType !== "bookmarks"
+            ? renderLogItems(data, item)
+            : renderGridItems([data]);
+        }
+
+        const wrapper = document.createElement("div");
+        wrapper.innerHTML = content;
+        const newElement = wrapper.firstElementChild;
+        newElement.dataset.id = id;
+        newElement.dataset.index = index;
+        return newElement;
+      } catch (error) {
+        const msg = `Error fetching data for item ID ${id} for ${sectionId} : ${error.message}`
+        const data = { sectionId, logType, id, mediaType, sno, eno, index}
+        const actions = [ { name : 'Fix', task : 'remove'} ]
+        notifyAlert(msg, "error", data, actions)
+        return null;
+      }
+    })
+  );
 
   // Append elements in the original sorted order
   results.forEach(result => {
