@@ -264,11 +264,13 @@ function setUpPlayer(source, mediaType, id, season = null, episode = null, setti
 }
 
 async function loadSource(source, mediaType, id, season = null, episode = null, settings = [null]) {
+  document.querySelector(".loading").style.display = "flex";
+  const iframe = document.querySelector(".iframe-container")
+  iframe.innerHTML = ''
   //console.log('loading source ifram')
   const loadIframe = await getSourceIframe(source, mediaType, id, season, episode, settings)
   // indicicate loading...
-  document.querySelector(".loading").style.display = "flex";
-  document.querySelector(".iframe-container").innerHTML = loadIframe;
+  iframe.innerHTML = loadIframe;
 }
 
 function setProviderSettings(item) {
@@ -466,7 +468,7 @@ function setupLogging(id, mediaType) {
       }
     }
     if (mediaType === 'movie') return
-    updatePageStatus(progress);
+    updatePageStatus(100);
   };
 
   // Cleanup existing listeners/intervals if any
