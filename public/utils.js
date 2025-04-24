@@ -1110,7 +1110,9 @@ async function sourceValidator(mediaType, id, season = null, eno = null) {
 }
 
 function scrollEpisodeIntoView(eno) {
-  const episode = document.getElementById(eno);
+  const episode = Array.from(document.querySelectorAll('.episode')).filter(ep => {
+    return String(ep.dataset.episode) === String(eno)
+  })[0]
 
   if (!episode) {
     return;
