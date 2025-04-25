@@ -762,7 +762,7 @@ body:has(.expandable.expanded) {
   position: relative;
   overflow: hidden;
   border-radius: var(--border-radius2);
-  margin-bottom: 6px;
+  margin-bottom: 4px;
   border: 1px solid #38385240;
 
   .progress-bar {
@@ -790,8 +790,8 @@ body:has(.expandable.expanded) {
   justify-content: space-between;
   text-align: left;
   padding-top: 0rem;
-  height: 2.725rem;
-  gap: 6px;
+  height: 48px;
+  gap: 4px;
 }
 
 .grid-item-info p {
