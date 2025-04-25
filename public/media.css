@@ -303,8 +303,8 @@
   }
 
   .grid-item {
-    aspect-ratio: unset !important;
-    height: fit-content;
+    aspect-ratio: 1/1.5 !important;
+    height: 190px;
     /* max-width: calc((100dvw - 1.2rem - 0.72rem) / 3); */
     min-width: 112px;
     padding: 0.36rem;
@@ -1077,7 +1077,6 @@
 
   .modal-info>h1 {
     position: relative;
-    padding: var(--padding1) 0;
     margin: unset !important;
     font-size: 22px !important;
   }

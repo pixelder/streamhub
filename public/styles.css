@@ -2332,7 +2332,7 @@ body:has(.filter-menu) {
   height: 100%;
   border-radius: var(--border-radius1);
   overflow: hidden;
-  min-width: 38%;
+  /* min-width: 38%; */
   aspect-ratio: 5/4;
   display: flex;
   justify-content: center;

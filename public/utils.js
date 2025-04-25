@@ -3,6 +3,7 @@ function truncate(num, precision) {
 }
 
 function extractYear(dateString) {
+  if (!dateString) return null
   const date = new Date(dateString);
   return date.getFullYear();
 }
@@ -35,6 +36,7 @@ function abbvText(text, limit) {
 }
 
 function convertDate(dateString) {
+  if (!dateString) return null
   const options = { month: 'long', day: 'numeric', year: 'numeric' };
   const formatter = new Intl.DateTimeFormat('en-US', options);
   return formatter.format(new Date(dateString));
@@ -111,7 +113,7 @@ function renderGridItems(items) {
       const progress = watched && mediaType === 'movie' ? 100 : Number(LOG?.sortDateDesc(false)[0]?.progress) || 0;
       const title = item.title || item.name;
       const rating = truncate(item.vote_average, 1);
-      const year = extractYear(item.release_date || item.first_air_date);
+      const year = extractYear(item.release_date || item.first_air_date) || '';
       const releaseDate = new ReleaseDate(item.release_date || item.first_air_date)
       const upcoming = releaseDate?.isUpcoming()
       const image = item.poster_path
@@ -285,6 +287,7 @@ function openModal(event) {
     })
     .catch((error) => {
       const msg = `Error fetching data for ${mediaType} id:${id}: ${error}`
+      console.log(error)
       notifyAlert(msg)
     })
 }
@@ -343,16 +346,15 @@ function displayModal(mediaType, data) {
 
   if (mediaType === 'tv') {
     const userData = getLogData('watching')?.find(item => item.id === data.id)?.data;
-    const season = isViewingDetails ? userData?.sno : null;
-    const episode = isViewingDetails ? userData?.eno : null;
+    const sno = isViewingDetails ? userData?.sno : null;
+    const eno = isViewingDetails ? userData?.eno : null;
     modalContent.style.height = !isMobile() ? '32rem' : '70%';
-    tvContent(data, season, episode, 'modal')
+    tvContent(data, sno, eno, 'modal')
       .then((season) => {
         const tvButtons = document.querySelector('.tv-actions');
         tvButtons.innerHTML += setUpModalActions(data, mediaType, season);
-        // if (releaseInfo(data, mediaType) !== null) seasonMenu.insertAdjacentHTML('beforebegin', releaseInfo(data, mediaType));
       })
-      .then(() => isViewingDetails ? scrollEpisodeIntoView(episode) : '')
+      .then(() => isViewingDetails ? scrollEpisodeIntoView(eno) : '')
       .catch((e) => console.log(e))
   }
 
@@ -392,7 +394,7 @@ function getContentLogoHTML(data) {
 function buildMediaDetailsHTML(data, mediaType, contentLogoHTML) {
   const name = data.name || data.title || data.original_title;
   const releaseDate = data.release_date || data.first_air_date || data.air_date || '';
-  const formattedDate = convertDate(releaseDate);
+  const formattedDate = convertDate(releaseDate) || null;
   const genresHTML = data.genres
     .slice(0, 5)
     .map(genre => `<a href="#">${genre.name}</a>`)
@@ -640,7 +642,7 @@ function isFreshRelease(tvData) {
 }
 
 function releaseInfo(data, mediaType) {
-  const tvAirDate = data.seasons?.sort((a, b) => (new Date(b.air_date) - new Date(a.air_date)))[0].air_date
+  const tvAirDate = data.seasons.length > 0 ? data.seasons?.sort((a, b) => (new Date(b.air_date) - new Date(a.air_date)))[0].air_date : '';
   let releaseDate = new ReleaseDate(data.release_date || tvAirDate);
   const nextEpisode = new ReleaseDate(data.next_episode_to_air?.air_date)
   const running = releaseDate.isUpcoming() ? false :  nextEpisode.isUpcoming() ? true: false;
@@ -818,16 +820,15 @@ async function tvContent(data, sno, eno, ref) {
   const backdrop = data.backdrop_path
   const seasons = [...data.seasons].sort((a, b) => a.season_number - b.season_number).reverse();
   const containerClass = ref === "modal" ? "episode-wrap" : "episode-player";
-  const season = sno || data.number_of_seasons
+  const season = sno || data.seasons?.at(0)?.season_number || data.number_of_seasons
   sno = sno ?? -1
   const { data: seasonData } = await fetchMetaData('tv', id, season);
   localStorage.setItem('seasonData', JSON.stringify(seasonData));
-  // console.log(seasonData)
   const generateEpisodesHTML = (episodes, season) => {
     let HTML = ''
     let epCount = 0;
     let logs = getLogData('history');
-    episodes.map(episode => {
+    episodes?.map(episode => {
       const epLog = logs ? logs.filter(log => {
         return Number(log.id) === Number(id) && log.mediaType === 'tv' &&
           String(log.data.sno) === String(episode.season_number) &&
@@ -904,16 +905,20 @@ async function tvContent(data, sno, eno, ref) {
     });
   }
 
-  document.getElementById('season-dropdown')?.addEventListener('change', async (event) => {
-    const selectedSeason = event.target.value;
-    const { data: tvData } = selectedSeason !== sno
-      ? await fetchMetaData('tv', id, selectedSeason)
-      : { data: seasonData };
-
-    localStorage.setItem('seasonData', JSON.stringify(tvData));
-    document.getElementById('episode-container').innerHTML = generateEpisodesHTML(tvData.episodes, selectedSeason);
-    document.querySelector('.play-trailer')?.setAttribute('data-sno', selectedSeason);
-  });
+  document.querySelector('.tv-actions').addEventListener('change', async (event) => {
+    if (event.target.matches('#season-dropdown')) {
+      const selectedSeason = event.target.value;
+      const { data: tvData } = selectedSeason !== sno
+        ? await fetchMetaData('tv', id, selectedSeason)
+        : { data: seasonData };
+  
+      localStorage.setItem('seasonData', JSON.stringify(tvData));
+      document.getElementById('episode-container').innerHTML = generateEpisodesHTML(tvData.episodes, selectedSeason);
+      document.querySelector('.play-trailer')?.setAttribute('data-sno', selectedSeason);
+      event.stopPropagation()
+      return
+    }
+  })
 
   return season
 }
