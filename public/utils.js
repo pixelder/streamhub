@@ -317,6 +317,8 @@ function getCountryCertification(data, mediaType) {
   return { displayCountry: ORIGIN_COUNTRY, rated: rating };
 }
 
+let isViewingDetails = false
+
 function displayModal(mediaType, data) {
   const modal = document.getElementById('info-modal');
   const modalContent = document.querySelector('.modal-content');
@@ -341,15 +343,16 @@ function displayModal(mediaType, data) {
 
   if (mediaType === 'tv') {
     const userData = getLogData('watching')?.find(item => item.id === data.id)?.data;
-    const season = userData?.sno;
-    const episode = userData?.eno;
+    const season = isViewingDetails ? userData?.sno : null;
+    const episode = isViewingDetails ? userData?.eno : null;
     modalContent.style.height = !isMobile() ? '32rem' : '70%';
     tvContent(data, season, episode, 'modal')
       .then((season) => {
-        const seasonMenu = document.querySelector('.seasons-menu');
-        seasonMenu?.insertAdjacentHTML('afterend', setUpModalActions(data, mediaType, season));
+        const tvButtons = document.querySelector('.tv-actions');
+        tvButtons.innerHTML += setUpModalActions(data, mediaType, season);
         // if (releaseInfo(data, mediaType) !== null) seasonMenu.insertAdjacentHTML('beforebegin', releaseInfo(data, mediaType));
       })
+      .then(() => isViewingDetails ? scrollEpisodeIntoView(episode) : '')
       .catch((e) => console.log(e))
   }
 
@@ -884,6 +887,7 @@ async function tvContent(data, sno, eno, ref) {
 
   if (ref === "modal") {
     document.querySelector("#modal-details").innerHTML += tvInfo;
+    console.log(eno)
   } else {
     const epName = seasonData.episodes.find(episode => episode.episode_number === Number(eno))?.name
     const title = `S${sno}:E${eno} ${epName || ""}`

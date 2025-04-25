@@ -63,6 +63,7 @@ function globalAddEventListener (event) {
           event.preventDefault()
         }
         if (event.target.closest('.view-details')) {
+          isViewingDetails = true
           openModal(event)
           event.stopPropagation();
         }
@@ -80,6 +81,7 @@ function globalAddEventListener (event) {
     if (event.key === 'Escape' || event.target.matches('#info-modal')) {
       document.getElementById('modal-details').innerHTML = '';
       modal.removeAttribute('active','')
+      isViewingDetails = false
       event.stopPropagation();
     }
     return;

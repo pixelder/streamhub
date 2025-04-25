@@ -209,23 +209,23 @@ function loadExplorePage(mediaType) {
 	searchResultFunction("#search-with-cast")
 	searchResultFunction("#search-with-company")
 
-	// document.body.addEventListener("focus", function(event) {
-	// 	if (!event.target.closest('.search-container')) return
-  //   const target = event.target;
-	// 	console.log(target.tagName)
-  //   switch (target.tagName) {
-  //       case "INPUT":
-  //       // case "TEXTAREA":
-  //       // case "SELECT":
-	// 				document.body.classList.add("keyboard");
-	// 				break;
-  //   }
-	// }, true);
+	document.body.addEventListener("focus", function(event) {
+		if (!event.target.closest('.search-container')) return
+    const target = event.target;
+		console.log(target.tagName)
+    switch (target.tagName) {
+        case "INPUT":
+        // case "TEXTAREA":
+        // case "SELECT":
+					document.body.classList.add("keyboard");
+					break;
+    }
+	}, true);
 
-	// document.body.addEventListener("blur", function() {
-	// 		console.log('blur')
-	// 		document.body.classList.remove("keyboard");
-	// }, true);
+	document.body.addEventListener("blur", function() {
+			console.log('blur')
+			document.body.classList.remove("keyboard");
+	}, true);
 	//filters.dispatchEvent(/* new Event('click') ||  */new Event('change', () => {console.log('hi')}));
 }
 
