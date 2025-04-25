@@ -201,8 +201,6 @@ function loadExplorePage(mediaType) {
 
 	['click', 'change'].forEach(eventType => {
 		filters.removeEventListener(eventType, filterEvents);
-	});
-	['click', 'change'].forEach(eventType => {
 		filters.addEventListener(eventType, filterEvents);
 	});
 
@@ -270,8 +268,8 @@ function filterParams(reset = null) {
 
 	// New values
 	sortBy.oninput = function () {
-		checkbox.checked = false
 		sortMode = this.value
+		sortOrder = checkbox.checked ? 'asc' : 'desc'
 	}
 
 	sortOrderButton.onclick = function () {

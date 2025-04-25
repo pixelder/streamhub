@@ -303,8 +303,8 @@
   }
 
   .grid-item {
-    aspect-ratio: 1/1.5 !important;
-    height: 190px;
+    aspect-ratio: unset !important;
+    height: fit-content;
     /* max-width: calc((100dvw - 1.2rem - 0.72rem) / 3); */
     min-width: 112px;
     padding: 0.36rem;
@@ -355,7 +355,7 @@
 
   .grid-item-info>p:nth-child(1) {
     flex: unset;
-    height: 24px;
+    height: 25px;
     width: 100%;
     max-width: 100%;
     margin-bottom: auto;
@@ -813,6 +813,11 @@
     .results-container {
       padding: 8px 0.6rem 12px;
       gap: 8px;
+      
+      .grid-item {
+         height: 190px;
+         aspect-ratio: 1 / 1.6 !important;
+      }
     }
   }
 
