@@ -7,7 +7,7 @@
 
   body.keyboard {
     .filter-menu {
-      top: 33%;
+      top: 248px;
     }
   }
 
@@ -519,7 +519,7 @@
       padding: 12px;
       gap: 12px;
       width: 90%;
-      top: 256px;
+      /* top: 256px; */
       /* max-height: 80% ; */
 
       .form-group {
