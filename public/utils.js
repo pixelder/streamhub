@@ -642,7 +642,7 @@ function isFreshRelease(tvData) {
 }
 
 function releaseInfo(data, mediaType) {
-  const tvAirDate = data.seasons.length > 0 ? data.seasons?.sort((a, b) => (new Date(b.air_date) - new Date(a.air_date)))[0].air_date : '';
+  const tvAirDate = data.seasons?.length > 0 ? data.seasons?.sort((a, b) => (new Date(b.air_date) - new Date(a.air_date)))[0].air_date : '';
   let releaseDate = new ReleaseDate(data.release_date || tvAirDate);
   const nextEpisode = new ReleaseDate(data.next_episode_to_air?.air_date)
   const running = releaseDate.isUpcoming() ? false :  nextEpisode.isUpcoming() ? true: false;
