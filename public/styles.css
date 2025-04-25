@@ -2940,6 +2940,7 @@ option {
   height: 100%;
   min-width: 100%;
   object-fit: cover;
+  mask-image: linear-gradient(to top, rgba(0, 0, 0, 0.5) 0%, black 35%, black 75%, rgba(0, 0, 0, 0.5) 100%);
 }
 
 .episode-items img:focus-visible {
@@ -3208,7 +3209,7 @@ option {
   .progress {
     height: 100%;
     /* background: var(--caution); */
-    background: #8e8eee;
+    background: #4a4af2;
     border-radius: var(--border-radius2);
   }
 }
