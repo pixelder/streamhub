@@ -20,14 +20,30 @@ const providers = [
           { active: false, value: "v2" }
         ],
         switches: [
-          { value: "2", active: false },
-          { value: "3", active: true }
+          { value: "2", active: true },
+          { value: "3", active: false }
         ]
       }
     ]
   },
   {
     ds: "100", name: "Anime", hiddenOn: 'movie',
+    settings: [
+      {
+        type: "format",
+        label: [
+          { active: true, value: "SUB" },
+          { active: false, value: "DUB" }
+        ],
+        switches: [
+          { value: "sub", active: true },
+          { value: "dub", active: false }
+        ]
+      }
+    ]
+  },
+  {
+    ds: "101", name: "Anime2", hiddenOn: 'movie',
     settings: [
       {
         type: "format",
@@ -306,6 +322,9 @@ async function getSourceIframe(source, mediaType, id, season = null, episode = n
 
   switch (source) {
     case 100:
+      src = `https://vidsrc.cc/v2/embed/anime/ani${ID}/${ep}/${format || 'sub'}`
+      break;
+    case 101:
       src = `https://vidsrc.icu/embed/anime/${ID}/${ep}/${format || '1'}`
       break;
     case 1:
@@ -433,7 +452,9 @@ function setupLogging(id, mediaType) {
 
   const postMsgLogging = (e) => {
     if (e) clearTimeout(defaultLogWait);
-    if (!logFlag || e.data.type === 'MEDIA_DATA') return;
+    const allowedOrigin = e.origin === 'https://vidsrc.cc';
+    if (e.data.type === 'MEDIA_DATA' && !allowedOrigin) return;
+    if (!logFlag) return
     logFlag = false;
     // const { season, episode} = e.data.data
     // console.log(season , currentSeason, episode, currentEpisode)
@@ -443,32 +464,33 @@ function setupLogging(id, mediaType) {
     //   currentEpisode = episode
     //   updatePageStatus()
     // }
-    const event = e.data.event || e.data.data?.event;
-    if (event !== 'timeupdate') return;
-
-    const progress = truncate(100 * (e.data.data.currentTime / e.data.data.duration), 2);
+    const event = e.data.event || e.data.data?.event || e.data.type ;
+    if (event !== 'timeupdate' && !allowedOrigin) return;
+    const { currentTime, duration } = e.data.data
+    const progress = truncate(100 * (currentTime / duration), 2);
 
     if (5 < progress && progress < 85) {
       ['watching', 'history'].forEach(logType => {
         logToLocalStorage(logType, Number(id), mediaType, currentSeason, currentEpisode, progress);
       });
       localStorage.setItem(id, newSource);
+      updatePageStatus(progress);
     }
 
     if (progress > 90) {
       logToLocalStorage('history', Number(id), mediaType, currentSeason, currentEpisode, 100);
       if (mediaType === 'movie') {
         removeFromLocalStorage('watching', Number(id), mediaType);
+        return
       } else {
         getNextEpisode(id, currentSeason, currentEpisode).then((ep) => {
           if (ep) {
             logToLocalStorage('watching', Number(id), 'tv', ep.season_number, ep.episode_number);
           }
         });
+        updatePageStatus(100);
       }
     }
-    if (mediaType === 'movie') return
-    updatePageStatus(100);
   };
 
   // Cleanup existing listeners/intervals if any
