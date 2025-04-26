@@ -300,6 +300,7 @@ async function loadUserContent(sectionId, logType) {
     fetchHistoryItems(section, sectionId, logData);
   }
   enableHorizontalWheelScroll(container, 5)
+  if ( sectionId === 'bookmarks' ) return 
   setupScrollEdgeMask(container)
 }
 

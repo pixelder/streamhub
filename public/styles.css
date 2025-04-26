@@ -3201,7 +3201,7 @@ option {
 .progress-bar {
   width: 100%;
   height: 4px;
-  background: var(--color1);
+  background: var(--color3);
   border-radius: var(--border-radius2);
   margin: 8px 0 0;
   order: 4;
@@ -3209,7 +3209,7 @@ option {
   .progress {
     height: 100%;
     /* background: var(--caution); */
-    background: #4a4af2;
+    background: #699bff;
     border-radius: var(--border-radius2);
   }
 }

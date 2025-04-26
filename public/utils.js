@@ -1591,7 +1591,7 @@ function getConfirm({ title, message, success, decline, state = 1, exitInterval 
   });
 }
 
-function setupCheckboxListeners(sectionID) {
+async function setupCheckboxListeners(sectionID) {
 
   const container = document.querySelector(`#${sectionID} .grid-container`);
   if (!container.querySelector('.grid-item')) return console.log('no data found for', sectionID)

@@ -65,10 +65,9 @@
       }
     }
     
-    /* .grid-item {
-      flex: 1 1 auto;
+    .grid-item {
       min-width: unset;
-    } */
+    }
   }
 
   #history {
