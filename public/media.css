@@ -189,9 +189,9 @@
     font-size: 20px;
   }
 
-  .section-header {
+  /* .section-header {
     padding-top: unset;
-  }
+  } */
 
   .select-action {
     font-size: 12px;
@@ -270,7 +270,7 @@
   .expandable.collapsed {
     margin: 10px 10px auto;
     width: calc(100% - 20px);
-    padding: 0 10px;
+    padding: 0px 10px;
 
     .section-header {
       height: 40px;

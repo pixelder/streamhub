@@ -1895,7 +1895,7 @@ function setUpExpandableSection() {
       section.classList.remove('expanded');
       section.classList.remove('collapsed');
       const scroll = localStorage.getItem(`LAST_Y_POSSITION-${section.id}`) || 0;
-      window.scrollTo({ top: scroll, behavior: 'smooth' });
+      window.scrollTo({ top: scroll, behavior: 'instant' });
       if (!section.classList.contains('user-content')) {
         container.querySelectorAll('.grid-item').forEach((item, index) => {
           if (index >= 20) item.remove();
@@ -1912,7 +1912,7 @@ function setUpExpandableSection() {
         // scroll = window.scrollY
       } else {
         localStorage.removeItem(`LAST_Y_POSSITION-${section.id}`)
-        window.scrollTo({ top: scroll, behavior: 'smooth' });
+        window.scrollTo({ top: scroll, behavior: 'instant' });
       }
       section.classList.remove('expanded')
       section.classList.toggle('collapsed')

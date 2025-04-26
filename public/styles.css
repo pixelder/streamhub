@@ -526,7 +526,8 @@ body:has(.expandable.expanded) {
 
 .expandable {
   border: 0px solid transparent;
-  transition: width 0.2s, height 0.2s, border 0.2s, margin 0.3s, padding 0.3s;
+  /* transition: border 0.2s, border-radius 0.2s, padding 0.2s, margin 0.2s, height 0.2s, width 0.2s ease-in-out; */
+  transition: all 0.2s ease-in-out;
 
   .section-header {
     cursor: pointer;
@@ -537,7 +538,8 @@ body:has(.expandable.expanded) {
     justify-content: flex-start !important;
     overflow-x: auto;
     padding: 4px;
-    transition: all 0.5s ease-out;
+    /* transition: opacity 0.4s, height 0.4s ease-in-out; */
+    transition: all 0.2s ease-in-out ;
     /* scroll-snap-type: x mandatory; */
     
     .grid-item {
@@ -622,14 +624,13 @@ body:has(.expandable.expanded) {
   padding: unset;
 }
 
-
 .expandable.collapsed {
   min-height: fit-content;
   border: 1px solid var(--color3);
   border-radius: var(--border-radius1);
   gap: 0;
   overflow: hidden;
-  padding: 0 16px;
+  padding: 0px 16px;
   margin: 16px 1.4rem;
   width: calc(100% - 2.8rem);
 
@@ -656,10 +657,7 @@ body:has(.expandable.expanded) {
     }
   }
 
-  .streaming-container {
-    display: none;
-  }
-
+  .streaming-container,
   .tab-menu, .tab-items {
     display: none;
   }
@@ -1958,7 +1956,6 @@ body:has(.filter-menu) {
 /* Continue Watching */
 #continue-watching,
 #history {
-  transition: opacity 0.2s, min-height 0.2s, height 0.2s ease;
 
   .grid-container {
     display: flex;
@@ -1998,7 +1995,8 @@ body:has(.filter-menu) {
     z-index: inherit;
     aspect-ratio: 16 / 9;
     height: 100%;
-    mask-image: linear-gradient(to top, rgba(0, 0, 0, 0.1) 0%, black 40%, black 60%, rgba(0, 0, 0, 0.5) 100%);
+    mask-image: linear-gradient(to top, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.3) 25%, black 70%, rgba(0, 0, 0, 0.5) 100%);
+    /* mask-image: linear-gradient(to top, rgba(0, 0, 0, 0.1) 0%, black 40%, black 60%, rgba(0, 0, 0, 0.5) 100%); */
   }
 
   .grid-item:hover,
@@ -2176,6 +2174,7 @@ body:has(.filter-menu) {
     bottom: 0;
     position: absolute;
     padding: var(--padding1);
+    padding-top: 10% ;
     z-index: 1;
     height: fit-content;
     width: 100%;
@@ -3209,7 +3208,24 @@ option {
   .progress {
     height: 100%;
     /* background: var(--caution); */
-    background: #699bff;
+    background: #8AA9E8;
     border-radius: var(--border-radius2);
   }
+}
+
+.blur-layer {
+  position: absolute !important;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  backdrop-filter: blur(3px);
+  mask-image: linear-gradient(to top, 
+  rgba(0,0,0,1) 0%, 
+  rgba(0,0,0,0.7) 30%, 
+  rgba(0,0,0,0.3) 70%, 
+  rgba(0,0,0,0) 100%
+  );
+  z-index: -1;
+  pointer-events: none;
 }
