@@ -16,12 +16,12 @@ const providers = [
       {
         type: "version",
         label: [
-          { active: true, value: "v3" },
-          { active: false, value: "v2" }
+          { active: false, value: "v2" },
+          { active: true, value: "v3" }
         ],
         switches: [
-          { value: "2", active: true },
-          { value: "3", active: false }
+          { value: "2", active: false },
+          { value: "3", active: true }
         ]
       }
     ]
