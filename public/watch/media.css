@@ -101,26 +101,57 @@
     font-size: 1.2rem;
   }
 
-  .provider-menu:hover,
-  .provider-menu:has(.provider-change:focus-within) {
+  .providers.show {
+    max-height: 200px;
+  }
 
-    .providers {
-      width: 8rem;
-      max-height: 200px;
+  .providers {
+    width: 160px;
+    border-radius: 10px;
+
+    .pv-header {
+      margin: 0px;
+      padding: 2px;
+      gap: 2px;
+    }
+
+    /* h4 {
+      font-size: 14px;
+    } */
+  
+    hr {
+      margin: 4px 0px;
+    }
+  
+    .close-btn {
+      height: 20px;
+      padding: 2px;
     }
   }
 
   .provider {
-    font-size: 0.7rem;
-
+    font-size: 12px;
+    border-radius: 4px;
+    margin: 2px 0px;
+    
     .provider-name {
-      margin: 0.2rem 0.25rem;
+      font-weight: unset;
+      margin: 4px 6px;
     }
   }
 
   .provider-settings {
+    margin: 0px 6px;
+    gap: 6px;
+
+    .switch-buttons {
+      width: 18px;
+    }
     .switch {
-      height: 0.5rem;
+      height: 6px;
+    }
+    .switch.active {
+      outline: 3px solid var(--success);
     }
   }
 
