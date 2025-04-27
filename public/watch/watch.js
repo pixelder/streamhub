@@ -5,11 +5,10 @@ const IMAGE_URL = 'https://image.tmdb.org/t/p/w500';
 
 let currentSeason = null;
 let currentEpisode = null;
-let lastSource = 1
 let newSource = 1
 
 const providers = [
-  { ds: "1", name: "Vidlink" },
+  { ds: "1", name: "VidLink" },
   {
     ds: "2", name: "VidPlay",
     settings: [
@@ -32,8 +31,8 @@ const providers = [
       {
         type: "format",
         label: [
-          { active: true, value: "SUB" },
-          { active: false, value: "DUB" }
+          { active: true, value: "Sub" },
+          { active: false, value: "Dub" }
         ],
         switches: [
           { value: "sub", active: true },
@@ -48,8 +47,8 @@ const providers = [
       {
         type: "format",
         label: [
-          { active: false, value: "SUB" },
-          { active: true, value: "DUB" }
+          { active: false, value: "Sub" },
+          { active: true, value: "Dub" }
         ],
         switches: [
           { value: "0", active: false },
@@ -59,12 +58,12 @@ const providers = [
     ]
   },
   { ds: "8", name: "VidFast" },
-  { ds: "6", name: "111movies" },
+  { ds: "6", name: "111Movies" },
   { ds: "10", name: "VidSu" },
-  { ds: "3", name: "Vidsrc" },
+  { ds: "3", name: "VidSrc" },
   { ds: "4", name: "Whvx", hidden: 'true' },
-  { ds: "5", name: "Videasy", hiddenOn: 'tv' },
-  { ds: "7", name: "Primewire" },
+  { ds: "5", name: "VidEasy", hiddenOn: 'tv' },
+  { ds: "7", name: "PrimeWire" },
   { ds: "9", name: "AutoEmbed+" }
 ];
 
@@ -103,8 +102,8 @@ async function loadWatchPage(mediaType, NAME = null, id, tvData = null) {
         const styleAttr = (mediaType === `${hiddenOn}` || hidden === 'true') ? "style='display:none'" : "";
         const settingsHTML = generateSettingsHTML(settings, ds);
         return `
-          <div class="provider" ${styleAttr}>
-            <p class="provider-name" data-source="${ds}">${name}</p>
+          <div class="provider" role="button" aria-pressed="false" tabindex="0" data-source="${ds}" ${styleAttr}>
+            <p class="provider-name" >${name}</p>
             ${settingsHTML}
           </div>
         `;
@@ -126,6 +125,17 @@ async function loadWatchPage(mediaType, NAME = null, id, tvData = null) {
                   <i class="fa-solid fa-server"></i>
                 </button>
                 <div class="providers">
+                  <div class="pv-header">
+                    <div class="flow-row">
+                      <h4>Providers</h4>
+                      <button class="close-btn">
+                        <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="32" height="32" viewBox="0,0,256,256">
+                        <g fill="#e6e6fa" fill-rule="nonzero" stroke="none" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="10" stroke-dasharray="" stroke-dashoffset="0" font-family="none" font-weight="none" font-size="none" text-anchor="none" style="mix-blend-mode: normal"><g transform="scale(8,8)"><path d="M7.21875,5.78125l-1.4375,1.4375l8.78125,8.78125l-8.78125,8.78125l1.4375,1.4375l8.78125,-8.78125l8.78125,8.78125l1.4375,-1.4375l-8.78125,-8.78125l8.78125,-8.78125l-1.4375,-1.4375l-8.78125,8.78125z"></path></g></g>
+                        </svg>
+										  </button>
+                    </div>
+                    <hr>
+                  </div>
                   ${buildProviderHTML()}
                 </div>
               </div>
@@ -179,20 +189,50 @@ async function loadWatchPage(mediaType, NAME = null, id, tvData = null) {
   setUpPlayer(source, mediaType, id, season, episode);
 
   // Add event listeners to dropdown items
-  const sourceSelector = document.querySelectorAll('.provider');
-  sourceSelector.forEach(item => {
-    item.addEventListener('click', (e) => {
-      const provider = item.querySelector('.provider-name')
-      lastSource = provider.classList.contains('selected');
+  let persistant = false;
+  const providerMenu = document.querySelector('.providers');
+
+  ['mouseover', 'mouseout', 'click'].forEach(type => { 
+    document.querySelector('.provider-menu').addEventListener(type, (e) => {
+
+      if (e.type === 'mouseover' && !persistant) {
+        providerMenu.classList.add('show')
+      }
+      if (e.type === 'mouseout' && !persistant) {
+        providerMenu.classList.remove('show')
+      }
+
+      if ( e.type === 'click' && e.target.closest('.provider-change')) {
+        persistant = true
+        providerMenu.classList.add('show')
+      }
+    })
+  })
+
+  document.querySelector('main').addEventListener('click', (e) => {
+    if ( e.target.closest('.provider-change')) return
+    providerMenu.classList.remove('show')
+    persistant = false
+  })
+
+  providerMenu.addEventListener('click', (e) => {
+    if (e.target.closest('.provider.selected')) return
+    const provider = e.target.closest('.provider')
+    const close = e.target.closest('.close-btn')
+    if (provider) {
+      console.log('changing provider')
       const settingsChanged = !!e.target.closest('.provider-settings > .switch-buttons')
       newSource = Number(provider.getAttribute('data-source'));
-      let settings = getProviderSettings(item) || [null]
-      if (settingsChanged) settings = setProviderSettings(item);
-      if (!lastSource || settingsChanged) {
+      let settings = getProviderSettings(provider) || [null]
+      if (settingsChanged) settings = setProviderSettings(provider);
+      if (newSource || settingsChanged) {
         setUpPlayer(newSource, mediaType, id, currentSeason, currentEpisode, settings);
-      }
-    });
-  });
+      } 
+    }
+
+    if (close) close.closest('.providers').classList.remove('show')
+
+  })
 }
 
 async function animeEpisodeCounter(metadata, tvData) {
@@ -259,7 +299,7 @@ async function animeResolver(mediaType, id, tvData) {
 function setUpPlayer(source, mediaType, id, season = null, episode = null, settings = [null]) {
   loc();
 
-  const sourceSelector = document.querySelectorAll('.provider-name');
+  const sourceSelector = document.querySelectorAll('.provider');
   sourceSelector.forEach(item => {
     if (item.dataset.source === String(source)) {
       item.classList.add('selected');
