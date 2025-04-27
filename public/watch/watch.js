@@ -210,18 +210,18 @@ async function loadWatchPage(mediaType, NAME = null, id, tvData = null) {
   })
 
   document.querySelector('main').addEventListener('click', (e) => {
-    if ( e.target.closest('.provider-change')) return
+    if ( e.target.closest('.provider-change') || e.target.closest('.providers')) return
     providerMenu.classList.remove('show')
     persistant = false
   })
 
   providerMenu.addEventListener('click', (e) => {
-    if (e.target.closest('.provider.selected')) return
+    const settingsChanged = !!e.target.closest('.provider-settings > .switch-buttons')
+    if (e.target.closest('.provider.selected') && !settingsChanged) return
     const provider = e.target.closest('.provider')
     const close = e.target.closest('.close-btn')
     if (provider) {
       console.log('changing provider')
-      const settingsChanged = !!e.target.closest('.provider-settings > .switch-buttons')
       newSource = Number(provider.getAttribute('data-source'));
       let settings = getProviderSettings(provider) || [null]
       if (settingsChanged) settings = setProviderSettings(provider);

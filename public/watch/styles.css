@@ -308,7 +308,7 @@ iframe.zoom {
     position: initial;
     height: 28px;
     width: unset;
-    background: var(--color4);
+    background: var(--color5);
     padding: 4px;
     margin: unset;
   }
@@ -319,7 +319,7 @@ iframe.zoom {
   align-items: center;
   justify-content: space-between;
   opacity: 0;
-  font-size: 0.8125rem;
+  font-size: 12px;
   color: var(--font-color1);
   margin: 4px 0px;
   border-radius: 6px;

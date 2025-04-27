@@ -106,7 +106,7 @@
   }
 
   .providers {
-    width: 160px;
+    width: 144px;
     border-radius: 10px;
 
     .pv-header {
@@ -115,9 +115,9 @@
       gap: 2px;
     }
 
-    /* h4 {
+    h4 {
       font-size: 14px;
-    } */
+    }
   
     hr {
       margin: 4px 0px;
@@ -130,7 +130,7 @@
   }
 
   .provider {
-    font-size: 12px;
+    font-size: 10px;
     border-radius: 4px;
     margin: 2px 0px;
     
