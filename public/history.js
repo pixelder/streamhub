@@ -201,11 +201,11 @@ function renderLogItems(data, item, tvData) {
   // should be done on above function
   const image = !tvData
     ? data.backdrop_path
-      ? (IMAGE_URL + data.backdrop_path)
+      ? (IMAGE_342 + data.backdrop_path)
       : 'assets/images/no-image-hr.png'
     : epData?.still_path
-      ? (IMAGE_URL + epData?.still_path)
-      : (IMAGE_URL + data.backdrop_path);
+      ? (IMAGE_342 + epData?.still_path)
+      : (IMAGE_342 + data.backdrop_path);
   const name = (data.title || data.name);
   const info = `S${sno}:E${eno} ` + (epData?.name || '');
   const rating = truncate(!tvData ? data.vote_average : epData?.vote_average, 1);

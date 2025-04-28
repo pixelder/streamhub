@@ -117,7 +117,7 @@ function renderGridItems(items) {
       const releaseDate = new ReleaseDate(item.release_date || item.first_air_date)
       const upcoming = releaseDate?.isUpcoming()
       const image = item.poster_path
-        ? `${IMAGE_URL + item.poster_path}`
+        ? `${IMAGE_342 + item.poster_path}`
         : 'assets/images/no-image.png ';
         //: 'https://placehold.co/440x661/383852/ccc?text=No+Image';
       return `
@@ -384,7 +384,7 @@ function getContentLogoHTML(data) {
   return `
     <span>
       <div class="modal-info-logo">
-        ${logoPath ? `<img src="${IMAGE_URL}${logoPath}" loading="lazy" alt="Logo">` : ''}
+        ${logoPath ? `<img src="${IMAGE_342}${logoPath}" loading="lazy" alt="Logo">` : ''}
       </div>
       <div class="modal-info">
         ${!logoPath ? `<h1>${name.toUpperCase()}</h1>` : ''}
@@ -418,7 +418,7 @@ function buildMediaDetailsHTML(data, mediaType, contentLogoHTML) {
     <div class="trailer-container"></div>
     <div class="modal-media">
       <div class="modal-cover">
-        <img src="${IMAGE_URL + data.poster_path}" loading="lazy" alt="${name}">
+        <img src="${IMAGE_300 + data.poster_path}" loading="lazy" alt="${name}">
       </div> 
       ${contentLogoHTML}
         <span class="ratings-genre">
@@ -476,7 +476,7 @@ function buildPersonDetailsHTML(data) {
     <div class="modal-media" ${isMobile() ? '' : `style="flex-direction:row ;justify-content: flex-start !important;"`}>
       ${data.profile_path ? `
         <div class="modal-cover portrait" style="display:flex">
-            <img style="opacity:1" loading="lazy" src="${IMAGE_URL + data.profile_path}">
+            <img style="opacity:1" loading="lazy" src="${IMAGE_300 + data.profile_path}">
         </div>` : ''
     }
       <div id="person-details">
@@ -561,7 +561,7 @@ function populateCreditSection(data, type) {
     const year = extractYear(item.release_date || item.first_air_date) || '';
     const mediaType = item.media_type === 'tv' ? 'TV' : 'Movie';
     return `<div class="grid-item" data-id="${item.id}" data-media-type="${item.media_type}">
-      <img loading="lazy" src="${IMAGE_URL + (item.poster_path || data.profile_path)}">
+      <img loading="lazy" src="${IMAGE_300 + (item.poster_path || data.profile_path)}">
       <div class="credit-item-info">
         <p class="credit-name">${item.job || item.character || `N/A`}</p>
         <p class="credit-media-title"> ${title || 'Title not specified'} ${year ? `(${year})` : ''}</p>
@@ -839,8 +839,8 @@ async function tvContent(data, sno, eno, ref) {
       const progress = Number(epLog.sortDateDesc(false)[0]?.progress) || 0;
       const rating = truncate(episode.vote_average, 1)
       const IMAGE = episode.still_path
-        ? IMAGE_URL + episode.still_path
-        : backdrop ? IMAGE_URL + backdrop : 'assets/images/no-image-hr.svg';
+        ? IMAGE_300 + episode.still_path
+        : backdrop ? IMAGE_300 + backdrop : 'assets/images/no-image-hr.svg';
       epCount++
       HTML += `
         <div id="${epCount}" class="episode episode-width" 
@@ -857,7 +857,7 @@ async function tvContent(data, sno, eno, ref) {
                 ? `Rated: ${rating}`
                 : `Not yet rated`}
               </p>
-              <p>${convertDate(episode.air_date)}</p>
+              <p>${convertDate(episode.air_date) || ""}</p>
             </div>
             <div class="synopsis">
               <p class="overview">${episode.overview || "No overview available"}</p>

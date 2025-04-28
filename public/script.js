@@ -1,6 +1,7 @@
 const API_KEY = "213d830aae3a2f7b67e37f157405a42e";
 const BASE_URL = 'https://api.tmdb.org/3';
-const IMAGE_URL = 'https://image.tmdb.org/t/p/w500';
+const IMAGE_300 = 'https://image.tmdb.org/t/p/w300';
+const IMAGE_342 = 'https://image.tmdb.org/t/p/w342'
 const IMAGE_ORG = 'https://image.tmdb.org/t/p/original'
 const OPTIONS = 'include_adult=false&include_null_first_air_dates=false&language=en-US';
 
@@ -13,7 +14,7 @@ let pageEnd = false;
 // let pageNumbers = {}; // Track the current page number for each section
 // let storedData = {}; // Store data for each section for persistent pagination
 let isFetching = {}; // Track fetching state per section to avoid multiple fetches
-
+let lastUrl = '';
 // parameters for discover call
 let selectedGenres = []
 let excludedGenres = []
@@ -45,7 +46,11 @@ function loadSections() {
     })
   });
 
-  discoverStreaming()
+  setTimeout(() => {
+    whenInView('#discover-streaming', () => {
+      discoverStreaming()
+    })
+  }, 400);
 }
 
 async function loadDiscoverContent(networkId, providerId, mediaType, sectionId) {
@@ -118,7 +123,9 @@ async function fetchContent(sectionId, url) {
   if (!isFetching[sectionId]) isFetching[sectionId] = false; // Initialize fetching state
 
   if (isFetching[sectionId]) return;  // Prevent multiple fetch requests while one is ongoing
-  
+  // if (url === lastUrl) return
+  // lastUrl = url
+
   try {
     isFetching[sectionId] = true; // fetching for the sectionID
     console.log(`fetching page `, currentPage, sectionId)

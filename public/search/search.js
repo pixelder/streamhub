@@ -1,6 +1,7 @@
 const API_KEY = "213d830aae3a2f7b67e37f157405a42e";
 const BASE_URL = 'https://api.tmdb.org/3';
-const IMAGE_URL = 'https://image.tmdb.org/t/p/w500';
+const IMAGE_300 = 'https://image.tmdb.org/t/p/w300';
+const IMAGE_342 = 'https://image.tmdb.org/t/p/w342';
 const IMAGE_ORG = 'https://image.tmdb.org/t/p/original';
 
 let contWatching = false;
@@ -114,7 +115,7 @@ function renderProfile(items) {
     .map(item => {
       const name = item.name || item.original_name;
       const image = item.profile_path
-        ? `${IMAGE_URL + item.profile_path}`
+        ? `${IMAGE_300 + item.profile_path}`
         : 'https://placehold.co/480x551/383852/ccc?text=No+Image';
       return `
         <div tabindex="0" class="profile-item" data-id="${item.id}" data-media-type="person">
