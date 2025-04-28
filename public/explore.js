@@ -1,4 +1,5 @@
 const GENRE_URL = `https://api.themoviedb.org/3/genre`
+const IMAGE_200 = `https://image.tmdb.org/t/p/w200`
 
 let isMovie = null;
 
@@ -549,10 +550,10 @@ function searchResultFunction(sectionId) {
 		result.classList.add("result")
 		result.setAttribute("data-id", item.id)
 		result.setAttribute("data-name", item.name)
-		let IMG
-		if (type === `person` &&  item.profile_path ) IMG = `${IMAGE_URL + item.profile_path}`
-		if (type === `company` &&  item.logo_path ) IMG = `${IMAGE_URL + item.logo_path}`
-		result.innerHTML = `<div class="img-container"><img src='${IMG}' loading="lazy" alt="No image available"></div><p>${item.name}</p>`
+		let IMG = '/assets/images/no-image.png'
+		if (type === `person` &&  item.profile_path ) IMG = `${IMAGE_200 + item.profile_path}`
+		if (type === `company` &&  item.logo_path ) IMG = `${IMAGE_200 + item.logo_path}`
+		result.innerHTML = `<div class="img-container"><img src='${IMG}' loading="lazy" alt=""></div><p>${item.name}</p>`
 		return result
 	}
 

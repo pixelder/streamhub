@@ -1690,7 +1690,8 @@ body:has(.expandable.expanded) {
         max-width: 30%;
         min-width: 30%;
         height: 100%;
-        border-radius: 4px;
+        border: 1px solid var(--color3);
+        border-radius: 6px;
         overflow: hidden;
         display: flex;
       }
@@ -1698,7 +1699,6 @@ body:has(.expandable.expanded) {
       img {
         object-fit: cover;
         width: 100%;
-        background: RGB(128, 128, 128);
         font-size: 8px;
         white-space: wrap;
       }
