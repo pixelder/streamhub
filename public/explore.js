@@ -550,7 +550,7 @@ function searchResultFunction(sectionId) {
 		result.classList.add("result")
 		result.setAttribute("data-id", item.id)
 		result.setAttribute("data-name", item.name)
-		let IMG = '/assets/images/no-image.png'
+		let IMG = '/assets/images/no-image-transparent-dark.svg'
 		if (type === `person` &&  item.profile_path ) IMG = `${IMAGE_92 + item.profile_path}`
 		if (type === `company` &&  item.logo_path ) IMG = `${IMAGE_92 + item.logo_path}`
 		result.innerHTML = `<div class="img-container"><img src='${IMG}' loading="lazy" alt=""></div><p>${item.name}</p>`

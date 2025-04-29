@@ -116,7 +116,7 @@ function renderProfile(items) {
       const name = item.name || item.original_name;
       const image = item.profile_path
         ? `${IMAGE_300 + item.profile_path}`
-        : 'https://placehold.co/480x551/383852/ccc?text=No+Image';
+        : 'assets/images/no-image.png';
       return `
         <div tabindex="0" class="profile-item" data-id="${item.id}" data-media-type="person">
           <span>
