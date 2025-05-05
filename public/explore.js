@@ -513,6 +513,9 @@ function searchResultFunction(sectionId) {
 		const term = this.value;
 		if (term.length < 1) resetResults()
 		if (term.length < 3) return
+		if (type === "person" && selectedCast < 1) selectedSearchItems = []
+		if (type === "company" && selectedCompany < 1) selectedSearchItems = []
+
 		clearTimeout(searchWait)
 		searchWait = setTimeout(() => {
 			fetchSearchResults(term, type, 5).then((data) => {
