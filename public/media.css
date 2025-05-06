@@ -7,7 +7,7 @@
 
   body.keyboard {
     .filter-menu {
-      top: 248px;
+      top: 248px !important;
     }
   }
 
