@@ -789,29 +789,28 @@ function updateWatchProgress(type, item, progress) {
 }
 
 async function markItemAs(type, item, section = null) {
-  const sectionID = section?.id || null;
   const logType = section?.dataset.type || null;
-  const { id, mediaType, sno, eno } = item.dataset
+  const { id, mediaType, sno, eno , index} = item.dataset
   if (type === 'watched') {
     logToLocalStorage('history', Number(id), mediaType, sno, eno, 100)
-    removeFromLocalStorage('watching', Number(id), mediaType, sno, eno)
-    if (sectionID === 'continue-watching' && mediaType === 'tv') {
+    removeFromLocalStorage('watching', Number(id), mediaType, sno, eno, index)
+    if (section.id === 'continue-watching' && mediaType === 'tv') {
       getNextEpisode(id, sno, eno).then((ep) => {
         if (ep) {
           logToLocalStorage('watching', Number(id), 'tv', ep.season_number, ep.episode_number);
         }
-      if (section) loadUserContent( sectionID, logType)
+      if (section) loadUserContent( section.id, logType)
       });
     } else if (section) {
-        loadUserContent( sectionID, logType)
+        loadUserContent( section.id, logType)
     }
   }
   if (type === 'unwatch') {
     removeFromLocalStorage('history', Number(id), mediaType, sno, eno)
-    if (sectionID === 'continue-watching') {
+    if (section.id === 'continue-watching') {
       logToLocalStorage('watching', Number(id), mediaType, sno, eno, 0)
     }
-    loadUserContent( sectionID, logType)
+    loadUserContent( section.id, logType)
   }
 }
 
