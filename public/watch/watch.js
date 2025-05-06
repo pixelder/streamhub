@@ -231,7 +231,10 @@ async function loadWatchPage(mediaType, NAME = null, id, tvData = null) {
       } 
     }
 
-    if (close) close.closest('.providers').classList.remove('show')
+    if (close) {
+      close.closest('.providers').classList.remove('show')
+      persistant = false
+    }
 
   })
 }
