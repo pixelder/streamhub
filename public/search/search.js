@@ -99,7 +99,7 @@ function updateSearchResultsUI(type, results, query) {
           <div class="expand-arrow"><i class="fa-solid fa-chevron-left"></i></div>
         </div>
         <div class="grid-container ${type === "person" ? "profiles" : "vertical-card"} ">
-          ${type === "person" ? renderProfile(results[type]) : renderGridItems(results[type])}
+          ${type === "person" ? renderProfile(results[type]) : renderGridItems(results[type], type = 'vertical')}
         </div>
       </section>
     `;
