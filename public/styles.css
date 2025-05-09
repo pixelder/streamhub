@@ -3239,7 +3239,7 @@ option {
 
 .progress-wrapper {
   position: absolute !important;
-  width: 3rem;
+  width: 40px;
   bottom: 0;
   right: 0;
   margin: 4px;
@@ -3257,7 +3257,7 @@ option {
 
   .progress-center {
     position: absolute;
-    width: calc(100% - 12px);
+    width: calc(100% - 8px);
     aspect-ratio: 1/1;
     top: 50%;
     left: 50%;
@@ -3271,7 +3271,7 @@ option {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    font-size: 12px;
+    font-size: 11px;
     font-weight: bold;
     color: lavender;
     z-index: 1;
@@ -3279,7 +3279,7 @@ option {
 
   .dot {
     position: absolute;
-    height: 6px;
+    height: 4px;
     aspect-ratio: 1/1;
     border-radius: 50%;
     background-color: var(--progress-color);

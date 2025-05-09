@@ -123,7 +123,7 @@ function renderGridItems(items, type = null) {
         : 'assets/images/no-image.png ';
       //: 'https://placehold.co/440x661/383852/ccc?text=No+Image';
       return `
-         <div tabindex="0" class="grid-item" id="grid-item" data-id="${item.id}" data-media-type="${mediaType}">
+         <div tabindex="0" class="grid-item" draggable="true" id="grid-item" data-id="${item.id}" data-media-type="${mediaType}">
            <div class="img-container">
             <div class="grid-actions">
               <div class="grid-options ${bookmark ? 'open' : ''}">
