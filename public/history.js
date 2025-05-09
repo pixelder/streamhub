@@ -210,11 +210,11 @@ function renderLogItems(data, item, tvData) {
   //const runTime = !tvData ? data.runtime : epData.runtime;
 
   return `
-      <div tabindex="0" draggable="true" aria-pressed="true" class="grid-item"
+      <div tabindex="0" aria-pressed="true" class="grid-item"
            data-id="${id}"  data-index="${index}" 
            data-media-type="${mediaType}" data-name="${name}"
            ${tvData ? `data-sno="${sno}" data-eno="${eno}"` : ''}>
-        <div class="item-container">
+        <div class="item-container"  draggable="true">
           <label class="selectable">
             <input type="checkbox" />
             <span class="checkbox-button">
