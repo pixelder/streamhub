@@ -98,7 +98,7 @@ function updateSearchResultsUI(type, results, query) {
           <h3>${resultType}</h3>
           <div class="expand-arrow"><i class="fa-solid fa-chevron-left"></i></div>
         </div>
-        <div class="grid-container ${type === "person" ? "profiles" : ""}">
+        <div class="grid-container ${type === "person" ? "profiles" : "vertical-card"} ">
           ${type === "person" ? renderProfile(results[type]) : renderGridItems(results[type])}
         </div>
       </section>

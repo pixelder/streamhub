@@ -76,8 +76,9 @@ async function handleSearch(event) {
 // Populate a section with content
 function populateSection(sectionId, items) {
   const container = document.querySelector(`#${sectionId} .grid-container`);
+  const type = container.classList.contains('vertical-card') ? 'vertical' : null;
   if (!isBrowsing && !sectionFetching) {
-    container.innerHTML = renderGridItems(items)
+    container.innerHTML = renderGridItems(items, type)
     container.classList.remove('loading');
     return
   }
@@ -85,9 +86,9 @@ function populateSection(sectionId, items) {
   // console.log(currentPage, container.innerHTML)
   if (currentPage === 1) {
     container.innerHTML = '';
-    container.innerHTML = renderGridItems(items);
+    container.innerHTML = renderGridItems(items, type);
   } else {
-    container.innerHTML += renderGridItems(items);
+    container.innerHTML += renderGridItems(items, type);
   }
   currentPage++
 
@@ -99,7 +100,7 @@ function populateSection(sectionId, items) {
   }
 }
 
-function renderGridItems(items) {
+function renderGridItems(items, type = null) {
   let logs = getLogData('history');
   return items
     .map(item => {
@@ -111,6 +112,7 @@ function renderGridItems(items) {
         return Number(log.id) === Number(id) && log.mediaType === 'movie'
       }) : null;
       const progress = watched && mediaType === 'movie' ? 100 : Number(LOG?.sortDateDesc(false)[0]?.progress) || 0;
+      const ring = type === 'vertical' ? 1 : null;
       const title = item.title || item.name;
       const rating = truncate(item.vote_average, 1);
       const year = extractYear(item.release_date || item.first_air_date) || '';
@@ -119,7 +121,7 @@ function renderGridItems(items) {
       const image = item.poster_path
         ? `${IMAGE_342 + item.poster_path}`
         : 'assets/images/no-image.png ';
-        //: 'https://placehold.co/440x661/383852/ccc?text=No+Image';
+      //: 'https://placehold.co/440x661/383852/ccc?text=No+Image';
       return `
          <div tabindex="0" class="grid-item" id="grid-item" data-id="${item.id}" data-media-type="${mediaType}">
            <div class="img-container">
@@ -132,7 +134,7 @@ function renderGridItems(items) {
               </div>
             </div>
             <img src="${image}" loading="lazy" alt="${title}">
-            ${watchProgress(progress)}
+            ${watchProgress(progress, ring)}
             ${upcoming ? `<div class="upcoming">Upcoming</div>` : ''}
            </div>
            <div class="grid-item-info">
@@ -140,10 +142,10 @@ function renderGridItems(items) {
              <span class="grid-rating">
               <p class="rating">
                 ${rating && !upcoming
-                ? `<i class="fa-solid fa-star"></i>
+          ? `<i class="fa-solid fa-star"></i>
                   ${rating}`
-                : `<img class="nostar" src="assets/icons/nostar.svg">`
-                }
+          : `<img class="nostar" src="assets/icons/nostar.svg">`
+        }
               </p>
              </span>
              <p>${year}</p>
@@ -155,8 +157,8 @@ function renderGridItems(items) {
 }
 
 function notifyAlert(msg, type = null, data = null, actions = null) {
-  if ( type === "error" ) console.error(msg)
-  if ( !type ) console.log(msg)
+  if (type === "error") console.error(msg)
+  if (!type) console.log(msg)
   let container = document.querySelector('.notifications')
   if (!container) {
     container = document.createElement('div')
@@ -166,20 +168,20 @@ function notifyAlert(msg, type = null, data = null, actions = null) {
   const el = document.createElement('div');
   el.classList.add('msg');
   el.innerText = msg;
-  
+
   if (actions) {
     const msgAction = document.createElement('div')
     msgAction.classList.add('msg-actions')
-    actions?.push({name : "Ignore"})
+    actions?.push({ name: "Ignore" })
     actions?.forEach(act => {
       const action = document.createElement('button')
       action.classList.add("action-btn")
       act.task === 'remove' ? action.classList.add("remove") : "";
       action.textContent = `${act.name}`
       if (act.task === 'remove') {
-        const { logType, id, mediaType, sno, eno, index} = data
+        const { logType, id, mediaType, sno, eno, index } = data
         action.onclick = () => {
-          removeFromLocalStorage(logType, id,mediaType, sno, eno , index).then(() => {
+          removeFromLocalStorage(logType, id, mediaType, sno, eno, index).then(() => {
             notifyAlert("Item removed successfully")
           })
         }
@@ -254,11 +256,11 @@ async function fetchMetaData(mediaType = null, id = null, season = null, credits
     let url;
     const append = `external_ids,videos,credits,images&include_image_language=en`
     if (mediaType === "movie") {
-      url = `${BASE_URL}/movie/${id}?api_key=${API_KEY}&language=en-US${options ? `&append_to_response=release_dates,${append}`:''}`;
+      url = `${BASE_URL}/movie/${id}?api_key=${API_KEY}&language=en-US${options ? `&append_to_response=release_dates,${append}` : ''}`;
     } else if (mediaType === "tv") {
-      url = `${BASE_URL}/tv/${id}${season ? `/season/${season}` : ''}?api_key=${API_KEY}&language=en-US${options ? `&append_to_response=content_ratings,${append}`:''}`;
+      url = `${BASE_URL}/tv/${id}${season ? `/season/${season}` : ''}?api_key=${API_KEY}&language=en-US${options ? `&append_to_response=content_ratings,${append}` : ''}`;
     } else if (mediaType === "person") {
-      url = `${BASE_URL}/person/${id}?api_key=${API_KEY}&language=en-US${options ? `&append_to_response=${credits},external_ids`:''}`;
+      url = `${BASE_URL}/person/${id}?api_key=${API_KEY}&language=en-US${options ? `&append_to_response=${credits},external_ids` : ''}`;
     }
     //console.log(url)
     const response = await fetch(url);
@@ -330,7 +332,7 @@ function displayModal(mediaType, data) {
     '--modal-backdrop',
     `url(${data.backdrop_path ? IMAGE_ORG + data.backdrop_path : ''})`
   );
-  
+
   modalContent.style.setProperty('--modal-backdrop-opacity', 1);
 
   const contentLogoHTML = getContentLogoHTML(data);
@@ -423,11 +425,11 @@ function buildMediaDetailsHTML(data, mediaType, contentLogoHTML) {
       ${contentLogoHTML}
         <span class="ratings-genre">
           <p data-title="${data.vote_count} votes">
-          ${rating 
-            ? `<i class="fa-solid fa-star"></i>
+          ${rating
+      ? `<i class="fa-solid fa-star"></i>
               ${rating}`
-            : `<img class="nostar" src="assets/icons/nostar.svg">`
-          }
+      : `<img class="nostar" src="assets/icons/nostar.svg">`
+    }
           </p>
           <span class="modal-genre">
             ${genresHTML}
@@ -631,7 +633,7 @@ function isFreshRelease(tvData) {
 
   const today = new Date();
   const airedSeasons = tvData.seasons.filter(season => {
-    if ( season.season_number === 0 || !season.air_date ) {
+    if (season.season_number === 0 || !season.air_date) {
       return false;
     }
     const airDate = new Date(season.air_date);
@@ -645,8 +647,8 @@ function releaseInfo(data, mediaType) {
   const tvAirDate = data.seasons?.length > 0 ? data.seasons?.sort((a, b) => (new Date(b.air_date) - new Date(a.air_date)))[0].air_date : '';
   let releaseDate = new ReleaseDate(data.release_date || tvAirDate);
   const nextEpisode = new ReleaseDate(data.next_episode_to_air?.air_date)
-  const running = releaseDate.isUpcoming() ? false :  nextEpisode.isUpcoming() ? true: false;
-  releaseDate = running ? nextEpisode : releaseDate ;
+  const running = releaseDate.isUpcoming() ? false : nextEpisode.isUpcoming() ? true : false;
+  releaseDate = running ? nextEpisode : releaseDate;
 
   if (!releaseDate.isUpcoming()) return null;
   // console.log('upcoming')
@@ -661,7 +663,7 @@ function releaseInfo(data, mediaType) {
   }
 
   if (mediaType === 'tv') {
-    HTML =  `
+    HTML = `
       <div class="releasing-on">
         <p>${running ? 'Next Episode' : isFreshRelease(data) ? 'Airing' : 'New season'} ${string}.<p>
       </div>
@@ -753,8 +755,23 @@ function initializeModalListeners(mediaType, data, modalContent, details) {
   details.addEventListener('scroll', backdropHandler);
 }
 
-function watchProgress(progress) {
+function watchProgress(progress, ring = null) {
   if (progress < 5) return ''
+  if (ring) {
+    const angle = 3.6 * Number(progress);
+    return `
+      <div class="progress-wrapper">
+        <div class="progress-ring" id="progressRing" style="background: conic-gradient(var(--progress-color) ${angle}deg, var(--color5) 0deg);">
+          <div class="progress-label">${Math.floor(progress)}%</div>
+          <div class="progress-center"></div>
+          <div class="dot fixed-dot"></div>
+          <div class="dot-container" style="transform: rotate(${angle}deg);">
+            <div class="dot moving-dot"></div>
+          </div>	
+        </div>
+      </div>
+    `
+  }
   return `
     <div class="progress-bar">
       <div class="progress" style="width:${progress}%;"></div>
@@ -763,7 +780,7 @@ function watchProgress(progress) {
 }
 
 function updateWatchProgress(type, item, progress) {
-  const { id, mediaType, sno, eno} = item?.dataset
+  const { id, mediaType, sno, eno } = item?.dataset
   if (type === 'watched' || type === 'playing') {
     if (mediaType === 'tv') {
       const progressBar = item.querySelector('.progress')
@@ -790,7 +807,7 @@ function updateWatchProgress(type, item, progress) {
 
 async function markItemAs(type, item, section = null) {
   const logType = section?.dataset.type || null;
-  const { id, mediaType, sno, eno , index} = item.dataset
+  const { id, mediaType, sno, eno, index } = item.dataset
   if (type === 'watched') {
     logToLocalStorage('history', Number(id), mediaType, sno, eno, 100)
     removeFromLocalStorage('watching', Number(id), mediaType, sno, eno, index)
@@ -799,10 +816,10 @@ async function markItemAs(type, item, section = null) {
         if (ep) {
           logToLocalStorage('watching', Number(id), 'tv', ep.season_number, ep.episode_number);
         }
-      if (section) loadUserContent( section.id, logType)
+        if (section) loadUserContent(section.id, logType)
       });
     } else if (section) {
-        loadUserContent( section.id, logType)
+      loadUserContent(section.id, logType)
     }
   }
   if (type === 'unwatch') {
@@ -810,7 +827,7 @@ async function markItemAs(type, item, section = null) {
     if (section.id === 'continue-watching') {
       logToLocalStorage('watching', Number(id), mediaType, sno, eno, 0)
     }
-    loadUserContent( section.id, logType)
+    loadUserContent(section.id, logType)
   }
 }
 
@@ -852,9 +869,9 @@ async function tvContent(data, sno, eno, ref) {
             </div>
             <div class="episode-info">
               <h3>${episode.episode_number}. ${episode.name}</h3>
-              <p>${ rating && !upcoming
-                ? `Rated: ${rating}`
-                : `Not yet rated`}
+              <p>${rating && !upcoming
+          ? `Rated: ${rating}`
+          : `Not yet rated`}
               </p>
               <p>${convertDate(episode.air_date) || ""}</p>
             </div>
@@ -910,7 +927,7 @@ async function tvContent(data, sno, eno, ref) {
       const { data: tvData } = selectedSeason !== sno
         ? await fetchMetaData('tv', id, selectedSeason)
         : { data: seasonData };
-  
+
       localStorage.setItem('seasonData', JSON.stringify(tvData));
       document.getElementById('episode-container').innerHTML = generateEpisodesHTML(tvData.episodes, selectedSeason);
       document.querySelector('.play-trailer')?.setAttribute('data-sno', selectedSeason);
@@ -1219,7 +1236,7 @@ function cappedOverview() {
       const container = e.target.closest('.synopsis');
       const textField = container?.querySelector('.overview')
       if (!container) return
-      textField.scrollTo({top:0, behavior: 'instant'})
+      textField.scrollTo({ top: 0, behavior: 'instant' })
       container.classList.toggle('expanded');
       e.stopPropagation();
     });
@@ -1751,13 +1768,13 @@ async function setupCheckboxListeners(sectionID) {
 
   let isScrolling = false;
   let scrollTimeout;
-  
+
   const onGridItemMouseDown = (e) => {
     const item = e.target.closest(".grid-item");
     const section = e.target.closest("section");
-  
+
     if (!item || isScrolling) return;
-  
+
     let timer = null;
     let isHeld = false;
 
@@ -1765,7 +1782,7 @@ async function setupCheckboxListeners(sectionID) {
       if (isScrolling) return;
       isHeld = true;
       console.log("Element is being held");
-  
+
       const isActive = item.querySelector(".selectable.active");
       wasEditing = true;
       item.blur()
@@ -1776,7 +1793,7 @@ async function setupCheckboxListeners(sectionID) {
       }
       toggleEditing(section, !isActive ? item : "");
     }, 500);
-  
+
     const clearTimer = () => clearTimeout(timer);
 
     ["mouseup", "mouseout", "touchcancel", "touchend"].forEach((eventType) => {
@@ -1798,8 +1815,8 @@ async function setupCheckboxListeners(sectionID) {
       container.removeEventListener(eventType, onGridItemMouseDown);
     });
   });
-  
-  
+
+
   // Attach the select-all listener.
   if (selectAllBox) {
     selectAllBox.addEventListener("click", selectAll);
@@ -1835,17 +1852,17 @@ function setUpExpandableSection() {
     // const collapsed = section.classList.contains('collapsed')
 
     if (windowBtns && !expanded) {
-      if ( window.innerWidth < 400 && section.classList.contains('user-content') ) return
+      if (window.innerWidth < 400 && section.classList.contains('user-content')) return
       sectionFetching = true;
       currentPage = 1;
       section.classList.add('expanded');
       section.classList.remove('collapsed')
       localStorage.removeItem(`LAST_Y_POSSITION-${section.id}`)
       localStorage.setItem(`LAST_Y_POSSITION-${section.id}`, window.scrollY);
-      
+
       const y = section.getBoundingClientRect().top + window.scrollY - 10;
-      window.scrollTo({ top: y, behavior: 'smooth' });  
-  
+      window.scrollTo({ top: y, behavior: 'smooth' });
+
       let pageWait;
       const loadPageOnScroll = () => {
         const buffer = 140;
@@ -1872,7 +1889,7 @@ function setUpExpandableSection() {
           }
         }, 200);
       };
-  
+
       if (!section.classList.contains('user-content')) {
         // Remove any previous listener before adding new
         const previousHandler = scrollHandlers.get(container);
@@ -1880,15 +1897,15 @@ function setUpExpandableSection() {
         container.addEventListener("scroll", loadPageOnScroll);
         scrollHandlers.set(container, loadPageOnScroll);
       }
-  
+
       document.getElementById('header').classList.add('hidden');
       return
     }
-  
+
     if (windowBtns && expanded) {
       const handler = scrollHandlers.get(container);
       if (handler) container.removeEventListener("scroll", handler);
-  
+
       sectionFetching = false;
       currentPage = 1;
       section.classList.remove('expanded');
@@ -1930,5 +1947,5 @@ function setUpExpandableSection() {
     .forEach(item => item.addEventListener('click', (e) => {
       handleSectionExpansion(e)
     })
-  )
+    )
 }

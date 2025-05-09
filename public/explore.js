@@ -146,8 +146,8 @@ function loadExplorePage(mediaType) {
 										</div>
                 </div>
             </div>
-            <div class='grid-container'></div>
-            <div class='result-message'>
+            <div class="grid-container vertical-card"></div>
+            <div class="result-message">
                 <label>Loading...</label>
                 <hr class="hr">
                 <div class="message">
@@ -182,7 +182,7 @@ function loadExplorePage(mediaType) {
 		if (window.scrollY > 260) {
 			document.querySelector('.button-container').classList.add('detach')
 		} else {
-			document.querySelector('.button-container').classList.remove('detach')			
+			document.querySelector('.button-container').classList.remove('detach')
 		}
 		if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 250) {
 			console.log('hit border', currentPage)
@@ -208,22 +208,22 @@ function loadExplorePage(mediaType) {
 	searchResultFunction("#search-with-cast")
 	searchResultFunction("#search-with-company")
 
-	document.body.addEventListener("focus", function(event) {
+	document.body.addEventListener("focus", function (event) {
 		if (!event.target.closest('.search-container')) return
-    const target = event.target;
+		const target = event.target;
 		console.log(target.tagName)
-    switch (target.tagName) {
-        case "INPUT":
-        // case "TEXTAREA":
-        // case "SELECT":
-					document.body.classList.add("keyboard");
-					break;
-    }
+		switch (target.tagName) {
+			case "INPUT":
+				// case "TEXTAREA":
+				// case "SELECT":
+				document.body.classList.add("keyboard");
+				break;
+		}
 	}, true);
 
-	document.body.addEventListener("blur", function() {
-			console.log('blur')
-			document.body.classList.remove("keyboard");
+	document.body.addEventListener("blur", function () {
+		console.log('blur')
+		document.body.classList.remove("keyboard");
 	}, true);
 	//filters.dispatchEvent(/* new Event('click') ||  */new Event('change', () => {console.log('hi')}));
 }
@@ -255,14 +255,14 @@ function filterParams(reset = null) {
 		minRateSlider.value = minRate
 		countryFilter.value = selectedCountry
 		languageFilter.value = selectedLanguage
-	
+
 		searchBox.forEach(box => {
 			box.value = '';
 			const section = box.closest('.search-container')
 			section.querySelector('.select-container').innerHTML = ''
 			section.querySelector('.results').innerHTML = ''
 		})
-	
+
 		updateSelectedGenres(genreContainer)
 		return
 	}
@@ -354,11 +354,11 @@ function fetchGenres(mediaType) {
 
 		genreContainer.appendChild(chip);
 	}
-	
+
 	const url = `${GENRE_URL}/${mediaType}/list?api_key=${API_KEY}`
 	fetchFromURL(url).then((data) => {
 		data.genres.forEach(genre => {
-				createChip(genre,genreContainer,mediaType)
+			createChip(genre, genreContainer, mediaType)
 		});
 	})
 
@@ -452,7 +452,7 @@ function resetSection() {
 		msg.classList.add('loading')
 		gridContainer.innerHTML = '';
 		currentPage = 1;
-	
+
 		loadDiscoverContent('', '', mediaType, `browse-${mediaType}s`);
 	} catch (e) {
 		console.log(e)
@@ -473,7 +473,7 @@ function filterEvents(event) {
 			event.stopPropagation();
 		}
 		if (event.target.closest('.go-up')) {
-			window.scrollTo({top : 0})
+			window.scrollTo({ top: 0 })
 		}
 		if (event.target.closest('.filter-overlay, .close-btn, .apply')) {
 			filterMenu.style.display = 'none';
@@ -489,7 +489,7 @@ function filterEvents(event) {
 
 		if (!event.target.closest('.search-box')) {
 			document.querySelectorAll('.search-container').forEach(el => {
-				el.removeAttribute('expanded','')
+				el.removeAttribute('expanded', '')
 			})
 		}
 	} else if (event.type === 'change') {
@@ -554,8 +554,8 @@ function searchResultFunction(sectionId) {
 		result.setAttribute("data-id", item.id)
 		result.setAttribute("data-name", item.name)
 		let IMG = '/assets/images/no-image-transparent-dark.svg'
-		if (type === `person` &&  item.profile_path ) IMG = `${IMAGE_92 + item.profile_path}`
-		if (type === `company` &&  item.logo_path ) IMG = `${IMAGE_92 + item.logo_path}`
+		if (type === `person` && item.profile_path) IMG = `${IMAGE_92 + item.profile_path}`
+		if (type === `company` && item.logo_path) IMG = `${IMAGE_92 + item.logo_path}`
 		result.innerHTML = `<div class="img-container"><img src='${IMG}' loading="lazy" alt=""></div><p>${item.name}</p>`
 		return result
 	}
@@ -604,7 +604,7 @@ function searchResultFunction(sectionId) {
 		const clearBtn = e.target.closest('.x-icon')
 		if (result) {
 			const item = currentSearchResults.find((item) => item.id == id)
-			if ( item && !selectedSearchItems.some((selected) => selected.id == id)) {
+			if (item && !selectedSearchItems.some((selected) => selected.id == id)) {
 				selectedSearchItems.push(item)
 				result.classList.add("removing") // Start animation
 				updateSelectItems()
@@ -628,7 +628,7 @@ function searchResultFunction(sectionId) {
 			}, 200)
 		}
 		if (container) {
-			document.querySelectorAll('.search-container').forEach(item => item.removeAttribute('expanded',''))
+			document.querySelectorAll('.search-container').forEach(item => item.removeAttribute('expanded', ''))
 			section.setAttribute('expanded', '')
 			searchBox.focus()
 		}
