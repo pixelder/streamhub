@@ -1442,7 +1442,7 @@ body:has(.expandable.expanded) {
   border: 1px solid var(--color3);
   border-radius: 12px;
   box-shadow: 0 5px 50px 25px rgba(0, 0, 0, 0.5);
-  z-index: 1;
+  z-index: 2;
   transition: top 0.2s ease-in-out;
 
   h3 {
@@ -1818,7 +1818,7 @@ body:has(.expandable.expanded) {
   height: 100%;
   opacity: 0;
   display: none;
-  z-index: 1;
+  z-index: 2;
   transition: opacity 0.25s ease-in-out;
 }
 
@@ -3264,7 +3264,6 @@ option {
     transform: translate(-50%, -50%);
     border-radius: 50%;
     background-color: var(--color3);
-    z-index: 1;
   }
 
   .progress-label {
@@ -3275,7 +3274,7 @@ option {
     font-size: 12px;
     font-weight: bold;
     color: lavender;
-    z-index: 2;
+    z-index: 1;
   }
 
   .dot {
