@@ -2292,6 +2292,7 @@ body:has(.filter-menu) {
     overflow: hidden;
 
     .grid-container {
+      pointer-events: none;
       opacity: 0;
       visibility: hidden;
       height: 0;
@@ -2306,6 +2307,7 @@ body:has(.filter-menu) {
     overflow: visible;
 
     .grid-container {
+      pointer-events: all;
       opacity: 1;
       visibility: visible;
       height: auto;
