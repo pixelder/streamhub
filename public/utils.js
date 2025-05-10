@@ -813,6 +813,7 @@ async function markItemAs(type, item, section = null) {
     removeFromLocalStorage('watching', Number(id), mediaType, sno, eno, index)
     if (section.id === 'continue-watching' && mediaType === 'tv') {
       getNextEpisode(id, sno, eno).then((ep) => {
+        console.log(ep)
         if (ep) {
           logToLocalStorage('watching', Number(id), 'tv', ep.season_number, ep.episode_number);
         }
@@ -1282,7 +1283,7 @@ async function getNextEpisode(id, sno, eno) {
     return currentSeason.episodes[currentIndex + 1];
   }
 
-  const { data: nextSeason } = await fetchMetaData('tv', id, sno + 1)
+  const { data: nextSeason } = await fetchMetaData('tv', id, Number(sno) + 1)
   if (nextSeason && nextSeason.episodes && nextSeason.episodes.length > 0) {
     //console.log(nextSeason.episodes[0].air_date)
     return nextSeason.episodes[0];
