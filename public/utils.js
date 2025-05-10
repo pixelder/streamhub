@@ -271,23 +271,32 @@ async function fetchMetaData(mediaType = null, id = null, season = null, credits
   }
 }
 
+let modalController = null;
+
 function openModal(event) {
-  const gridItem = event.target.closest('.grid-item, .profile-item');
-  const id = gridItem?.dataset.id; // Get the ID of the item
-  //const sectionId = gridItem?.closest('section')?.id; // Find the parent section's ID
-  const mediaType = gridItem?.dataset?.mediaType ?? gridItem?.closest('section')?.dataset?.type;
+
+  if (modalController) modalController.abort();
+  modalController = new AbortController();
+  const signal = modalController.signal;
+  if (signal.aborted) return; 
+  
+  const content = event.target.closest('.grid-item, .profile-item');
+  const id = content?.dataset.id;
+  const mediaType = content?.dataset?.mediaType ?? content?.closest('section')?.dataset?.type;
   const credits = mediaType === 'person' ? 'combined_credits' : null;
   console.log(mediaType, id)
-  if (gridItem && !mediaType || !id) {
+  if (content && !mediaType || !id) {
     console.error("Media type or ID not found");
     return;
   }
 
   fetchMetaData(mediaType, id, null, credits)
     .then(({ mediaType, data }) => {
+      if (signal.aborted) return; 
       displayModal(mediaType, data);
     })
     .catch((error) => {
+      if (error.name === 'AbortError') return;
       const msg = `Error fetching data for ${mediaType} id:${id}: ${error}`
       console.log(error)
       notifyAlert(msg)
@@ -351,6 +360,7 @@ function displayModal(mediaType, data) {
     const sno = isViewingDetails ? userData?.sno : null;
     const eno = isViewingDetails ? userData?.eno : null;
     modalContent.style.height = !isMobile() ? '32rem' : '70%';
+   
     tvContent(data, sno, eno, 'modal')
       .then((season) => {
         const tvButtons = document.querySelector('.tv-actions');
@@ -419,9 +429,9 @@ function buildMediaDetailsHTML(data, mediaType, contentLogoHTML) {
   const detailsBodyHTML = `
     <div class="trailer-container"></div>
     <div class="modal-media">
-      <div class="modal-cover">
+      <!-- <div class="modal-cover">
         <img src="${IMAGE_300 + data.poster_path}" loading="lazy" alt="${name}">
-      </div> 
+      </div> -->
       ${contentLogoHTML}
         <span class="ratings-genre">
           <p data-title="${data.vote_count} votes">
@@ -905,7 +915,6 @@ async function tvContent(data, sno, eno, ref) {
 
   if (ref === "modal") {
     document.querySelector("#modal-details").innerHTML += tvInfo;
-    console.log(eno)
   } else {
     const epName = seasonData.episodes.find(episode => episode.episode_number === Number(eno))?.name
     const title = `S${sno}:E${eno} ${epName || ""}`
