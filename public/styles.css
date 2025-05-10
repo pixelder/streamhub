@@ -2533,7 +2533,7 @@ body:has(.modal:is([active])) {
 
   .modal-media {
     gap: var(--padding1);
-    height: fit-content;
+    min-height: fit-content;
   }
 
   .modal-media>span {
@@ -2600,9 +2600,9 @@ body:has(.modal:is([active])) {
 
 .modal-media {
   display: flex;
-  flex-direction: row-reverse;
+  /* flex-direction: row-reverse; */
   justify-content: space-between;
-  height: 21rem;
+  min-height: 21rem;
   width: 100%;
   gap: 2rem;
 }
@@ -2743,6 +2743,7 @@ body:has(.modal:is([active])) {
   width: 50%;
   height: 100%;
   transition: max-width 1s ease-in-out;
+  margin-top: auto;
 }
 
 .modal-info-logo {

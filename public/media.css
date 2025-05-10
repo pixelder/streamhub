@@ -966,7 +966,7 @@
     flex-direction: column;
     justify-content: space-between;
     gap: 12px;
-    height: fit-content;
+    min-height: fit-content;
   }
 
   .modal-actions {
@@ -1047,7 +1047,7 @@
 
     .modal-media {
       gap: unset;
-      height: unset;
+      min-height: unset;
       max-height: 80%;
     }
 
