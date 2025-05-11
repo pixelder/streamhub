@@ -599,8 +599,14 @@
     margin: 4px 0 0;
   }
 
+
+  .progress-wrapper.watched {
+    .progress-label {
+      font-size: 12px;
+    }
+  }
   .progress-wrapper {
-    width: 32px;
+    width: 26px;
 
     .progress-label {
       font-size: 8px;

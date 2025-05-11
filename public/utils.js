@@ -768,10 +768,22 @@ function initializeModalListeners(mediaType, data, modalContent, details) {
 function watchProgress(progress, ring = null) {
   if (progress < 5) return ''
   if (ring) {
+    if ( progress === 100 ) {
+      return `
+        <div class="progress-wrapper watched">
+          <div class="progress-ring" id="progressRing" style="background: conic-gradient(var(--success) 360deg, var(--color1) 0deg);">
+            <div class="progress-label">
+              <i class="fa-solid fa-check"></i>
+            </div>
+            <div class="progress-center"></div>
+          </div>
+        </div>
+      `
+    }
     const angle = 3.6 * Number(progress);
     return `
       <div class="progress-wrapper">
-        <div class="progress-ring" id="progressRing" style="background: conic-gradient(var(--progress-color) ${angle}deg, var(--color5) 0deg);">
+        <div class="progress-ring" id="progressRing" style="background: conic-gradient(var(--progress-color) ${angle}deg, var(--color1) 0deg);">
           <div class="progress-label">${Math.floor(progress)}%</div>
           <div class="progress-center"></div>
           <div class="dot fixed-dot"></div>
