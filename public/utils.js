@@ -115,7 +115,7 @@ function renderGridItems(items, type = null) {
       const ring = type === 'vertical' ? 1 : null;
       const title = item.title || item.name;
       const rating = truncate(item.vote_average, 1);
-      const year = extractYear(item.release_date || item.first_air_date) || '';
+      const year = extractYear(item.release_date || item.first_air_date) || 'N/A';
       const releaseDate = new ReleaseDate(item.release_date || item.first_air_date)
       const upcoming = releaseDate?.isUpcoming()
       const image = item.poster_path
