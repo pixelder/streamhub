@@ -163,7 +163,7 @@ async function loadWatchPage(mediaType, NAME = null, id, tvData = null) {
   const name = data.title ?? data.name
 
   const title = `${mediaType === "movie"
-    ? `${name} - PixelStream`
+    ? `${name}`
     : `S${season}:E${episode} ${name}`} - PixelStream`;
   const info = `<h2>${name}</h2> ${mediaType === "tv"
     ? `<h4>S${season}:E${episode} ${tvData?.epname}</h4>`
@@ -171,7 +171,7 @@ async function loadWatchPage(mediaType, NAME = null, id, tvData = null) {
 
   document.querySelector("title").innerText = title;
   document.querySelector(".now-playing").innerHTML = info;
-  localStorage.setItem('current-media-title',name);
+  localStorage.setItem('current-media-title', name);
   history.replaceState('', '', `/watch/${mediaType}/${id}/${name}${mediaType === 'tv' ? `/${season}/${episode}` : ''}`)
 
   if (mediaType == 'tv') {
@@ -193,7 +193,7 @@ async function loadWatchPage(mediaType, NAME = null, id, tvData = null) {
   let persistant = false;
   const providerMenu = document.querySelector('.providers');
 
-  ['mouseover', 'mouseout', 'click'].forEach(type => { 
+  ['mouseover', 'mouseout', 'click'].forEach(type => {
     document.querySelector('.provider-menu').addEventListener(type, (e) => {
 
       if (e.type === 'mouseover' && !persistant) {
@@ -203,7 +203,7 @@ async function loadWatchPage(mediaType, NAME = null, id, tvData = null) {
         providerMenu.classList.remove('show')
       }
 
-      if ( e.type === 'click' && e.target.closest('.provider-change')) {
+      if (e.type === 'click' && e.target.closest('.provider-change')) {
         persistant = true
         providerMenu.classList.add('show')
       }
@@ -211,7 +211,7 @@ async function loadWatchPage(mediaType, NAME = null, id, tvData = null) {
   })
 
   document.querySelector('main').addEventListener('click', (e) => {
-    if ( e.target.closest('.provider-change') || e.target.closest('.providers')) return
+    if (e.target.closest('.provider-change') || e.target.closest('.providers')) return
     providerMenu.classList.remove('show')
     persistant = false
   })
@@ -228,7 +228,7 @@ async function loadWatchPage(mediaType, NAME = null, id, tvData = null) {
       if (settingsChanged) settings = setProviderSettings(provider);
       if (newSource || settingsChanged) {
         setUpPlayer(newSource, mediaType, id, currentSeason, currentEpisode, settings);
-      } 
+      }
     }
 
     if (close) {
@@ -508,7 +508,7 @@ function setupLogging(id, mediaType) {
     //   currentEpisode = episode
     //   updatePageStatus()
     // }
-    const event = e.data.event || e.data.data?.event || e.data.type ;
+    const event = e.data.event || e.data.data?.event || e.data.type;
     if (event !== 'timeupdate' && !allowedOrigin) return;
     const { currentTime, duration } = e.data.data
     const progress = truncate(100 * (currentTime / duration), 2);
