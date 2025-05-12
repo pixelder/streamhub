@@ -2056,13 +2056,13 @@ body:has(.filter-menu) {
     h4 {
       color: #96a1c3;
       display: none;
-      margin: 0px 4px;
+      margin: 2px 4px 0px;
     }
 
     .flow-row {
       justify-content: space-between;
       align-items: center;
-      gap: 8px;
+      gap: 6px;
       padding: 2px;
     }
 
@@ -2120,6 +2120,7 @@ body:has(.filter-menu) {
 
     .options-x-icon {
       opacity: 0;
+      display: flex;
     }
 
   }
@@ -2147,7 +2148,7 @@ body:has(.filter-menu) {
       grid-template-columns: repeat(2, 1fr);
       opacity: 1;
       text-shadow: none;
-      padding-right: 6px;
+      padding-right: 2px;
       gap: 2px;
     }
 
