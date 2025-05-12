@@ -452,6 +452,7 @@ function resetSection() {
 		msg.classList.add('loading')
 		gridContainer.innerHTML = '';
 		currentPage = 1;
+		pageEnd = false;
 
 		loadDiscoverContent('', '', mediaType, `browse-${mediaType}s`);
 	} catch (e) {
