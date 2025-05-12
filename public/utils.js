@@ -981,7 +981,7 @@ function watchEventListeners(event, data) {
       event.stopPropagation();
     }
 
-    if (event.target.classList.contains("play-trailer")) {
+    if (event.target.closest(".play-trailer")) {
       console.log('trailer button')
       event.stopPropagation();
 
