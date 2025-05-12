@@ -973,6 +973,7 @@
     justify-content: space-between;
     gap: 12px;
     min-height: fit-content;
+    height: fit-content;
   }
 
   .modal-actions {
@@ -1053,6 +1054,7 @@
 
     .modal-media {
       gap: unset;
+      height: unset;
       min-height: unset;
       max-height: 80%;
     }
