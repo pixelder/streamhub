@@ -118,6 +118,7 @@ Array.prototype.sortDateDesc = function (desc = null) {
 
 async function fetchHistoryItems(section, sectionId, items) {
   const container = section.querySelector('.grid-container');
+  const type = container.classList.contains('vertical-card') ? 'vertical' : null;
   const logType = section.dataset.type;
   const fragment = document.createDocumentFragment();
   const existingItems = new Map();
@@ -152,7 +153,7 @@ async function fetchHistoryItems(section, sectionId, items) {
           data.media_type = mediaType;
           content = logType !== "bookmarks"
             ? renderLogItems(data, item)
-            : renderGridItems([data]);
+            : renderGridItems([data], 'vertical');
         }
 
         const wrapper = document.createElement("div");
@@ -190,13 +191,13 @@ async function fetchHistoryItems(section, sectionId, items) {
 }
 
 
-function renderLogItems(data, item, tvData) {
+function renderLogItems(data, item, tvData, type = null) {
   const [id, mediaType] = [item.id, item.mediaType];
   const index = item.index || null;
   const [sno, eno] = tvData ? [item.data.sno, item.data.eno] : ['', ''];
   const epData = tvData ? tvData?.episodes?.find(ep => ep.episode_number === Number(eno)) : '';
   const progress = Number(item.progress) || 0;
-  
+  const ring = type === 'vertical' ? 1 : null;
   const image = !tvData
     ? data.backdrop_path
       ? (IMAGE_342 + data.backdrop_path)
@@ -274,7 +275,7 @@ function renderLogItems(data, item, tvData) {
                   }
               </p>
             </span>
-            ${watchProgress(progress)}
+            ${watchProgress(progress, ring)}
           </div>
         </div>
       </div>
