@@ -29,7 +29,7 @@
   --bg-color: #0d0d1b;
   --border-radius1: 0.6rem;
   --border-radius2: 0.3rem;
-  --progress-color: #78a4e4;
+  --progress-color: #5A8FDB;
   --error: #a6192e;
   --caution: #ff9900;
   --success: #04b34f;
@@ -2646,7 +2646,7 @@ body:has(.modal:is([active])) {
   background: linear-gradient(
     to right,
     var(--progress-color) calc(var(--progress) * 1%),
-    #b8b8c1 0
+    #bebec9 0
   );
   left: 0;
   bottom: 0;
