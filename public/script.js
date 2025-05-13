@@ -11,10 +11,9 @@ let sectionFetching = false
 let contWatching = false;
 let pageEnd = false;
 
-// let pageNumbers = {}; // Track the current page number for each section
-// let storedData = {}; // Store data for each section for persistent pagination
-let isFetching = {}; // Track fetching state per section to avoid multiple fetches
+let isFetching = {}; // Track fetching state per section
 let lastUrl = '';
+
 // parameters for discover call
 let selectedGenres = []
 let excludedGenres = []
@@ -89,11 +88,9 @@ async function loadDiscoverContent( mediaType, sectionId) {
       params.append(key, value);
     }
   }
-  console.log(params)
+  
   if (document.getElementById(sectionId)) {
     const url = `${BASE_URL}/discover/${mediaType}?api_key=${API_KEY}&watch_region=${watchRegion}&${params}&${OPTIONS}`;
-    // storedData[sectionId] = [];
-    // pageNumbers[sectionId] = 1;
     fetchContent(sectionId, url);
   }
 }
@@ -151,9 +148,6 @@ function discoverStreaming() {
 
 
 async function fetchContent(sectionId, url) {
-  //const limit = (isMobile() || isBrowsing) ? 20 : 14; // Set limit based on device size
-  //const limit = 20;
-  // if (!pageNumbers[sectionId]) pageNumbers[sectionId] = 1; // Initialize page number if not set
   if (!isFetching[sectionId]) isFetching[sectionId] = false; // Initialize fetching state
 
   if (isFetching[sectionId]) return;  // Prevent multiple fetch requests while one is ongoing
@@ -174,7 +168,7 @@ async function fetchContent(sectionId, url) {
   } catch (error) {
     console.error(`Error fetching data for ${sectionId}:`, error);
   } finally {
-    isFetching[sectionId] = false; // Done Fetching for sectionId
+    isFetching[sectionId] = false;
   }
 }
 
