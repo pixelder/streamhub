@@ -913,7 +913,7 @@
   }
 
   .modal-content {
-    width: 92%;
+    width: 95%;
     height: fit-content;
     overflow: scroll;
     max-height: 70% !important;
@@ -980,7 +980,7 @@
   }
 
   .modal-actions {
-    gap: 10px;
+    gap: 8px;
     padding: unset;
   }
 
@@ -1009,7 +1009,8 @@
     min-width: 20%;
     height: 30px;
     font-size: 12px;
-    padding: 0 12px;
+    padding: 0 8px;
+    gap: 4px;
   }
 
   .play-trailer .temp-message {
@@ -1064,7 +1065,7 @@
   } */
 
   .modal-content:has(#ytplayer) {
-    width: 92% !important;
+    width: 95% !important;
     height: auto !important;
     max-height: 70% !important;
     aspect-ratio: unset !important;
@@ -1103,7 +1104,7 @@
 
     .modal-actions {
       width: unset;
-      gap: 0.6rem;
+      gap: 8px;
     }
 
     .releasing-on {
