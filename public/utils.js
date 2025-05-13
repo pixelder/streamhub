@@ -42,9 +42,10 @@ function convertDate(dateString) {
   return formatter.format(new Date(dateString));
 }
 
-function runtime(min) {
+function runtime(min, type = 'short') {
   const hour = Math.floor(min / 60.0);
   const minute = min - hour * 60.0;
+  if ( type === 'long') return (hour !== 0 ? `${hour} hour ` : '') + `${minute} minutes` 
   return (hour !== 0 ? `${hour}h` : '') + `${minute}m`;
 }
 
@@ -101,6 +102,18 @@ function populateSection(sectionId, items) {
   }
 }
 
+function getProgressInfo(id, mediaType = 'movie',logData = null) {
+  let logs = logData
+  if (!logData) logs = getLogData('history');
+
+  const watched = logExists('history', id, mediaType, null, null, 100)
+  const LOG = logs && !watched ? logs.filter(log => {
+    return Number(log.id) === Number(id) && log.mediaType === 'movie'
+  }) : null;
+  const progress = watched && mediaType === 'movie' ? 100 : Number(LOG?.sortDateDesc(false)[0]?.progress) || 0;
+  return progress
+}
+
 function renderGridItems(items, type = null) {
   let logs = getLogData('history');
   return items
@@ -108,11 +121,7 @@ function renderGridItems(items, type = null) {
       const id = item.id;
       const mediaType = item.media_type;
       const bookmark = logExists('bookmarks', id, mediaType);
-      const watched = logExists('history', id, mediaType, null, null, 100)
-      const LOG = logs && !watched ? logs.filter(log => {
-        return Number(log.id) === Number(id) && log.mediaType === 'movie'
-      }) : null;
-      const progress = watched && mediaType === 'movie' ? 100 : Number(LOG?.sortDateDesc(false)[0]?.progress) || 0;
+      const progress = getProgressInfo(id, mediaType,logs)
       const ring = type === 'vertical' ? 1 : null;
       const title = item.title || item.name;
       const rating = truncate(item.vote_average, 1);
@@ -122,7 +131,6 @@ function renderGridItems(items, type = null) {
       const image = item.poster_path
         ? `${IMAGE_342 + item.poster_path}`
         : 'assets/images/no-image.png ';
-      //: 'https://placehold.co/440x661/383852/ccc?text=No+Image';
       return `
          <div tabindex="0" class="grid-item" draggable="true" id="grid-item" data-id="${item.id}" data-media-type="${mediaType}">
            <div class="img-container">
@@ -425,7 +433,11 @@ function buildMediaDetailsHTML(data, mediaType, contentLogoHTML) {
   const { rated } = getCountryCertification(data, mediaType);
   const rating = truncate(data.vote_average, 1)
   let released = true;
-  if (releaseInfo(data, mediaType) !== null) released = false
+  if (releaseInfo(data, mediaType) !== null) released = false;
+
+  const progress = getProgressInfo(data.id, mediaType);
+  const timeLeft =  data.runtime - Math.floor(data.runtime * Number(progress) / 100 );
+  const watch_progress = `${runtime(timeLeft, 'long')} remaining`;
 
   const detailsBodyHTML = `
     <div class="trailer-container"></div>
@@ -462,6 +474,12 @@ function buildMediaDetailsHTML(data, mediaType, contentLogoHTML) {
       </div>
     </span>
   </div>
+  ${progress !== Number(0)
+    ? progress === 100 
+      ? '<p class="watched-check"><i class="fa-solid fa-check"></i> Watched</p>' 
+      : `<p class="remaining-time">${watch_progress}</p>` 
+    : '' 
+    }
   ${released ? '' : releaseInfo(data, mediaType)}
   `;
   return detailsBodyHTML;
@@ -688,11 +706,21 @@ function insertMovieActions(data, mediaType) {
   const name = data.name || data.title || data.original_title;
   let released = true;
   if (releaseInfo(data, mediaType) !== null) released = false
+  const progress = getProgressInfo(data.id, mediaType)
+  const watched = progress === 100
+
   const actionHTML = `
     <div class="modal-actions">
       ${released
-      ? `<button class="watch-btn" title="watch movie" data-name="${name}" data-id="${data.id}">
-          <i class="fa-solid fa-play"></i>Watch
+      ? `<button class="watch-btn ${watched ? 'watched' : ''}" title="watch movie" data-name="${name}" data-id="${data.id}">
+          <i class="fa-solid fa-play"></i>
+          ${progress !== Number(0)  
+            ? watched 
+              ? 'Rewatch' 
+              : `Resume
+                <div class="progress-indicator" style="--progress: ${progress};"></div>`
+            : 'Watch'
+          }
         </button>`
       : ''}
       ${setUpModalActions(data, mediaType)}
@@ -1898,7 +1926,6 @@ function setUpExpandableSection() {
           if (currentPage === 1) currentPage++;
           if (section.id === 'discover-streaming') {
             const tab = section.querySelector(".tab-menu .active")
-            //tab.classList.add("active");
             const mediaType = section.querySelector(".media-switch .active").dataset.type;
             selectedNetworks = [tab.dataset.network]
             selectedProviders = [tab.dataset.provider]

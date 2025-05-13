@@ -224,10 +224,6 @@
     }
   }
 
-  .actions .pagination-buttons button {
-    font-size: 10px;
-  }
-
   .checkbox-button {
     font-size: 14px;
   }
@@ -986,6 +982,20 @@
   .modal-actions {
     gap: 10px;
     padding: unset;
+  }
+
+  .remaining-time {
+    font-size: 12px;
+    line-height: 12px;
+  }
+
+  .watched-check {
+    gap: 6px;
+    font-size: 12px;
+  }
+
+  .progress-indicator {
+    height: 4px;
   }
 
   .releasing-on {

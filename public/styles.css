@@ -29,7 +29,7 @@
   --bg-color: #0d0d1b;
   --border-radius1: 0.6rem;
   --border-radius2: 0.3rem;
-  --progress-color: #8AA9E8;
+  --progress-color: #78a4e4;
   --error: #a6192e;
   --caution: #ff9900;
   --success: #04b34f;
@@ -431,16 +431,6 @@ section:has(.grid-item) .actions {
 
 .close-window:hover {
   background: var(--error) !important;
-}
-
-.actions .pagination-buttons {
-  display: flex;
-  flex-direction: row;
-  gap: 0.4rem;
-
-  button {
-    font-size: 12px;
-  }
 }
 
 .actions .edit-button {
@@ -1977,6 +1967,16 @@ body:has(.filter-menu) {
 #continue-watching,
 #history {
 
+  .grid-item-info, img {
+    transition: filter 0.15s;
+  }
+
+  .grid-item:has(.grid-options.open) {
+    .grid-item-info, img {
+      filter: blur(2px) brightness(0.6);
+    }
+  }
+
   .grid-container {
     display: flex;
     overflow-x: auto;
@@ -2435,7 +2435,7 @@ body:has(.modal:is([active])) {
   position: relative;
   width: 58rem;
   height: fit-content;
-  max-height: 30rem;
+  max-height: 32rem;
   padding: 32px;
   margin: auto;
   border-radius: var(--border-radius1);
@@ -2575,7 +2575,8 @@ body:has(.modal:is([active])) {
     max-width: unset;
   }
 
-  .releasing-on {
+  .releasing-on,
+  .remaining-time {
     display: none;
   }
 }
@@ -2626,6 +2627,30 @@ body:has(.modal:is([active])) {
   flex-wrap: wrap;
 }
 
+.remaining-time {
+  font-size: 16px;
+  line-height: 20px;
+}
+
+.watched-check {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.progress-indicator {
+  position: absolute;
+  height: 5px;
+  width: 100%;
+  background: linear-gradient(
+    to right,
+    var(--progress-color) calc(var(--progress) * 1%),
+    #b8b8c1 0
+  );
+  left: 0;
+  bottom: 0;
+}
+
 .releasing-on {
   width: fit-content;
   border: 1px dashed green;
@@ -2641,6 +2666,7 @@ body:has(.modal:is([active])) {
   color: var(--bg-color);
 }
 
+
 .watch-btn,
 .play-trailer {
   position: relative;
@@ -2655,6 +2681,7 @@ body:has(.modal:is([active])) {
   justify-content: center;
   align-items: center;
   text-wrap: nowrap;
+  overflow: hidden;
   gap: 8px;
 }
 
