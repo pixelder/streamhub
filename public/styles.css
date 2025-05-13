@@ -2576,7 +2576,8 @@ body:has(.modal:is([active])) {
   }
 
   .releasing-on,
-  .remaining-time {
+  .remaining-time,
+  .watched-check {
     display: none;
   }
 }

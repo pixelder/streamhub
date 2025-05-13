@@ -449,10 +449,10 @@ function buildMediaDetailsHTML(data, mediaType, contentLogoHTML) {
         <span class="ratings-genre">
           <p data-title="${data.vote_count} votes">
           ${rating
-      ? `<i class="fa-solid fa-star"></i>
+            ? `<i class="fa-solid fa-star"></i>
               ${rating}`
-      : `<img class="nostar" src="assets/icons/nostar.svg">`
-    }
+            : `<img class="nostar" src="assets/icons/nostar.svg">`
+          }
           </p>
           <span class="modal-genre">
             ${genresHTML}
@@ -1048,7 +1048,10 @@ function watchEventListeners(event, data) {
           return
         }
         container.innerHTML = trailerIframe
-        trailerBtn.innerHTML = `<i class="fa-solid fa-xmark"></i>Close`
+        trailerBtn.innerHTML = `
+          <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="20" height="20" viewBox="0,0,256,256">
+          <g fill="#e6e6fa" fill-rule="nonzero" stroke="none" stroke-width="2" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="10" stroke-dasharray="" stroke-dashoffset="0" font-family="none" font-weight="none" font-size="none" text-anchor="none" style="mix-blend-mode: normal"><g transform="scale(8,8)"><path d="M7.21875,5.78125l-1.4375,1.4375l8.78125,8.78125l-8.78125,8.78125l1.4375,1.4375l8.78125,-8.78125l8.78125,8.78125l1.4375,-1.4375l-8.78125,-8.78125l8.78125,-8.78125l-1.4375,-1.4375l-8.78125,8.78125z"></path></g></g>
+          </svg>Close`
       }
 
       const trailer = document.getElementById('ytplayer')

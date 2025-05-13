@@ -1013,6 +1013,9 @@
     gap: 4px;
   }
 
+  .play-trailer svg {
+    height: 16px;
+  }
   .play-trailer .temp-message {
     z-index: 2000;
     left: 12px;
