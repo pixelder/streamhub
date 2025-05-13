@@ -153,7 +153,7 @@ async function fetchHistoryItems(section, sectionId, items) {
           data.media_type = mediaType;
           content = logType !== "bookmarks"
             ? renderLogItems(data, item)
-            : renderGridItems([data], 'vertical');
+            : renderGridItems([data], type);
         }
 
         const wrapper = document.createElement("div");
