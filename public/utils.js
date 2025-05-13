@@ -95,6 +95,7 @@ function populateSection(sectionId, items) {
   if (items.length < 20) {
     pageEnd = true;
     const msg = document.querySelector('.result-message');
+    if (!msg) return
     msg.classList.remove('loading');
     msg.querySelector('label').innerText = 'No more results';
   }
@@ -1899,10 +1900,9 @@ function setUpExpandableSection() {
             const tab = section.querySelector(".tab-menu .active")
             //tab.classList.add("active");
             const mediaType = section.querySelector(".media-switch .active").dataset.type;
-            const networkId = tab.dataset.network;
-            const providerId = tab.dataset.provider;
-            console.log(mediaType, networkId, providerId);
-            loadDiscoverContent(networkId, providerId, mediaType, 'discover-streaming');
+            selectedNetworks = [tab.dataset.network]
+            selectedProviders = [tab.dataset.provider]
+            loadDiscoverContent( mediaType, 'discover-streaming');
             return
           }
           const url = sectionURLs[section.id];

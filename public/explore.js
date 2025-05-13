@@ -171,7 +171,7 @@ function loadExplorePage(mediaType) {
     `;
 
 	filterReset()
-	loadDiscoverContent('', '', mediaType, `browse-${mediaType}s`);
+	loadDiscoverContent(mediaType, `browse-${mediaType}s`);
 
 	fetchGenres(mediaType);
 	fetchCountriesAndLanguages();
@@ -190,7 +190,7 @@ function loadExplorePage(mediaType) {
 				clearTimeout(pageWait)
 				pageWait = setTimeout(() => {
 					console.log('loading page', currentPage)
-					loadDiscoverContent('', '', mediaType, `browse-${mediaType}s`);
+					loadDiscoverContent(mediaType, `browse-${mediaType}s`);
 				}, (200));
 			}
 		}
@@ -454,7 +454,7 @@ function resetSection() {
 		currentPage = 1;
 		pageEnd = false;
 
-		loadDiscoverContent('', '', mediaType, `browse-${mediaType}s`);
+		loadDiscoverContent(mediaType, `browse-${mediaType}s`);
 	} catch (e) {
 		console.log(e)
 		notifyAlert(e)

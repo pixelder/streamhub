@@ -28,6 +28,9 @@ let minRate = 5
 let currentYear = null
 let selectedCountry = ''
 let selectedLanguage = ''
+let watchRegion = 'US';
+let selectedNetworks = []
+let selectedProviders = []
 
 const sectionURLs = {
   'trending-movies': `${BASE_URL}/trending/movie/week?api_key=${API_KEY}`,
@@ -53,9 +56,11 @@ function loadSections() {
   }, 400);
 }
 
-async function loadDiscoverContent(networkId, providerId, mediaType, sectionId) {
+async function loadDiscoverContent( mediaType, sectionId) {
 
-  const params = new URLSearchParams({
+  const params = new URLSearchParams()
+
+  const queryParameters = {
     with_genres: selectedGenres.join(','),
     without_genres: excludedGenres.join(','),
     page: currentPage,
@@ -69,12 +74,24 @@ async function loadDiscoverContent(networkId, providerId, mediaType, sectionId) 
     with_original_language: selectedLanguage,
     'vote_average.gte': minRate,
     'vote_count.gte': minVoteCount,
-    with_networks: networkId,
-    with_watch_providers: providerId
-  });
+    with_networks: selectedNetworks.join(','),
+    with_watch_providers: selectedProviders.join(','),
+    watch_region: watchRegion
+  };
 
+  for (const [key, value] of Object.entries(queryParameters)) {
+    if (
+      value !== '' &&
+      value !== null &&
+      value !== undefined &&
+      !(Array.isArray(value) && value.length === 0)
+    ) {
+      params.append(key, value);
+    }
+  }
+  console.log(params)
   if (document.getElementById(sectionId)) {
-    const url = `${BASE_URL}/discover/${mediaType}?api_key=${API_KEY}&${params}&watch_region=US&${OPTIONS}`;
+    const url = `${BASE_URL}/discover/${mediaType}?api_key=${API_KEY}&watch_region=${watchRegion}&${params}&${OPTIONS}`;
     // storedData[sectionId] = [];
     // pageNumbers[sectionId] = 1;
     fetchContent(sectionId, url);
@@ -82,39 +99,56 @@ async function loadDiscoverContent(networkId, providerId, mediaType, sectionId) 
 }
 
 function discoverStreaming() {
-  loadDiscoverContent( 213, 8, 'movie', 'discover-streaming');
-  const container = document.querySelector('#discover-streaming .grid-container')
-  enableHorizontalWheelScroll(container,5)
-  setupScrollEdgeMask(container)
+  const sectionId = 'discover-streaming';
+  const container = document.querySelector(`#${sectionId} .grid-container`);
+  if (!container) return;
+ 
+  selectedNetworks = [213]
+  selectedProviders = [8]
+
+  loadDiscoverContent('movie', sectionId);
+
+  enableHorizontalWheelScroll(container, 5);
+  setupScrollEdgeMask(container);
+
+  const getActiveTab = () => document.querySelector(".tab-menu .tab.active");
+  const getActiveMedia = () => document.querySelector(".media-tab.active");
+
+  const updateContent = () => {
+    const expanded = container.closest('section').classList.contains('expanded');
+    if (expanded) container.scrollTo({ top: 0 })
+    else container.scrollTo({ left: 0 });
+    currentPage = 1;
+    pageEnd = false
+    minVoteCount = 60
+
+    const mediaType = getActiveMedia()?.dataset?.type;
+    const { network, provider } = getActiveTab()?.dataset || {};
+    selectedNetworks = [network]
+    selectedProviders = [provider]
+
+    loadDiscoverContent( mediaType, sectionId);
+  };
 
   document.querySelectorAll(".tab-menu .tab").forEach(tab => {
     tab.addEventListener("click", () => {
-      container.scrollTo({ top: 0});
-      currentPage = 1
-      document.querySelector(".tab-menu .active").classList.remove("active");
+      const activeTab = getActiveTab();
+      activeTab.classList.remove("active");
       tab.classList.add("active");
-      const mediaType = document.querySelector(".media-switch .active").dataset.type;
-      const { network, provider } = tab.dataset
-      minVoteCount = 60
-      console.log(mediaType, network, provider);
-      loadDiscoverContent(network, provider, mediaType, 'discover-streaming');
+      updateContent();
     });
   });
 
   document.querySelectorAll(".media-tab").forEach(button => {
     button.addEventListener("click", () => {
-      container.scrollTo({ top: 0});
-      currentPage = 1
-      document.querySelector(".media-tab.active").classList.remove("active");
+      const activeMedia = getActiveMedia();
+      activeMedia.classList.remove("active");
       button.classList.add("active");
-      const mediaType = button.dataset.type;
-      const { network, provider } = document.querySelector(".tab-menu .active").dataset;
-      minVoteCount = 60
-      console.log(mediaType, network, provider);
-      loadDiscoverContent(network, provider, mediaType, 'discover-streaming');
+      updateContent();
     });
   });
 }
+
 
 async function fetchContent(sectionId, url) {
   //const limit = (isMobile() || isBrowsing) ? 20 : 14; // Set limit based on device size
