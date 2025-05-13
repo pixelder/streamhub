@@ -2983,6 +2983,7 @@ option {
   border-radius: var(--border-radius2);
   box-shadow: 0 0 4px rgba(0, 0, 0, 0.3);
   cursor: pointer;
+  background: var(--bg-color);
 
   .progress-bar {
     --margin: 8px;
@@ -2997,7 +2998,7 @@ option {
   height: 100%;
   min-width: 100%;
   object-fit: cover;
-  mask-image: linear-gradient(to top, rgba(0, 0, 0, 0.5) 0%, black 35%, black 75%, rgba(0, 0, 0, 0.5) 100%);
+  mask-image: linear-gradient(to top, rgba(0, 0, 0, 0.2) 0%, black 35%, black 75%, rgba(0, 0, 0, 0.4) 100%);
 }
 
 .episode-items img:focus-visible {

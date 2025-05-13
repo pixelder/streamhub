@@ -1110,9 +1110,12 @@
       gap: 8px;
     }
 
-    .releasing-on {
-      display: block;
+    .releasing-on,
+    .remaining-time,
+    .watched-check {
+      display: flex;
     }
+
   }
 
   .modal-info-logo {
