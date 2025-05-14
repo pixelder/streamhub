@@ -247,6 +247,14 @@
           <option value="movie">Movie</option>
         </select>
       </div>
+
+      <div class="form-group">
+        <label>Server</label>
+        <select id="server-key">
+          <option value="alpha">Datadiff</option>
+          <option value="bravo">UHDscrapper</option>
+        </select>
+      </div>
   
       <div class="form-group">
         <label>Name</label>
@@ -376,6 +384,7 @@
       const year = document.getElementById("year").value;
       const season = document.getElementById("season").value;
       const episode = document.getElementById("episode").value;
+      const server_key = document.getElementById('server-key').value || 'alpha';
 
         // Input validation
       if (mediaType === "movie") {
@@ -392,7 +401,7 @@
         }
       }
 
-      const payload = { mediaType, name };
+      const payload = { mediaType, name, server: server_key };
 
       if (mediaType === "movie") {
         payload.year = year;
@@ -409,8 +418,25 @@
         }
       }
 
-      const server = "https://alpha-scraper.onrender.com"
-      //const server = "http://192.168.29.122:3000";
+      const server = [
+       "https://alpha-scraper.onrender.com",
+      ]
+      //  const server = [
+      //    "http://192.168.29.122:3000",
+      //  ]
+      
+      // try {
+      //   const pingRes = await fetch(`${server}/ping`, { method: "HEAD" });
+      //   if (!pingRes.ok) {
+      //     throw new Error("Server not awake");
+      //   }
+      // } catch (err) {
+      //   // Step 2: If server is not awake, wake it up
+      //   console.log("Waking up the server...");
+      //   status.innerHTML = `<span style="color: orange; text-shadow: none;">⏳ Server is waking up... please wait.</span>`;
+      //   await fetch(`${server}/ping`, { method: "GET" }); // Trigger the wake-up
+      // }
+      
       try {
         const res = await fetch(`${server}/fetch`, {
           method: "POST",
@@ -430,6 +456,7 @@
           errorMessage.textContent = `❌ ${data.error || 'Something went wrong.'}`;
           status.innerHTML = ''
           status.appendChild(errorMessage);
+          return
         }
 
         const files = Array.isArray(data.results)
