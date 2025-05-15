@@ -3,7 +3,7 @@
 
 <head>
   <meta charset="UTF-8">
-  <title>Link scrapper | Pixelstream</title>
+  <title>Tools - Pixelstream</title>
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
@@ -19,199 +19,8 @@
   <script src="../utils.js" defer></script>
   <link rel="icon" href="../assets/icons/favicon.png" type="image/png">
 
-  <style>
-
-    main {
-      padding: 4.4rem 10px;
-      align-items: start;
-      gap: 8px;
-      max-width: 700px;
-      margin: auto;
-    }
-
-    .input-form {
-      display: grid;
-      gap: 8px;
-      padding: 14px;
-      /* background: #191930; */
-      background: var(--color3);
-      border-radius: 12px;
-      margin: 16px 0;
-      width: 100%;
-    }
-
-    .input-form label {
-      font-weight: 600;
-      font-size: 15px;
-    }
-
-    .input-form .form-group {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px;
-      margin-bottom: 2px;
-    }
-
-    .input-form {
-      input,
-      select,
-      button {
-        width: 100% !important;
-        height: 36px;
-        background-color: var(--color5) !important;
-        color: lavender;
-        /* border: 1px solid #383852; */
-        border: none !important;
-        box-shadow: none;
-        border-radius: 6px !important;
-        box-sizing: border-box;
-        font-size: 14px !important;
-        padding: 0 10px;
-      }
-    }
-
-    .number-control {
-      display: flex;
-      align-items: center;
-      gap: 4px;
-      width: 100%;
-    }
-
-    .number-control input {
-      flex: 1;
-    }
-
-    .number-control button {
-      width: auto !important;
-      aspect-ratio: 1 / 1;
-      padding: unset;
-      font-size: 18px !important;
-      /* font-weight: bold; */
-      cursor: pointer;
-    }
-
-    #scrape {
-      font-size: 15px !important;
-      font-weight: 600;
-      background: var(--color2) !important;
-    }
-
-    #reset {
-      background: var(--error) !important;
-    }
-
-    #tv-input {
-      display: flex;
-      gap: 8px;
-    }
-
-    .raw-output {
-      width: 100%;
-      margin: 16px 0;
-    }
-
-    pre {
-      background: #191930;
-      padding: 10px;
-      margin: 8px 0;
-      overflow-x: auto;
-      border-radius: 8px;
-      font-size: 12px;
-      line-break: anywhere;
-      white-space: break-spaces;
-    }
-
-    /* .result-card {
-      background: #1d1d34;
-      border: 1px solid #383852;
-    }
-    .result-card button {
-      background-color: #3a3a5c;
-    } */
-
-    .results-table {
-      width: 100%;
-      border: 1px solid #383852;
-      border-radius: 6px;
-      overflow: hidden;
-    }
-
-    .results-table table {
-      border-collapse: collapse;
-      table-layout: fixed;
-      width: 100%;
-      background: #191930;
-      /* background: #1c1c30; */
-      overflow: hidden;
-    }
-
-    .results-table th,
-    .results-table td {
-      padding: 10px;
-      border-bottom: 1px solid #383852;
-      text-align: left;
-    }
-
-    .results-table tr {
-      display: flex;
-    }
-    .results-table tr:nth-last-child(1) td {
-      border-bottom: 1px solid transparent;
-    }
-
-    .results-table td {
-      color: #ccc;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-    }
-
-    .results-table th {
-      background: #242448;
-      color: lavender;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-    }
-
-    .results-table td a button {
-      height: 32px;
-      aspect-ratio: 1/1;
-      border-radius: 6px;
-      background: var(--color1) !important;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin: unset;
-      cursor: pointer;
-      transition: background 0.2s ease;
-    }
-
-    .results-table td a button:hover {
-      background-color: var(--color3) !important;
-    }
-
-    .file-cell {
-      width: 100%;
-    }
-
-    .file-name {
-      font-size: 14px;
-      overflow-x: auto;
-      overflow-y: hidden;
-      text-overflow: ellipsis;
-      max-width: 100%;
-      line-break: anywhere;
-    }
-
-    .file-flags {
-      font-size: 12px;
-      color: var(--font-color2);
-    }
-
-    .action-cell {
-      text-align: right;
-    }
-  </style>
+  <link rel="stylesheet" href="styles.css" type="text/css">
+  <script src="script.js" defer></script>
 </head>
 
 <body>
@@ -238,287 +47,84 @@
 
   <main id="main-content">
     
-    <div class="input-form">
-      <h3>Get Download Links</h3>
-      <div class="form-group">
-        <label>Media Type</label>
-        <select id="mediaType" onchange="toggleFields()">
-          <option value="tv">TV</option>
-          <option value="movie">Movie</option>
-        </select>
-      </div>
-
-      <div class="form-group">
-        <label>Server</label>
-        <select id="server-key">
-          <option value="alpha">Datadiff</option>
-          <option value="bravo">UHDscrapper</option>
-        </select>
-      </div>
+    <section class="Download-links">
+      <div class="input-form">
+        <h3>EXTRACTOR</h3>
   
-      <div class="form-group">
-        <label>Name</label>
-        <input type="text" id="name" placeholder="e.g., Silo or Dune">
-      </div>
+        <div class="flow-row">
+          <div class="form-group">
+            <label>Media Type</label>
+            <select id="mediaType" onchange="toggleFields()">
+              <option value="movie">Movie</option>
+              <option value="tv">TV</option>
+            </select>
+          </div>
     
-      <!-- These fields are initially hidden for 'movie' type -->
-      <div id="tv-input">
-        <div class="form-group">
-          <label>Season (required)</label>
-          <div class="number-control">
-            <button type="button" onclick="changeValue('season', -1)">−</button>
-            <button type="button" onclick="changeValue('season', 1)">+</button>
-            <input id="season" placeholder="e.g., 1" min="0">
+          <div class="form-group">
+            <label>Server</label>
+            <select id="server-key">
+              <option value="alpha">Datadiff</option>
+              <option value="bravo">UHDscrapper</option>
+            </select>
           </div>
         </div>
     
         <div class="form-group">
-          <label>Episode (optional)</label>
-          <div class="number-control">
-            <button type="button" onclick="changeValue('episode', -1)">−</button>
-            <button type="button" onclick="changeValue('episode', 1)">+</button>
-            <input id="episode" placeholder="e.g., 2" min="0">
-          </div>
+          <label>Name</label>
+          <input type="text" id="name" placeholder="e.g., Silo or Dune ">
         </div>
-      </div>
-    
-      <!-- This field is initially hidden for 'tv' type -->
-      <div id="year-input" class="form-group">
-        <label>Year (for movies)</label>
-        <div class="number-control">
-          <button type="button" onclick="changeValue('year', -1)">−</button>
-          <button type="button" onclick="changeValue('year', 1)">+</button>
-          <input id="year" placeholder="e.g., 2021" min="0">
-        </div>
-      </div>
-    
-      <div style="display: flex; gap: 8px;">
-        <button id="scrape" onclick="scrape()">Generate</button>
-        <button id="reset" onclick="resetForm()" style="background: var(--color5);">Reset</button>
-      </div>
       
-    </div>
-  
-    <h3>Links</h3>
-    <div id="status-info"></div>
-    <div id="results" class="results-table"></div>
-  
-    <details class="raw-output">
-      <summary>Raw Response</summary>
-      <pre id="output"></pre>
-    </details>
+        <!-- These fields are initially hidden for 'movie' type -->
+        <div id="tv-input">
+          <div class="form-group">
+            <label>Season (required)</label>
+            <div class="number-control">
+              <button type="button" onclick="changeValue('season', -1)">−</button>
+              <button type="button" onclick="changeValue('season', 1)">+</button>
+              <input id="season" value="1" placeholder="0" min="1" >
+            </div>
+          </div>
+      
+          <div class="form-group">
+            <label>Episode (optional)</label>
+            <div class="number-control">
+              <button type="button" onclick="changeValue('episode', -1)">−</button>
+              <button type="button" onclick="changeValue('episode', 1)">+</button>
+              <input id="episode" placeholder="0" min="1">
+            </div>
+          </div>
+        </div>
+      
+        <!-- This field is initially hidden for 'tv' type -->
+        <div id="year-input" class="form-group">
+          <label>Year (for movies)</label>
+          <div class="number-control">
+            <button type="button" onclick="changeValue('year', -1)">−</button>
+            <button type="button" onclick="changeValue('year', 1)">+</button>
+            <input id="year" placeholder="Year" min="0" value="2025">
+          </div>
+        </div>
+      
+        <div class="form-actions">
+          <button id="scrape" onclick="scrape()">Generate</button>
+          <button id="reset" onclick="resetForm()" style="background: var(--color5);">Reset</button>
+        </div>
+        
+      </div>
+    
+      <h3>Links</h3>
+      <div id="status-info"></div>
+      <div id="results" class="results-table"></div>
+    
+      <details class="raw-output">
+        <summary>Raw Response</summary>
+        <pre id="output"></pre>
+      </details>
+    </section>
   </main>
 
-  <nav class="bottom-bar">
+  <nav class="bottom-bar"></nav>
 
-  </nav>
-
-  <script>
-    function toggleFields() {
-      const mediaType = document.getElementById("mediaType").value;
-      const tvinfo = document.getElementById("tv-input");
-      const yearinfo = document.getElementById("year-input");
-
-      // Show and hide fields based on media type
-      if (mediaType === "tv") {
-        tvinfo.style.display = "flex";
-        yearinfo.style.display = "none";
-      } else {
-        tvinfo.style.display = "none";
-        yearinfo.style.display = "flex";
-      }
-    }
-
-    // Initialize the fields on page load
-    window.onload = function () {
-      toggleFields(); // Ensure fields are correctly set on initial load
-      bottomNavBar()
-    };
-
-    function resetUI() {
-      const btn = document.getElementById("scrape");
-      btn.disabled = false;
-      btn.style.filter = 'unset'
-      btn.textContent = "Generate";
-    }
-
-    function changeValue(id, delta) {
-      const input = document.getElementById(id);
-      let value = parseInt(input.value) || 0;
-      value = Math.max(0, value + delta); // Prevent negative numbers
-      input.value = value;
-    }
-
-    function resetForm() {
-      document.getElementById("name").value = "";
-      document.getElementById("season").value = "";
-      document.getElementById("episode").value = "";
-      document.getElementById("year").value = "";
-      document.getElementById("output").textContent = "";
-      document.getElementById("status-info").innerHTML = "";
-      document.getElementById("results").innerHTML = "";
-      toggleFields();
-      resetUI();
-    }
-
-
-    async function scrape() {
-      const btn = document.getElementById("scrape");
-      const output = document.getElementById("output");
-      const resultsDiv = document.getElementById("results");
-      const status = document.getElementById("status-info");
-
-      // Reset the status info and results before starting the fetch process
-      status.innerHTML = "";
-      resultsDiv.innerHTML = "";
-
-      // Disable UI elements during loading
-      btn.disabled = true;
-      btn.style.filter = 'saturate(0.2)';
-      btn.textContent = "Loading...";
-      status.innerText = "Fetching data..."
-      output.textContent = "";
-
-      const mediaType =  document.getElementById("mediaType").value;
-      const name =  document.getElementById("name").value.trim();
-      const year = document.getElementById("year").value;
-      const season = document.getElementById("season").value;
-      const episode = document.getElementById("episode").value;
-      const server_key = document.getElementById('server-key').value || 'alpha';
-
-        // Input validation
-      if (mediaType === "movie") {
-        if (!name || !year) {
-          status.innerHTML = `<span style="color: orange; text-shadow: none;">⚠️ Movie requires both <b>Name</b> and <b>Year</b>.</span>`;
-          resetUI();
-          return;
-        }
-      } else if (mediaType === "tv") {
-        if (!name || !season) {
-          status.innerHTML = `<span style="color: orange; text-shadow: none;">⚠️ TV Show requires both <b>Name</b> and <b>Season</b>.</span>`;
-          resetUI();
-          return;
-        }
-      }
-
-      const payload = { mediaType, name, server: server_key };
-
-      if (mediaType === "movie") {
-        payload.year = year;
-      } 
-      if (mediaType === 'tv') {
-        payload.year = '';
-        payload.season = season;
-        payload.episode = episode || '';
-      }
-      // Remove any empty fields from the payload
-      for (let key in payload) {
-        if (payload[key] === "" || payload[key] === null) {
-          delete payload[key];
-        }
-      }
-
-      const server = [
-       "https://alpha-scraper.onrender.com",
-      ]
-      //  const server = [
-      //    "http://192.168.29.122:3000",
-      //  ]
-      
-      // try {
-      //   const pingRes = await fetch(`${server}/ping`, { method: "HEAD" });
-      //   if (!pingRes.ok) {
-      //     throw new Error("Server not awake");
-      //   }
-      // } catch (err) {
-      //   // Step 2: If server is not awake, wake it up
-      //   console.log("Waking up the server...");
-      //   status.innerHTML = `<span style="color: orange; text-shadow: none;">⏳ Server is waking up... please wait.</span>`;
-      //   await fetch(`${server}/ping`, { method: "GET" }); // Trigger the wake-up
-      // }
-      
-      try {
-        const res = await fetch(`${server}/fetch`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload)
-        });
-
-        const data = await res.json();
-        output.textContent = JSON.stringify(data, null, 2);
-
-        // Reset status
-        status.innerHTML = "";
-
-        if (!res.ok || data.error) {
-          const errorMessage = document.createElement("div");
-          errorMessage.style = "color: crimson; text-shadow: none;";
-          errorMessage.textContent = `❌ ${data.error || 'Something went wrong.'}`;
-          status.innerHTML = ''
-          status.appendChild(errorMessage);
-          return
-        }
-
-        const files = Array.isArray(data.results)
-          ? data.results
-          : data.result?.available_files || [];
-
-        if (files.length === 0) {
-          status.innerHTML = "<p>No results found.</p>";
-          return;
-        }
-
-        // Show info message
-        const infoMessage = document.createElement("div");
-        if ( !data.error ) {
-          infoMessage.textContent = `Results for ${data.name} ${data.tvinfo ? `- ${data.tvinfo}` : ""}`;
-          status.innerHTML = ''
-          status.appendChild(infoMessage);
-        } else {
-          infoMessage.textContent = `${data.error} — showing available data instead for ${data.result.name}.`;
-          status.innerHTML = ''
-          status.appendChild(infoMessage);
-        }
-
-        // Render files
-        let tableHTML = `<table><tbody>`;
-        for (const file of files) {
-          tableHTML += `
-            <tr>
-              <td class="file-cell">
-                <div class="file-name">${file.file_name}</div>
-                <div class="file-flags">Size: ${file.size} | Quality: ${file.quality || "Unknown"}</div>
-              </td>
-              <td class="action-cell">
-                <a href="${file.url}" target="_blank">
-                  <button>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" 
-                        viewBox="0 0 24 24" fill="none" stroke="currentColor" 
-                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-                      <polyline points="7 10 12 15 17 10"/>
-                      <line x1="12" y1="15" x2="12" y2="3"/>
-                    </svg>
-                  </button>
-                </a>
-              </td>
-            </tr>`;
-        }
-        tableHTML += `</tbody></table>`;
-        resultsDiv.innerHTML += tableHTML;
-
-      } catch (err) {
-        output.textContent = `Error: ${err.message}`;
-        const errorMessage = document.createElement("div");
-        errorMessage.style = "color: crimson; text-shadow: none;";
-        errorMessage.textContent = `❌ ${err.message}`;
-        status.innerHTML = ''
-        status.appendChild(errorMessage);
-      } finally {
-        resetUI()
-      }
-    }
-  </script>
 </body>
 
 </html>

@@ -1,0 +1,285 @@
+@import url('https://fonts.cdnfonts.com/css/beyonders');
+
+main {
+  padding: 4.4rem 10px;
+  align-items: start;
+}
+
+section {
+  flex-direction: column;
+  max-width: 700px;
+  margin: auto;
+  gap: 8px;
+}
+
+.input-form h3 {
+  font-size: 24px;
+  font-style: italic;
+  font-family: 'Beyonders', var(--font-style1);
+  text-shadow: 0 0 10px #E6E6FA4F;
+}
+
+.input-form {
+  display: grid;
+  gap: 12px;
+  padding: 24px;
+  background: var(--color5);
+  border-radius: 24px;
+  margin: 16px 0;
+  width: 100%;
+}
+
+.input-form label {
+  font-weight: 600;
+  font-size: 16px;
+}
+
+.input-form .flow-row {
+  gap: inherit;
+}
+.input-form .form-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 2px;
+  width: 100%;
+}
+
+.input-form {
+  input,
+  select,
+  button {
+    width: 100% !important;
+    height: 36px;
+    font-size: 14px !important;
+    padding: 0 10px;
+    background-color: #242433 !important;
+    border: 1px solid var(--color3) !important;
+    border-radius: 8px !important;
+    box-shadow: none;
+    box-sizing: border-box;
+  }
+}
+
+.number-control {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  width: 100%;
+}
+
+.number-control input {
+  flex: 1;
+}
+
+.number-control button {
+  width: auto !important;
+  aspect-ratio: 1 / 1;
+  padding: unset;
+  font-size: 24px !important;
+  font-weight: 300;
+  cursor: pointer;
+}
+
+.form-actions {
+  display: flex;
+  gap: inherit;
+  margin-top: 8px;
+
+  button {
+    border: none !important;
+    font-size: 15px !important;
+  }
+}
+
+#scrape {
+  font-weight: 600;
+  background: var(--color1) !important;
+}
+
+#reset {
+  background: var(--error) !important;
+}
+
+#tv-input {
+  display: flex;
+  gap: inherit;
+}
+
+.raw-output {
+  width: 100%;
+  margin: 16px 0;
+}
+
+pre {
+  background: #191930;
+  padding: 10px;
+  margin: 8px 0;
+  overflow-x: auto;
+  border-radius: 8px;
+  font-size: 12px;
+  line-break: anywhere;
+  white-space: break-spaces;
+}
+
+/* .result-card {
+  background: #1d1d34;
+  border: 1px solid #383852;
+}
+.result-card button {
+  background-color: #3a3a5c;
+} */
+
+.results-table:not(:has(table)) {
+  padding: 2px;
+}
+
+.results-table {
+  width: 100%;
+  height: auto;
+  padding: 12px;
+  /* border: 1px solid #383852; */
+  border-radius: 12px;
+  overflow: hidden;
+  background-color: var(--color5);
+  transition: padding 0.15s, height 0.15s;
+}
+
+.results-table table {
+  /* border-collapse: collapse; */
+  table-layout: fixed;
+  width: 100%;
+  /* background: #1c1c30; */
+  overflow: hidden;
+}
+
+
+.results-table tbody {
+  display: grid;
+  gap: 8px;
+}
+
+.results-table tr {
+  display: flex;
+  border-radius: 8px;
+  background-color: var(--color3);
+}
+
+.results-table th,
+.results-table td {
+  padding: 10px;
+  /* border-bottom: 1px solid #383852; */
+  text-align: left;
+}
+
+
+.results-table th {
+  background: #242448;
+  color: lavender;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.file-cell {
+  width: 100%;
+  color: #ccc;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.file-name {
+  font-size: 14px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+  line-break: anywhere;
+}
+
+.file-flags {
+  font-size: 12px;
+  color: var(--font-color2);
+}
+
+.action-cell {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  a {
+    text-decoration: none;
+  }
+
+  button {
+    height: 36px;
+    aspect-ratio: 1/1;
+    border-radius: 8px;
+    background-color: var(--color3) !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: unset;
+    cursor: pointer;
+    transition: background 0.2s ease;
+  }
+  
+  button:hover {
+    background-color: #2f2f46 !important;
+  }
+}
+
+
+@media (max-width: 767px) {
+
+  main {
+    padding: 3.6rem 0 75px 0;
+  }
+  .input-form {
+    padding: 12px;
+    border-radius: 16px;
+    gap: 8px;
+  }
+
+  .input-form h3 {
+    font-size: 20px;
+    text-shadow: 0 0 5px #E6E6FA4F;
+  }
+
+  .input-form label {
+    font-size: 14px;
+  }
+
+  .input-form {
+    & input, & select, & button {
+      font-weight: 500;
+      padding: 0 8px;
+      border-radius: 8px !important;
+    }
+  }
+
+  .number-control button {
+    font-weight: 300;
+  }
+
+  .form-actions {
+    margin-top: 4px;
+    gap: 8px;
+
+    button {
+      font-size: 14px !important;
+    }
+  }
+
+  .results-table {
+    padding: 8px;
+  }
+
+  .action-cell {
+    gap: 6px;
+    button {
+      border-radius: 6px;
+      height: 32px;
+    }
+  }
+}
