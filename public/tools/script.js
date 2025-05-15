@@ -103,8 +103,8 @@ async function scrape() {
     }
   }
 
-  // const server = "https://alpha-scraper.onrender.com";
-  const server = "http://192.168.29.122:3000";
+  const server = "https://alpha-scraper.onrender.com";
+  // const server = "http://192.168.29.122:3000";
   
   // try {
   //   const pingRes = await fetch(`${server}/ping`, { method: "HEAD" });
