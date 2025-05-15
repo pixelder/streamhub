@@ -103,8 +103,8 @@ async function scrape() {
     }
   }
 
-  const server = "https://alpha-scraper.onrender.com";
-  // const server = "http://192.168.29.122:3000";
+  // const server = "https://alpha-scraper.onrender.com";
+  const server = "http://192.168.29.122:3000";
   
   // try {
   //   const pingRes = await fetch(`${server}/ping`, { method: "HEAD" });
@@ -164,6 +164,7 @@ async function scrape() {
     // Render files
     let tableHTML = `<table><tbody>`;
     for (const file of files) {
+      const intent =`intent://${file.url.replace('https://', '')}#Intent;scheme=https;type=video/*;end;`
       tableHTML += `
         <tr>
           <td class="file-cell">
@@ -173,11 +174,9 @@ async function scrape() {
           <td class="action-cell">
 
             ${file.url ? `
-              <a href="intent://${file.url.replace('https://', '')}#Intent;scheme=https;type=video/*;end;" target="_blank">
-                <button>
-                  <i class="fa-solid fa-arrow-up-right-from-square"></i>
-                </button>
-              </a>
+              <button onclick="openLinkExternal(this)" data-link="${intent}">
+                <i class="fa-solid fa-arrow-up-right-from-square"></i>
+              </button>
               <button class="copy" onclick="copyLink(this)" data-link=${file.url}>
                 <i class="fa-solid fa-clone"></i>
               </button>
@@ -190,7 +189,7 @@ async function scrape() {
               </a>
             `: ''}
             ${file.url ? `
-              <a href="${file.url}" target="_blank">
+              <a href="${file.url}" download="${file.name}" target="_self">
                 <button>
                   <i class="fa-solid fa-download"></i>
                   <!-- <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" 
@@ -228,6 +227,11 @@ async function copyLink(btn) {
   } catch (e) {
     console.error(e)
   }
+}
+
+async function openLinkExternal(btn) {
+  const link = btn.dataset.link
+  window.open(link, '_self')
 }
 
 function matchItem(ua, data) {
