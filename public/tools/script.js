@@ -103,8 +103,8 @@ async function scrape() {
     }
   }
 
-  const server = "https://alpha-scraper.onrender.com";
-  // const server =  "http://192.168.29.122:3000";
+  //const server = "https://alpha-scraper.onrender.com";
+  const server = "http://192.168.29.122:3000";
   
   // try {
   //   const pingRes = await fetch(`${server}/ping`, { method: "HEAD" });
@@ -171,24 +171,38 @@ async function scrape() {
             <div class="file-flags">Size: ${file.size} | Quality: ${file.quality || "Unknown"}</div>
           </td>
           <td class="action-cell">
-          ${file.drive_link ? `
+
+            ${file.url ? `
+              <a href="intent://${file.url.replace('https://', '')}#Intent;scheme=https;type=video/*;end;" target="_blank">
+                <button>
+                  <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                </button>
+              </a>
+              <button class="copy" onclick="copyLink(this)" data-link=${file.url}>
+                <i class="fa-solid fa-clone"></i>
+              </button>
+            ` : ''}
+            ${file.drive_link ? `
               <a href="${file.drive_link}" target="_blank">
                 <button>
                   <i class="fa-solid fa-server"></i>
                 </button>
               </a>
-          `: ''}
-            <a href="${file.url}" target="_blank">
-              <button>
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" 
-                    viewBox="0 0 24 24" fill="none" stroke="currentColor" 
-                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-                  <polyline points="7 10 12 15 17 10"/>
-                  <line x1="12" y1="15" x2="12" y2="3"/>
-                </svg>
-              </button>
-            </a>
+            `: ''}
+            ${file.url ? `
+              <a href="${file.url}" target="_blank">
+                <button>
+                  <i class="fa-solid fa-download"></i>
+                  <!-- <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" 
+                      viewBox="0 0 24 24" fill="none" stroke="currentColor" 
+                      stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                    <polyline points="7 10 12 15 17 10"/>
+                    <line x1="12" y1="15" x2="12" y2="3"/>
+                  </svg> -->
+                </button>
+              </a>  
+            `: ''}
           </td>
         </tr>`;
     }
@@ -205,4 +219,67 @@ async function scrape() {
   } finally {
     resetUI()
   }
+}
+
+async function copyLink(btn) {
+  const link = btn.dataset.link
+  try {
+    await navigator.clipboard.writeText(link);
+  } catch (e) {
+    console.error(e)
+  }
+}
+
+function matchItem(ua, data) {
+  for (let i = 0; i < data.length; i++) {
+    const { name, value, version: versionLabel } = data[i];
+
+    const match = new RegExp(value, 'i').test(ua);
+    if (!match) continue;
+
+    const versionRegex = new RegExp(`${versionLabel}[- /:;]([\\d._]+)`, 'i');
+    const matchResult = ua.match(versionRegex);
+
+    let version = '0';
+    if (matchResult && matchResult[1]) {
+      version = matchResult[1].split(/[._]+/).join('.');
+    }
+    return { name, version: parseFloat(version) };
+  }
+  return { name: 'unknown', version: 0 };
+}
+
+
+function detectOS() {
+  
+  const os = [
+    { name: 'Windows Phone', value: 'Windows Phone', version: 'OS' },
+    { name: 'Windows', value: 'Win', version: 'NT' },
+    { name: 'iPhone', value: 'iPhone', version: 'OS' },
+    { name: 'iPad', value: 'iPad', version: 'OS' },
+    { name: 'Kindle', value: 'Silk', version: 'Silk' },
+    { name: 'Android', value: 'Android', version: 'Android' },
+    { name: 'PlayBook', value: 'PlayBook', version: 'OS' },
+    { name: 'BlackBerry', value: 'BlackBerry', version: '/' },
+    { name: 'Macintosh', value: 'Mac', version: 'OS X' },
+    { name: 'Linux', value: 'Linux', version: 'rv' },
+    { name: 'Palm', value: 'Palm', version: 'PalmOS' }
+  ];
+  
+  const browser = [
+    { name: 'Chrome', value: 'Chrome', version: 'Chrome' },
+    { name: 'Firefox', value: 'Firefox', version: 'Firefox' },
+    { name: 'Safari', value: 'Safari', version: 'Version' },
+    { name: 'Internet Explorer', value: 'MSIE', version: 'MSIE' },
+    { name: 'Opera', value: 'Opera', version: 'Opera' },
+    { name: 'BlackBerry', value: 'CLDC', version: 'CLDC' },
+    { name: 'Mozilla', value: 'Mozilla', version: 'Mozilla' }
+  ];
+
+  const userAgent = navigator.userAgent;
+  const OS = matchItem(userAgent, os);
+  const BROWSER = matchItem(userAgent, browser);
+
+  console.log({ 'OS': OS.name, 'Browser': BROWSER.name })
+  return { 'OS': OS.name, 'Browser': BROWSER.name }
 }
