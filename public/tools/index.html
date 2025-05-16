@@ -69,9 +69,19 @@
           </div>
         </div>
     
-        <div class="form-group">
-          <label>Name</label>
-          <input type="text" id="name" placeholder="e.g., Silo or Dune ">
+        <div class="flow-row">
+          <div class="form-group">
+            <label>Name</label>
+            <input type="text" id="name" placeholder="e.g., Silo or Dune ">
+          </div>
+          <div class="form-group">
+            <label>Size Limit (GB)</label>
+            <div class="number-control">
+              <button type="button" onclick="changeValue('maxsize', -0.1)">−</button>
+              <button type="button" onclick="changeValue('maxsize', 0.1)">+</button>
+              <input id="maxsize" value="10" placeholder="No Limit" min="0">
+            </div>
+          </div>
         </div>
       
         <!-- These fields are initially hidden for 'movie' type -->

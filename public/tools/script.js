@@ -29,9 +29,9 @@ function resetUI() {
 
 function changeValue(id, delta) {
   const input = document.getElementById(id);
-  let value = parseInt(input.value) || 0;
+  let value = parseFloat(input.value) || 0;
   value = Math.max(0, value + delta); // Prevent negative numbers
-  input.value = value;
+  input.value = value.toFixed(2).replace(/\.?0+$/, ''); // Trim trailing zeros
 }
 
 function resetForm() {
@@ -39,6 +39,7 @@ function resetForm() {
   document.getElementById("season").value = "";
   document.getElementById("episode").value = "";
   document.getElementById("year").value = "";
+  document.getElementById("maxsize").value = "";
   document.getElementById("output").textContent = "";
   document.getElementById("status-info").innerHTML = "";
   document.getElementById("results").innerHTML = "";
@@ -69,6 +70,7 @@ async function scrape() {
   const year = document.getElementById("year").value;
   const season = document.getElementById("season").value;
   const episode = document.getElementById("episode").value;
+  const maxsize = document.getElementById("maxsize").value * 1024 ** 3;
   const server_key = document.getElementById('server-key').value || 'alpha';
 
     // Input validation
@@ -86,7 +88,7 @@ async function scrape() {
     }
   }
 
-  const payload = { mediaType, name, server: server_key };
+  const payload = { mediaType, name, server: server_key , limit: maxsize};
 
   if (mediaType === "movie") {
     payload.year = year;
@@ -238,7 +240,7 @@ function buildFileEntry(file) {
 function buildActionHTML(file) {
   const { url, drive_link, file_name, index } = file
   if (!url && !drive_link) return ''
-  const intent = (link) => { `intent://${link.replace('https://', '')}#Intent;scheme=https;type=video/*;end;` }
+  const intent = (link) => { return `intent://${link.replace('https://', '')}#Intent;scheme=https;type=video/*;end;` }
 
   return `
     ${ url ? `
