@@ -1762,12 +1762,12 @@ body:has(.expandable.expanded) {
 @keyframes appearing {
   from {
     opacity: 0;
-    scale: 0.97;
+    height: 0;
   }
 
   to {
     opacity: 1;
-    scale: unset;
+    height: auto;
   }
 }
 
