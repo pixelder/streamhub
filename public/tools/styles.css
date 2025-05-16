@@ -130,7 +130,7 @@ pre {
   background-color: #3a3a5c;
 } */
 
-.results-table:not(:has(table)) {
+.results-table:not(:has(.result-row)) {
   padding: 2px;
 }
 
@@ -165,6 +165,10 @@ pre {
   gap: 8px;
   border-radius: 8px;
   background-color: var(--color3);
+}
+
+.result-row {
+  animation: fadeIn 0.2s, appearing 0.2s;
 }
 
 .results-table th,

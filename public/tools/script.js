@@ -103,8 +103,8 @@ async function scrape() {
     }
   }
 
-  const server = "https://alpha-scraper.onrender.com";
-  // const server = "http://192.168.29.122:3000";
+  // const server = "https://alpha-scraper.onrender.com";
+  const server = "http://192.168.29.122:3000";
   
   // try {
   //   const pingRes = await fetch(`${server}/ping`, { method: "HEAD" });
@@ -125,88 +125,75 @@ async function scrape() {
       body: JSON.stringify(payload)
     });
 
-    const data = await res.json();
-    output.textContent = JSON.stringify(data, null, 2);
+    const decoder = new TextDecoder();
+    const reader = res.body.getReader();
+    let buffer = '';
+    let raw = { raw: [], file: [] }
+    let parsedCount = 0;
+    let parsable = 0;
+    const table = document.createElement('table');
+    const tbody = document.createElement('tbody');
+    table.appendChild(tbody);
+    resultsDiv.appendChild(table);
+    
+    // Stream handler
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+    
+      buffer += decoder.decode(value, { stream: true });
 
-    // Reset status
-    status.innerHTML = "";
+      let lines = buffer.split('\n');
+      buffer = lines.pop(); // Save incomplete line for next chunk
+    
+      for (const line of lines) {
+        if (!line.trim()) continue;
+        
+        const response = JSON.parse(line);
+        console.log(response.status)
 
-    if (!res.ok || data.error) {
-      const errorMessage = document.createElement("div");
-      errorMessage.style = "color: crimson; text-shadow: none;";
-      errorMessage.textContent = `❌ ${data.error || 'Something went wrong.'}`;
-      status.innerHTML = ''
-      status.appendChild(errorMessage);
-      return
+        
+        if (response.status === 'file') {
+          parsedCount++
+
+          raw.file.push(response)
+          output.textContent = JSON.stringify(raw, null, 2)
+          status.innerHTML = `<span>📦 Processing data for ${parsable - parsedCount} out of ${pluralResolver(parsable, 'file', 's')}.</span>`
+
+          const file = response.result
+          try {
+
+            buildFileEntry(file)
+  
+          } catch (e) {
+            console.error('Stream parse error:', e);
+            output.textContent = `Stream parse error: ${e.message}`
+          }
+        }
+        
+        if (response.status === 'raw') {
+          raw.raw.push(response)
+          output.textContent = JSON.stringify(raw, null, 2)
+          parsable = response.results.length
+          status.innerHTML = `<span>📦 Processing data for ${pluralResolver(parsable, 'file', 's')}.</span>`;
+
+          for (file of response.results) {
+            try {
+              buildFileEntry(file)
+    
+            } catch (e) {
+              console.error('Stream parse error:', e);
+              output.textContent = `Stream parse error: ${e.message}`
+            }
+          }
+        }
+      }
     }
-
-    const files = Array.isArray(data.results)
-      ? data.results
-      : data.result?.available_files || [];
-
-    if (files.length === 0) {
-      status.innerHTML = "<p>No results found.</p>";
-      return;
-    }
-
-    // Show info message
-    const infoMessage = document.createElement("div");
-    if ( !data.error ) {
-      infoMessage.textContent = `Results for ${data.name} ${data.tvinfo ? `- ${data.tvinfo}` : ""}`;
-      status.innerHTML = ''
-      status.appendChild(infoMessage);
-    } else {
-      infoMessage.textContent = `${data.error} — showing available data instead for ${data.result.name}.`;
-      status.innerHTML = ''
-      status.appendChild(infoMessage);
-    }
-
-    // Render files
-    let tableHTML = `<table><tbody>`;
-    for (const file of files) {
-      const intent =`intent://${file.url.replace('https://', '')}#Intent;scheme=https;type=video/*;end;`
-      tableHTML += `
-        <tr>
-          <td class="file-cell">
-            <div class="file-name">${file.file_name}</div>
-            <div class="file-flags">Size: ${file.size} | Quality: ${file.quality || "Unknown"}</div>
-          </td>
-          <td class="action-cell">
-
-            ${file.url ? `
-              <button onclick="openLinkExternal(this)" data-link="${intent}">
-                <i class="fa-solid fa-arrow-up-right-from-square"></i>
-              </button>
-              <button class="copy" onclick="copyLink(this)" data-link=${file.url}>
-                <i class="fa-solid fa-clone"></i>
-              </button>
-            ` : ''}
-            ${file.drive_link ? `
-              <a href="${file.drive_link}" target="_blank">
-                <button>
-                  <i class="fa-solid fa-server"></i>
-                </button>
-              </a>
-            `: ''}
-            ${file.url ? `
-              <a href="${file.url}" download="${file.name}" target="_self">
-                <button>
-                  <i class="fa-solid fa-download"></i>
-                  <!-- <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" 
-                      viewBox="0 0 24 24" fill="none" stroke="currentColor" 
-                      stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-                    <polyline points="7 10 12 15 17 10"/>
-                    <line x1="12" y1="15" x2="12" y2="3"/>
-                  </svg> -->
-                </button>
-              </a>  
-            `: ''}
-          </td>
-        </tr>`;
-    }
-    tableHTML += `</tbody></table>`;
-    resultsDiv.innerHTML += tableHTML;
+    
+    status.innerHTML = parsedCount
+    ? `<span style="var(--success)"> 🎉 Received ${pluralResolver(parsedCount, 'file', 's')}.</span>`
+    : `<span style="color: orange">⚠️ No valid results received.</span>`;
+    
 
   } catch (err) {
     output.textContent = `Error: ${err.message}`;
@@ -218,6 +205,59 @@ async function scrape() {
   } finally {
     resetUI()
   }
+}
+
+function buildFileEntry(file) {
+  const tbody = document.querySelector('tbody')
+  const { size, index, quality, file_name } = file
+  let tr = document.querySelector(`.result-row[data-index="${index}"]`)
+  if ( !tr ) {
+    tr = document.createElement('tr');
+    tr.classList.add('result-row')
+    tr.setAttribute('data-index', index)
+  
+    tr.innerHTML = `
+      <td class="file-cell">
+        <div class="file-name">${file_name}</div>
+        <div class="file-flags">Size: ${size} | Quality: ${quality || "Unknown"}</div>
+      </td>
+      <td class="action-cell">
+        ${buildActionHTML(file)}
+      </td>
+    `;
+    tbody.appendChild(tr);
+  } 
+
+  if ( tr ) {
+    tr.querySelector('.action-cell').innerHTML = buildActionHTML(file);
+  }
+
+}
+
+
+function buildActionHTML(file) {
+  const { url, drive_link, file_name, index } = file
+  if (!url && !drive_link) return ''
+  const intent = (link) => { `intent://${link.replace('https://', '')}#Intent;scheme=https;type=video/*;end;` }
+
+  return `
+    ${ url ? `
+      <button onclick="openLinkExternal(this)" data-link="${intent(url)}">
+        <i class="fa-solid fa-arrow-up-right-from-square"></i>
+      </button>
+      <button class="copy" onclick="copyLink(this)" data-link="${url}">
+        <i class="fa-solid fa-clone"></i>
+      </button>
+      <a href="${url}" download="${file_name}" target="_self">
+        <button><i class="fa-solid fa-download"></i></button>
+      </a>
+    ` : ''}
+    ${ drive_link ? `
+      <a href="${drive_link}" target="_blank">
+        <button><i class="fa-solid fa-server"></i></button>
+      </a>
+    ` : '' }
+  `
 }
 
 async function copyLink(btn) {
