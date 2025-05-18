@@ -27,8 +27,8 @@
   --font-color3: #81818c;
   --active-color: red;
   --bg-color: #0d0d1b;
-  --border-radius1: 0.6rem;
-  --border-radius2: 0.3rem;
+  --border-radius1: 10px;
+  --border-radius2: 6px;
   --progress-color: #5A8FDB;
   --error: #a6192e;
   --caution: #ff9900;
@@ -36,7 +36,7 @@
   --info: #0057b8;
   --font-style1: "Geist", sans-serif;
   --font-style2: "Onest", sans-serif;
-  --padding1: 0.6rem;
+  --padding1: 10px;
   --modal-backdrop: '';
   --modal-backdrop-opacity: 0.8;
   font-size: 100%;
@@ -2407,7 +2407,7 @@ body:has(.modal:is([active])) {
 
   .modal-overlay {
     opacity: 1;
-    backdrop-filter: blur(5px) brightness(0.4);
+    backdrop-filter: blur(3px) brightness(0.4);
     visibility: visible;
   }
 }
@@ -2435,7 +2435,7 @@ body:has(.modal:is([active])) {
   position: relative;
   width: 58rem;
   height: fit-content;
-  max-height: 32rem;
+  /* max-height: 32rem; */
   padding: 32px;
   margin: auto;
   border-radius: var(--border-radius1);
@@ -2446,9 +2446,9 @@ body:has(.modal:is([active])) {
   transition: width 0.2s;
 }
 
-.modal-content:has(.releasing-on) {
+/* .modal-content:has(.releasing-on) {
   max-height: 32rem;
-}
+} */
 
 .modal-content::before {
   content: '';
@@ -2606,12 +2606,12 @@ body:has(.modal:is([active])) {
 
 .modal-media {
   display: flex;
-  /* flex-direction: row-reverse; */
+  flex-direction: column;
   justify-content: space-between;
-  min-height: 21rem;
-  height: 21rem;
+  min-height: 23.5rem;
+  height: 23.5rem;
   width: 100%;
-  gap: 2rem;
+  gap: 12px;
 }
 
 .modal-actions {
