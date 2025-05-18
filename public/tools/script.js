@@ -109,8 +109,8 @@ let controller
 
 async function  fetchAndRender({payload, status, output, resultsDiv}) {
 
-  // const server = "https://alpha-scraper.onrender.com";
-  const server = "http://192.168.29.122:3000"
+  const server = "https://alpha-scraper.onrender.com";
+  // const server = "http://192.168.29.122:3000"
 
   controller = new AbortController();
   const signal = controller.signal;
