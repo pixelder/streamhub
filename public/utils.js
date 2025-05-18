@@ -473,6 +473,7 @@ function buildMediaDetailsHTML(data, mediaType, contentLogoHTML) {
         </p>
       </div>
     </span>
+    ${released ? '' : releaseInfo(data, mediaType)}
   </div>
   ${progress !== Number(0)
     ? progress === 100 
@@ -480,7 +481,6 @@ function buildMediaDetailsHTML(data, mediaType, contentLogoHTML) {
       : `<p class="remaining-time">${watch_progress}</p>` 
     : '' 
     }
-  ${released ? '' : releaseInfo(data, mediaType)}
   `;
   return detailsBodyHTML;
 }
@@ -694,7 +694,7 @@ function releaseInfo(data, mediaType) {
   if (mediaType === 'tv') {
     HTML = `
       <div class="releasing-on">
-        <p>${running ? 'Next Episode' : isFreshRelease(data) ? 'Airing' : 'New season'} ${string}.<p>
+        <p>${running ? 'Next Episode' : isFreshRelease(data) ? 'Airing' : 'New season'} ${string}.</p>
       </div>
     `;
   }
