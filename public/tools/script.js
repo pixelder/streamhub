@@ -11,7 +11,7 @@ function toggleFields() {
 }
 
 window.addEventListener('DOMContentLoaded', () => {
-  document.getElementById('mediaType').value = 'movie';
+  // document.getElementById('mediaType').value = 'movie';
   toggleFields();
   bottomNavBar();
 });
@@ -106,6 +106,8 @@ async function scrape() {
 }
 
 let controller
+let parsedCount = 0;
+let parsable = 0;
 
 async function  fetchAndRender({payload, status, output, resultsDiv}) {
 
@@ -140,8 +142,8 @@ async function  fetchAndRender({payload, status, output, resultsDiv}) {
     const reader = res.body.getReader();
     let buffer = '';
     let raw = { raw: [], file: [] };
-    let parsedCount = 0;
-    let parsable = 0;
+    parsedCount = 0;
+    parsable = 0;
     const table = document.createElement('table');
     const tbody = document.createElement('tbody');
     table.appendChild(tbody);
@@ -183,10 +185,6 @@ async function  fetchAndRender({payload, status, output, resultsDiv}) {
       }
     }
 
-    status.innerHTML = parsedCount
-      ? `<span style="var(--success)"> 🎉 Received ${parsedCount} file${parsedCount !== 1 ? 's' : ''}.</span>`
-      : `<span style="color: orange">⚠️ No valid results received.</span>`;
-
   } catch (err) {
     output.textContent = `Error: ${err.message}`;
     const msg = document.createElement("div");
@@ -196,6 +194,14 @@ async function  fetchAndRender({payload, status, output, resultsDiv}) {
     status.appendChild(msg);
     setTimeout(() => {status.removeChild(msg)}, 5000)
   } finally {
+    if (parsedCount) {
+      status.innerHTML = `<span style="var(--success)"> 🎉 Received ${parsedCount} file${parsedCount !== 1 ? 's' : ''}.</span>`
+    } else {
+      status.innerHTML = `<span style="color: orange">⚠️ No valid results received.</span>`;
+      setTimeout(() => {
+        status.innerHTML = ''
+      }, 5000);
+    }
     resetUI();
   }
 }
