@@ -1321,6 +1321,7 @@ function shareItem(mediaType, id, name) {
   });
 }
 
+let toastTimeout
 function toastMessage({el, string, time}) {
   const message = document.createElement('div')
   message.classList.add('temp-message')
@@ -1331,9 +1332,10 @@ function toastMessage({el, string, time}) {
   message.setAttribute('style', `top: ${y}px; left: ${x + 50}px;` );
   document.body.appendChild(message)
   message.onclick = () => {
+    clearTimeout(toastTimeout)
     document.body.removeChild(message)
   }
-  setTimeout(() => {
+  toastTimeout = setTimeout(() => {
     document.body.removeChild(message)
   }, time);
 } 
