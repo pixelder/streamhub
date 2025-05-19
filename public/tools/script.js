@@ -129,8 +129,8 @@ let controller
 let parsedCount = 0;
 let parsable = 0;
 let error = false;
-const SERVER = "https://alpha-scraper.onrender.com";
-// const SERVER = "http://192.168.29.122:3000"
+// const SERVER = "https://alpha-scraper.onrender.com";
+const SERVER = "http://192.168.29.122:3000"
 
 async function  fetchAndRender({payload, output, resultsDiv}) {
 
@@ -222,6 +222,11 @@ async function  fetchAndRender({payload, output, resultsDiv}) {
       const string = 'No valid results received.'
       updateStatus({type: 'warn', string, expire : true})
     }
+
+    document.querySelectorAll('.action-cell').forEach(item => {
+      if (item.querySelector('.fa-spinner')) item.innerHTML = `<i class="fa-solid fa-triangle-exclamation btn"></i>`
+    })
+    
     resetUI();
   }
 }
