@@ -1308,23 +1308,28 @@ function shareItem(mediaType, id, name) {
 
   const btn = document.querySelector(".share");
 
-  const message = document.createElement('div')
-  message.classList.add('temp-message')
-  message.innerHTML = `<p>Copied link to clipboard!</p>`
 
   btn?.addEventListener("click", async () => {
     try {
       await navigator.share(shareData);
     } catch (err) {
       await navigator.clipboard.writeText(shareData.url);
-      console.log('Copied link to clipboard');
-      btn.appendChild(message)
-      setTimeout(() => {
-        btn.removeChild(message)
-      }, 2000);
+      const msg = 'Copied link to clipboard!';
+      console.log(msg);
+      toastMessage(msg, 3000)
     }
   });
 }
+
+function toastMessage(string, time) {
+  const message = document.createElement('div')
+  message.classList.add('temp-message')
+  message.innerHTML = `<p>${string}</p>`
+  btn.appendChild(message)
+  setTimeout(() => {
+    btn.removeChild(message)
+  }, time);
+} 
 
 async function getNextEpisode(id, sno, eno) {
   const { data: currentSeason } = await fetchMetaData('tv', id, sno)
