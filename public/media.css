@@ -1,7 +1,7 @@
 @media (max-width: 767px) {
   :root {
-    --border-radius1: 0.375rem;
-    --border-radius2: 0.2rem;
+    --border-radius1: 6px;
+    --border-radius2: 4px;
     --padding1: 0.4rem;
   }
 
