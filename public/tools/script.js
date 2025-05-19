@@ -126,7 +126,7 @@ let controller
 let parsedCount = 0;
 let parsable = 0;
 let error = false;
-const SERVER = "https://alpha-scraper.onrender.com";
+const SERVER = "https://alph=a-scraper.onrender.com";
 // const SERVER = "http://192.168.29.122:3000"
 
 async function  fetchAndRender({payload, output, resultsDiv}) {
@@ -307,8 +307,8 @@ function buildActionHTML(file) {
 
 async function copyLink(btn) {
   try {
-    await navigator.clipboard.writeText(btn.dataset.link);
     toastMessage({ el: btn, string: 'Copied link to clipboard!', time: 3000})
+    await navigator.clipboard.writeText(btn.dataset.link);
   } catch (e) {
     console.error(e);
   }
