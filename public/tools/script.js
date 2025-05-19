@@ -78,9 +78,6 @@ async function scrape() {
     e.preventDefault()
     if (!e.target.matches(".cancel")) return
     if (controller) controller.abort();
-    document.querySelectorAll('.action-cell').forEach(item => {
-      if (item.querySelector('.fa-spinner')) item.innerHTML = `<i class="fa-solid fa-triangle-exclamation btn"></i>`
-    })
   }, {once : true})
 
   status.innerHTML = "";
@@ -129,8 +126,8 @@ let controller
 let parsedCount = 0;
 let parsable = 0;
 let error = false;
-// const SERVER = "https://alpha-scraper.onrender.com";
-const SERVER = "http://192.168.29.122:3000"
+const SERVER = "https://alpha-scraper.onrender.com";
+// const SERVER = "http://192.168.29.122:3000"
 
 async function  fetchAndRender({payload, output, resultsDiv}) {
 
@@ -155,7 +152,7 @@ async function  fetchAndRender({payload, output, resultsDiv}) {
         // keep raw text if not JSON
       }
 
-      throw new Error(`Server Error ${res.status}: ${errorText}`);
+      throw new Error(`Server error ${res.status}: ${errorText}`);
     }
 
     const decoder = new TextDecoder();
@@ -226,7 +223,7 @@ async function  fetchAndRender({payload, output, resultsDiv}) {
     document.querySelectorAll('.action-cell').forEach(item => {
       if (item.querySelector('.fa-spinner')) item.innerHTML = `<i class="fa-solid fa-triangle-exclamation btn"></i>`
     })
-    
+
     resetUI();
   }
 }
@@ -239,7 +236,7 @@ function updateStatus({type = 'log', string, time = 5000, expire = false}) {
 
   if (type === 'error') {
     msg.style = "color: crimson; text-shadow: none;";
-    msg.innerHTML = `⛔ ${string}`;
+    msg.innerHTML = `<i class="fa-solid fa-circle-exclamation"></i> ${string}`;
   } else if (type === 'warn') {
     msg.style = "color: orange; text-shadow: nonel";
     msg.innerHTML = `<i class="fa-solid fa-triangle-exclamation btn"></i> ${string}`
