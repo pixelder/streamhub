@@ -1330,6 +1330,9 @@ function toastMessage({el, string, time}) {
   const y = rect.top + window.scrollY;
   message.setAttribute('style', `top: ${y}px; left: ${x + 50}px;` );
   document.body.appendChild(message)
+  message.onclick = () => {
+    document.body.removeChild(message)
+  }
   setTimeout(() => {
     document.body.removeChild(message)
   }, time);
