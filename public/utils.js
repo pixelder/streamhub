@@ -1316,18 +1316,18 @@ function shareItem(mediaType, id, name) {
       await navigator.clipboard.writeText(shareData.url);
       const msg = 'Copied link to clipboard!';
       console.log(msg);
-      toastMessage(msg, 3000)
+      toastMessage({el: btn, string: msg, time: 3000})
     }
   });
 }
 
-function toastMessage(string, time) {
+function toastMessage({el, string, time}) {
   const message = document.createElement('div')
   message.classList.add('temp-message')
   message.innerHTML = `<p>${string}</p>`
-  btn.appendChild(message)
+  el.appendChild(message)
   setTimeout(() => {
-    btn.removeChild(message)
+    el.removeChild(message)
   }, time);
 } 
 
