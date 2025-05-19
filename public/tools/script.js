@@ -308,7 +308,7 @@ function buildActionHTML(file) {
 async function copyLink(btn) {
   try {
     await navigator.clipboard.writeText(btn.dataset.link);
-    toastMessage(btn, 'Copied link to clipboard!', 3000)
+    toastMessage({ el: btn, string: 'Copied link to clipboard!', time: 3000})
   } catch (e) {
     console.error(e);
   }
