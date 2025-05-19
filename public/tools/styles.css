@@ -12,32 +12,32 @@ section {
   gap: 8px;
 }
 
-.input-form h1 {
+.form-container {
+  display: grid;
+  width: 100%;
+  gap: 12px;
+  padding: 24px;
+  margin: 16px 0;
+  border-radius: 24px;
+  background: var(--color5);
+}
+
+.form-container h1 {
   font-size: 24px;
   font-style: italic;
   font-family: 'Beyonders', var(--font-style1);
   text-shadow: 0 0 8px #e6e6fa3b;
 }
 
-.input-form {
-  display: grid;
-  gap: 12px;
-  padding: 24px;
-  background: var(--color5);
-  border-radius: 24px;
-  margin: 16px 0;
-  width: 100%;
-}
-
-.input-form label {
+.form-container label {
   font-weight: 600;
   font-size: 16px;
 }
 
-.input-form .flow-row {
+.form-container .flow-row {
   gap: inherit;
 }
-.input-form .form-group {
+.form-container .form-group {
   display: flex;
   flex-wrap: wrap;
   gap: 6px;
@@ -45,7 +45,7 @@ section {
   width: 100%;
 }
 
-.input-form {
+.form-container {
   input,
   select,
   button {
@@ -110,6 +110,18 @@ section {
   gap: inherit;
 }
 
+#status-info {
+  height: 24px;
+  transition: height 0.2s;
+  .message {
+    animation: fadeIn 0.2s, appearing 0.2s;
+  }
+}
+
+#status-info:not(:has(.message)) {
+  height: 0;
+}
+
 .raw-output {
   width: 100%;
   margin: 16px 0;
@@ -134,13 +146,25 @@ pre {
   background-color: #3a3a5c;
 } */
 
+.results-container {
+  display: inherit;
+  flex-direction: inherit;
+}
+
+.results-container:has(.result-row),
+.results-container:has(.message) {
+  gap: inherit;
+}
+
 .results-table:not(:has(.result-row)) {
+  opacity: 0;
   padding: 2px;
 }
 
 .results-table {
   width: 100%;
   height: auto;
+  opacity: unset;
   padding: 12px;
   /* border: 1px solid #383852; */
   border-radius: 12px;
@@ -256,22 +280,22 @@ pre {
     gap: 4px;
   }
 
-  .input-form {
+  .form-container {
     padding: 12px;
     border-radius: 16px;
     gap: 8px;
   }
 
-  .input-form h1 {
+  .form-container h1 {
     font-size: 20px;
     text-shadow: 0 0 5px #E6E6FA4F;
   }
 
-  .input-form label {
+  .form-container label {
     font-size: 14px;
   }
 
-  .input-form {
+  .form-container {
     & input, & select, & button {
       font-weight: 500;
       padding: 0 8px;

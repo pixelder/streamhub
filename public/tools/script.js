@@ -10,13 +10,28 @@ function toggleFields() {
   limit.value = isMovie ? 12 : 4;
 }
 
-window.addEventListener('DOMContentLoaded', () => {
+function initiateForm() {
   // document.getElementById('mediaType').value = 'movie';
   toggleFields();
+
+  const form = document.getElementById("form");
+  form.addEventListener('submit', e => {
+    e.preventDefault();
+    const submit = e.submitter.id === 'scrape'
+    const reset = e.submitter.id === 'reset'
+    if (submit) scrape();
+    if (reset) resetForm(e.submitter)
+  })
+}
+
+window.addEventListener('DOMContentLoaded', () => {
+  initiateForm()
   bottomNavBar();
 });
 
 function resetUI() {
+  parsedCount = 0;
+  parsable = 0;
   const btn = document.getElementById("scrape");
   const cancel_btn = document.getElementById("reset")
   btn.disabled = false;
@@ -60,6 +75,7 @@ async function scrape() {
   const status = document.getElementById("status-info");
 
   cancel_btn.addEventListener('click', (e) => {
+    e.preventDefault()
     if (!e.target.matches(".cancel")) return
     if (controller) controller.abort();
     document.querySelectorAll('.action-cell').forEach(item => {
@@ -73,7 +89,8 @@ async function scrape() {
   btn.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Loading...';
   btn.classList.add('loading')
   cancel_btn.innerText = 'Cancel'
-  status.innerText = "Fetching data...";
+  const string = "Fetching data...";
+  updateStatus({type: 'log', string})
   output.textContent = "";
 
   const mediaType = document.getElementById("mediaType").value;
@@ -85,11 +102,14 @@ async function scrape() {
   const server_key = document.getElementById("server-key").value || "alpha";
 
   if ((mediaType === "movie" && (!name || !year)) || (mediaType === "tv" && (!name || !season))) {
-    status.innerHTML = `
-      <span style="color: orange; text-shadow: none;">⚠️ ${mediaType === "movie" 
-        ? 'Movie requires both <b>Name</b> and <b>Year</b>.' 
-        : 'TV Show requires both <b>Name</b> and <b>Season</b>.'}
+    const string = `
+      <span>
+        ${mediaType === "movie" 
+          ? 'Movie requires both <b>Name</b> and <b>Year</b>.' 
+          : 'TV Show requires both <b>Name</b> and <b>Season</b>.'
+        }
       </span>`;
+    updateStatus({type: 'warn', string, expire: true})
     resetUI();
     return;
   }
@@ -98,27 +118,27 @@ async function scrape() {
     mediaType,
     name,
     server: server_key,
-    ...(mediaType === "movie" ? { year } : { season, episode }),
+    ...(mediaType === "movie" ? { year } : { season, episode : episode === '0' ? '' : episode }),
     ...(maxsize ? { limit: maxsize } : {})
   };
 
-  fetchAndRender({payload, status, output, resultsDiv})
+  fetchAndRender({payload, output, resultsDiv})
 }
 
 let controller
 let parsedCount = 0;
 let parsable = 0;
+let error = false;
+// const SERVER = "https://alpha-scraper.onrender.com";
+const SERVER = "http://192.168.29.122:3000"
 
-async function  fetchAndRender({payload, status, output, resultsDiv}) {
-
-  const server = "https://alpha-scraper.onrender.com";
-  // const server = "http://192.168.29.122:3000"
+async function  fetchAndRender({payload, output, resultsDiv}) {
 
   controller = new AbortController();
   const signal = controller.signal;
 
   try {
-    const res = await fetch(`${server}/fetch`, {
+    const res = await fetch(`${SERVER}/fetch`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),
@@ -165,7 +185,8 @@ async function  fetchAndRender({payload, status, output, resultsDiv}) {
             parsedCount++;
             raw.file.push(response);
             output.textContent = JSON.stringify(raw, null, 2);
-            status.innerHTML = `<span>📦 Processing ${parsable - parsedCount} of ${parsable} files.</span>`;
+            const string = `📦 Processing ${parsable - parsedCount} of ${pluralResolver(parsable,'file','s')}.`
+            updateStatus({type: 'log', string})
             buildFileEntry(response.result);
           }
 
@@ -173,7 +194,8 @@ async function  fetchAndRender({payload, status, output, resultsDiv}) {
             raw.raw.push(response);
             output.textContent = JSON.stringify(raw, null, 2);
             parsable = response.results.length;
-            status.innerHTML = `<span>📦 Processing ${parsable} files.</span>`;
+            const string = `<span>📦 Processing ${pluralResolver(parsable,'file','s')}.</span>`;
+            updateStatus({type: 'log', string})
             for (const file of response.results) {
               buildFileEntry(file);
             }
@@ -186,24 +208,45 @@ async function  fetchAndRender({payload, status, output, resultsDiv}) {
     }
 
   } catch (err) {
+    error = true;
     output.textContent = `Error: ${err.message}`;
-    const msg = document.createElement("div");
-    msg.style = "color: crimson; text-shadow: none;";
-    msg.textContent = `⛔ ${err.message}`;
-    status.innerHTML = '';
-    status.appendChild(msg);
-    setTimeout(() => {status.removeChild(msg)}, 5000)
+    const string = `${err.message}`;
+    updateStatus({type: 'error', string, expire : true})
+
   } finally {
     if (parsedCount) {
-      status.innerHTML = `<span style="var(--success)"> 🎉 Received ${parsedCount} file${parsedCount !== 1 ? 's' : ''}.</span>`
-    } else {
-      status.innerHTML = `<span style="color: orange">⚠️ No valid results received.</span>`;
-      setTimeout(() => {
-        status.innerHTML = ''
-      }, 5000);
+      const string = `<span style="color: var(--success); text-shadow: none;"> 🎉 Received ${pluralResolver(parsedCount,'file','s')}</span>`
+      updateStatus({type: 'log', string})
+    }
+    if (!parsedCount && !error) {
+      const string = 'No valid results received.'
+      updateStatus({type: 'warn', string, expire : true})
     }
     resetUI();
   }
+}
+
+let statusTimeout
+function updateStatus({type = 'log', string, time = 5000, expire = false}) {
+  const status = document.getElementById('status-info')
+  const msg = document.createElement("div");
+  msg.classList.add('message')
+
+  if (type === 'error') {
+    msg.style = "color: crimson; text-shadow: none;";
+    msg.innerHTML = `⛔ ${string}`;
+  } else if (type === 'warn') {
+    msg.style = "color: orange; text-shadow: nonel";
+    msg.innerHTML = `<i class="fa-solid fa-triangle-exclamation btn"></i> ${string}`
+  } else if (type === 'log') {
+    msg.innerHTML = `${string}`
+  }
+
+  clearTimeout(statusTimeout)
+  status.innerHTML = '';
+  status.appendChild(msg);
+  if (expire)
+  statusTimeout = setTimeout(() => { status.removeChild(msg) }, time)
 }
 
 function buildFileEntry(file) {
@@ -263,6 +306,7 @@ function buildActionHTML(file) {
 async function copyLink(btn) {
   try {
     await navigator.clipboard.writeText(btn.dataset.link);
+    toastMessage(btn, 'Copied link to clipboard!', 3000)
   } catch (e) {
     console.error(e);
   }
@@ -287,17 +331,16 @@ function matchItem(ua, data) {
 
 function detectOS() {
   const os = [
-    { name: 'Windows Phone', value: 'Windows Phone', version: 'OS' },
     { name: 'Windows', value: 'Win', version: 'NT' },
+    { name: 'Windows Phone', value: 'Windows Phone', version: 'OS' },
+    { name: 'Linux', value: 'Linux', version: 'rv' },
+    { name: 'Android', value: 'Android', version: 'Android' },
     { name: 'iPhone', value: 'iPhone', version: 'OS' },
     { name: 'iPad', value: 'iPad', version: 'OS' },
-    { name: 'Kindle', value: 'Silk', version: 'Silk' },
-    { name: 'Android', value: 'Android', version: 'Android' },
     { name: 'PlayBook', value: 'PlayBook', version: 'OS' },
-    { name: 'BlackBerry', value: 'BlackBerry', version: '/' },
     { name: 'Macintosh', value: 'Mac', version: 'OS X' },
-    { name: 'Linux', value: 'Linux', version: 'rv' },
-    { name: 'Palm', value: 'Palm', version: 'PalmOS' }
+    { name: 'Kindle', value: 'Silk', version: 'Silk' },
+    { name: 'BlackBerry', value: 'BlackBerry', version: '/' }
   ];
 
   const browser = [
