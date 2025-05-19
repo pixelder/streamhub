@@ -126,7 +126,7 @@ let controller
 let parsedCount = 0;
 let parsable = 0;
 let error = false;
-const SERVER = "https://alph=a-scraper.onrender.com";
+const SERVER = "https://alpha-scraper.onrender.com";
 // const SERVER = "http://192.168.29.122:3000"
 
 async function  fetchAndRender({payload, output, resultsDiv}) {
