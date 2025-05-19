@@ -1313,10 +1313,10 @@ function shareItem(mediaType, id, name) {
     try {
       await navigator.share(shareData);
     } catch (err) {
-      await navigator.clipboard.writeText(shareData.url);
       const msg = 'Copied link to clipboard!';
       console.log(msg);
       toastMessage({el: btn, string: msg, time: 3000})
+      await navigator.clipboard.writeText(shareData.url);
     }
   });
 }
@@ -1325,9 +1325,13 @@ function toastMessage({el, string, time}) {
   const message = document.createElement('div')
   message.classList.add('temp-message')
   message.innerHTML = `<p>${string}</p>`
-  el.appendChild(message)
+  const rect = el.getBoundingClientRect();
+  const x = rect.left + window.scrollX;
+  const y = rect.top + window.scrollY;
+  message.setAttribute('style', `top: ${y}px; left: ${x + 50}px;` );
+  document.body.appendChild(message)
   setTimeout(() => {
-    el.removeChild(message)
+    document.body.removeChild(message)
   }, time);
 } 
 
