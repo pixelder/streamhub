@@ -126,8 +126,8 @@ let controller
 let parsedCount = 0;
 let parsable = 0;
 let error = false;
-const SERVER = "https://alpha-scraper.onrender.com";
-// const SERVER = "http://192.168.29.122:3000"
+//const SERVER = "https://alpha-scraper.onrender.com";
+const SERVER = "http://192.168.29.122:3000"
 
 async function  fetchAndRender({payload, output, resultsDiv}) {
 
@@ -143,16 +143,11 @@ async function  fetchAndRender({payload, output, resultsDiv}) {
     });
 
     if (!res.ok) {
-      // Try to parse server-provided error message
-      let errorText = await res.text();
-      try {
-        const errorJson = JSON.parse(errorText);
-        errorText = errorJson.message || JSON.stringify(errorJson);
-      } catch {
-        // keep raw text if not JSON
-      }
-
-      throw new Error(`Server error ${res.status}: ${errorText}`);
+      const error = new Error()
+      error.name = res.statusText
+      error.status = res.status
+      error.message = JSON.parse(await res.text()).message
+      throw error;
     }
 
     const decoder = new TextDecoder();
@@ -206,8 +201,9 @@ async function  fetchAndRender({payload, output, resultsDiv}) {
 
   } catch (err) {
     error = true;
-    output.textContent = `Error: ${err.message}`;
-    const string = `${err.message}`;
+    console.log(err)
+    const string = err.name === 'AbortError' ? `The operation was aborted!` : `${err.message}`;
+    output.textContent = `${string}`;
     updateStatus({type: 'error', string, expire : true})
 
   } finally {
@@ -251,10 +247,11 @@ function updateStatus({type = 'log', string, time = 5000, expire = false}) {
   statusTimeout = setTimeout(() => { status.removeChild(msg) }, time)
 }
 
-function buildFileEntry(file) {
+async function buildFileEntry(file) {
   const tbody = document.querySelector('tbody');
   const { size, index, quality, file_name } = file;
   let tr = document.querySelector(`.result-row[data-index="${index}"]`);
+  const actionHTML = await buildActionHTML(file)
 
   if (!tr) {
     tr = document.createElement('tr');
@@ -270,7 +267,7 @@ function buildFileEntry(file) {
           <p>Quality: ${quality || "Unknown"}</p>
         </div>
       </td>
-      <td class="action-cell">${buildActionHTML(file)}</td>`;
+      <td class="action-cell">${actionHTML}</td>`;
     tbody.appendChild(tr);
   } else {
     if (file_name) {
@@ -279,11 +276,11 @@ function buildFileEntry(file) {
     if (size) {
       tr.querySelector('.file-size').innerText = `Size: ${size}`; 
     }
-    tr.querySelector('.action-cell').innerHTML = buildActionHTML(file);
+    tr.querySelector('.action-cell').innerHTML = actionHTML;
   }
 }
 
-function buildActionHTML(file) {
+async function buildActionHTML(file) {
   const { url, drive_link, file_name } = file;
   const intent = (link) => `intent://${link.replace('https://', '')}#Intent;scheme=https;type=video/*;end;`;
   
