@@ -1551,34 +1551,26 @@ window.addEventListener('scroll', () => {
 
   const header = document.querySelector('header');
   const bottomBar = document.querySelector('.bottom-bar');
-  const nav = document.querySelector("#header > nav > ul");
   const filter = document.querySelector('.button-container');
-  const input = document.getElementById('search-input');
 
-  let end = ((window.scrollY + 10 + window.innerHeight) >= (document.body.scrollHeight)) || window.scrollY <= 40;
+  let end = (window.scrollY + 10 + window.innerHeight) >= (document.body.scrollHeight);
+  let top =  window.scrollY <= 40
 
   if (window.scrollY > lastScrollY && !end) {
     // Scrolling down
     if (!isScrollingDown) {
       isScrollingDown = true;
-      input.style.height = "1.8rem";
-      nav.style.padding = isMobile() ? "0.4rem 0.6rem" : "0.4rem 1.4rem";
-      header.style.height = "3rem"//isMobile() ? "3rem" : "2.8rem";
       clearTimeout(hideTimeout);
       hideTimeout = setTimeout(() => {
-        header.classList.add('hidden');
+        header.classList.add('contract');
         (isMobile() && bottomBar) ? bottomBar.style.bottom = '-4rem' : '';
         (isMobile() && filter) ? filter.style.bottom = '1.4rem' : '';
-      }, 500);
+      }, 150);
     }
   } else if ((window.scrollY <= lastScrollY) || end) {
     isScrollingDown = false;
     clearTimeout(hideTimeout); // Cancel any pending hide
-
-    input.style.height = "2rem";
-    nav.style.padding = isMobile() ? "0.8rem 0.6rem" : "0.8rem 1.4rem";
-    header.style.height = isMobile() ? "3.6rem" : "4rem";
-    header.classList.remove('hidden');
+    if (top) header.classList.remove('contract');
     (isMobile() && bottomBar) ? bottomBar.style.bottom = '0rem' : '';
     (isMobile() && filter) ? filter.style.bottom = '5rem' : '';
   }
@@ -1998,7 +1990,8 @@ function setUpExpandableSection() {
       }
       section.classList.remove('expanded')
       section.classList.toggle('collapsed')
-
+      document.getElementById('header').classList.remove('hidden');
+      
       if (!section.classList.contains('user-content')) {
         container.querySelectorAll('.grid-item').forEach((item, index) => {
           if (index >= 20) item.remove();

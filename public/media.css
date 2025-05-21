@@ -12,10 +12,10 @@
   }
 
   header {
-    height: 3.6rem;
+    height: 56px;
 
     nav ul {
-      padding: 12px 0.6rem;
+      padding: 0.4rem 0.6rem;
     }
 
     nav ul li {
@@ -30,15 +30,23 @@
       display: flex;
 
       a:after {
-        font-size: 1.12rem;
+        font-size: 18px;
         font-weight: 600;
         font-family: var(--font-style1);
       }
 
       a:before {
-        height: 1.6rem;
+        height: 28px;
       }
     }
+  }
+
+  header.contract {
+
+    nav ul {
+      padding: 0.4rem 0.6rem;
+    }
+
   }
 
   #search-input {
@@ -65,7 +73,7 @@
 
   .search-icon,
   .x-icon {
-    font-size: 14px;
+    font-size: 16px;
   }
 
   input[type="number"],
@@ -117,13 +125,14 @@
             hsla(0, 0%, 0%, 0.998) 98.2%,
             hsla(0, 0%, 0%, 1) 100%
         ); */
-    background-color: #0d0d1bdd;
-    border-top: 1px solid var(--color3);
-    backdrop-filter: blur(10px);
+    /* background-color: #0d0d1bdd; */
+    background: linear-gradient(0deg,#090a15,#090a1580);
+    /* border-top: 1px solid var(--color3); */
+    border-block-start: solid 1px #ffffff1a;
+    backdrop-filter: blur(4px);
     box-shadow: 0 0 30px 10px var(--bg-color);
-    transition: top 1s, height 0.3s, padding 0.3s ease-in-out;
+    transition: bottom 0.4s, height 0.3s, padding 0.3s ease-in-out;
     z-index: 1;
-    transition: bottom 0.4s;
 
     ul {
       list-style: none;
@@ -171,10 +180,14 @@
     }
   }
 
-
+  body:has(header.hidden, header.contract) {
+    main {
+      padding-top: 56px;
+    }
+  }
 
   main {
-    padding: 3.6rem 0 75px 0;
+    padding: 0 0 75px 0;
   }
 
   section {

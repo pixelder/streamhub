@@ -72,27 +72,56 @@ h5 h6 {
   font-family: var(--font-style2);
 }
 
+body:has(header.hidden, header.contract) {
+  main {
+    padding-top: 4rem;
+  }
+}
+
 /* Navbar */
 header {
-  position: fixed;
-  top: 0%;
+  /* top: 0%; */
   width: 100%;
   height: 4rem;
   padding: 0;
   margin: 0;
-  align-content: center;
-  background-color: #0d0d1bcc;
-  border-bottom: 1px solid var(--color3);
-
-  box-shadow: 0 0 15px 5px var(--bg-color);
-  backdrop-filter: blur(5px);
-  transition: top 0.5s, height 0.2s, padding 0.3s ease-in-out;
   z-index: 2;
+
+  nav {
+    background-color: #0d0d1b;/* cc */
+    border-block-end : solid 1px transparent;
+    height: 100%;
+    transition: height 0.1s, padding 0.15s, border-block-end 0.15s, backdrop-filter 0.15s ease-in-out;
+  }
 }
 
-
 header.hidden {
+  position: fixed;
   top: -100%;
+  background-color: unset !important;
+  backdrop-filter: unset !important;
+}
+
+header.contract {
+  position: fixed;
+  /* top: -100%; */
+  /* height: 56px; */
+  
+  nav {
+    backdrop-filter: blur(3px);
+    background: linear-gradient(180deg,#090a15,#090a1580);
+    border-block-end: solid 1px #ffffff1a;
+    box-shadow: 0 0 15px 5px var(--bg-color);
+    height: 56px;
+  }
+
+  nav ul {
+    padding: 0.4rem 1.4rem;
+  }
+
+  #search-input {
+    height: 1.8rem;
+  }
 }
 
 header {
@@ -346,7 +375,7 @@ button:focus-visible {
 
 /* Sections */
 main {
-  padding: 4rem 0 0 0;
+  padding: 0;
   display: flex;
   flex-direction: column;
   align-items: center;
