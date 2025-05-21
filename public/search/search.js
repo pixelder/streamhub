@@ -149,6 +149,7 @@ function activeSearchResults() {
 window.onload = function () {
   bottomNavBar()
   setActiveIcon('search')
+  setUpScrollEvents()
   activeSearchResults()
 }
 

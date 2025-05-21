@@ -19,5 +19,6 @@ window.onload = function() {
   loadLibrary()
   bottomNavBar()
   setActiveIcon('library')
+  setUpScrollEvents()
   fixLog()
 }

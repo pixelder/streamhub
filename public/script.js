@@ -180,14 +180,17 @@ document.addEventListener('DOMContentLoaded', () => {
       loadExplorePage('movie');
       bottomNavBar();
       setActiveIcon('movie')
+      setUpScrollEvents()
     } else if (path === '/tv') {
       loadExplorePage('tv');
       bottomNavBar();
       setActiveIcon('tv')
+      setUpScrollEvents()
     } else if (path === '' || path === '/') {
       window.onload = function() {
         bottomNavBar();
         setActiveIcon('home')
+        setUpScrollEvents()
         loadSections()
         loadUserContent('continue-watching','watching');
         setUpExpandableSection()
