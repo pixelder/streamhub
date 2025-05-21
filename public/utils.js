@@ -299,6 +299,11 @@ function openModal(event) {
     return;
   }
 
+  ['#header' , '.bottom-bar'].forEach(selector => {
+    const bar = document.querySelector(selector)
+    if (bar.classList.contains('detach')) bar.classList.add('hidden')
+  })
+
   fetchMetaData(mediaType, id, null, credits)
     .then(({ mediaType, data }) => {
       if (signal.aborted) return; 
@@ -1468,6 +1473,7 @@ function whenInView(selector, callback) {
 // bottom nav
 function bottomNavBar() {
   const navbar = document.querySelector('.bottom-bar')
+  navbar.classList.add('detach')
   navbar ? navbar.innerHTML = `
     <ul>
             <li><a href="/" id="home">
@@ -1543,39 +1549,51 @@ function backdropAnim(details, modalContent) {
   modalContent.style.setProperty('--modal-backdrop-opacity', opacity);
 }
 
-let lastScrollY = window.scrollY;
-let isScrollingDown = false;
-let hideTimeout;
-
-window.addEventListener('scroll', () => {
-
-  const header = document.querySelector('header');
-  const bottomBar = document.querySelector('.bottom-bar');
-  const filter = document.querySelector('.button-container');
-
-  let end = (window.scrollY + 10 + window.innerHeight) >= (document.body.scrollHeight);
-  let top =  window.scrollY <= 40
-
-  if (window.scrollY > lastScrollY && !end) {
-    // Scrolling down
-    if (!isScrollingDown) {
-      isScrollingDown = true;
-      clearTimeout(hideTimeout);
-      hideTimeout = setTimeout(() => {
-        header.classList.add('contract');
-        (isMobile() && bottomBar) ? bottomBar.style.bottom = '-4rem' : '';
-        (isMobile() && filter) ? filter.style.bottom = '1.4rem' : '';
-      }, 150);
+function setUpScrollEvents() {
+  let lastScrollY = window.scrollY;
+  let isScrollingDown = false;
+  let hideTimeout;
+  
+  window.addEventListener('scroll', () => {
+  
+    const header = document.querySelector('header');
+    const bottomBar = document.querySelector('.bottom-bar');
+    const filter = document.querySelector('.button-container');
+  
+    const threshold = 64; //px
+    let end = (window.scrollY + threshold + window.innerHeight) >= (document.body.scrollHeight);
+    let top =  window.scrollY <= threshold
+  
+    if (end) {
+      bottomBar.classList.remove('detach', 'hidden')
     }
-  } else if ((window.scrollY <= lastScrollY) || end) {
-    isScrollingDown = false;
-    clearTimeout(hideTimeout); // Cancel any pending hide
-    if (top) header.classList.remove('contract');
-    (isMobile() && bottomBar) ? bottomBar.style.bottom = '0rem' : '';
-    (isMobile() && filter) ? filter.style.bottom = '5rem' : '';
-  }
-  lastScrollY = window.scrollY;
-});
+    if (top) {
+      header.classList.remove('detach')
+    }
+    if (!top && !end) {
+      [bottomBar, header].forEach(bar => bar.classList.add('detach'))
+    }
+    if (window.scrollY > lastScrollY && !end) {
+      // Scrolling down
+      if (!isScrollingDown) {
+        isScrollingDown = true;
+        clearTimeout(hideTimeout);
+        hideTimeout = setTimeout(() => {
+          // header.classList.add('detach');
+          (isMobile() && bottomBar) ? bottomBar.classList.add('hidden') : ''; //.style.bottom = '-4rem' : '';
+          (isMobile() && filter) ? filter.style.bottom = '1.4rem' : '';
+        }, 150);
+      }
+    } else if ((window.scrollY <= lastScrollY) || end) {
+      isScrollingDown = false;
+      clearTimeout(hideTimeout); // Cancel any pending hide
+      // if (top) header.classList.remove('detach');
+      (isMobile() && bottomBar) ? bottomBar.classList.remove('hidden') : '';
+      (isMobile() && filter) ? filter.style.bottom = '5rem' : '';
+    }
+    lastScrollY = window.scrollY;
+  });
+}
 
 function getConfirm({ title, message, success, decline, state = 1, exitInterval = 700 } = {}) {
 
