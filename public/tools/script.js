@@ -27,6 +27,7 @@ function initiateForm() {
 window.addEventListener('DOMContentLoaded', () => {
   initiateForm()
   bottomNavBar();
+  setUpScrollEvents()
 });
 
 function resetUI() {
