@@ -1053,9 +1053,6 @@
     gap: 6px;
   }
 
-  .play-trailer svg {
-    height: 16px;
-  }
   .play-trailer .temp-message {
     z-index: 2000;
     left: 12px;
@@ -1114,7 +1111,7 @@
     aspect-ratio: unset !important;
 
     .modal-media {
-      gap: unset;
+      /* gap: unset; */
       height: unset;
       min-height: unset;
       max-height: 80%;
@@ -1133,7 +1130,7 @@
       opacity: 0;
       padding: unset;
       transition: scale 0.2s, opacity 0.5s ease-in-out;
-      margin-bottom: 20px;
+      margin-bottom: 16px;
     }
 
     .modal-info {
