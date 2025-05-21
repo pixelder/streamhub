@@ -80,7 +80,11 @@ function globalAddEventListener (event) {
   if (modalActive) {
     if (event.key === 'Escape' || event.target.matches('#info-modal')) {
       document.getElementById('modal-details').innerHTML = '';
-      modal.removeAttribute('active','')
+      modal.removeAttribute('active','');
+      ['#header' , '.bottom-bar'].forEach(selector => {
+        const bar = document.querySelector(selector)
+        bar.classList.remove('hidden')
+      })
       isViewingDetails = false
       event.stopPropagation();
     }
