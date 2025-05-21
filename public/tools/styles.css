@@ -136,8 +136,9 @@ section {
 
 pre {
   background: #191930;
-  padding: 10px;
+  padding: 12px;
   margin: 8px 0;
+  max-height: 400px;
   overflow-x: auto;
   border-radius: 8px;
   font-size: 12px;
