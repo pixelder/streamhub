@@ -86,7 +86,7 @@ async function scrape() {
   btn.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Loading...';
   btn.classList.add('loading')
   cancel_btn.innerText = 'Cancel'
-  const string = "Fetching data...";
+  const string = '<i class="fa fa-spinner fa-spin"></i> Fetching data...';
   updateStatus({type: 'log', string})
   output.textContent = "";
 
@@ -177,7 +177,7 @@ async function  fetchAndRender({payload, output, resultsDiv}) {
             parsedCount++;
             raw.file.push(response);
             output.textContent = JSON.stringify(raw, null, 2);
-            const string = `📦 Processing ${parsable - parsedCount} of ${pluralResolver(parsable,'file','s')}.`
+            const string = `📦 Processing ${parsable - parsedCount} of ${pluralResolver(parsable,'file','s')}...`
             updateStatus({type: 'log', string})
             buildFileEntry(response.result);
           }
@@ -186,7 +186,7 @@ async function  fetchAndRender({payload, output, resultsDiv}) {
             raw.raw.push(response);
             output.textContent = JSON.stringify(raw, null, 2);
             parsable = response.results.length;
-            const string = `<span>📦 Processing ${pluralResolver(parsable,'file','s')}.</span>`;
+            const string = `<span>📦 Processing ${pluralResolver(parsable,'file','s')}...</span>`;
             updateStatus({type: 'log', string})
             for (const file of response.results) {
               buildFileEntry(file);
@@ -208,7 +208,7 @@ async function  fetchAndRender({payload, output, resultsDiv}) {
 
   } finally {
     if (parsedCount) {
-      const string = `<span style="color: var(--success); text-shadow: none;"> 🎉 Received ${pluralResolver(parsedCount,'file','s')}</span>`
+      const string = `<span style="color: var(--success); text-shadow: none;"> 🎉 Received ${pluralResolver(parsedCount,'file','s')}.</span>`
       updateStatus({type: 'log', string})
     }
     if (!parsedCount && !error) {
