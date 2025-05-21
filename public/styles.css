@@ -58,7 +58,7 @@ body {
   /* 151527 */
   color: lavender;
   text-shadow: 0 0 10px #E6E6FA25;
-  height: 100%;
+  height: 100vh;
   overflow-y: auto;
   scroll-behavior: smooth;
   scroll-snap-type: y mandatory;
@@ -72,7 +72,7 @@ h5 h6 {
   font-family: var(--font-style2);
 }
 
-body:has(header.hidden, header.contract) {
+body:has(header.hidden, header.detach) {
   main {
     padding-top: 4rem;
   }
@@ -102,7 +102,7 @@ header.hidden {
   backdrop-filter: unset !important;
 }
 
-header.contract {
+header.detach {
   position: fixed;
   /* top: -100%; */
   /* height: 56px; */
@@ -376,6 +376,7 @@ button:focus-visible {
 /* Sections */
 main {
   padding: 0;
+  min-height: calc(100% - 64px);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -2437,7 +2438,7 @@ body:has(.modal:is([active])) {
 
   .modal-overlay {
     opacity: 1;
-    backdrop-filter: blur(3px) brightness(0.4);
+    backdrop-filter: blur(1px) brightness(0.2);
     visibility: visible;
   }
 }
@@ -2464,7 +2465,28 @@ body:has(.modal:is([active])) {
   box-sizing: border-box;
   position: relative;
   width: 58rem;
-  height: fit-content;
+  height: fit-c
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  ontent;
   /* max-height: 32rem; */
   padding: 32px;
   margin: auto;
@@ -2472,7 +2494,7 @@ body:has(.modal:is([active])) {
   border: 1px solid var(--color1);
   /* 3838526b */
   backdrop-filter: brightness(0.2);
-  background-color: #141427db;
+  background-color: #111122;/*  #141427db; */
   transition: width 0.2s;
 }
 
@@ -2988,7 +3010,7 @@ option {
 .episode {
   flex: 1;
   padding: 12px;
-  background-color: #222233ee;
+  background-color: #222233;/* ee; */
   border-radius: var(--border-radius2);
   border: 1px solid var(--color1);
   box-shadow: 0 0 4px rgba(0, 0, 0, 0.3);
