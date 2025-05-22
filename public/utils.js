@@ -1572,7 +1572,7 @@ function setUpScrollEvents() {
     const bottomBar = document.querySelector('.bottom-bar');
     const filter = document.querySelector('.button-container');
   
-    const threshold = 64; //px
+    const threshold = 56; //px
     let end = (window.scrollY + threshold + window.innerHeight) >= (document.body.scrollHeight);
     let top =  window.scrollY <= threshold
   
