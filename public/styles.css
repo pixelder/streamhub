@@ -440,7 +440,7 @@ section:has(.grid-item) .actions {
 .actions {
   button,
   div {
-    height: 30px;
+    height: 32px;
     aspect-ratio: 1/1;
     display: flex;
     justify-content: center;
@@ -1050,8 +1050,8 @@ body:has(.expandable.expanded) {
     top: 0;
     right: 100px;
     z-index: 2;
-    height: 56px;
-    padding: 8px;
+    height: 58px;
+    padding: 10px 0px;
     margin: unset;
     border: unset;
     gap: 6px;
