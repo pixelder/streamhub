@@ -89,7 +89,7 @@ header {
 
   nav {
     background-color: #0d0d1b;/* cc */
-    border-block-end : solid 1px transparent;
+    border-block-end: solid 1px #ffffff1a;
     height: 100%;
     transition: height 0.1s, padding 0.15s, border-block-end 0.15s, backdrop-filter 0.15s ease-in-out;
   }
@@ -110,7 +110,6 @@ header.detach {
   nav {
     backdrop-filter: blur(3px);
     background: linear-gradient(180deg,#090a15,#090a1580);
-    border-block-end: solid 1px #ffffff1a;
     box-shadow: 0 0 15px 5px var(--bg-color);
     height: 56px;
   }
@@ -432,14 +431,13 @@ section:has(.grid-item) .actions {
   display: flex;
 }
 
-.actions button {
+/* .actions button {
   font-size: 14px;
-  /* border: 1px solid #3838528c; */
-}
+  border: 1px solid #3838528c;
+} */
 
 
 .actions {
-
   button,
   div {
     height: 30px;
@@ -447,7 +445,7 @@ section:has(.grid-item) .actions {
     display: flex;
     justify-content: center;
     align-items: center;
-    border-radius: 4px;
+    border-radius: var(--border-radius2);
     background: var(--color5);
     box-sizing: border-box;
     cursor: pointer;
@@ -479,8 +477,7 @@ section:has(.grid-item) .actions {
 
 .actions .delete-button {
   position: absolute;
-  color: var(--error);
-  filter: saturate(1.4);
+  color: #ff2c2c;
   opacity: 0;
   scale: 0;
   transition: scale 0.2s ease-in-out;
@@ -585,7 +582,7 @@ body:has(.expandable.expanded) {
 
 .expandable:has(.section-header:active) {
   &:not(:has(.section-header > *:active)) {
-    background: var(--color4);
+    background: #141420;
   }
 }
 
@@ -898,8 +895,8 @@ body:has(.expandable.expanded) {
 /* Container for the menu */
 .grid-options {
   opacity: 0;
-  width: 2rem;
-  height: 2rem;
+  width: 32px;
+  height: 32px;
   background-color: #181825cc;
   border: 1px solid var(--color1);
   border-radius: var(--border-radius1);

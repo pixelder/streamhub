@@ -2,7 +2,7 @@
   :root {
     --border-radius1: 6px;
     --border-radius2: 4px;
-    --padding1: 0.4rem;
+    --padding1: 8px;
   }
 
   body.keyboard {
@@ -235,7 +235,7 @@
 
   .select-action {
     font-size: 12px;
-    height: 26px;
+    height: 30px;
     border-radius: var(--border-radius1);
   }
 
@@ -254,10 +254,9 @@
   }
 
   .actions {
-
     button,
     div {
-      height: 26px;
+      height: 30px;
       font-size: 14px;
       /* word-spacing: -1px; */
       border-radius: var(--border-radius1);
@@ -433,8 +432,8 @@
   }
 
   .grid-options {
-    width: 1.8rem;
-    height: 1.8rem;
+    width: 30px;
+    height: 30px;
 
     .options-buttons {
       font-size: 12px;
