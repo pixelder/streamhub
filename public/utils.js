@@ -2010,25 +2010,26 @@ function setUpExpandableSection() {
     }
 
     if (e.target.closest('.section-header')) {
-      let scroll = localStorage.getItem(`LAST_Y_POSSITION-${section.id}`);
-      if (!scroll) {
-        localStorage.setItem(`LAST_Y_POSSITION-${section.id}`, window.scrollY);
-        // scroll = window.scrollY
-      } else {
-        localStorage.removeItem(`LAST_Y_POSSITION-${section.id}`)
-        window.scrollTo({ top: scroll, behavior: 'instant' });
-      }
-      section.classList.remove('expanded')
-      section.classList.toggle('collapsed')
-      document.getElementById('header').classList.remove('hidden');
-      
-      if (!section.classList.contains('user-content')) {
-        container.querySelectorAll('.grid-item').forEach((item, index) => {
-          if (index >= 20) item.remove();
-        });
-      }
-
       return
+      // let scroll = localStorage.getItem(`LAST_Y_POSSITION-${section.id}`);
+      // if (!scroll) {
+      //   localStorage.setItem(`LAST_Y_POSSITION-${section.id}`, window.scrollY);
+      //   // scroll = window.scrollY
+      // } else {
+      //   localStorage.removeItem(`LAST_Y_POSSITION-${section.id}`)
+      //   window.scrollTo({ top: scroll, behavior: 'instant' });
+      // }
+      // section.classList.remove('expanded')
+      // section.classList.toggle('collapsed')
+      // document.getElementById('header').classList.remove('hidden');
+      
+      // if (!section.classList.contains('user-content')) {
+      //   container.querySelectorAll('.grid-item').forEach((item, index) => {
+      //     if (index >= 20) item.remove();
+      //   });
+      // }
+
+      // return
     }
   }
 
