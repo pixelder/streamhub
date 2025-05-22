@@ -58,7 +58,7 @@ body {
   /* 151527 */
   color: lavender;
   text-shadow: 0 0 10px #E6E6FA25;
-  height: 100vh;
+  height: 100dvh;
   overflow-y: auto;
   scroll-behavior: smooth;
   scroll-snap-type: y mandatory;
