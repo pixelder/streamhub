@@ -132,24 +132,14 @@ function renderProfile(items) {
     .join('');
 }
 
-function activeSearchResults() {
-  const searchBar = document.querySelector('#search-input')
-  let searchWait
-
-  searchBar.oninput = function () {
-    const query = this.value
-    if (query.length < 3) return
-    clearTimeout(searchWait)
-    searchWait = setTimeout(() => {
-      getSearchResults(query)
-    }, 300)
-  }
-}
-
 window.onload = function () {
   bottomNavBar()
   setActiveIcon('search')
   setUpScrollEvents()
-  activeSearchResults()
+  activeSearchResults(getSearchResults,{  
+    selector  : '#search-input',
+    minLength : 3,
+    debounce : 300
+  })
 }
 

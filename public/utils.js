@@ -221,6 +221,20 @@ function popularity(item, type) {
   return item.popularity
 }
 
+function activeSearchResults(callback, { selector, minLength, debounce } = {}) {
+  const searchBar = document.querySelector(selector);
+  if (!searchBar) return;
+  let searchWait;
+
+  searchBar.oninput = function () {
+    const query = this.value;
+    if (query.length < minLength) return;
+    clearTimeout(searchWait);
+    searchWait = setTimeout(() => {
+      callback(query);
+    }, debounce);
+  };
+}
 
 async function fetchSearchResults(term, type, pages) {
   console.log("fetching results")
@@ -1470,31 +1484,32 @@ function whenInView(selector, callback) {
 // bottom nav
 function bottomNavBar() {
   const navbar = document.querySelector('.bottom-bar')
+  const showTitle = true
   navbar.classList.add('detach')
   navbar ? navbar.innerHTML = `
     <ul>
             <li><a href="/" id="home">
                 <i class="fa-solid fa-house"></i>
-                <p>Home</p>
+                ${showTitle ? '<p>Home</p>' : ''}
                 </a>
             </li>
             <li><a href="javascript:void(0)" id="search" >
                 <i class="fa-solid fa-magnifying-glass"></i>
-                <p>Search</p>
+                ${showTitle ? '<p>Search</p>' : ''}
                 </a>
             </li>
             <li><a href="/movie" id="movie">
                     <i class="fa-solid fa-film"></i>
-                    <p>Movies</p>
+                    ${showTitle ? '<p>Movies</p>' : ''}
                 </a></li>
             <li><a href="/tv" id="tv">
                     <i class="fa-solid fa-display"></i>                    
-                    <p>TV</p>
+                    ${showTitle ? '<p>TV</p>' : ''}
                 </a>
             </li>
             <li><a href="/library" id="library">
                     <i class="fa-solid fa-folder-tree"></i>
-                    <p>Library</p>
+                    ${showTitle ? '<p>Library</p>' : ''}
                 </a>
             </li>
         </ul>

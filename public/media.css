@@ -105,7 +105,7 @@
 
   body:has(.bottom-bar.hidden, .bottom-bar.detach) {
   main {
-    padding-bottom: 75px;
+    padding-bottom: 64px;
   }
 }
 
@@ -121,7 +121,7 @@
   .bottom-bar.detach {
     position: fixed;
     bottom: 0rem;
-    background: linear-gradient(0deg,#090a15,#090a1580);
+    background: linear-gradient(0deg,#090a15,#090a15cc);
     border-block-start: solid 1px #ffffff1a;
     backdrop-filter: blur(4px);
     box-shadow: 0 0 30px 10px var(--bg-color);
@@ -153,12 +153,13 @@
         ); */
     /* background-color: #0d0d1bdd; */
     /* border-top: 1px solid var(--color3); */
-    /* background: linear-gradient(0deg,#090a15,#090a1580);
+    /* background: linear-gradient(0deg,#090a15,#090a1580); */
     border-block-start: solid 1px #ffffff1a;
-    backdrop-filter: blur(4px);
-    box-shadow: 0 0 30px 10px var(--bg-color);
-    z-index: 1; */
-    transition: bottom 0.4s, /* height 0.3s, padding 0.3s, */ opacity 0.2s ease-in-out;
+    /* border-radius: 1rem 1rem 0 0; */
+    /* backdrop-filter: blur(4px); */
+    /* box-shadow: 0 0 30px 10px var(--bg-color); */
+    /* z-index: 1; */
+    transition: bottom 0.4s, background 0.2s, backdrop-filter 0.2s, opacity 0.2s ease-in-out;
 
     ul {
       list-style: none;
@@ -213,7 +214,6 @@
   }
 
   main {
-    padding: 0 0 0 0;
     min-height: calc(100% - (2 * 56px));
   }
 
@@ -957,6 +957,7 @@
     height: fit-content;
     overflow: scroll;
     max-height: 70% !important;
+    border-radius: 10px;
     padding: 10px;
     backdrop-filter: blur(10px);
   }
