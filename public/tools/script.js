@@ -400,7 +400,7 @@ async function fetchAndRender({ payload, output, signal, resultsDiv }) {
     error = true;
     console.log(err);
     const string = err.name === 'AbortError' ? `The operation was aborted!` : `${err.message}`;
-    updateStatus({ type: 'error', string, expire: false });
+    updateStatus({ type: 'error', string, expire: true });
     output.textContent = `${string}`;
 
   } finally {
