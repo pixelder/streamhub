@@ -214,7 +214,7 @@
   }
 
   main {
-    min-height: calc(100% - (2 * 56px));
+    min-height: calc(100% - 120px);
   }
 
   section {
