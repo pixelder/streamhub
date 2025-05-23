@@ -70,13 +70,13 @@ function resetForm(btn) {
 
 let statusTimeout
 
-function updateStatus({type = 'log', string, time = 5000, expire = false}) {
+function updateStatus({type = 'log', string, time = 5000, expire = false, remove = false}) {
   const status = document.getElementById('status-info')
   const msg = document.createElement("div");
   msg.classList.add('message')
 
   if (type === 'error') {
-    msg.style = "color: #f03; text-shadow: none;";
+    msg.style = "color: #ff5855; background: #2f111a";
     msg.innerHTML = `<i class="fa-solid fa-circle-exclamation"></i> ${string}`;
   } else if (type === 'warn') {
     msg.style = "color: orange; text-shadow: nonel";
@@ -87,13 +87,14 @@ function updateStatus({type = 'log', string, time = 5000, expire = false}) {
 
   clearTimeout(statusTimeout)
   status.innerHTML = '';
+  if (remove) return
   status.appendChild(msg);
   if (expire)
   statusTimeout = setTimeout(() => { status.removeChild(msg) }, time)
 }
 
-const SERVER = 'https://alpha-scraper.onrender.com'
-// const SERVER = "http://192.168.29.122:3000";
+// const SERVER = 'https://alpha-scraper.onrender.com'
+const SERVER = "http://192.168.29.122:3000";
 
 let controller;
 let parsedCount = 0;
@@ -103,8 +104,15 @@ let clientId = null;
 let ws;
 let retry= false;
 let opened = false;
+let aborted = false
+let initTimeout
 
-function initWebSocket({ retries = 5, attempt = 0, timeoutMs = 15000 } = {}) {
+async function initWebSocket({ retries = 5, attempt = 0, timeoutMs = 15000 } = {}) {
+  console.log('initializing websocket connection', attempt)
+  if (aborted) {
+    updateStatus({ remove : true})
+    return
+  }
   if (opened) {
     updateStatus({type: 'log',
     string: `
@@ -138,6 +146,7 @@ function initWebSocket({ retries = 5, attempt = 0, timeoutMs = 15000 } = {}) {
 
   socket.onopen = () => {
     if (timedOut) return;
+    aborted = false;
     opened = true;
     retry = false;
     ATTEMPTS = 0;
@@ -178,45 +187,37 @@ function initWebSocket({ retries = 5, attempt = 0, timeoutMs = 15000 } = {}) {
   };
 
   socket.onclose = () => {
+    aborted = false;
     clearTimeout(timeout);
     clientId = null;
-    if (opened && !retry) {
-      console.log('connection lost')
-      updateStatus({ type: 'warn', string: 'Server connection lost.' });
-    }
-    if (!opened && timeout && !retry) {
-      console.log('connection timed out')
-      updateStatus({ type: 'warn', string: 'Connection timed out.' });
-    }
+    if (opened && !retry) updateStatus({ type: 'warn', string: 'Server connection lost.', expire: true });
+    if (!opened && !retry) updateStatus({ type: 'warn', string: 'Unable to connect.', expire: true });
 
     opened = false
 
     const nextAttempt = ATTEMPTS + 1;
     if (nextAttempt <= RETRIES) {
       console.warn(`Retrying WebSocket (${nextAttempt}/${RETRIES})...`);
-      const retryText = `<i class="fa-solid fa-sync fa-spin"></i> Retrying to connect... [${nextAttempt}/${RETRIES}]`;
-      if (!retry) {
-        setTimeout(() => {
-          updateStatus({type: 'log', string: retryText});
-        }, 2000)
-      } else {
-        updateStatus({type: 'log', string: retryText});
-      }
+      const retryText = `<i class="fa-solid fa-sync fa-spin"></i> Retrying... [${nextAttempt}/${RETRIES}]`;
+      if (!retry) setTimeout(() => {updateStatus({type: 'log', string: retryText})}, 2000)
+      if (retry) updateStatus({type: 'log', string: retryText})
       retry = true
-      setTimeout(() => {
+      initTimeout = setTimeout(() => {
         initWebSocket({ retries: RETRIES, attempt: nextAttempt, timeoutMs })
-      }, 10000);
+      }, 5000);
     } else {
-      updateStatus({ type: 'error', string: 'Server failed to connect.' });
+      updateStatus({ type: 'error', string: 'Server failed to connect.', expire: true });
     }
   };
 }
-
 
 // Establish WebSocket connection once at page load
 initWebSocket();
 
 async function scrape() {
+  aborted = false
+  controller = new AbortController();
+  const signal = controller.signal;
 
   const btn = document.getElementById("scrape");
   const cancel_btn = document.getElementById("reset");
@@ -226,18 +227,22 @@ async function scrape() {
   const resultsDiv = document.getElementById("results");
   const status = document.getElementById("status-info");
 
-  cancel_btn.addEventListener('click', (e) => {
-    e.preventDefault();
-    if (!e.target.matches(".cancel")) return;
-    if (controller) controller.abort();
-  }, { once: true });
-
   status.innerHTML = "";
   resultsDiv.innerHTML = "";
   btn.disabled = true;
   btn.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Loading...';
   btn.classList.add('loading');
   cancel_btn.innerText = 'Cancel';
+
+  cancel_btn.addEventListener('click', (e) => {
+    e.preventDefault();
+    if (!e.target.matches(".cancel")) return;
+    if (controller) controller.abort();
+    updateStatus({type: "error", string: "The operataion was aborted", expire: true})
+    resetUI();
+    aborted = true;
+    clearTimeout(initTimeout)
+  }, { once: true });
 
   updateStatus({ type: 'log', string: '<i class="fa fa-spinner fa-spin"></i> Fetching data...' });
   output.textContent = "";
@@ -270,25 +275,56 @@ async function scrape() {
     ...(maxsize ? { limit: maxsize } : {})
   };
 
-  // Wait for clientId if not yet received
-  if (!clientId) {
+  // Ensure WebSocket is connected
+  if (!opened || !ws || ws.readyState !== WebSocket.OPEN) {
+    updateStatus({ type: 'warn', string: 'Reconnecting to server...' });
+    if (aborted) return
+    initTimeout = setTimeout(async () => {
+      await initWebSocket();
+    }, 2000)
+  }
+
+  // Wait for clientId with timeout fallback
+  if (!clientId && !aborted) {
     updateStatus({ type: 'warn', string: 'Waiting for server connection...' });
-    await new Promise(resolve => {
+
+    const waitForClientId = new Promise((resolve) => {
       const interval = setInterval(() => {
         if (clientId) {
           clearInterval(interval);
-          resolve();
+          resolve(true);
         }
-      }, 100);
+      }, 2000);
     });
-  }
 
-  fetchAndRender({ payload, output, resultsDiv });
+    const timeout = new Promise((_, reject) => setTimeout(() => reject(new Error("Timeout waiting for clientId")), 10000));
+
+    try {
+      await Promise.race([
+        waitForClientId,
+        timeout,
+        new Promise((_, reject) => signal.addEventListener("abort", () => {
+            const error = new Error()
+            error.name = 'AbortError'
+            reject(error)
+          }
+        ))
+      ]);
+
+    } catch (err) {
+      console.log(err)
+      if (err.name === 'AbortError') {
+        const string = 'The operation was aborted!';
+        updateStatus({ type: 'error', string, expire: true });
+      }
+      resetUI();
+      return;
+    }
+  }
+  await fetchAndRender({ payload, output, signal, resultsDiv });
 }
 
-async function fetchAndRender({ payload, output, resultsDiv }) {
-  controller = new AbortController();
-  const signal = controller.signal;
+async function fetchAndRender({ payload, output, signal, resultsDiv }) {
 
   try {
     const res = await fetch(`${SERVER}/fetch`, {
@@ -364,8 +400,8 @@ async function fetchAndRender({ payload, output, resultsDiv }) {
     error = true;
     console.log(err);
     const string = err.name === 'AbortError' ? `The operation was aborted!` : `${err.message}`;
-    output.textContent = `${string}`;
     updateStatus({ type: 'error', string, expire: false });
+    output.textContent = `${string}`;
 
   } finally {
     if (parsedCount) {
