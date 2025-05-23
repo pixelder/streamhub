@@ -111,23 +111,23 @@ section {
 #status-info {
   display: flex;
   align-items: center;
-  padding: 0 12px;
   width: fit-content;
-  height: 32px;
   border: 1px dashed var(--color3);
-  border-radius: var(--border-radius1);
-  background: #181825a1;
+  border-radius: 8px;
+  background: #141421;
   transition: height 0.2s;
   overflow: hidden;
-
+  height: fit-content;
+  
   .message {
+    min-height: 32px;
+    padding: 0 12px;
     animation: fadeIn 0.2s;
     display: flex;
     gap: 8px;
     height: 100%;
     align-items: center;
-    /* font-family: 'Jetbrains Mono', monospace; */
-    font: normal 600 13px 'Jetbrains Mono', monospace;
+    font: normal 600 14px 'Jetbrains Mono', monospace;
     text-shadow: none;
   }
   .blink-container {
@@ -368,11 +368,10 @@ pre {
   }
 
   #status-info {
-    height: auto;
-    min-height: 30px;
-    padding: 6px 8px;
     
     .message {
+      min-height: 30px;
+      padding: 6px 8px;
       font-size: 11px;
     }
   }
