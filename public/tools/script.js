@@ -79,7 +79,7 @@ function updateStatus({type = 'log', string, time = 5000, expire = false, remove
     msg.style = "color: #ff5855; background: #2f111a";
     msg.innerHTML = `<i class="fa-solid fa-circle-exclamation"></i> ${string}`;
   } else if (type === 'warn') {
-    msg.style = "color: orange; text-shadow: nonel";
+    msg.style = "color: orange; text-shadow: none";
     msg.innerHTML = `<i class="fa-solid fa-triangle-exclamation btn"></i> ${string}`
   } else if (type === 'log') {
     msg.innerHTML = `${string}`
