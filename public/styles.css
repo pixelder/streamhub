@@ -592,12 +592,12 @@ body:has(.expandable.expanded) {
   height: calc(100vh - var(--margin) * 2);
   background: var(--bg-color);
   border: 1px solid var(--color3);
-  border-radius: var(--border-radius1);
+  border-radius: 16px;
   margin: 10rem auto;
   position: relative;
   padding-right: unset;
   padding-left: unset;
-  padding-top: 58px;
+  padding-top: 60px;
   transition: unset;
 
   .section-header {
@@ -607,8 +607,7 @@ body:has(.expandable.expanded) {
     z-index: 1;
     /* background: var(--color5); */
     border-bottom: 1px solid var(--color3);
-    border-radius: var(--border-radius1) var(--border-radius1) 0 0;
-    padding: 0.8125rem 1rem;
+    padding: 14px;
     width: 100%;
   }
 
@@ -1050,7 +1049,7 @@ body:has(.expandable.expanded) {
     top: 0;
     right: 100px;
     z-index: 2;
-    height: 58px;
+    height: 60px;
     padding: 10px 0px;
     margin: unset;
     border: unset;

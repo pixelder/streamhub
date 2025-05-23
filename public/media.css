@@ -285,6 +285,7 @@
     padding: 46px 0 8px;
     height: calc(100dvh - 20px);
     margin: 8rem;
+    border-radius: 8px;
 
     .section-header {
       padding: 8px;
