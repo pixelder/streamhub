@@ -93,8 +93,8 @@ function updateStatus({type = 'log', string, time = 5000, expire = false, remove
   statusTimeout = setTimeout(() => { status.removeChild(msg) }, time)
 }
 
-// const SERVER = 'https://alpha-scraper.onrender.com'
-const SERVER = "http://192.168.29.122:3000";
+const SERVER = 'https://alpha-scraper.onrender.com'
+// const SERVER = "http://192.168.29.122:3000";
 
 let controller;
 let parsedCount = 0;
