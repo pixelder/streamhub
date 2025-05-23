@@ -1,4 +1,6 @@
 @import url('https://fonts.cdnfonts.com/css/beyonders');
+/* @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap'); */
+/* @import "@fontsource/jetbrains-mono"; */
 
 section {
   flex-direction: column;
@@ -115,12 +117,47 @@ section {
   border: 1px dashed var(--color3);
   border-radius: var(--border-radius1);
   background: #181825a1;
-  font-size: 15px;
   transition: height 0.2s;
   overflow: hidden;
 
   .message {
     animation: fadeIn 0.2s;
+    display: flex;
+    gap: 8px;
+    height: 100%;
+    align-items: center;
+    /* font-family: 'Jetbrains Mono', monospace; */
+    font: normal 600 13px 'Jetbrains Mono', monospace;
+    text-shadow: none;
+  }
+  .blink-container {
+    position: relative;
+    display: flex;
+    aspect-ratio: 1 / 1;
+    align-items: center;
+    justify-content: center;
+  }
+  .blink-dot {
+    height: 8px;
+    aspect-ratio: 1 / 1;
+    border-radius: 50%;
+    background-color: rgb(16 185 129);
+  }
+  .blink {
+    position: absolute;
+    animation: blink 2s infinite forwards;
+  }
+}
+
+
+@keyframes blink {
+  0% {
+    scale: 0.4;
+    opacity: 1;
+  }
+  100% {
+    scale: 2.4;
+    opacity: 0;
   }
 }
 
@@ -142,6 +179,7 @@ pre {
   overflow-x: auto;
   border-radius: 8px;
   font-size: 12px;
+  font-family: "Jetbrains Mono", monospace;
   line-break: anywhere;
   white-space: break-spaces;
 }
@@ -330,9 +368,13 @@ pre {
   }
 
   #status-info {
-    font-size: 13px;
-    height: 30px;
-    padding: 0 8px;
+    height: auto;
+    min-height: 30px;
+    padding: 6px 8px;
+    
+    .message {
+      font-size: 11px;
+    }
   }
 
   .results-table {
@@ -355,5 +397,9 @@ pre {
       height: 32px;
       font-size: 14px;
     }
+  }
+
+  pre {
+    font-size: 10px;
   }
 }

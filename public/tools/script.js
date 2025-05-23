@@ -65,30 +65,181 @@ function resetForm(btn) {
   });
   toggleFields();
   resetUI();
+  initWebSocket()
 }
 
+let statusTimeout
+
+function updateStatus({type = 'log', string, time = 5000, expire = false}) {
+  const status = document.getElementById('status-info')
+  const msg = document.createElement("div");
+  msg.classList.add('message')
+
+  if (type === 'error') {
+    msg.style = "color: #f03; text-shadow: none;";
+    msg.innerHTML = `<i class="fa-solid fa-circle-exclamation"></i> ${string}`;
+  } else if (type === 'warn') {
+    msg.style = "color: orange; text-shadow: nonel";
+    msg.innerHTML = `<i class="fa-solid fa-triangle-exclamation btn"></i> ${string}`
+  } else if (type === 'log') {
+    msg.innerHTML = `${string}`
+  }
+
+  clearTimeout(statusTimeout)
+  status.innerHTML = '';
+  status.appendChild(msg);
+  if (expire)
+  statusTimeout = setTimeout(() => { status.removeChild(msg) }, time)
+}
+
+const SERVER = 'https://alpha-scrapper.onrender.com'
+// const SERVER = "http://192.168.29.122:3000";
+
+let controller;
+let parsedCount = 0;
+let parsable = 0;
+let error = false;
+let clientId = null;
+let ws;
+let retry= false;
+let opened = false;
+
+function initWebSocket({ retries = 5, attempt = 0, timeoutMs = 15000 } = {}) {
+  if (opened) {
+    updateStatus({type: 'log',
+    string: `
+      <div class="blink-container">
+        <div class="blink-dot"></div>
+        <div class="blink-dot blink"></div>
+      </div>
+      Connected to server.`
+    });
+    return
+  }
+  let RETRIES = retries;
+  let ATTEMPTS = attempt
+
+  if (attempt === 0) {
+    updateStatus({ type: 'log', string: '🔌 Establishing connection to server...' });
+  }
+
+  const wsUrl = new URL(SERVER);
+  wsUrl.protocol = wsUrl.protocol === "https:" ? "wss:" : "ws:";
+  const socket = new WebSocket(wsUrl.href);
+  let timedOut = false;
+
+  // Connection timeout fallback
+  const timeout = setTimeout(() => {
+    timedOut = true;
+    if (!opened) {
+      socket.close(); // triggers onclose
+    }
+  }, timeoutMs);
+
+  socket.onopen = () => {
+    if (timedOut) return;
+    opened = true;
+    retry = false;
+    ATTEMPTS = 0;
+    clearTimeout(timeout);
+
+    ws = socket; // promote to global only after success
+    updateStatus({type: 'log',
+      string: `
+        <div class="blink-container">
+          <div class="blink-dot"></div>
+          <div class="blink-dot blink"></div>
+        </div>
+        Connected to server.`
+      });
+    console.log('WebSocket connected');
+  };
+
+  socket.onmessage = ({ data }) => {
+    try {
+      const parsed = JSON.parse(data);
+      if (parsed.clientId) {
+        clientId = parsed.clientId;
+        console.log("Received client ID:", clientId);
+      } else if (parsed.status) {
+        const icon = `${parsed.status === 'queue' ? '📌' 
+          : parsed.status === 'running' 
+          ? '<i class="fa fa-spinner fa-spin"></i>' : ''}`
+        updateStatus({ type: 'log', string: `${icon} ${parsed.message}` });
+      }
+    } catch (err) {
+      console.error('Failed to parse WebSocket message:', err);
+    }
+  };
+
+  socket.onerror = (err) => {
+    opened = false
+    console.error("WebSocket error:", err);
+  };
+
+  socket.onclose = () => {
+    clearTimeout(timeout);
+    clientId = null;
+    if (opened && !retry) {
+      console.log('connection lost')
+      updateStatus({ type: 'warn', string: 'Server connection lost.' });
+    }
+    if (!opened && timeout && !retry) {
+      console.log('connection timed out')
+      updateStatus({ type: 'warn', string: 'Connection timed out.' });
+    }
+
+    opened = false
+
+    const nextAttempt = ATTEMPTS + 1;
+    if (nextAttempt <= RETRIES) {
+      console.warn(`Retrying WebSocket (${nextAttempt}/${RETRIES})...`);
+      const retryText = `<i class="fa-solid fa-sync fa-spin"></i> Retrying to connect... [${nextAttempt}/${RETRIES}]`;
+      if (!retry) {
+        setTimeout(() => {
+          updateStatus({type: 'log', string: retryText});
+        }, 2000)
+      } else {
+        updateStatus({type: 'log', string: retryText});
+      }
+      retry = true
+      setTimeout(() => {
+        initWebSocket({ retries: RETRIES, attempt: nextAttempt, timeoutMs })
+      }, 10000);
+    } else {
+      updateStatus({ type: 'error', string: 'Server failed to connect.' });
+    }
+  };
+}
+
+
+// Establish WebSocket connection once at page load
+initWebSocket();
+
 async function scrape() {
+
   const btn = document.getElementById("scrape");
-  const cancel_btn = document.getElementById("reset")
-  cancel_btn.classList.add('cancel')
+  const cancel_btn = document.getElementById("reset");
+  cancel_btn.classList.add('cancel');
+
   const output = document.getElementById("output");
   const resultsDiv = document.getElementById("results");
   const status = document.getElementById("status-info");
 
   cancel_btn.addEventListener('click', (e) => {
-    e.preventDefault()
-    if (!e.target.matches(".cancel")) return
+    e.preventDefault();
+    if (!e.target.matches(".cancel")) return;
     if (controller) controller.abort();
-  }, {once : true})
+  }, { once: true });
 
   status.innerHTML = "";
   resultsDiv.innerHTML = "";
   btn.disabled = true;
   btn.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Loading...';
-  btn.classList.add('loading')
-  cancel_btn.innerText = 'Cancel'
-  const string = '<i class="fa fa-spinner fa-spin"></i> Fetching data...';
-  updateStatus({type: 'log', string})
+  btn.classList.add('loading');
+  cancel_btn.innerText = 'Cancel';
+
+  updateStatus({ type: 'log', string: '<i class="fa fa-spinner fa-spin"></i> Fetching data...' });
   output.textContent = "";
 
   const mediaType = document.getElementById("mediaType").value;
@@ -102,12 +253,11 @@ async function scrape() {
   if ((mediaType === "movie" && (!name || !year)) || (mediaType === "tv" && (!name || !season))) {
     const string = `
       <span>
-        ${mediaType === "movie" 
-          ? 'Movie requires both <b>Name</b> and <b>Year</b>.' 
-          : 'TV Show requires both <b>Name</b> and <b>Season</b>.'
-        }
+        ${mediaType === "movie"
+        ? 'Movie requires both <b>Name</b> and <b>Year</b>.'
+        : 'TV Show requires both <b>Name</b> and <b>Season</b>.'}
       </span>`;
-    updateStatus({type: 'warn', string, expire: true})
+    updateStatus({ type: 'warn', string, expire: true });
     resetUI();
     return;
   }
@@ -116,38 +266,46 @@ async function scrape() {
     mediaType,
     name,
     server: server_key,
-    ...(mediaType === "movie" ? { year } : { season, episode : episode === '0' ? '' : episode }),
+    ...(mediaType === "movie" ? { year } : { season, episode: episode === '0' ? '' : episode }),
     ...(maxsize ? { limit: maxsize } : {})
   };
 
-  fetchAndRender({payload, output, resultsDiv})
+  // Wait for clientId if not yet received
+  if (!clientId) {
+    updateStatus({ type: 'warn', string: 'Waiting for server connection...' });
+    await new Promise(resolve => {
+      const interval = setInterval(() => {
+        if (clientId) {
+          clearInterval(interval);
+          resolve();
+        }
+      }, 100);
+    });
+  }
+
+  fetchAndRender({ payload, output, resultsDiv });
 }
 
-let controller
-let parsedCount = 0;
-let parsable = 0;
-let error = false;
-const SERVER = "https://alpha-scraper.onrender.com";
-// const SERVER = "http://192.168.29.122:3000"
-
-async function  fetchAndRender({payload, output, resultsDiv}) {
-
+async function fetchAndRender({ payload, output, resultsDiv }) {
   controller = new AbortController();
   const signal = controller.signal;
 
   try {
     const res = await fetch(`${SERVER}/fetch`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        "x-client-id": clientId || ''
+      },
       body: JSON.stringify(payload),
       signal
     });
 
     if (!res.ok) {
-      const error = new Error()
-      error.name = res.statusText
-      error.status = res.status
-      error.message = JSON.parse(await res.text()).message
+      const error = new Error();
+      error.name = res.statusText;
+      error.status = res.status;
+      error.message = JSON.parse(await res.text()).message;
       throw error;
     }
 
@@ -157,6 +315,7 @@ async function  fetchAndRender({payload, output, resultsDiv}) {
     let raw = { raw: [], file: [] };
     parsedCount = 0;
     parsable = 0;
+
     const table = document.createElement('table');
     const tbody = document.createElement('tbody');
     table.appendChild(tbody);
@@ -174,12 +333,13 @@ async function  fetchAndRender({payload, output, resultsDiv}) {
 
         try {
           const response = JSON.parse(line);
+
           if (response.status === 'file') {
             parsedCount++;
             raw.file.push(response);
             output.textContent = JSON.stringify(raw, null, 2);
-            const string = `📦 Processing ${parsable - parsedCount} of ${pluralResolver(parsable,'file','s')}...`
-            updateStatus({type: 'log', string})
+            const string = `📦 Processing ${parsable - parsedCount} of ${pluralResolver(parsable, 'file', 's')}...`;
+            updateStatus({ type: 'log', string });
             buildFileEntry(response.result);
           }
 
@@ -187,8 +347,8 @@ async function  fetchAndRender({payload, output, resultsDiv}) {
             raw.raw.push(response);
             output.textContent = JSON.stringify(raw, null, 2);
             parsable = response.results.length;
-            const string = `<span>📦 Processing ${pluralResolver(parsable,'file','s')}...</span>`;
-            updateStatus({type: 'log', string})
+            const string = `<span>📦 Processing ${pluralResolver(parsable, 'file', 's')}...</span>`;
+            updateStatus({ type: 'log', string });
             for (const file of response.results) {
               buildFileEntry(file);
             }
@@ -202,51 +362,29 @@ async function  fetchAndRender({payload, output, resultsDiv}) {
 
   } catch (err) {
     error = true;
-    console.log(err)
+    console.log(err);
     const string = err.name === 'AbortError' ? `The operation was aborted!` : `${err.message}`;
     output.textContent = `${string}`;
-    updateStatus({type: 'error', string, expire : true})
+    updateStatus({ type: 'error', string, expire: false });
 
   } finally {
     if (parsedCount) {
-      const string = `<span style="color: var(--success); text-shadow: none;"> 🎉 Received ${pluralResolver(parsedCount,'file','s')}.</span>`
-      updateStatus({type: 'log', string})
+      const string = `<span style="color: var(--success); text-shadow: none;"> 🎉 Received ${pluralResolver(parsedCount, 'file', 's')}.</span>`;
+      updateStatus({ type: 'log', string });
     }
     if (!parsedCount && !error) {
-      const string = 'No valid results received.'
-      updateStatus({type: 'warn', string, expire : true})
+      const string = 'No valid results received.';
+      updateStatus({ type: 'warn', string, expire: true });
     }
 
     document.querySelectorAll('.action-cell').forEach(item => {
-      if (item.querySelector('.fa-spinner')) item.innerHTML = `<i class="fa-solid fa-triangle-exclamation btn"></i>`
-    })
+      if (item.querySelector('.fa-spinner')) item.innerHTML = `<i class="fa-solid fa-triangle-exclamation btn"></i>`;
+    });
 
     resetUI();
   }
 }
 
-let statusTimeout
-function updateStatus({type = 'log', string, time = 5000, expire = false}) {
-  const status = document.getElementById('status-info')
-  const msg = document.createElement("div");
-  msg.classList.add('message')
-
-  if (type === 'error') {
-    msg.style = "color: crimson; text-shadow: none;";
-    msg.innerHTML = `<i class="fa-solid fa-circle-exclamation"></i> ${string}`;
-  } else if (type === 'warn') {
-    msg.style = "color: orange; text-shadow: nonel";
-    msg.innerHTML = `<i class="fa-solid fa-triangle-exclamation btn"></i> ${string}`
-  } else if (type === 'log') {
-    msg.innerHTML = `${string}`
-  }
-
-  clearTimeout(statusTimeout)
-  status.innerHTML = '';
-  status.appendChild(msg);
-  if (expire)
-  statusTimeout = setTimeout(() => { status.removeChild(msg) }, time)
-}
 
 async function buildFileEntry(file) {
   const tbody = document.querySelector('tbody');
