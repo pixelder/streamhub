@@ -83,6 +83,7 @@ function globalAddEventListener (event) {
       modal.removeAttribute('active','');
       ['#header' , '.bottom-bar'].forEach(selector => {
         const bar = document.querySelector(selector)
+        if (document.querySelectorAll('.expandable.expanded').length) return
         bar.classList.remove('hidden')
       })
       isViewingDetails = false
