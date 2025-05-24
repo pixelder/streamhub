@@ -1,3 +1,66 @@
+// utils
+
+function changeValue(id, delta) {
+  const input = document.getElementById(id);
+  let value = parseFloat(input.value) || 0;
+  value = Math.max(0, value + delta);
+  input.value = parseFloat(value.toFixed(2)).toString();
+}
+
+let statusTimeout
+// function updateStatus({ type='log', string, expire=false, time=5000, remove=false }) {
+//   const container = document.getElementById('status-info');
+//   container.innerHTML = ''; 
+//   if (remove) return;
+//   const msg = document.createElement('div');
+//   msg.className = `message ${type}`;
+//   msg.textContent = string;   // use textContent
+//   container.appendChild(msg);
+//   if (expire) setTimeout(() => container.textContent='', time);
+// }
+
+function updateStatus({ type = 'log', icon = null, string, time = 5000, expire = false, remove = false }) {
+  if (!type) return;
+  const container = document.getElementById('status-info')
+  container.innerHTML = ''
+  if (remove) return
+  const msg = document.createElement("div");
+  msg.className = `message ${type}`;
+  let iconDiv = null
+  if (icon) {
+    iconDiv = document.createElement("div");
+    iconDiv.style = "display: grid; place-content: center; height: 100%; width: auto;" ;
+    iconDiv.innerHTML = icon;
+  }
+  
+  if (type === 'error') {
+    iconDiv = document.createElement("div")
+    iconDiv.innerHTML = '<i class="fa-solid fa-circle-exclamation"></i>'
+  }
+  if (type === 'warn') {
+    iconDiv = document.createElement("div")
+    iconDiv.innerHTML = '<i class="fa-solid fa-triangle-exclamation btn"></i>'
+  } 
+  // if (type === 'success') {
+    // }
+    
+  if (iconDiv) {
+    iconDiv.className = 'icon';
+    msg.appendChild(iconDiv)
+  }
+  const span = document.createElement('span')
+  span.textContent = `${string}`
+  msg.appendChild(span)
+
+  clearTimeout(statusTimeout)
+  container.appendChild(msg);
+  if (expire) {
+    statusTimeout = setTimeout(() => { container.textContent = '' }, time)
+  }
+}
+
+//////
+
 function toggleFields() {
   const mediaType = document.getElementById("mediaType").value;
   const tvinfo = document.getElementById("tv-input");
@@ -20,15 +83,9 @@ function initiateForm() {
     const submit = e.submitter.id === 'scrape'
     const reset = e.submitter.id === 'reset'
     if (submit) scrape();
-    if (reset) resetForm(e.submitter)
+    if (reset) resetFormFields(e.submitter)
   })
 }
-
-window.addEventListener('DOMContentLoaded', () => {
-  initiateForm()
-  bottomNavBar();
-  setUpScrollEvents()
-});
 
 function resetUI() {
   parsedCount = 0;
@@ -42,14 +99,7 @@ function resetUI() {
   cancel_btn.innerText = 'Reset';
 }
 
-function changeValue(id, delta) {
-  const input = document.getElementById(id);
-  let value = parseFloat(input.value) || 0;
-  value = Math.max(0, value + delta);
-  input.value = parseFloat(value.toFixed(2)).toString();
-}
-
-function resetForm(btn) {
+function resetFormFields(btn) {
   if (btn.classList.contains('cancel')) return;
   ["name", "season", "episode", "year"].forEach(id => {
     const el = document.getElementById(id);
@@ -68,33 +118,8 @@ function resetForm(btn) {
   initWebSocket()
 }
 
-let statusTimeout
-
-function updateStatus({type = 'log', string, time = 5000, expire = false, remove = false}) {
-  const status = document.getElementById('status-info')
-  const msg = document.createElement("div");
-  msg.classList.add('message')
-
-  if (type === 'error') {
-    msg.style = "color: #ff5855; background: #2f111a";
-    msg.innerHTML = `<i class="fa-solid fa-circle-exclamation"></i> ${string}`;
-  } else if (type === 'warn') {
-    msg.style = "color: orange; text-shadow: none";
-    msg.innerHTML = `<i class="fa-solid fa-triangle-exclamation btn"></i> ${string}`
-  } else if (type === 'log') {
-    msg.innerHTML = `${string}`
-  }
-
-  clearTimeout(statusTimeout)
-  status.innerHTML = '';
-  if (remove) return
-  status.appendChild(msg);
-  if (expire)
-  statusTimeout = setTimeout(() => { status.removeChild(msg) }, time)
-}
-
-const SERVER = 'https://alpha-scraper.onrender.com'
-// const SERVER = "http://192.168.29.122:3000";
+// const SERVER = 'https://alpha-scraper.onrender.com'
+const SERVER = "http://192.168.29.122:3000";
 
 let controller;
 let parsedCount = 0;
@@ -102,7 +127,7 @@ let parsable = 0;
 let error = false;
 let clientId = null;
 let ws;
-let retry= false;
+let retry = false;
 let opened = false;
 let aborted = false
 let initTimeout
@@ -110,18 +135,15 @@ let initTimeout
 async function initWebSocket({ retries = 5, attempt = 0, timeoutMs = 15000 } = {}) {
   console.log('initializing websocket connection', attempt)
   if (aborted) {
-    updateStatus({ remove : true})
+    updateStatus({ remove: true })
     return
   }
   if (opened) {
-    updateStatus({type: 'log',
-    string: `
-      <div class="blink-container">
-        <div class="blink-dot"></div>
-        <div class="blink-dot blink"></div>
-      </div>
-      Connected to server.`
-    });
+    const icon = `<div class="blink-container">
+                    <div class="blink-dot"></div>
+                    <div class="blink-dot blink"></div>
+                  </div>`
+    updateStatus({type: 'log', icon,  string: 'Connected to server.' });
     return
   }
   let RETRIES = retries;
@@ -153,14 +175,11 @@ async function initWebSocket({ retries = 5, attempt = 0, timeoutMs = 15000 } = {
     clearTimeout(timeout);
 
     ws = socket; // promote to global only after success
-    updateStatus({type: 'log',
-      string: `
-        <div class="blink-container">
-          <div class="blink-dot"></div>
-          <div class="blink-dot blink"></div>
-        </div>
-        Connected to server.`
-      });
+    const icon = `<div class="blink-container">
+                    <div class="blink-dot"></div>
+                    <div class="blink-dot blink"></div>
+                  </div>`
+    updateStatus({type: 'log', icon,  string: 'Connected to server.' });
     console.log('WebSocket connected');
   };
 
@@ -171,10 +190,10 @@ async function initWebSocket({ retries = 5, attempt = 0, timeoutMs = 15000 } = {
         clientId = parsed.clientId;
         console.log("Received client ID:", clientId);
       } else if (parsed.status) {
-        const icon = `${parsed.status === 'queue' ? '📌' 
-          : parsed.status === 'running' 
-          ? '<i class="fa fa-spinner fa-spin"></i>' : ''}`
-        updateStatus({ type: 'log', string: `${icon} ${parsed.message}` });
+        const icon = `${parsed.status === 'queue' ? '📌'
+          : parsed.status === 'running'
+            ? '<i class="fa fa-spinner fa-spin"></i>' : ''}`
+        updateStatus({ type: 'log', icon,  string: parsed.message });
       }
     } catch (err) {
       console.error('Failed to parse WebSocket message:', err);
@@ -198,9 +217,10 @@ async function initWebSocket({ retries = 5, attempt = 0, timeoutMs = 15000 } = {
     const nextAttempt = ATTEMPTS + 1;
     if (nextAttempt <= RETRIES) {
       console.warn(`Retrying WebSocket (${nextAttempt}/${RETRIES})...`);
-      const retryText = `<i class="fa-solid fa-sync fa-spin"></i> Retrying... [${nextAttempt}/${RETRIES}]`;
-      if (!retry) setTimeout(() => {updateStatus({type: 'log', string: retryText})}, 2000)
-      if (retry) updateStatus({type: 'log', string: retryText})
+      const icon = '<i class="fa-solid fa-sync fa-spin"></i> '
+      const retryText = `Retrying... [${nextAttempt}/${RETRIES}]`;
+      if (!retry) setTimeout(() => { updateStatus({ type: 'log', icon, string: retryText }) }, 2000)
+      if (retry) updateStatus({ type: 'log',icon,  string: retryText })
       retry = true
       initTimeout = setTimeout(() => {
         initWebSocket({ retries: RETRIES, attempt: nextAttempt, timeoutMs })
@@ -211,8 +231,12 @@ async function initWebSocket({ retries = 5, attempt = 0, timeoutMs = 15000 } = {
   };
 }
 
-// Establish WebSocket connection once at page load
-initWebSocket();
+window.addEventListener('DOMContentLoaded', () => {
+  bottomNavBar();
+  setUpScrollEvents()
+  initiateForm();
+});
+initWebSocket(); // Establish WebSocket connection once at page load
 
 async function scrape() {
   aborted = false
@@ -238,13 +262,14 @@ async function scrape() {
     e.preventDefault();
     if (!e.target.matches(".cancel")) return;
     if (controller) controller.abort();
-    updateStatus({type: "error", string: "The operataion was aborted", expire: true})
+    updateStatus({ type: "error", string: "The operataion was aborted", expire: true })
     resetUI();
     aborted = true;
     clearTimeout(initTimeout)
   }, { once: true });
 
-  updateStatus({ type: 'log', string: '<i class="fa fa-spinner fa-spin"></i> Fetching data...' });
+
+  updateStatus({ type: 'log', icon: '<i class="fa fa-spinner fa-spin"></i>', string: 'Fetching data...' });
   output.textContent = "";
 
   const mediaType = document.getElementById("mediaType").value;
@@ -256,12 +281,10 @@ async function scrape() {
   const server_key = document.getElementById("server-key").value || "alpha";
 
   if ((mediaType === "movie" && (!name || !year)) || (mediaType === "tv" && (!name || !season))) {
-    const string = `
-      <span>
-        ${mediaType === "movie"
-        ? 'Movie requires both <b>Name</b> and <b>Year</b>.'
-        : 'TV Show requires both <b>Name</b> and <b>Season</b>.'}
-      </span>`;
+    const string = `${mediaType === "movie"
+        ? 'Movie requires both Name and Year.'
+        : 'TV Show requires both Name and Season.'
+      }`;
     updateStatus({ type: 'warn', string, expire: true });
     resetUI();
     return;
@@ -304,10 +327,10 @@ async function scrape() {
         waitForClientId,
         timeout,
         new Promise((_, reject) => signal.addEventListener("abort", () => {
-            const error = new Error()
-            error.name = 'AbortError'
-            reject(error)
-          }
+          const error = new Error()
+          error.name = 'AbortError'
+          reject(error)
+        }
         ))
       ]);
 
@@ -383,7 +406,7 @@ async function fetchAndRender({ payload, output, signal, resultsDiv }) {
             raw.raw.push(response);
             output.textContent = JSON.stringify(raw, null, 2);
             parsable = response.results.length;
-            const string = `<span>📦 Processing ${pluralResolver(parsable, 'file', 's')}...</span>`;
+            const string = `📦 Processing ${pluralResolver(parsable, 'file', 's')}...`;
             updateStatus({ type: 'log', string });
             for (const file of response.results) {
               buildFileEntry(file);
@@ -405,8 +428,8 @@ async function fetchAndRender({ payload, output, signal, resultsDiv }) {
 
   } finally {
     if (parsedCount) {
-      const string = `<span style="color: var(--success); text-shadow: none;"> 🎉 Received ${pluralResolver(parsedCount, 'file', 's')}.</span>`;
-      updateStatus({ type: 'log', string });
+      const string = ` Received ${pluralResolver(parsedCount, 'file', 's')}.`;
+      updateStatus({ type: 'success', icon: '🎉', string });
     }
     if (!parsedCount && !error) {
       const string = 'No valid results received.';
@@ -420,7 +443,6 @@ async function fetchAndRender({ payload, output, signal, resultsDiv }) {
     resetUI();
   }
 }
-
 
 async function buildFileEntry(file) {
   const tbody = document.querySelector('tbody');
@@ -438,7 +460,7 @@ async function buildFileEntry(file) {
         <div class="file-name">${file_name}</div>
         <div class="file-flags">
           <p class="file-size">Size: ${size}</p>
-          <div> | </div>
+          <div> • </div>
           <p>Quality: ${quality || "Unknown"}</p>
         </div>
       </td>
@@ -449,7 +471,7 @@ async function buildFileEntry(file) {
       tr.querySelector('.file-name').innerText = file_name;
     }
     if (size) {
-      tr.querySelector('.file-size').innerText = `Size: ${size}`; 
+      tr.querySelector('.file-size').innerText = `Size: ${size}`;
     }
     tr.querySelector('.action-cell').innerHTML = actionHTML;
   }
@@ -458,8 +480,8 @@ async function buildFileEntry(file) {
 async function buildActionHTML(file) {
   const { url, drive_link, file_name } = file;
   const intent = (link) => `intent://${link.replace('https://', '')}#Intent;scheme=https;type=video/*;end;`;
-  
-  if ( !url && !drive_link) return `<i class="fa fa-spinner fa-spin btn">`
+
+  if (!url && !drive_link) return `<i class="fa fa-spinner fa-spin btn">`
   return `
     ${url ? `
       <button title="Open in external player" onclick="openLinkExternal(this)" data-link="${intent(url)}">
@@ -479,7 +501,7 @@ async function buildActionHTML(file) {
 
 async function copyLink(btn) {
   try {
-    toastMessage({ el: btn, string: 'Copied link to clipboard!', time: 3000})
+    toastMessage({ el: btn, string: 'Copied link to clipboard!', time: 3000 })
     await navigator.clipboard.writeText(btn.dataset.link);
   } catch (e) {
     console.error(e);
