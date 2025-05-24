@@ -1,5 +1,3 @@
-// utils
-
 function changeValue(id, delta) {
   const input = document.getElementById(id);
   let value = parseFloat(input.value) || 0;
@@ -8,19 +6,7 @@ function changeValue(id, delta) {
 }
 
 let statusTimeout
-// function updateStatus({ type='log', string, expire=false, time=5000, remove=false }) {
-//   const container = document.getElementById('status-info');
-//   container.innerHTML = ''; 
-//   if (remove) return;
-//   const msg = document.createElement('div');
-//   msg.className = `message ${type}`;
-//   msg.textContent = string;   // use textContent
-//   container.appendChild(msg);
-//   if (expire) setTimeout(() => container.textContent='', time);
-// }
-
 function updateStatus({ type = 'log', icon = null, string, time = 5000, expire = false, remove = false }) {
-  if (!type) return;
   const container = document.getElementById('status-info')
   container.innerHTML = ''
   if (remove) return
@@ -29,10 +15,9 @@ function updateStatus({ type = 'log', icon = null, string, time = 5000, expire =
   let iconDiv = null
   if (icon) {
     iconDiv = document.createElement("div");
-    iconDiv.style = "display: grid; place-content: center; height: 100%; width: auto;" ;
     iconDiv.innerHTML = icon;
   }
-  
+
   if (type === 'error') {
     iconDiv = document.createElement("div")
     iconDiv.innerHTML = '<i class="fa-solid fa-circle-exclamation"></i>'
@@ -40,10 +25,10 @@ function updateStatus({ type = 'log', icon = null, string, time = 5000, expire =
   if (type === 'warn') {
     iconDiv = document.createElement("div")
     iconDiv.innerHTML = '<i class="fa-solid fa-triangle-exclamation btn"></i>'
-  } 
+  }
   // if (type === 'success') {
-    // }
-    
+  // }
+
   if (iconDiv) {
     iconDiv.className = 'icon';
     msg.appendChild(iconDiv)
@@ -55,11 +40,9 @@ function updateStatus({ type = 'log', icon = null, string, time = 5000, expire =
   clearTimeout(statusTimeout)
   container.appendChild(msg);
   if (expire) {
-    statusTimeout = setTimeout(() => { container.textContent = '' }, time)
+    statusTimeout = setTimeout( async () => { container.textContent = '' }, time)
   }
 }
-
-//////
 
 function toggleFields() {
   const mediaType = document.getElementById("mediaType").value;
@@ -132,7 +115,15 @@ let opened = false;
 let aborted = false
 let initTimeout
 
-async function initWebSocket({ retries = 5, attempt = 0, timeoutMs = 15000 } = {}) {
+const WS_CONNECT_TIMEOUT  = 3_000;
+const WS_RETRY_DELAY      = 10_000;
+const SCRAPE_RETRY_DELAY  = 2_000;
+const STATUS_CLEAR_DELAY  = 5_000;
+const CLIENTID_WAIT_DELAY = 2_000;
+const CLIENTID_WAIT_MAX   = 10_000;
+
+
+async function initWebSocket({ retries = 5, attempt = 0} = {}) {
   console.log('initializing websocket connection', attempt)
   if (aborted) {
     updateStatus({ remove: true })
@@ -143,14 +134,14 @@ async function initWebSocket({ retries = 5, attempt = 0, timeoutMs = 15000 } = {
                     <div class="blink-dot"></div>
                     <div class="blink-dot blink"></div>
                   </div>`
-    updateStatus({type: 'log', icon,  string: 'Connected to server.' });
+    updateStatus({ type: 'log', icon, string: 'Connected to server.' });
     return
   }
   let RETRIES = retries;
   let ATTEMPTS = attempt
 
   if (attempt === 0) {
-    updateStatus({ type: 'log', string: '🔌 Establishing connection to server...' });
+    updateStatus({ type: 'log', icon: '🔌', string: 'Establishing connection to server...' });
   }
 
   const wsUrl = new URL(SERVER);
@@ -164,7 +155,7 @@ async function initWebSocket({ retries = 5, attempt = 0, timeoutMs = 15000 } = {
     if (!opened) {
       socket.close(); // triggers onclose
     }
-  }, timeoutMs);
+  }, WS_CONNECT_TIMEOUT);
 
   socket.onopen = () => {
     if (timedOut) return;
@@ -179,7 +170,7 @@ async function initWebSocket({ retries = 5, attempt = 0, timeoutMs = 15000 } = {
                     <div class="blink-dot"></div>
                     <div class="blink-dot blink"></div>
                   </div>`
-    updateStatus({type: 'log', icon,  string: 'Connected to server.' });
+    updateStatus({ type: 'log', icon, string: 'Connected to server.' });
     console.log('WebSocket connected');
   };
 
@@ -193,7 +184,7 @@ async function initWebSocket({ retries = 5, attempt = 0, timeoutMs = 15000 } = {
         const icon = `${parsed.status === 'queue' ? '📌'
           : parsed.status === 'running'
             ? '<i class="fa fa-spinner fa-spin"></i>' : ''}`
-        updateStatus({ type: 'log', icon,  string: parsed.message });
+        updateStatus({ type: 'log', icon, string: parsed.message });
       }
     } catch (err) {
       console.error('Failed to parse WebSocket message:', err);
@@ -220,11 +211,11 @@ async function initWebSocket({ retries = 5, attempt = 0, timeoutMs = 15000 } = {
       const icon = '<i class="fa-solid fa-sync fa-spin"></i> '
       const retryText = `Retrying... [${nextAttempt}/${RETRIES}]`;
       if (!retry) setTimeout(() => { updateStatus({ type: 'log', icon, string: retryText }) }, 2000)
-      if (retry) updateStatus({ type: 'log',icon,  string: retryText })
+      if (retry) updateStatus({ type: 'log', icon, string: retryText })
       retry = true
       initTimeout = setTimeout(() => {
-        initWebSocket({ retries: RETRIES, attempt: nextAttempt, timeoutMs })
-      }, 5000);
+        initWebSocket({ retries: RETRIES, attempt: nextAttempt})
+      }, WS_RETRY_DELAY);
     } else {
       updateStatus({ type: 'error', string: 'Server failed to connect.', expire: true });
     }
@@ -281,10 +272,10 @@ async function scrape() {
   const server_key = document.getElementById("server-key").value || "alpha";
 
   if ((mediaType === "movie" && (!name || !year)) || (mediaType === "tv" && (!name || !season))) {
-    const string = `${mediaType === "movie"
-        ? 'Movie requires both Name and Year.'
-        : 'TV Show requires both Name and Season.'
-      }`;
+    const string = `${ mediaType === "movie"
+      ? 'Movie requires both Name and Year.'
+      : 'TV Show requires both Name and Season.'
+    }`;
     updateStatus({ type: 'warn', string, expire: true });
     resetUI();
     return;
@@ -302,9 +293,10 @@ async function scrape() {
   if (!opened || !ws || ws.readyState !== WebSocket.OPEN) {
     updateStatus({ type: 'warn', string: 'Reconnecting to server...' });
     if (aborted) return
+    clearTimeout(initTimeout)
     initTimeout = setTimeout(async () => {
       await initWebSocket();
-    }, 2000)
+    }, SCRAPE_RETRY_DELAY)
   }
 
   // Wait for clientId with timeout fallback
@@ -317,10 +309,13 @@ async function scrape() {
           clearInterval(interval);
           resolve(true);
         }
-      }, 2000);
+      }, CLIENTID_WAIT_DELAY);
     });
 
-    const timeout = new Promise((_, reject) => setTimeout(() => reject(new Error("Timeout waiting for clientId")), 10000));
+    const timeout = new Promise((_, reject) => setTimeout(() => {
+        reject(new Error("Timeout waiting for clientId")), CLIENTID_WAIT_MAX
+      }
+    ));
 
     try {
       await Promise.race([
@@ -449,18 +444,20 @@ async function buildFileEntry(file) {
   const { size, index, quality, file_name } = file;
   let tr = document.querySelector(`.result-row[data-index="${index}"]`);
   const actionHTML = await buildActionHTML(file)
-
+  
   if (!tr) {
     tr = document.createElement('tr');
     tr.classList.add('result-row');
     tr.setAttribute('data-index', index);
+    tr.setAttribute('data-size', size);
+    tr.setAttribute('data-quality', quality);
 
     tr.innerHTML = `
       <td class="file-cell">
         <div class="file-name">${file_name}</div>
         <div class="file-flags">
           <p class="file-size">Size: ${size}</p>
-          <div> • </div>
+          <div> | </div>
           <p>Quality: ${quality || "Unknown"}</p>
         </div>
       </td>
