@@ -40,19 +40,25 @@ function updateStatus({ type = 'log', icon = null, string, time = 5000, expire =
   clearTimeout(statusTimeout)
   container.appendChild(msg);
   if (expire) {
-    statusTimeout = setTimeout( async () => { container.textContent = '' }, time)
+    statusTimeout = setTimeout(async () => { container.textContent = '' }, time)
   }
 }
 
 function toggleFields() {
   const mediaType = document.getElementById("mediaType").value;
-  const tvinfo = document.getElementById("tv-input");
+  const tvinfo = document.querySelectorAll(".tv-input");
   const yearinfo = document.getElementById("year-input");
   const limit = document.getElementById("maxsize")
   const isMovie = mediaType === "movie";
 
-  tvinfo.style.display = isMovie ? "none" : "flex";
   yearinfo.style.display = isMovie ? "flex" : "none";
+  if (isMovie) {
+    tvinfo.forEach(input => input.classList.add('hidden'));
+    yearinfo.classList.remove('hidden')
+  } else {
+    tvinfo.forEach(input => input.classList.remove('hidden'));
+    yearinfo.classList.add('hidden')
+  }
   limit.value = isMovie ? 12 : 4;
 }
 
@@ -115,30 +121,30 @@ let opened = false;
 let aborted = false
 let initTimeout
 
-const WS_CONNECT_TIMEOUT  = 3_000;
-const WS_RETRY_DELAY      = 10_000;
-const SCRAPE_RETRY_DELAY  = 2_000;
-const STATUS_CLEAR_DELAY  = 5_000;
+const WS_CONNECT_TIMEOUT = 3_000;
+const WS_RETRY_DELAY = 10_000;
+const SCRAPE_RETRY_DELAY = 2_000;
+const STATUS_CLEAR_DELAY = 5_000;
 const CLIENTID_WAIT_DELAY = 2_000;
-const CLIENTID_WAIT_MAX   = 10_000;
+const CLIENTID_WAIT_MAX = 50_000;
 
 
-async function initWebSocket({ retries = 5, attempt = 0} = {}) {
+async function initWebSocket({ retries = 5, attempt = 0 } = {}) {
   console.log('initializing websocket connection', attempt)
   if (aborted) {
     updateStatus({ remove: true })
     return
   }
   if (opened) {
-    const icon = `<div class="blink-container">
-                    <div class="blink-dot"></div>
-                    <div class="blink-dot blink"></div>
+    const icon = `<div class="pulse-container">
+                    <div class="pulse-dot"></div>
+                    <div class="pulse-dot pulse"></div>
                   </div>`
     updateStatus({ type: 'log', icon, string: 'Connected to server.' });
     return
   }
   let RETRIES = retries;
-  let ATTEMPTS = attempt
+  let ATTEMPT = attempt
 
   if (attempt === 0) {
     updateStatus({ type: 'log', icon: '🔌', string: 'Establishing connection to server...' });
@@ -162,13 +168,13 @@ async function initWebSocket({ retries = 5, attempt = 0} = {}) {
     aborted = false;
     opened = true;
     retry = false;
-    ATTEMPTS = 0;
+    ATTEMPT = 0;
     clearTimeout(timeout);
 
     ws = socket; // promote to global only after success
-    const icon = `<div class="blink-container">
-                    <div class="blink-dot"></div>
-                    <div class="blink-dot blink"></div>
+    const icon = `<div class="pulse-container">
+                    <div class="pulse-dot"></div>
+                    <div class="pulse-dot pulse"></div>
                   </div>`
     updateStatus({ type: 'log', icon, string: 'Connected to server.' });
     console.log('WebSocket connected');
@@ -200,12 +206,12 @@ async function initWebSocket({ retries = 5, attempt = 0} = {}) {
     aborted = false;
     clearTimeout(timeout);
     clientId = null;
-    if (opened && !retry) updateStatus({ type: 'warn', string: 'Server connection lost.', expire: true });
     if (!opened && !retry) updateStatus({ type: 'warn', string: 'Unable to connect.', expire: true });
+    if (opened && !retry) updateStatus({ type: 'warn', string: 'Server connection lost.', expire: true });
 
     opened = false
 
-    const nextAttempt = ATTEMPTS + 1;
+    const nextAttempt = ATTEMPT + 1;
     if (nextAttempt <= RETRIES) {
       console.warn(`Retrying WebSocket (${nextAttempt}/${RETRIES})...`);
       const icon = '<i class="fa-solid fa-sync fa-spin"></i> '
@@ -214,7 +220,7 @@ async function initWebSocket({ retries = 5, attempt = 0} = {}) {
       if (retry) updateStatus({ type: 'log', icon, string: retryText })
       retry = true
       initTimeout = setTimeout(() => {
-        initWebSocket({ retries: RETRIES, attempt: nextAttempt})
+        initWebSocket({ retries: RETRIES, attempt: nextAttempt })
       }, WS_RETRY_DELAY);
     } else {
       updateStatus({ type: 'error', string: 'Server failed to connect.', expire: true });
@@ -226,8 +232,8 @@ window.addEventListener('DOMContentLoaded', () => {
   bottomNavBar();
   setUpScrollEvents()
   initiateForm();
+  initWebSocket(); // Establish WebSocket connection once at page load
 });
-initWebSocket(); // Establish WebSocket connection once at page load
 
 async function scrape() {
   aborted = false
@@ -272,10 +278,10 @@ async function scrape() {
   const server_key = document.getElementById("server-key").value || "alpha";
 
   if ((mediaType === "movie" && (!name || !year)) || (mediaType === "tv" && (!name || !season))) {
-    const string = `${ mediaType === "movie"
+    const string = `${mediaType === "movie"
       ? 'Movie requires both Name and Year.'
       : 'TV Show requires both Name and Season.'
-    }`;
+      }`;
     updateStatus({ type: 'warn', string, expire: true });
     resetUI();
     return;
@@ -313,9 +319,9 @@ async function scrape() {
     });
 
     const timeout = new Promise((_, reject) => setTimeout(() => {
-        reject(new Error("Timeout waiting for clientId")), CLIENTID_WAIT_MAX
-      }
-    ));
+      reject(new Error("Timeout waiting for clientId"))
+    }, CLIENTID_WAIT_MAX)
+    );
 
     try {
       await Promise.race([
@@ -444,7 +450,7 @@ async function buildFileEntry(file) {
   const { size, index, quality, file_name } = file;
   let tr = document.querySelector(`.result-row[data-index="${index}"]`);
   const actionHTML = await buildActionHTML(file)
-  
+
   if (!tr) {
     tr = document.createElement('tr');
     tr.classList.add('result-row');

@@ -83,6 +83,7 @@ section {
   display: flex;
   gap: inherit;
   margin-top: 8px;
+  width: 100%;
 
   button {
     border: none !important;
@@ -90,6 +91,40 @@ section {
     font-weight: 600 !important;
   }
 }
+
+#form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: inherit;
+}
+
+.form-group {
+  min-width: 45%;
+  flex: 1 1;
+}
+
+.form-group:has(#name) {
+  min-width: 70%;
+}
+
+#form:has(#year-input.hidden) { 
+  .form-group:has(#maxsize) {
+    min-width: 108px;
+    max-width: 160px;
+  }
+}
+
+.tv-input {
+  display: flex;
+  gap: inherit;
+}
+
+#year-input.hidden,
+.tv-input.hidden {
+  display: none;
+  visibility: hidden;
+}
+
 
 #scrape {
   background: var(--color1) !important;
@@ -103,10 +138,6 @@ section {
   background: var(--error) !important;
 }
 
-#tv-input {
-  display: flex;
-  gap: inherit;
-}
 
 
 #status-info:not(:has(.message)) {
@@ -159,7 +190,7 @@ section {
     background: #072920;
   }
 
-  .blink-container {
+  .pulse-container {
     position: relative;
     display: flex;
     aspect-ratio: 1 / 1;
@@ -167,21 +198,21 @@ section {
     justify-content: center;
   }
 
-  .blink-dot {
+  .pulse-dot {
     height: 8px;
     aspect-ratio: 1 / 1;
     border-radius: 50%;
     background-color: rgb(16 185 129);
   }
 
-  .blink {
+  .pulse {
     position: absolute;
-    animation: blink 2s infinite forwards;
+    animation: pulse 2s infinite forwards;
   }
 }
 
 
-@keyframes blink {
+@keyframes pulse {
   0% {
     scale: 0.4;
     opacity: 1;
@@ -383,6 +414,10 @@ pre {
     font-weight: 300;
   }
 
+  .form-group:has(#name) {
+    min-width: 60%;
+  }
+
   .form-actions {
     margin-top: 4px;
     gap: 8px;
@@ -405,7 +440,7 @@ pre {
     }
 
     .icon {
-      font-size: 13px;
+      font-size: 13px !important;
     }
   }
 
