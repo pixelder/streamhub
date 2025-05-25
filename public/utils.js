@@ -1573,18 +1573,20 @@ function setUpScrollEvents() {
     const filter = document.querySelector('.button-container');
   
     const threshold = 56; //px
-    let end = (window.scrollY + 12 + window.innerHeight) >= (document.body.scrollHeight);
+    let end = (window.scrollY + 16 + window.innerHeight) >= (document.body.scrollHeight);
     let top =  window.scrollY <= threshold
   
     if (end) {
       bottomBar.classList.remove('detach', 'hidden')
+    } else {
+      bottomBar.classList.add('detach')
     }
     if (top) {
       header.classList.remove('detach')
+    } else {
+      header.classList.add('detach')
     }
-    if (!top && !end) {
-      [bottomBar, header].forEach(bar => bar.classList.add('detach'))
-    }
+
     if (window.scrollY > lastScrollY && !end) {
       // Scrolling down
       if (!isScrollingDown) {
