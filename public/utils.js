@@ -1573,7 +1573,7 @@ function setUpScrollEvents() {
     const filter = document.querySelector('.button-container');
   
     const threshold = 56; //px
-    let end = (window.scrollY + 20 + window.innerHeight) >= (document.body.scrollHeight);
+    let end = (window.scrollY + 12 + window.innerHeight) >= (document.body.scrollHeight);
     let top =  window.scrollY <= threshold
   
     if (end) {
