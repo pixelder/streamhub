@@ -1,3 +1,7 @@
+const API_KEY = "213d830aae3a2f7b67e37f157405a42e";
+const BASE_URL = 'https://api.tmdb.org/3';
+const IMAGE_300 = 'https://image.tmdb.org/t/p/w300';
+
 function changeValue(id, delta) {
   const input = document.getElementById(id);
   let value = parseFloat(input.value) || 0;
@@ -60,6 +64,7 @@ function toggleFields() {
     yearinfo.classList.add('hidden')
   }
   limit.value = isMovie ? 12 : 4;
+  document.querySelector('.suggestion-container')?.remove()
 }
 
 function initiateForm() {
@@ -74,6 +79,69 @@ function initiateForm() {
     if (submit) scrape();
     if (reset) resetFormFields(e.submitter)
   })
+
+  activeSearchResults(getActiveResults, { selector: '#name', minLength: 2, debounce: 1000})
+
+}
+
+let removeTimeout
+async function getActiveResults(query) {
+  if (query < 2) clearTimeout(removeTimeout)
+  const type = document.getElementById("mediaType").value
+  fetchSearchResults(query, type, 1).then( async (data) => {
+    sortByPopularity(data, type).then((data) => {
+      buildSuggestedResult(data, type)
+    })
+  })
+}
+
+async function buildSuggestedResult(data, type) {
+  const parent = document.getElementById('search-field')
+  let container = document.querySelector('.suggestion-container')
+  if (!container) {
+    container = document.createElement('div');
+    container.className = 'suggestion-container';
+  }
+  container.innerHTML = ''
+  clearTimeout(removeTimeout)
+  data.map(item => {
+    container.appendChild(buildResultHTML(item, type))
+  })
+  parent.appendChild(container)
+
+  container.addEventListener('click', (e) => {
+    const result = e.target.closest('.result')
+    if (!result) return
+    populateFields(result)
+    clearTimeout(removeTimeout)
+    removeTimeout = setTimeout(() => {
+      parent.removeChild(container)
+    }, Infinity);
+  },false)
+}
+
+function buildResultHTML(item, type) {
+		const result = document.createElement("div")
+		result.classList.add("result")
+		result.setAttribute("data-id", item.id)
+		result.setAttribute("data-name", item.name || item.title)
+    result.setAttribute("data-media-type", type)
+    result.setAttribute("data-year", extractYear(item.release_date) || '')
+		let IMG = '/assets/images/no-image-transparent-dark.svg'
+    if (item.poster_path) IMG = `${IMAGE_300 + item.poster_path}`
+		result.innerHTML = `<div class="img-container"><img src='${IMG}' loading="lazy" alt=""></div><p>${item.name || item.title}</p>`
+		return result
+}
+
+async function sortByPopularity(data, type) {
+  data.sort((a, b) => popularity(b, type) - popularity(a, type))
+  data.filter(item => popularity(item, type) > 0.01);
+  return data
+}
+
+async function populateFields(item) {
+  document.getElementById('name').value = item.dataset.name
+  document.getElementById('year').value = item.dataset.year
 }
 
 function resetUI() {
