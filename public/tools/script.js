@@ -86,11 +86,12 @@ function initiateForm() {
 
 async function getActiveResults(query) {
   if (query.length < 2) {
-    document.querySelector('.suggestion-container').remove()
+    document.querySelector('.suggestion-container')?.remove()
     return
   }
   const type = document.getElementById("mediaType").value
   fetchSearchResults(query, type, 1).then( async (data) => {
+    if (!data.length) return
     sortByPopularity(data, type).then((data) => {
       buildSuggestedResult(data, type)
     })
@@ -111,12 +112,13 @@ async function buildSuggestedResult(data, type) {
   })
   parent.appendChild(container)
 
-  container.addEventListener('click', (e) => {
+  parent.addEventListener('click', (e) => {
     const result = e.target.closest('.result')
-    if (!result) return
+    const xicon = e.target.closest('.x-icon')
+    if (!result && !xicon) return
     populateFields(result)
     container.remove()
-  },false)
+  }, false )
 }
 
 function buildResultHTML(item, type) {

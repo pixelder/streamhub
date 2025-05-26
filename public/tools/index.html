@@ -62,7 +62,7 @@
           </div>
           <div class="form-group">
             <label>Server</label>
-            <select id="server-key">
+            <select id="server-key" title="Alpha (recommended) - Fast results. Good for downloading.&#013;Bravo - Slow results. Good for streaming with vlc, mpv or other video player. ">
               <option value="alpha">Alpha</option>
               <option value="bravo">Bravo</option>
             </select>
@@ -71,6 +71,10 @@
             <label>Name</label>
             <div id="search-field">
               <input type="text" id="name" placeholder="e.g., Silo or Dune ">
+              <button type="reset" class="x-icon" for="name">
+                    <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+              </button>
+              </input>
             </div>
           </div>
           <div class="form-group">
@@ -89,7 +93,7 @@
               <input id="season" value="1" placeholder="0" min="1" >
             </div>
           </div>
-          <div class="tv-input form-group">
+          <div class="tv-input form-group hidden">
             <label>Episode (optional)</label>
             <div class="number-control">
               <button type="button" onclick="changeValue('episode', -1)">−</button>
@@ -97,12 +101,12 @@
               <input id="episode" placeholder="0" min="1">
             </div>
           </div>
-          <div id="year-input" class="form-group hidden">
-            <label>Year (for movies)</label>
+          <div id="year-input" class="form-group">
+            <label>Release Year</label>
             <div class="number-control">
               <button type="button" onclick="changeValue('year', -1)">−</button>
               <button type="button" onclick="changeValue('year', 1)">+</button>
-              <input id="year" placeholder="Year" min="0" value="2025">
+              <input id="year" placeholder="eg. 2025" min="1872" value="">
             </div>
           </div>
           <div class="form-actions">

@@ -110,8 +110,36 @@ section {
   flex: 1 1;
 }
 
+
 .form-group:has(#name) {
   min-width: 70%;
+
+  #name {
+    padding-inline-end: unset;
+    flex: 1;
+  }
+
+  .x-icon {
+    position: relative;
+    top: unset;
+    right: unset;
+    translate: unset;
+    rotate: unset;
+    width: unset !important;
+    height: 24px;
+    min-height: unset;
+    margin: 6px;
+    padding: 4px;
+    border-radius: 6px !important;
+    background: var(--color1) !important;
+    font-size: 13px !important;
+  }
+  
+  &:has(input:not(:placeholder-shown)) .x-icon {
+    pointer-events: all;
+    opacity: 1;
+    visibility: visible;
+  }
 }
 
 #form:has(#year-input.hidden) { 
@@ -132,7 +160,6 @@ section {
   visibility: hidden;
 }
 
-
 #scrape {
   background: var(--color1) !important;
 }
@@ -144,8 +171,6 @@ section {
 #reset {
   background: var(--error) !important;
 }
-
-
 
 #status-info:not(:has(.message)) {
   max-height: 0;
@@ -314,7 +339,6 @@ pre {
   text-align: left;
 }
 
-
 .results-table th {
   background: #242448;
 }
@@ -383,26 +407,33 @@ pre {
 }
 
 #search-field {
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
   width: 100%;
   background: #242433;
   border-radius: 8px;
   overflow: hidden;
   outline-color: transparent;
   transition: outline 0.2s;
-  
+
+  #name:focus {
+    border-color: transparent !important; 
+  }
+
+  &:has(#name:focus) {
+    outline: 1px solid var(--color1);
+  }
   &:has(.suggestion-container) {
     box-shadow: 0 0 8px 2px rgba(0, 0, 0, 0.2);
     
     #name {
       max-height: unset;
       height: 48px;
-
-      &:focus {
-        border-color: transparent !important; 
-      }
     }
-    &:has(#name:focus) {
-      outline: 1px solid var(--color1);
+
+    .x-icon {
+      margin: 12px;
     }
   }
 }
@@ -459,7 +490,6 @@ pre {
     }
 }
 
-
 @media (max-width: 767px) {
 
   section {
@@ -501,6 +531,10 @@ pre {
 
   .form-group:has(#name) {
     min-width: 60%;
+
+    .x-icon {
+      height: 20px;
+    }
   }
 
   .form-actions {
@@ -570,6 +604,10 @@ pre {
     &:has(.suggestion-container) {
       & #name {
         height: 36px;
+      }
+
+      .x-icon {
+        margin: 8px;
       }
     }
   }
