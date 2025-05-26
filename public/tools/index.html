@@ -70,12 +70,12 @@
           <div class="form-group">
             <label>Name</label>
             <!-- <div id="search-field"> -->
-              <label id="search-field">
-                <input type="text" id="name" placeholder="e.g., Silo or Dune ">
+              <div id="search-field">
+                <input type="text" id="name" placeholder="e.g., Silo or Dune">
                 <button class="x-icon" onclick="resetNameEntry()">
                   <i class="fa-solid fa-xmark" aria-hidden="true"></i>
                 </button>
-              </label>
+              </div>
             <!-- </div> -->
           </div>
           <div class="form-group">
@@ -83,7 +83,7 @@
             <div class="number-control">
               <button type="button" onclick="changeValue('maxsize', -0.1)">−</button>
               <button type="button" onclick="changeValue('maxsize', 0.1)">+</button>
-              <input id="maxsize" value="12" placeholder="No Limit" min="0">
+              <input id="maxsize" value="12" placeholder="No Limit" min="0" inputmode="decimal">
             </div>
           </div>
           <div class="tv-input form-group">
@@ -91,7 +91,7 @@
             <div class="number-control">
               <button type="button" onclick="changeValue('season', -1)">−</button>
               <button type="button" onclick="changeValue('season', 1)">+</button>
-              <input id="season" value="1" placeholder="0" min="1" >
+              <input id="season" value="1" placeholder="0" min="1" inputmode="numeric">
             </div>
           </div>
           <div class="tv-input form-group hidden">
@@ -99,7 +99,7 @@
             <div class="number-control">
               <button type="button" onclick="changeValue('episode', -1)">−</button>
               <button type="button" onclick="changeValue('episode', 1)">+</button>
-              <input id="episode" placeholder="0" min="1">
+              <input id="episode" placeholder="0" min="1" inputmode="numeric">
             </div>
           </div>
           <div id="year-input" class="form-group">
@@ -107,7 +107,7 @@
             <div class="number-control">
               <button type="button" onclick="changeValue('year', -1)">−</button>
               <button type="button" onclick="changeValue('year', 1)">+</button>
-              <input id="year" placeholder="eg. 2025" min="1872" value="">
+              <input id="year" placeholder="eg. 2025" min="1872" value="" inputmode="numeric">
             </div>
           </div>
           <div class="form-actions">
