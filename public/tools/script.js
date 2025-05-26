@@ -80,13 +80,15 @@ function initiateForm() {
     if (reset) resetFormFields(e.submitter)
   })
 
-  activeSearchResults(getActiveResults, { selector: '#name', minLength: 2, debounce: 1000})
+  activeSearchResults(getActiveResults, { selector: '#name', minLength: 0, debounce: 1000})
 
 }
 
-let removeTimeout
 async function getActiveResults(query) {
-  if (query < 2) clearTimeout(removeTimeout)
+  if (query.length < 2) {
+    document.querySelector('.suggestion-container').remove()
+    return
+  }
   const type = document.getElementById("mediaType").value
   fetchSearchResults(query, type, 1).then( async (data) => {
     sortByPopularity(data, type).then((data) => {
@@ -103,7 +105,7 @@ async function buildSuggestedResult(data, type) {
     container.className = 'suggestion-container';
   }
   container.innerHTML = ''
-  clearTimeout(removeTimeout)
+  container.remove()
   data.map(item => {
     container.appendChild(buildResultHTML(item, type))
   })
@@ -113,10 +115,7 @@ async function buildSuggestedResult(data, type) {
     const result = e.target.closest('.result')
     if (!result) return
     populateFields(result)
-    clearTimeout(removeTimeout)
-    removeTimeout = setTimeout(() => {
-      parent.removeChild(container)
-    }, Infinity);
+    container.remove()
   },false)
 }
 
