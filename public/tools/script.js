@@ -123,7 +123,7 @@ async function buildSuggestedResult(data, type) {
 }
 
 function buildResultHTML(item, type) {
-		const result = document.createElement("div")
+		const result = document.createElement("button")
 		result.classList.add("result")
 		result.setAttribute("data-id", item.id)
 		result.setAttribute("data-name", item.name || item.title)
