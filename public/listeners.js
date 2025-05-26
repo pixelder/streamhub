@@ -9,7 +9,7 @@ let wasEditing = false
 function globalAddEventListener (event) {
   const editing =  event.target.closest('.selectable.active') || event.target.querySelector('.selectable.active')
   const modal = document.getElementById('info-modal');
-  const modalActive = modal.getAttribute('active') !== null;
+  const modalActive = modal?.getAttribute('active') !== null;
   
   if (editing && !modalActive) return
   
