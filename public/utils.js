@@ -1337,23 +1337,28 @@ function shareItem(mediaType, id, name) {
   });
 }
 
-let toastTimeout
 function toastMessage({el, string, time}) {
-  const message = document.createElement('div')
-  message.classList.add('temp-message')
+  let message = document.querySelector('.temp-message')
+  message?.remove()
+  if (!message) {
+    message = document.createElement('div');
+    message.className = 'temp-message';
+  }
   message.innerHTML = `<p>${string}</p>`
   const rect = el.getBoundingClientRect();
-  const x = rect.left + window.scrollX;
-  const y = rect.top + window.scrollY;
-  message.setAttribute('style', `top: ${y}px; left: ${x + 50}px;` );
+  const x = parseFloat(( rect.left + window.scrollX ).toFixed(0));
+  const y = parseFloat(( rect.top + window.scrollY ).toFixed(0));
+  message.setAttribute('style', `top: ${y + 40}px; left: ${x - 70}px;`);
   document.body.appendChild(message)
-  message.onclick = () => {
-    clearTimeout(toastTimeout)
-    document.body.removeChild(message)
-  }
-  toastTimeout = setTimeout(() => {
+
+  let toastTimeout = setTimeout(() => {
     document.body.removeChild(message)
   }, time);
+
+  message.onclick = () => {
+    clearTimeout(toastTimeout)
+    message.remove()
+  }
 } 
 
 async function getNextEpisode(id, sno, eno) {
