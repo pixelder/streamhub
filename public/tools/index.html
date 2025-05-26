@@ -69,20 +69,21 @@
           </div>
           <div class="form-group">
             <label>Name</label>
-            <div id="search-field">
-              <input type="text" id="name" placeholder="e.g., Silo or Dune ">
-              <button type="reset" class="x-icon" for="name">
-                    <i class="fa-solid fa-xmark" aria-hidden="true"></i>
-              </button>
-              </input>
-            </div>
+            <!-- <div id="search-field"> -->
+              <label id="search-field">
+                <input type="text" id="name" placeholder="e.g., Silo or Dune ">
+                <button class="x-icon" onclick="resetNameEntry()">
+                  <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+                </button>
+              </label>
+            <!-- </div> -->
           </div>
           <div class="form-group">
             <label>Size Limit (GB)</label>
             <div class="number-control">
               <button type="button" onclick="changeValue('maxsize', -0.1)">−</button>
               <button type="button" onclick="changeValue('maxsize', 0.1)">+</button>
-              <input id="maxsize" value="10" placeholder="No Limit" min="0">
+              <input id="maxsize" value="12" placeholder="No Limit" min="0">
             </div>
           </div>
           <div class="tv-input form-group">

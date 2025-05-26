@@ -77,12 +77,14 @@ function initiateForm() {
     const submit = e.submitter.id === 'scrape'
     const reset = e.submitter.id === 'reset'
     if (submit) scrape();
-    if (reset) resetFormFields(e.submitter)
+    if (reset) resetFormEntries(e.submitter)
   })
 
   activeSearchResults(getActiveResults, { selector: '#name', minLength: 0, debounce: 1000})
 
 }
+
+
 
 async function getActiveResults(query) {
   if (query.length < 2) {
@@ -114,8 +116,7 @@ async function buildSuggestedResult(data, type) {
 
   parent.addEventListener('click', (e) => {
     const result = e.target.closest('.result')
-    const xicon = e.target.closest('.x-icon')
-    if (!result && !xicon) return
+    if (!result) return
     populateFields(result)
     container.remove()
   }, false )
@@ -157,7 +158,12 @@ function resetUI() {
   cancel_btn.innerText = 'Reset';
 }
 
-function resetFormFields(btn) {
+function resetNameEntry() {
+  document.querySelector('#name').value = ''
+  document.querySelector('.suggestion-container')?.remove()
+}
+
+function resetFormEntries(btn) {
   if (btn.classList.contains('cancel')) return;
   ["name", "season", "episode", "year"].forEach(id => {
     const el = document.getElementById(id);
