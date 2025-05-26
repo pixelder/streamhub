@@ -297,6 +297,7 @@ async function initWebSocket({ retries = 5, attempt = 0 } = {}) {
 
 window.addEventListener('DOMContentLoaded', () => {
   bottomNavBar();
+  setActiveIcon('tools')
   setUpScrollEvents()
   initiateForm();
   initWebSocket(); // Establish WebSocket connection once at page load
