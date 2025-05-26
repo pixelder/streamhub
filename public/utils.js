@@ -45,7 +45,7 @@ function convertDate(dateString) {
 function runtime(min, type = 'short') {
   const hour = Math.floor(min / 60.0);
   const minute = min - hour * 60.0;
-  if ( type === 'long') return (hour !== 0 ? `${hour} hour ` : '') + `${minute} minutes` 
+  if (type === 'long') return (hour !== 0 ? `${hour} hour ` : '') + `${minute} minutes`
   return (hour !== 0 ? `${hour}h` : '') + `${minute}m`;
 }
 
@@ -102,7 +102,7 @@ function populateSection(sectionId, items) {
   }
 }
 
-function getProgressInfo(id, mediaType = 'movie',logData = null) {
+function getProgressInfo(id, mediaType = 'movie', logData = null) {
   let logs = logData
   if (!logData) logs = getLogData('history');
 
@@ -121,7 +121,7 @@ function renderGridItems(items, type = null) {
       const id = item.id;
       const mediaType = item.media_type;
       const bookmark = logExists('bookmarks', id, mediaType);
-      const progress = getProgressInfo(id, mediaType,logs)
+      const progress = getProgressInfo(id, mediaType, logs)
       const ring = type === 'vertical' ? 1 : null;
       const title = item.title || item.name;
       const rating = truncate(item.vote_average, 1);
@@ -301,8 +301,8 @@ function openModal(event) {
   if (modalController) modalController.abort();
   modalController = new AbortController();
   const signal = modalController.signal;
-  if (signal.aborted) return; 
-  
+  if (signal.aborted) return;
+
   const content = event.target.closest('.grid-item, .profile-item');
   const id = content?.dataset.id;
   const mediaType = content?.dataset?.mediaType ?? content?.closest('section')?.dataset?.type;
@@ -313,14 +313,14 @@ function openModal(event) {
     return;
   }
 
-  ['#header' , '.bottom-bar'].forEach(selector => {
+  ['#header', '.bottom-bar'].forEach(selector => {
     const bar = document.querySelector(selector)
     if (bar.classList.contains('detach')) bar.classList.add('hidden')
   })
 
   fetchMetaData(mediaType, id, null, credits)
     .then(({ mediaType, data }) => {
-      if (signal.aborted) return; 
+      if (signal.aborted) return;
       displayModal(mediaType, data);
     })
     .catch((error) => {
@@ -388,7 +388,7 @@ function displayModal(mediaType, data) {
     const sno = isViewingDetails ? userData?.sno : null;
     const eno = isViewingDetails ? userData?.eno : null;
     modalContent.style.height = !isMobile() ? '32rem' : '70%';
-   
+
     tvContent(data, sno, eno, 'modal')
       .then((season) => {
         const tvButtons = document.querySelector('.tv-actions');
@@ -455,7 +455,7 @@ function buildMediaDetailsHTML(data, mediaType, contentLogoHTML) {
   if (releaseInfo(data, mediaType) !== null) released = false;
 
   const progress = getProgressInfo(data.id, mediaType);
-  const timeLeft =  data.runtime - Math.floor(data.runtime * Number(progress) / 100 );
+  const timeLeft = data.runtime - Math.floor(data.runtime * Number(progress) / 100);
   const watch_progress = `${runtime(timeLeft, 'long')} remaining`;
 
   const detailsBodyHTML = `
@@ -469,7 +469,7 @@ function buildMediaDetailsHTML(data, mediaType, contentLogoHTML) {
           <p data-title="${data.vote_count} votes">
           ${rating
             ? `<i class="fa-solid fa-star"></i>
-              ${rating}`
+                    ${rating}`
             : `<img class="nostar" src="assets/icons/nostar.svg">`
           }
           </p>
@@ -495,10 +495,10 @@ function buildMediaDetailsHTML(data, mediaType, contentLogoHTML) {
     ${released ? '' : releaseInfo(data, mediaType)}
   </div>
   ${progress !== Number(0)
-    ? progress === 100 
-      ? '<p class="watched-check"><i class="fa-solid fa-check"></i> Watched</p>' 
-      : `<p class="remaining-time">${watch_progress}</p>` 
-    : '' 
+      ? progress === 100
+        ? '<p class="watched-check"><i class="fa-solid fa-check"></i> Watched</p>'
+        : `<p class="remaining-time">${watch_progress}</p>`
+      : ''
     }
   `;
   return detailsBodyHTML;
@@ -733,13 +733,13 @@ function insertMovieActions(data, mediaType) {
       ${released
       ? `<button class="watch-btn ${watched ? 'watched' : ''}" title="watch movie" data-name="${name}" data-id="${data.id}">
           <i class="fa-solid fa-play"></i>
-          ${progress !== Number(0)  
-            ? watched 
-              ? 'Rewatch' 
+          ${progress !== Number(0)
+            ? watched
+              ? 'Rewatch'
               : `Resume
-                <div class="progress-indicator" style="--progress: ${progress};"></div>`
-            : 'Watch'
-          }
+                    <div class="progress-indicator" style="--progress: ${progress};"></div>`
+              : 'Watch'
+            }
         </button>`
       : ''}
       ${setUpModalActions(data, mediaType)}
@@ -816,7 +816,7 @@ function initializeModalListeners(mediaType, data, modalContent, details) {
 function watchProgress(progress, ring = null) {
   if (progress < 5) return ''
   if (ring) {
-    if ( progress === 100 ) {
+    if (progress === 100) {
       return `
         <div class="progress-wrapper watched">
           <div class="progress-ring" id="progressRing" style="background: conic-gradient(var(--success) 360deg, var(--color1) 0deg);">
@@ -1331,13 +1331,13 @@ function shareItem(mediaType, id, name) {
     } catch (err) {
       const msg = 'Copied link to clipboard!';
       console.log(msg);
-      toastMessage({el: btn, string: msg, time: 3000})
+      toastMessage({ el: btn, string: msg, time: 3000 })
       await navigator.clipboard.writeText(shareData.url);
     }
   });
 }
 
-function toastMessage({el, string, time}) {
+function toastMessage({ el, string, time }) {
   let message = document.querySelector('.temp-message')
   message?.remove()
   if (!message) {
@@ -1346,8 +1346,8 @@ function toastMessage({el, string, time}) {
   }
   message.innerHTML = `<p>${string}</p>`
   const rect = el.getBoundingClientRect();
-  const x = parseFloat(( rect.left + window.scrollX ).toFixed(0));
-  const y = parseFloat(( rect.top + window.scrollY ).toFixed(0));
+  const x = parseFloat((rect.left + window.scrollX).toFixed(0));
+  const y = parseFloat((rect.top + window.scrollY).toFixed(0));
   message.setAttribute('style', `top: ${y + 40}px; left: ${x - 70}px;`);
   document.body.appendChild(message)
 
@@ -1359,7 +1359,7 @@ function toastMessage({el, string, time}) {
     clearTimeout(toastTimeout)
     message.remove()
   }
-} 
+}
 
 async function getNextEpisode(id, sno, eno) {
   const { data: currentSeason } = await fetchMetaData('tv', id, sno)
@@ -1493,44 +1493,50 @@ function bottomNavBar() {
   navbar.classList.add('detach')
   navbar ? navbar.innerHTML = `
     <ul>
-            <li><a href="/" id="home">
-                <i class="fa-solid fa-house"></i>
-                ${showTitle ? '<p>Home</p>' : ''}
-                </a>
-            </li>
-            <li><a href="javascript:void(0)" id="search" >
-                <i class="fa-solid fa-magnifying-glass"></i>
-                ${showTitle ? '<p>Search</p>' : ''}
-                </a>
-            </li>
-            <li><a href="/movie" id="movie">
-                    <i class="fa-solid fa-film"></i>
-                    ${showTitle ? '<p>Movies</p>' : ''}
-                </a></li>
-            <li><a href="/tv" id="tv">
-                    <i class="fa-solid fa-display"></i>                    
-                    ${showTitle ? '<p>TV</p>' : ''}
-                </a>
-            </li>
-            <li><a href="/library" id="library">
-                    <i class="fa-solid fa-folder-tree"></i>
-                    ${showTitle ? '<p>Library</p>' : ''}
-                </a>
-            </li>
-        </ul>
+      <li><a href="/" id="home">
+          <i class="fa-solid fa-house"></i>
+          ${showTitle ? '<p>Home</p>' : ''}
+          </a>
+      </li>
+      <!-- <li><a href="javascript:void(0)" id="search" >
+          <i class="fa-solid fa-magnifying-glass"></i>
+          ${showTitle ? '<p>Search</p>' : ''}
+          </a>
+      </li> -->
+      <li><a href="/movie" id="movie">
+              <i class="fa-solid fa-film"></i>
+              ${showTitle ? '<p>Movies</p>' : ''}
+          </a>
+      </li>
+      <li><a href="/tv" id="tv">
+              <i class="fa-solid fa-display"></i>                    
+              ${showTitle ? '<p>TV</p>' : ''}
+          </a>
+      </li>
+      <li><a href="/tools" id="tools">
+            <i class="fa-solid fa-screwdriver-wrench"></i>
+            ${showTitle ? '<p>Tools</p>' : ''}
+          </a>
+      </li>
+      <li><a href="/library" id="library">
+              <i class="fa-solid fa-folder-tree"></i>
+              ${showTitle ? '<p>Library</p>' : ''}
+          </a>
+      </li>
+    </ul>
   ` : '';
 
   // let lastActive = null
   navbar.querySelectorAll('a').forEach(link => {
     link.onclick = function () {
       const id = this.id
-      if (id === 'search') {
-        const input = document.querySelector('#search-input')
-        this.classList.toggle('active')
-        this.classList.contains('active') ? input.focus() : input.blur();
-        // navbar.querySelector(`#${lastActive}`).classList.toggle('active');
-        return
-      }
+      // if (id === 'search') {
+      //   const input = document.querySelector('#search-input')
+      //   this.classList.toggle('active')
+      //   this.classList.contains('active') ? input.focus() : input.blur();
+      //   // navbar.querySelector(`#${lastActive}`).classList.toggle('active');
+      //   return
+      // }
       setActiveIcon(id)
     }
   })
@@ -1570,17 +1576,17 @@ function setUpScrollEvents() {
   let lastScrollY = window.scrollY;
   let isScrollingDown = false;
   let hideTimeout;
-  
+
   window.addEventListener('scroll', () => {
-  
+
     const header = document.querySelector('header');
     const bottomBar = document.querySelector('.bottom-bar');
     const filter = document.querySelector('.button-container');
-  
+
     const threshold = 56; //px
     let end = (window.scrollY + 16 + window.innerHeight) >= (document.body.scrollHeight);
-    let top =  window.scrollY <= threshold
-  
+    let top = window.scrollY <= threshold
+
     if (end) {
       bottomBar.classList.remove('detach', 'hidden')
     } else {
@@ -1975,7 +1981,7 @@ function setUpExpandableSection() {
             const mediaType = section.querySelector(".media-switch .active").dataset.type;
             selectedNetworks = [tab.dataset.network]
             selectedProviders = [tab.dataset.provider]
-            loadDiscoverContent( mediaType, 'discover-streaming');
+            loadDiscoverContent(mediaType, 'discover-streaming');
             return
           }
           const url = sectionURLs[section.id];
@@ -2029,7 +2035,7 @@ function setUpExpandableSection() {
       // section.classList.remove('expanded')
       // section.classList.toggle('collapsed')
       // document.getElementById('header').classList.remove('hidden');
-      
+
       // if (!section.classList.contains('user-content')) {
       //   container.querySelectorAll('.grid-item').forEach((item, index) => {
       //     if (index >= 20) item.remove();
@@ -2042,7 +2048,7 @@ function setUpExpandableSection() {
 
   document.querySelectorAll('.expandable .section-header ')
     .forEach(item => item.addEventListener('click', (e) => {
-      handleSectionExpansion(e)
-    })
+        handleSectionExpansion(e)
+      })
     )
 }
