@@ -756,7 +756,7 @@ body:has(.expandable.expanded) {
   max-width: 100%;
   height: fit-content;
   text-align: center;
-  padding: var(--padding1);
+  padding: 8px;
   border: 1px solid var(--color3);
   border-radius: var(--border-radius1);
   background-color: var(--color5);
@@ -1201,7 +1201,7 @@ body:has(.expandable.expanded) {
     color: #757592;
     border: 1px solid var(--color1);
     border-radius: var(--border-radius1);
-
+    
     label {
       font-size: 1.4rem;
       font-weight: 700;
@@ -1236,6 +1236,7 @@ body:has(.expandable.expanded) {
 .result-message.loading {
   background: var(--color5);
   margin: 1.2rem 0rem !important;
+  width: 100%;
 
   .message,
   hr {
