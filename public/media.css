@@ -535,7 +535,7 @@
     }
 
     .chip {
-      padding: var(--padding1);
+      padding-inline: var(--padding1);
       font-size: 12px;
       height: 30px;
     }
