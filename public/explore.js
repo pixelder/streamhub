@@ -5,186 +5,60 @@ let isMovie = null;
 
 function loadExplorePage(mediaType) {
 	document.querySelector('title').innerText = `Browse ${mediaType !== 'tv' ? mediaType : `serie`}s | Pixelstream`;
-	console.log(loc());
 	!loc().includes(`/${mediaType}`) ? window.history.pushState('', '', `/${mediaType}`) : '';
 	window.addEventListener('popstate', function () {
 		console.log('active');
 		window.location.href = `${loc()}`;
 	});
 	loc();
+
+	let params = []
+	const urlParams = new URLSearchParams(window.location.search);
+  if (Number(urlParams.size)) {
+    for (let [key, value] of urlParams.entries()) {
+      params[key] = value
+    }
+  }
 	isBrowsing = true;
-	isMovie = mediaType === 'movie' ? true : false;
-	const main = document.querySelector('main');
-	const sectionTitle = mediaType === 'tv' ? 'Browse TV Series' : 'Browse Movies';
-	main.innerHTML = `
-        <section id="browse-${mediaType}s" data-type="${mediaType}">
-            <div class="section-header">
-            <h2>${sectionTitle}</h2>
-            </div>
-            <div class="filters">
-                <div class="form-group">
-                    <div class="flow-row">
-                        <label>Genre</label>
-                        <div class="genre-counter"><p></p></div>
-                    </div>
-                    <div class="genre-chips" id="genreChips">
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label>Sort by</label>
-                    <div class="flow-row">
-                        <select id="sort">
-                            <option value="popularity" "selected">Popular</option>
-                            <option value="vote_average">Rating</option>
-                            <option value="${isMovie ? 'primary_release_date' : 'first_air_date'}">Date</option>
-                            <option value="${isMovie ? 'title' : 'name'}">Name</option>
-                        </select>
-                        <label id="sort-order" class="selectable active">
-                            <input type="checkbox" />
-                            <span class="checkbox-button">
-                            <i class="fa-solid fa-sort-down active"></i> 
-                            <i class="fa-solid fa-sort-up passive"></i>
-                            </span>
-                        </label>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label>Year</label>
-                    <input type="number" id="year-picker" min="1888" max="2099" step="1" value="" placeholder="eg. 2024" />
-                </div>
-                <div class="form-group">
-                    <label>Minimum Rating</label>
-                    <div class="min-rating">
-                        <input id="min-rating-number" type="number" value="5" min="0" step="0.1" max="10">
-                        <p>0</p>
-                        <input id="min-rating-slider" type="range" value="5" min="0" step="0.1" max="10">
-                        <p>10</p>
-                    </div>
-                </div>
-								<div class="form-group button-container">
-									<button class="go-up"><i class="fa-solid fa-angles-up"></i></button>
-									<button class="filter-button"><i class="fa-solid fa-filter"></i></button>
-								</div>
-                <div class="filter-overlay"></div>
-                <div class="filter-menu">
-                    <h3>More Filters</h3>
-										<button class="close-btn">
-											<svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="32" height="32" viewBox="0,0,256,256">
-											<g fill="#e6e6fa" fill-rule="nonzero" stroke="none" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="10" stroke-dasharray="" stroke-dashoffset="0" font-family="none" font-weight="none" font-size="none" text-anchor="none" style="mix-blend-mode: normal"><g transform="scale(8,8)"><path d="M7.21875,5.78125l-1.4375,1.4375l8.78125,8.78125l-8.78125,8.78125l1.4375,1.4375l8.78125,-8.78125l8.78125,8.78125l1.4375,-1.4375l-8.78125,-8.78125l8.78125,-8.78125l-1.4375,-1.4375l-8.78125,8.78125z"></path></g></g>
-											</svg>
-										</button>
-                    <div class="form-group">
-                        <div class="flow-row">
-													<label for="search-with-cast">Cast</label>
-													<div class="caution">
-														<i class="fa-solid fa-triangle-exclamation"></i>
-														<p>For Movies Only</p>
-													</div>
-												</div>
-                        <div class="search-container" id="search-with-cast" type="person">
-                            <div class="search-box">
-															<form class="flow-row" action="javascript:void(0);">
-																<input id="cast-input" type="search" placeholder="eg. Tom Cruise">
-																<button type="reset" class="x-icon" >
-																	<i class="fa-solid fa-xmark" aria-hidden="true"></i>
-																</button>
-															</form>
-															<div class="select-container">
-															</div>
-															<div class="result-container">
-																	<div class="results">
-																	</div>
-															</div>
-														</div>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="search-with-company">Production Company</label>
-                        <div class="search-container" id="search-with-company" type="company">
-                            <div class="search-box">
-															<form class="flow-row" action="javascript:void(0);">	
-																<input id="company-input" type="search" placeholder="eg. Studio Ghibli">
-																<button type="reset" class="x-icon" >
-																	<i class="fa-solid fa-xmark" aria-hidden="true"></i>
-																</button>
-															</form>
-															<div class="select-container">
-															</div>
-															<div class="result-container">
-																	<div class="results">
-																	</div>
-															</div>
-														</div>
-                        </div>
-                    </div>
-                    <div class="flow-row">
-											<div class="form-group">
-													<label for="countryFilter">Country</label>
-													<select id="countryFilter">
-															<option value="">Any</option>
-													</select>
-											</div>
-											<div class="form-group">
-													<label for="languageFilter">Language</label>
-													<select id="languageFilter">
-															<option value="">Any</option>
-													</select>
-											</div>
-                    </div>
-                    <div class="form-group">
-                        <label for="min-vote-slider">Minimum vote count</label>
-                        <div class="vote-count">
-                            <input id="min-vote-number" type="number" value="200" min="0" step="10" max="1000">
-                            <p>0</p>
-                            <input id="min-vote-slider" type="range" value="200" min="0" step="1" max="1000">
-                            <p>1000</p>
-                        </div>
-                    </div>
-										<div class="form-group menu-buttons">
-											<button class="apply">Apply</button>
-											<button class="reset-button" onclick=filterReset()>Reset</button>
-										</div>
-                </div>
-            </div>
-            <div class="grid-container vertical-card"></div>
-            <div class="result-message">
-                <label>Loading...</label>
-                <hr class="hr">
-                <div class="message">
-                    <p>Have you tried</p>
-                    <ul>
-                        <li>lowering the <strong>minimum vote count</strong> ?</li>
-                        <li>lowering the <strong>minimum rating value</strong> ?</li>
-                        <li>selecting the proper country or language ?</li>
-                    </ul>  
-                </div>  
-            </div>
-        </section>
-        <div class="modal-overlay"></div>
-            <div id="info-modal" class="modal">
-                <div class="modal-content">
-                    <div id="modal-details">
-                        <!-- Dynamic content will be injected here -->
-                    </div>
-                </div>
-            </div>
-    `;
+	buildExploreHtml(mediaType).then(() => {
 
-	filterReset()
-	loadDiscoverContent(mediaType, `browse-${mediaType}s`);
+		setFilterVariables(params) // reset all filters variable to default set values
 
-	fetchGenres(mediaType);
-	fetchCountriesAndLanguages();
+		renderGenreChips(mediaType, params?.genre); // builds genre chips with name and id from api
+		renderNationAndLangSelector(params);
+
+		loadDiscoverContent(mediaType, `browse-${mediaType}s`); // load initial content
+
+		setupFilterParams();
+
+		searchResultFunction("#search-with-cast")
+		searchResultFunction("#search-with-company")
+
+		setupExploreEventListeners(mediaType)
+	})
+
+}
+
+async function setupExploreEventListeners(mediaType) {
+
+	const filters = document.querySelector('.filters');
+
+	['click', 'change'].forEach(eventType => {
+		filters.removeEventListener(eventType, filterEventHandler);
+		filters.addEventListener(eventType, filterEventHandler);
+	});
 
 	let pageWait
-
 	window.addEventListener("scroll", () => {
 		if (window.scrollY > 260) {
 			document.querySelector('.button-container').classList.add('detach')
 		} else {
 			document.querySelector('.button-container').classList.remove('detach')
 		}
-		if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 250) {
+
+		const threshold = 180;
+		if (window.scrollY + document.body.offsetHeight  >= document.querySelector('main').clientHeight - threshold) {
+
 			console.log('hit border', currentPage)
 			if (!pageEnd) {
 				clearTimeout(pageWait)
@@ -195,18 +69,6 @@ function loadExplorePage(mediaType) {
 			}
 		}
 	})
-
-	filterParams();
-
-	const filters = document.querySelector('.filters');
-
-	['click', 'change'].forEach(eventType => {
-		filters.removeEventListener(eventType, filterEvents);
-		filters.addEventListener(eventType, filterEvents);
-	});
-
-	searchResultFunction("#search-with-cast")
-	searchResultFunction("#search-with-company")
 
 	document.body.addEventListener("focus", function (event) {
 		if (!event.target.closest('.search-container')) return
@@ -225,11 +87,169 @@ function loadExplorePage(mediaType) {
 		console.log('blur')
 		document.body.classList.remove("keyboard");
 	}, true);
-	//filters.dispatchEvent(/* new Event('click') ||  */new Event('change', () => {console.log('hi')}));
 }
 
+async function buildExploreHtml(mediaType) {
+	isMovie = mediaType === 'movie' ? true : false;
+	const main = document.querySelector('main');
+	const sectionTitle = mediaType === 'tv' ? 'Browse TV Series' : 'Browse Movies';
+	main.innerHTML = `
+		<section id="browse-${mediaType}s" data-type="${mediaType}">
+			<div class="section-header">
+				<h2>${sectionTitle}</h2>
+			</div>
+			<div class="filters">
+				<div class="form-group">
+					<div class="flow-row">
+							<label>Genre</label>
+							<div class="genre-counter"><p></p></div>
+					</div>
+					<div class="genre-chips" id="genreChips">
+					</div>
+				</div>
+				<div class="form-group">
+						<label>Sort by</label>
+						<div class="flow-row">
+								<select id="sort">
+										<option value="popularity" "selected">Popular</option>
+										<option value="vote_average">Rating</option>
+										<option value="${isMovie ? 'primary_release_date' : 'first_air_date'}">Date</option>
+										<option value="${isMovie ? 'title' : 'name'}">Name</option>
+								</select>
+								<label id="sort-order" class="selectable active">
+										<input type="checkbox" />
+										<span class="checkbox-button">
+										<i class="fa-solid fa-sort-down active"></i> 
+										<i class="fa-solid fa-sort-up passive"></i>
+										</span>
+								</label>
+				</div>
+			</div>
+			<div class="form-group">
+				<label>Year</label>
+				<input type="number" id="year-picker" min="1888" max="2099" step="1" value="" placeholder="eg. 2024" />
+			</div>
+			<div class="form-group">
+				<label>Minimum Rating</label>
+				<div class="min-rating">
+						<input id="min-rating-number" type="number" value="5" min="0" step="0.1" max="10">
+						<p>0</p>
+						<input id="min-rating-slider" type="range" value="5" min="0" step="0.1" max="10">
+						<p>10</p>
+				</div>
+			</div>
+			<div class="form-group button-container">
+				<button class="go-up"><i class="fa-solid fa-angles-up"></i></button>
+				<button class="filter-button"><i class="fa-solid fa-filter"></i></button>
+			</div>
+			<div class="filter-overlay"></div>
+			<div class="filter-menu">
+				<h3>More Filters</h3>
+				<button class="close-btn">
+					<svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="32" height="32" viewBox="0,0,256,256">
+					<g fill="#e6e6fa" fill-rule="nonzero" stroke="none" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="10" stroke-dasharray="" stroke-dashoffset="0" font-family="none" font-weight="none" font-size="none" text-anchor="none" style="mix-blend-mode: normal"><g transform="scale(8,8)"><path d="M7.21875,5.78125l-1.4375,1.4375l8.78125,8.78125l-8.78125,8.78125l1.4375,1.4375l8.78125,-8.78125l8.78125,8.78125l1.4375,-1.4375l-8.78125,-8.78125l8.78125,-8.78125l-1.4375,-1.4375l-8.78125,8.78125z"></path></g></g>
+					</svg>
+				</button>
+				<div class="form-group">
+						<div class="flow-row">
+							<label for="search-with-cast">Cast</label>
+							<div class="caution">
+								<i class="fa-solid fa-triangle-exclamation"></i>
+								<p>For Movies Only</p>
+							</div>
+						</div>
+						<div class="search-container" id="search-with-cast" type="person">
+								<div class="search-box">
+									<form class="flow-row" action="javascript:void(0);">
+										<input id="cast-input" type="search" placeholder="eg. Tom Cruise">
+										<button type="reset" class="x-icon" >
+											<i class="fa-solid fa-xmark" aria-hidden="true"></i>
+										</button>
+									</form>
+									<div class="select-container">
+									</div>
+									<div class="result-container">
+											<div class="results">
+											</div>
+									</div>
+								</div>
+						</div>
+				</div>
+				<div class="form-group">
+					<label for="search-with-company">Production Company</label>
+					<div class="search-container" id="search-with-company" type="company">
+						<div class="search-box">
+							<form class="flow-row" action="javascript:void(0);">	
+								<input id="company-input" type="search" placeholder="eg. Studio Ghibli">
+								<button type="reset" class="x-icon" >
+									<i class="fa-solid fa-xmark" aria-hidden="true"></i>
+								</button>
+							</form>
+							<div class="select-container">
+							</div>
+							<div class="result-container">
+								<div class="results">
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="flow-row">
+					<div class="form-group">
+						<label for="countryFilter">Country</label>
+						<select id="countryFilter">
+								<option value="">Any</option>
+						</select>
+					</div>
+					<div class="form-group">
+						<label for="languageFilter">Language</label>
+						<select id="languageFilter">
+								<option value="">Any</option>
+						</select>
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="min-vote-slider">Minimum vote count</label>
+					<div class="vote-count">
+						<input id="min-vote-number" type="number" value="200" min="0" step="10" max="1000">
+						<p>0</p>
+						<input id="min-vote-slider" type="range" value="200" min="0" step="1" max="1000">
+						<p>1000</p>
+					</div>
+				</div>
+				<div class="form-group menu-buttons">
+					<button class="apply">Apply</button>
+					<button class="reset-button" onclick=setFilterVariables()>Reset</button>
+				</div>
+			</div>
+			</div>
+			<div class="grid-container vertical-card"></div>
+			<div class="result-message">
+					<label>Loading...</label>
+					<hr class="hr">
+					<div class="message">
+							<p>Have you tried</p>
+							<ul>
+									<li>lowering the <strong>minimum vote count</strong> ?</li>
+									<li>lowering the <strong>minimum rating value</strong> ?</li>
+									<li>selecting the proper country or language ?</li>
+							</ul>  
+					</div>  
+			</div>
+		</section>
+		<div class="modal-overlay"></div>
+		<div id="info-modal" class="modal">
+				<div class="modal-content">
+						<div id="modal-details">
+								<!-- Dynamic content will be injected here -->
+						</div>
+				</div>
+		</div> 
+	` ;
+	return new Promise((resolve) => resolve(true))
+}
 
-function filterParams(reset = null) {
+function setupFilterParams({ reset = false } = {}) {
 	const minVoteSlider = document.getElementById("min-vote-slider")
 	const minVoteNumber = document.getElementById("min-vote-number")
 	const minRateSlider = document.getElementById("min-rating-slider")
@@ -244,7 +264,7 @@ function filterParams(reset = null) {
 	const searchBox = document.querySelectorAll(".search-box input")
 
 	if (reset) {
-		// On reset
+		// On reset // after setFilterVariables()
 		sortBy.value = sortMode
 		checkbox.checked = false;
 		sortOrder = 'desc'
@@ -267,7 +287,7 @@ function filterParams(reset = null) {
 		return
 	}
 
-	// New values
+	// Connect the fields with variables
 	sortBy.oninput = function () {
 		sortMode = this.value
 		sortOrder = checkbox.checked ? 'asc' : 'desc'
@@ -311,8 +331,11 @@ function filterParams(reset = null) {
 
 }
 
-function filterReset() {
-	selectedGenres = []
+function setFilterVariables(params = null) {
+	const { genre, lang, reg } = params || '';
+	console.log(genre)
+
+	selectedGenres = genre ? [Number(genre)] : []
 	excludedGenres = []
 	currentPage = 1
 	sortMode = 'popularity'
@@ -322,32 +345,35 @@ function filterReset() {
 	minVoteCount = 200
 	minRate = 5
 	currentYear = null
-	selectedCountry = '';
-	selectedLanguage = '';
+	selectedCountry = reg || '';
+	selectedLanguage = lang || '';
 
-	filterParams(1);
+	setupFilterParams({ reset: true });
 	resetSection();
 	pageEnd = false;
 }
 
-function fetchGenres(mediaType) {
+async function renderGenreChips(mediaType, selected = null) {
 	const genreContainer = document.getElementById("genreChips");
-	const createChip = (genre, genreContainer, mediaType) => {
+
+	const createChip = (genre, genreContainer) => {
 		const chip = document.createElement('div');
 		chip.classList.add('chip');
 		chip.textContent = genre.name;
 		chip.dataset.id = genre.id;
+		if (chip.dataset.id.toString() === selected?.toString()) chip.classList.add('selected')
+
 		let clickTimer = null;
 
 		chip.addEventListener('click', () => {
 			if (clickTimer) {
 				clearTimeout(clickTimer);
 				clickTimer = null;
-				handleChipClick(genre.id, 'double', genreContainer, mediaType);
+				handleChipClick(genre.id, 'double', genreContainer);
 			} else {
 				clickTimer = setTimeout(() => {
 					clickTimer = null;
-					handleChipClick(genre.id, 'single', genreContainer, mediaType);
+					handleChipClick(genre.id, 'single', genreContainer);
 				}, 300);
 			}
 		});
@@ -358,15 +384,16 @@ function fetchGenres(mediaType) {
 	const url = `${GENRE_URL}/${mediaType}/list?api_key=${API_KEY}`
 	fetchFromURL(url).then((data) => {
 		data.genres.forEach(genre => {
-			createChip(genre, genreContainer, mediaType)
+			createChip(genre, genreContainer)
 		});
 	})
 
 	enableHorizontalWheelScroll(genreContainer, 2)
 }
 
-async function fetchCountriesAndLanguages() {
+async function renderNationAndLangSelector(params = null) {
 	// Fetch countries
+	const { reg, lang } = params
 	const counteryURL = `${BASE_URL}/configuration/countries?language=en-US&api_key=${API_KEY}`
 	const counteryList = ['AS', 'US', 'AU', 'GB', 'IE', 'JP', 'KO', 'IN', 'RU', 'MX', 'FR', 'DE',];
 	fetchFromURL(counteryURL).then((data) => {
@@ -377,6 +404,7 @@ async function fetchCountriesAndLanguages() {
 				const option = document.createElement('option');
 				option.value = country.iso_3166_1;
 				option.textContent = abbvText(country.english_name, 13);
+				if (option.value.toLowerCase() === reg?.toLowerCase()) option.setAttribute('selected', '')
 				countrySelect.appendChild(option);
 			}
 		});
@@ -396,6 +424,7 @@ async function fetchCountriesAndLanguages() {
 				const option = document.createElement('option');
 				option.value = language.iso_639_1;
 				option.textContent = language.english_name;
+				if (option.value.toLowerCase() === lang?.toLowerCase()) option.setAttribute('selected', '')
 				languageSelect.appendChild(option);
 			}
 		});
@@ -405,7 +434,7 @@ async function fetchCountriesAndLanguages() {
 	})
 }
 
-function handleChipClick(genreId, type, genreContainer, mediaType) {
+function handleChipClick(genreId, type, genreContainer) {
 	genreId = parseInt(genreId);
 
 	if (type === 'single') {
@@ -461,8 +490,7 @@ function resetSection() {
 	}
 }
 
-
-function filterEvents(event) {
+function filterEventHandler(event) {
 	const filterMenu = document.querySelector('.filter-menu');
 	const filterOverlay = document.querySelector('.filter-overlay');
 	if (event.type === 'click') {
