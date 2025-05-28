@@ -1357,7 +1357,7 @@ body:has(.expandable.expanded) {
     display: flex;
     width: fit-content;
     align-items: center;
-    padding: 8px 10px;
+    padding-inline: 10px;
     font-size: 0.875rem;
     text-wrap: nowrap;
     background-color: var(--color5);
@@ -2507,7 +2507,7 @@ body:has(.modal:is([active])) {
   z-index: -1;
   top: 0rem;
   right: 0rem;
-  height: 94%;
+  height: 96%;
   aspect-ratio: 16 / 9;
   opacity: var(--modal-backdrop-opacity);
   background-image: var(--modal-backdrop);
@@ -2515,7 +2515,7 @@ body:has(.modal:is([active])) {
   background-size: 100% 100%;
   background-position: 0rem 0rem;
   mask-image: url(assets/images/mask.png);
-  mask-size: 110% 118%;
+  mask-size: 116% 116%;
   mask-position: calc(100% + 1.8rem) -2.6rem;
   mask-repeat: no-repeat;
   transition: opacity 0.15s ease-in-out;
