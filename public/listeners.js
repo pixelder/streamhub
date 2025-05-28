@@ -40,7 +40,15 @@ function globalAddEventListener (event) {
         return;
       }
       if ( event.target.matches(".options-buttons")) {
-        event.target.closest('.grid-options')?.classList.toggle('open');
+        const options = event.target.closest('.grid-options')
+        const section = options.closest('section')
+        section.querySelectorAll('.grid-options').forEach(item => {
+          const open = options.classList.contains('open')
+          if (!open) {
+            item.classList.remove('open')
+          }
+        })
+        options?.classList.toggle('open');
         event.stopPropagation();
         return;
       }
