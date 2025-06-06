@@ -1517,38 +1517,33 @@ async function topNavBar() {
 
 async function bottomNavBar() {
   const navbar = document.querySelector('.bottom-bar')
-  const showTitle = true
+  const showLabel = true
   navbar.classList.add('detach')
   navbar ? navbar.innerHTML = `
     <ul>
       <li><a href="/" id="home">
           <i class="fa-solid fa-house"></i>
-          ${showTitle ? '<p>Home</p>' : ''}
+          ${showLabel ? '<p>Home</p>' : ''}
           </a>
       </li>
       <!-- <li><a href="javascript:void(0)" id="search" >
           <i class="fa-solid fa-magnifying-glass"></i>
-          ${showTitle ? '<p>Search</p>' : ''}
+          ${showLabel ? '<p>Search</p>' : ''}
           </a>
       </li> -->
-      <li><a href="/movie" id="movie">
-              <i class="fa-solid fa-film"></i>
-              ${showTitle ? '<p>Movies</p>' : ''}
-          </a>
-      </li>
-      <li><a href="/tv" id="tv">
-              <i class="fa-solid fa-display"></i>                    
-              ${showTitle ? '<p>TV</p>' : ''}
+      <li><a href="/explore" id="explore">
+              <i class="fa-solid fa-tower-cell"></i>
+              ${showLabel ? '<p>Explore</p>' : ''}
           </a>
       </li>
       <li><a href="/tools" id="tools">
-            <i class="fa-solid fa-screwdriver-wrench"></i>
-            ${showTitle ? '<p>Tools</p>' : ''}
+            <i class="fa-solid fa-toolbox"></i>
+            ${showLabel ? '<p>Tools</p>' : ''}
           </a>
       </li>
       <li><a href="/library" id="library">
               <i class="fa-solid fa-folder-tree"></i>
-              ${showTitle ? '<p>Library</p>' : ''}
+              ${showLabel ? '<p>Library</p>' : ''}
           </a>
       </li>
     </ul>
@@ -1611,7 +1606,7 @@ function isElementInView(element) {
 
 function backdropAnim(details, modalContent) {
   const scrollTop = details.scrollTop;
-  const opacity = 0.8 - Math.min(scrollTop / 360, 0.8);
+  const opacity = 1 - Math.min(scrollTop / 300, 1);
   modalContent.style.setProperty('--modal-backdrop-opacity', opacity);
 }
 
