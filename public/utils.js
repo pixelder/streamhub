@@ -1496,7 +1496,7 @@ async function topNavBar() {
           <div class="nav-sub-path">
             <div><a href="/explore?type=movie">Movies</a></div>
             <div><a href="/explore?type=tv">TV Shows</a></div>
-            <div><a href="/explore?type=nime">Anime</a></div>
+            <div><a href="/explore?type=anime">Anime</a></div>
           </div>
         </li>
         <li><a href="/#discover-streaming">What's Streaming</a></li>
