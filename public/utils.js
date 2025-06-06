@@ -134,7 +134,7 @@ function renderGridItems(items, type = null) {
       return `
          <div tabindex="0" class="grid-item" draggable="true" id="grid-item" data-id="${item.id}" data-media-type="${mediaType}">
            <div class="img-container">
-            <div class="grid-actions">
+            <div class="grid-actions bookmarks">
               <div class="grid-options ${bookmark ? 'open' : ''}">
                 <div tabindex="0" class="options-buttons">
                   <i class="options-icon fa-regular fa-bookmark"></i>
@@ -1496,7 +1496,7 @@ async function topNavBar() {
           <div class="nav-sub-path">
             <div><a href="/explore?type=movie">Movies</a></div>
             <div><a href="/explore?type=tv">TV Shows</a></div>
-            <div><a href="/explore?type=anime">Anime</a></div>
+            <div><a href="/explore?type=nime">Anime</a></div>
           </div>
         </li>
         <li><a href="/#discover-streaming">What's Streaming</a></li>
