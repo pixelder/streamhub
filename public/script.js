@@ -178,6 +178,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const path = window.location.pathname;
     const searchPath = window.location.search
     const params = {}
+  
     if (searchPath.length) {
       const URLPARAMS = new URLSearchParams(searchPath)
       for (let [key, value] of URLPARAMS.entries()) {
@@ -195,14 +196,12 @@ document.addEventListener('DOMContentLoaded', () => {
       setActiveIcon('home')
     }
     if (path.includes('explore')) return
-    window.onload = function() {
-      topNavBar()
-      bottomNavBar();
-      setUpScrollEvents()
-      fixLog()
-      loc();
-    }
   }
+  topNavBar()
+  bottomNavBar();
+  setUpScrollEvents()
+  fixLog()
+  loc();
   handleRouting();
 
   window.addEventListener('popstate', handleRouting);
