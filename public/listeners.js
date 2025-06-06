@@ -42,8 +42,8 @@ function globalAddEventListener (event) {
       }
       if ( event.target.matches(".options-buttons")) {
         const options = event.target.closest('.grid-options')
-        const section = options.closest('section')
-        section.querySelectorAll('.grid-options').forEach(item => {
+        document.querySelectorAll('.grid-options').forEach(item => {
+          if (item.closest('.bookmarks')) return
           const open = options.classList.contains('open')
           if (!open) {
             item.classList.remove('open')
