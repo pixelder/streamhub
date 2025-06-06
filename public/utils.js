@@ -1599,8 +1599,9 @@ function setUpScrollEvents() {
     const threshold = 56; //px
     let end = (window.scrollY + 16 + window.innerHeight) >= (document.body.scrollHeight);
     let top = window.scrollY <= threshold
+    const infScroll = document.querySelector('.result-message.loading')
 
-    if (end) {
+    if (end && !infScroll) {
       bottomBar.classList.remove('detach', 'hidden')
     } else {
       bottomBar.classList.add('detach')
