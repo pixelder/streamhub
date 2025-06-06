@@ -1551,13 +1551,28 @@ function setActiveIcon(button) {
 }
 
 function enableHorizontalWheelScroll(container, factor = 1) {
+  let hover = false
+  let hovering = false
+  let hoverTimeout
   const scrollEvent = (e) => {
+    if (!hover) return
     if (container.scrollWidth <= container.clientWidth) return
     e.preventDefault();
     container.scrollLeft += e.deltaY * factor;
   }
-  container.removeEventListener("wheel", scrollEvent);
   container.addEventListener("wheel", scrollEvent);
+  container.addEventListener('mouseover', () => {
+    if (hovering) return
+    hover = false
+    hovering = true
+    hoverTimeout = setTimeout(() => {
+      hover = true;
+    }, 500)
+  })
+  container.addEventListener('mouseleave', () => {
+    hovering = false
+    clearTimeout(hoverTimeout)
+  })
 }
 
 // Helper function to get element's position
