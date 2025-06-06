@@ -69,8 +69,9 @@ const providers = [
 ];
 
 window.onload = function () {
-  setUpScrollEvents()
+  topNavBar()
   bottomNavBar()
+  setUpScrollEvents()
 }
 
 async function loadWatchPage(mediaType, NAME = null, id, tvData = null) {

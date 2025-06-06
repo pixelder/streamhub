@@ -132,7 +132,8 @@ function renderProfile(items) {
     .join('');
 }
 
-window.onload = function () {
+window.addEventListener('DOMContentLoaded', () => {
+  // topNavBar() done in ejs
   bottomNavBar()
   setActiveIcon('search')
   setUpScrollEvents()
@@ -141,5 +142,4 @@ window.onload = function () {
     minLength : 3,
     debounce : 300
   })
-}
-
+})

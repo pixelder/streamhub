@@ -7,7 +7,7 @@ const OPTIONS = 'include_adult=false&include_null_first_air_dates=false&language
 
 let isBrowsing = false;
 
-function loadLibrary() {
+async function loadLibrary() {
   window.history.replaceState('','','/library')
   loadUserContent('history', 'history')
   loadUserContent('continue-watching', 'watching')
@@ -17,6 +17,7 @@ function loadLibrary() {
 
 window.onload = function() {
   loadLibrary()
+  topNavBar()
   bottomNavBar()
   setActiveIcon('library')
   setUpScrollEvents()

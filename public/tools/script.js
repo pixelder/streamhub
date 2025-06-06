@@ -303,9 +303,13 @@ async function initWebSocket({ retries = 5, attempt = 0 } = {}) {
   };
 }
 
-window.addEventListener('DOMContentLoaded', () => {
+window.onload = () => {
+  topNavBar();
   bottomNavBar();
   setActiveIcon('tools')
+}
+
+window.addEventListener('DOMContentLoaded', () => {
   setUpScrollEvents()
   initiateForm();
   initWebSocket(); // Establish WebSocket connection once at page load

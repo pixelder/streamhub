@@ -1484,8 +1484,38 @@ function whenInView(selector, callback) {
   }
 }
 
-// bottom nav
-function bottomNavBar() {
+async function topNavBar() {
+  const navbar = document.getElementById('header') 
+  if (!navbar) return
+  navbar.innerHTML = `
+    <nav>
+      <ul>
+        <li class="home"><a href="/"></a></li>
+        <li class="nav-path">
+          <a href="/explore">Explore</a>
+          <div class="nav-sub-path">
+            <div><a href="/explore?type=movie">Movies</a></div>
+            <div><a href="/explore?type=tv">TV Shows</a></div>
+            <div><a href="/explore?type=anime">Anime</a></div>
+          </div>
+        </li>
+        <li><a href="/#discover-streaming">What's Streaming</a></li>
+        <li><a href="/tools">Tools</a></li>
+        <li><a href="/library">Library</a></li>
+        <form class="search-bar" onsubmit="return handleSearch(event)">
+          <input type="search" id="search-input" placeholder="Search" />
+          <i class="search-icon fa-solid fa-magnifying-glass"></i>
+          <button type="reset" class="x-icon" id="search-button"><!-- onclick="handleSearch(event)" -->
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+        </form>
+
+      </ul>
+    </nav>
+  `
+}
+
+async function bottomNavBar() {
   const navbar = document.querySelector('.bottom-bar')
   const showTitle = true
   navbar.classList.add('detach')
