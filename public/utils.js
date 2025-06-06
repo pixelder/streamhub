@@ -296,19 +296,17 @@ async function fetchMetaData(mediaType = null, id = null, season = null, credits
 
 let modalController = null;
 
-function openModal(event) {
-
+function openModal(data) {
   if (modalController) modalController.abort();
   modalController = new AbortController();
   const signal = modalController.signal;
   if (signal.aborted) return;
 
-  const content = event.target.closest('.grid-item, .profile-item');
-  const id = content?.dataset.id;
-  const mediaType = content?.dataset?.mediaType ?? content?.closest('section')?.dataset?.type;
+  const id = data?.id;
+  const mediaType = data?.mediaType /*  ?? data?.closest('section')?.dataset?.type; */
   const credits = mediaType === 'person' ? 'combined_credits' : null;
   console.log(mediaType, id)
-  if (content && !mediaType || !id) {
+  if (data && !mediaType || !id) {
     console.error("Media type or ID not found");
     return;
   }

@@ -21,7 +21,8 @@ function globalAddEventListener (event) {
     if ((event.type === 'click' && !watchingOrHistory ||
         event.type === 'keydown' && event.key === 'Enter' && (!watchingOrHistory || event.shiftKey))) {
       if (!event.target.closest('.grid-options')) {
-        openModal(event);
+        console.log(loc())
+        openModal(gridItem.dataset);
         event.stopPropagation();
       } else {
         console.log('toggling bookmark')
@@ -72,7 +73,7 @@ function globalAddEventListener (event) {
         }
         if (event.target.closest('.view-details')) {
           isViewingDetails = true
-          openModal(event)
+          openModal(gridItem.dataset)
           event.stopPropagation();
         }
         if (event.target.closest('.mark-item')) {
@@ -87,6 +88,9 @@ function globalAddEventListener (event) {
   }
   if (modalActive) {
     if (event.key === 'Escape' || event.target.matches('#info-modal')) {
+      if (loc().includes('/movie?id=') || loc().includes('/tv?id=')) {
+        window.history.replaceState('', '', '/')
+      }
       document.getElementById('modal-details').innerHTML = '';
       modal.removeAttribute('active','');
       ['#header' , '.bottom-bar'].forEach(selector => {
