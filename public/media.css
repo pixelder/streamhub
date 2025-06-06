@@ -616,7 +616,7 @@
       gap: 0.36rem;
 
       input[type="number"] {
-        width: 2.2rem;
+        min-width: 2.2rem;
       }
 
       input[type="range"] {
