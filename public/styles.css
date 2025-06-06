@@ -157,7 +157,7 @@ header {
     color: #ff4747;
   }
 
-  nav ul li:nth-child(1) {
+  nav ul li.home {
     a::after {
       content: "Pixelstream";
       font-size: 1rem;
@@ -172,6 +172,46 @@ header {
       height: 1.8rem;
       aspect-ratio: 1 / 1;
     }
+  }
+
+  .nav-path {
+    position: relative;
+  }
+  
+  .nav-sub-path {
+    display: grid;
+    position: absolute;
+    border: 1px solid transparent;
+    text-wrap: nowrap;
+    padding: 4px;
+    gap: 4px;
+    z-index: 1;
+    border-radius: 6px;
+    min-width: 6rem;
+    max-height: 0px;
+    overflow: hidden;
+    opacity: 0;
+    translate: -12px;
+    transition: max-height 0.5s, opacity 0.15s, background 0.15s, border 0.15s;
+    
+    a {
+      color: var(--font-color1) !important;
+      font-size: 12px;
+      padding: 6px;
+      height: unset;
+      border-radius: 4px;  
+    }
+    
+    a:hover {
+      background: var(--color3);
+    }
+  }
+
+  .nav-path:hover .nav-sub-path {
+    max-height: 1000px;
+    opacity: unset;
+    background: var(--bg-color);
+    border-color: var(--color3);
   }
 }
 
@@ -1540,7 +1580,8 @@ body:has(.expandable.expanded) {
 
   input[type="number"] {
     height: 100%;
-    width: 4.2rem;
+    width: fit-content;
+    min-width: 4.2rem;
     max-height: 36px;
   }
 
@@ -2464,28 +2505,7 @@ body:has(.modal:is([active])) {
   box-sizing: border-box;
   position: relative;
   width: 58rem;
-  height: fit-c
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  ontent;
+  height: fit-content;
   /* max-height: 32rem; */
   padding: 32px;
   margin: auto;
@@ -2518,7 +2538,7 @@ body:has(.modal:is([active])) {
   mask-size: 116% 116%;
   mask-position: calc(100% + 1.8rem) -2.6rem;
   mask-repeat: no-repeat;
-  transition: opacity 0.15s ease-in-out;
+  transition: opacity 0.2s ease-in-out;
 }
 
 .close-btn {

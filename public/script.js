@@ -176,27 +176,31 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function handleRouting() {
     const path = window.location.pathname;
-    if (path === '/movie') {
-      loadExplorePage('movie');
-      bottomNavBar();
-      setActiveIcon('movie')
-      setUpScrollEvents()
-    } else if (path === '/tv') {
-      loadExplorePage('tv');
-      bottomNavBar();
-      setActiveIcon('tv')
-      setUpScrollEvents()
-    } else if (path === '' || path === '/') {
-      window.onload = function() {
-        bottomNavBar();
-        setActiveIcon('home')
-        setUpScrollEvents()
-        loadSections()
-        loadUserContent('continue-watching','watching');
-        setUpExpandableSection()
-        fixLog()
-        loc();
+    const searchPath = window.location.search
+    const params = {}
+    if (searchPath.length) {
+      const URLPARAMS = new URLSearchParams(searchPath)
+      for (let [key, value] of URLPARAMS.entries()) {
+        params[key] = value
       }
+    }
+    if (path === '/movie' || path === '/tv') {
+      params.mediaType = path.replace('/', '')
+      openModal(params)
+    } 
+    if (path === '/' || path === '') {
+      loadSections()
+      loadUserContent('continue-watching','watching');
+      setUpExpandableSection()
+      setActiveIcon('home')
+    }
+    if (path.includes('explore')) return
+    window.onload = function() {
+      topNavBar()
+      bottomNavBar();
+      setUpScrollEvents()
+      fixLog()
+      loc();
     }
   }
   handleRouting();

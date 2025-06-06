@@ -26,7 +26,7 @@
       }
     }
 
-    nav ul li:nth-child(1) {
+    nav ul li.home {
       display: flex;
 
       a:after {
