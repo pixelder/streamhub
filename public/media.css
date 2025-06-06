@@ -694,7 +694,7 @@
     }
 
     .grid-actions {
-      padding: 2px;
+      padding: 3px;
     }
 
     .grid-options {
@@ -708,6 +708,12 @@
 
       .flow-row {
         gap: 4px;
+      }
+
+      .options-menu {
+        p {
+          font-size: 11px;
+        }
       }
 
       .options-buttons {

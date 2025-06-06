@@ -518,7 +518,9 @@ section:has(.grid-item) .actions {
 
 .actions .delete-button {
   position: absolute;
-  color: #ff2c2c;
+  /* color: #ff2c2c; */
+  background: #2f111a;
+  color: #ff5855;
   opacity: 0;
   scale: 0;
   transition: scale 0.2s ease-in-out;
@@ -2253,7 +2255,11 @@ body:has(.filter-menu) {
       }
 
       .remove {
-        color: #ff2c2c;
+        /* color: #ff2c2c; */
+        color: #ff5855;
+        button {
+          background: #2f111a;
+        }
       }
     }
 
