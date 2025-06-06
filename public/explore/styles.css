@@ -1,6 +1,6 @@
 #explore-content {
   min-height: unset;
-  gap: 16px;
+  gap: 32px;
 }
 
 .explore-section {
@@ -52,12 +52,20 @@
 }
 
 @media (max-width: 767px) {
+  #explore-content {
+    gap: 20px;
+  }
   .explore-section {
     gap: 8px;
   }
 
   .cards-container {
     grid-template-columns: repeat(auto-fill, minmax(10rem, 1fr));
+    gap: 4px;
+  }
+
+  .explore-card {
+    border-radius: 6px;
   }
 
   .explore-card h3 {
