@@ -21,7 +21,9 @@ const CONFIG_PARAMS = [
 			'title' : 'Anime',
 			'type' : 'tv',
 		 	'lang' : 'ja',
-		 	'genre' : 16
+		 	'genre' : 16,
+			'reg' : 'JP',
+			'voteCount' : 10
 		}
 	},
 	{
@@ -30,7 +32,9 @@ const CONFIG_PARAMS = [
 			'title' : 'Anime Movies',
 			'type' : 'movie',
 		 	'lang' : 'ja',
-		 	'genre' : 16
+		 	'genre' : 16,
+			'reg' : 'JP',
+			'voteCount' : 10
 		}
 	},
 	{
@@ -274,7 +278,7 @@ async function buildExploreHtml(params) {
               <input id="min-vote-number" type="number" value="200" min="0" step="10">
               <p>0</p>
               <input id="min-vote-slider" type="range" value="200" min="0" step="1" max="1000">
-              <p>1000</p>
+              <p>1000+</p>
             </div>
           </div>
           <div class="form-group menu-buttons">
