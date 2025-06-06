@@ -1,0 +1,66 @@
+#explore-content {
+  min-height: unset;
+  gap: 16px;
+}
+
+.explore-section {
+  width: 100%;
+  display: grid;
+  gap: 12px;
+}
+
+.cards-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr));
+  gap: 8px;
+  width: 100%;
+}
+
+.explore-card {
+  display: grid;
+  place-content: center;
+  border: 1px solid var(--color3);
+  border-radius: 8px;
+  aspect-ratio: 16 / 9;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: border 0.2s, scale 0.2s;
+
+  h3 {
+    font-size: 24px;
+    text-shadow: 0 0 8px #000c;
+    font-weight: calc(8*100);
+    text-align: center;
+  }
+}
+
+.explore-card:hover {
+  border-color: var(--color2);
+  scale: 0.97;
+}
+
+.explore-card:not(:has(img)) {
+  background: var(--color5);
+}
+
+.backdrop {
+  mask-image: linear-gradient(20deg, #0006, #000e);
+  position: absolute;
+  width: 100%;
+  z-index: -1;
+}
+
+@media (max-width: 767px) {
+  .explore-section {
+    gap: 8px;
+  }
+
+  .cards-container {
+    grid-template-columns: repeat(auto-fill, minmax(10rem, 1fr));
+  }
+
+  .explore-card h3 {
+    font-size: 18px;
+  }
+}

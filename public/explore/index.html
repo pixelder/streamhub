@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title>Explore - Pixelstream</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <meta property="og:title" content="Pixelstream" />
+  <meta property="og:image" content="https://pixelstream.vercel.app/assets/meta/meta_dark.png">
+  <meta property="og:description" content="Watch your favorite movies and tv shows" />
+
+  <script src="https://kit.fontawesome.com/60a2eca232.js" crossorigin="anonymous" defer></script>
+
+  
+  <!-- global items -->
+  <link rel="stylesheet" href="/styles.css" type="text/css">
+  <link rel="stylesheet" href="/media.css" type="text/css">
+  <link rel="icon" href="/assets/icons/favicon.png" type="image/png">
+  <script src="/script.js" defer></script>
+  <script src="/utils.js" defer></script>
+  <script src="/history.js" defer></script>
+  <!-- <script src="/explore.js" defer></script> -->
+  <script src="/listeners.js" defer></script>
+
+  <!-- local items -->
+  <link rel="stylesheet" href="styles.css" type="text/css">
+  <script src="script.js" defer></script>
+
+</head>
+
+<body>
+  <script>0</script>
+  <!-- Top Navbar -->
+  <header id="header"></header>
+
+  <!-- Body Content -->
+  <main id="main-content" style="display: none;">
+
+    <section id="explore-content">
+      <div class="explore-section">
+        <div class="section-header">
+          <h2>Start Exploring</h2>
+        </div>
+        <div class="cards-container">
+          <div class="explore-card" data-type="movie">
+            <h3>Movies</h3>
+            <img class="backdrop" src="../assets/images/movies.jpg">
+          </div>
+          <div class="explore-card" data-type="tv">
+            <h3>TV Shows</h3>
+            <img class="backdrop" src="../assets/images/tvs.jpg">
+          </div>
+          <div class="explore-card" data-type="anime">
+            <h3>Anime</h3>
+            <img class="backdrop" src="../assets/images/anime.jpg">
+          </div>
+          <div class="explore-card" data-type="anime-movies">
+            <h3>Anime Movies</h3>
+            <img class="backdrop" src="../assets/images/anime_movie.jpg">
+          </div>
+        </div>
+      </div>
+      <div class="explore-section">
+        <div class="section-header">
+          <h2>Top Rated</h2>
+        </div>
+        <div class="cards-container">
+          <div class="explore-card" data-type='top-rated-movies' >
+            <h3>Movies</h3>
+            <img class="backdrop" src="../assets/images/tr_movie.jpg"> 
+          </div>
+          <div class="explore-card" data-type='top-rated-tv-shows' >
+            <h3>TV Shows</h3>
+            <img class="backdrop" src="../assets/images/tr_tv.jpg">
+          </div>
+        </div>
+      </div>
+      <div class="explore-section">
+        <div class="section-header">
+          <h2>Bollywood and more</h2>
+        </div>
+        <div class="cards-container">
+          <div class="explore-card" data-type='hindi-movies' >
+            <h3>Hindi Movies</h3>
+            <img class="backdrop" src="../assets/images/bw_movie.jpg"> 
+          </div>
+          <div class="explore-card" data-type='indian-tv-shows' >
+            <h3>TV Shows</h3>
+            <img class="backdrop" src="../assets/images/in_tv.jpg">
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- <div class="modal-overlay"></div>
+        <div id="info-modal" class="modal">
+            <div class="modal-content">
+                <div tabindex="0" id="modal-details">
+                </div>
+            </div>
+        </div> -->
+  </main>
+  <nav class="bottom-bar">
+    <!-- Dynamic bootom bar -->
+  </nav>
+  <footer>
+  </footer>
+</body>
+
+</html>
