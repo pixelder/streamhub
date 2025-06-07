@@ -603,7 +603,9 @@
       font-size: 12px;
 
       .select-item {
-        height: 24px;
+        --spacing: 4px;
+        min-height: 20px;
+        font-size: 11px;
       }
     }
 
