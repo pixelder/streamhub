@@ -174,6 +174,13 @@ async function fetchContent(sectionId, url) {
 
 document.addEventListener('DOMContentLoaded', () => {
 
+  async function buildHomePage() {
+    loadSections()
+    loadUserContent('continue-watching','watching');
+    setUpExpandableSection()
+    setActiveIcon('home')
+  }
+
   function handleRouting() {
     const path = window.location.pathname;
     const searchPath = window.location.search
@@ -185,16 +192,14 @@ document.addEventListener('DOMContentLoaded', () => {
         params[key] = value
       }
     }
+    if (path === '/' || path === '') {
+      buildHomePage()
+    }
     if (path === '/movie' || path === '/tv') {
       params.mediaType = path.replace('/', '')
       openModal(params)
+      buildHomePage()
     } 
-    if (path === '/' || path === '') {
-      loadSections()
-      loadUserContent('continue-watching','watching');
-      setUpExpandableSection()
-      setActiveIcon('home')
-    }
     if (path.includes('explore')) return
   }
   topNavBar()
