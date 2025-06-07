@@ -1,3 +1,6 @@
+@import url('https://fonts.cdnfonts.com/css/reverie');
+@import url('https://fonts.cdnfonts.com/css/gloock-2');
+
 #explore-content {
   min-height: unset;
   gap: 32px;
@@ -7,6 +10,12 @@
   width: 100%;
   display: grid;
   gap: 12px;
+  
+  h2 {
+    font: italic bold 24px 'Reverie', sans-serif;
+    filter: brightness(0.7);
+    text-shadow: none;
+  }
 }
 
 .cards-container {
@@ -28,11 +37,11 @@
   transition: border 0.2s, scale 0.2s;
 
   h3 {
-    font-size: 24px;
+    font: normal calc(7 * 100) 22px var(--font-style2);
+    /* letter-spacing: 0.5px; */
     text-shadow: 0 0 8px #000c;
-    font-weight: calc(8*100);
     text-align: center;
-  }
+  } 
 }
 
 .explore-card:hover {
@@ -45,7 +54,7 @@
 }
 
 .backdrop {
-  mask-image: linear-gradient(20deg, #0006, #000e);
+  mask-image: linear-gradient(20deg, #0006, #000a);
   position: absolute;
   width: 100%;
   z-index: -1;
@@ -57,11 +66,15 @@
   }
   .explore-section {
     gap: 8px;
+
+    h2 {
+      font-size: 22px;
+    }
   }
 
   .cards-container {
     grid-template-columns: repeat(auto-fill, minmax(10rem, 1fr));
-    gap: 4px;
+    gap: 6px;
   }
 
   .explore-card {
