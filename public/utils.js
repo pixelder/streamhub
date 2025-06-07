@@ -790,7 +790,6 @@ function setUpModalActions(data, mediaType, season = null) {
 function initializeModalListeners(mediaType, data, modalContent, details) {
   const id = data.id;
   const name = data.name || data.title || data.original_title;
-  shareItem(mediaType, id, name);
 
   if (document.modalWatchHandler) {
     ['click', 'keydown'].forEach(eventType => {
@@ -809,6 +808,10 @@ function initializeModalListeners(mediaType, data, modalContent, details) {
   const backdropHandler = () => backdropAnim(details, modalContent);
   details.removeEventListener('scroll', backdropHandler);
   details.addEventListener('scroll', backdropHandler);
+
+  whenExists('.share').then(() => {
+    shareItem(mediaType, id, name);
+  })
 }
 
 function watchProgress(progress, ring = null) {
@@ -1317,13 +1320,13 @@ function cappedOverview() {
 function shareItem(mediaType, id, name) {
   const shareData = {
     text: `${name}`,
-    url: `https://pixelstream.vercel.app/watch/${mediaType}/${id}/${encodeURIComponent(name)}${mediaType === 'tv' ? '/1/1' : ''}`,
+    url: `${window.location.href}${mediaType}?id=${id}`,
   };
 
   const btn = document.querySelector(".share");
 
-
-  btn?.addEventListener("click", async () => {
+  btn.onclick = async () => {
+    console.log('share btn')
     try {
       await navigator.share(shareData);
     } catch (err) {
@@ -1332,7 +1335,8 @@ function shareItem(mediaType, id, name) {
       toastMessage({ el: btn, string: msg, time: 3000 })
       await navigator.clipboard.writeText(shareData.url);
     }
-  });
+  }
+
 }
 
 function toastMessage({ el, string, time }) {
@@ -1469,6 +1473,28 @@ function waitTimeout() {
 
 const { wait, cancel, cancelAll } = waitTimeout();
 
+function checkElement(selector) {
+  return document.querySelector(selector) ? true : false
+}
+
+async function whenExists(selector) {
+    return new Promise((resolve) => {
+      let element = checkElement(selector);
+      if (element)  resolve(element);
+      const observer = new MutationObserver((mutaions,observer) => {
+        element = checkElement(selector);
+        if (element) {
+            observer.disconnect();
+            resolve(element);
+        }
+      });
+      observer.observe(document.body, {
+          childList: true,
+          subtree: true,
+      });
+    });
+}
+
 function whenInView(selector, callback) {
   const observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
@@ -1599,10 +1625,10 @@ function enableHorizontalWheelScroll(container, factor = 1) {
 }
 
 // Helper function to get element's position
-function isElementInView(element) {
-  const rect = element.getBoundingClientRect();
-  return rect.top >= 0 && rect.bottom <= window.innerHeight;
-}
+// function isElementInView(element) {
+//   const rect = element.getBoundingClientRect();
+//   return rect.top >= 0 && rect.bottom <= window.innerHeight;
+// }
 
 function backdropAnim(details, modalContent) {
   const scrollTop = details.scrollTop;
