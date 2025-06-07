@@ -1,10 +1,9 @@
 const container = document.querySelectorAll('.cards-container')
 container.forEach(item => item.addEventListener('click', (e) => {
   const card = e.target.closest('.explore-card') 
+	if (!card) return
 	let params = {}
-  if (card) {
-    params = JSON.parse(JSON.stringify(card.dataset))
-  }
+	params = JSON.parse(JSON.stringify(card.dataset))
 	params = resolvedParams(params)
 	loadExplorePage(params)
 }))
