@@ -1518,7 +1518,7 @@ async function topNavBar() {
       <ul>
         <li class="home"><a href="/"></a></li>
         <li class="nav-path">
-          <a href="/explore">Explore</a>
+          <a href="/explore">Explore <i class="fa-solid fa-angle-down"></i></a>
           <div class="nav-sub-path">
             <div><a href="/explore?type=movie">Movies</a></div>
             <div><a href="/explore?type=tv">TV Shows</a></div>
