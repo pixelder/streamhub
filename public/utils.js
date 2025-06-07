@@ -540,11 +540,9 @@ function buildPersonDetailsHTML(data) {
         </div>
         <div class="item-actions">
           ${links.filter(link => link.id).map(link => `
-            <button class="external" title="visit ${link.page} page">
-              <a style="all:inherit" href="${link.url}" target="_blank" rel="noopener noreferrer">
-                <img loading="lazy" src="/assets/icons/${link.icon}">
-              </a>
-            </button>
+            <a class="external" title="visit ${link.page} page" href="${link.url}" target="_blank" rel="noopener noreferrer">
+              <img loading="lazy" src="/assets/icons/${link.icon}">
+            </a>
           `).join('')}
         </div>
       </div>
@@ -767,11 +765,9 @@ function setUpModalActions(data, mediaType, season = null) {
 
     <div class="item-actions">
       ${links.filter(link => link.id).map(link => `
-        <button class="external" title="visit ${link.page} page">
-          <a style="all:inherit" href="${link.url}" target="_blank" rel="noopener noreferrer">
-            <img src="/assets/icons/${link.icon}">
-          </a>
-        </button>
+        <a class="external" title="visit ${link.page} page" href="${link.url}" target="_blank" rel="noopener noreferrer">
+          <img src="/assets/icons/${link.icon}">
+        </a>
       `).join('')}
       <label tabindex="0" for="bookmarkbox" class="selectable active bookmark" title="bookmark" data-id="${data.id}" data-media-type="${mediaType}">
         <input type="checkbox" id="bookmarkbox" ${bookmark ? `checked` : ''}/>
@@ -1616,7 +1612,7 @@ function enableHorizontalWheelScroll(container, factor = 1) {
     hovering = true
     hoverTimeout = setTimeout(() => {
       hover = true;
-    }, 500)
+    }, 400)
   })
   container.addEventListener('mouseleave', () => {
     hovering = false
