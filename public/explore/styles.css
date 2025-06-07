@@ -19,7 +19,7 @@
 .explore-card {
   display: grid;
   place-content: center;
-  border: 1px solid var(--color3);
+  border: 1px solid #ffffff1a;
   border-radius: 8px;
   aspect-ratio: 16 / 9;
   cursor: pointer;
