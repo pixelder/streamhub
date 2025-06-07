@@ -2577,6 +2577,10 @@ body:has(.modal:is([active])) {
   border-radius: var(--border-radius2);
 }
 
+#modal-details:focus-visible {
+  border : unset; outline : unset;
+}
+
 .modal:has(#ytplayer) {
   .modal-content::before {
     width: 100%;
