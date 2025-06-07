@@ -773,8 +773,8 @@ function setUpModalActions(data, mediaType, season = null) {
           </a>
         </button>
       `).join('')}
-      <label class="selectable active bookmark" title="bookmark" data-id="${data.id}" data-media-type="${mediaType}">
-        <input type="checkbox" ${bookmark ? `checked` : ''}/>
+      <label tabindex="0" for="bookmarkbox" class="selectable active bookmark" title="bookmark" data-id="${data.id}" data-media-type="${mediaType}">
+        <input type="checkbox" id="bookmarkbox" ${bookmark ? `checked` : ''}/>
         <span class="checkbox-button">
           <i class="options-icon fa-regular fa-bookmark active"></i>
           <i class="options-x-icon fa-solid fa-bookmark passive"></i>
