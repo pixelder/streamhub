@@ -979,6 +979,7 @@
   }
 
   #modal-details {
+    padding: unset;
     gap: 8px;
     scrollbar-width: none;
   }

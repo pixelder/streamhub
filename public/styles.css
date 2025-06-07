@@ -204,14 +204,14 @@ header {
     }
     
     a:hover {
-      background: var(--color3);
+      background: #334;
     }
   }
 
   .nav-path:hover .nav-sub-path {
     max-height: 1000px;
     opacity: unset;
-    background: var(--bg-color);
+    background: var(--color5);
     border-color: var(--color3);
   }
 }
@@ -2232,7 +2232,7 @@ body:has(.filter-menu) {
         display: flex;
         justify-content: center;
         align-items: center;
-        font-size: 14px;
+        font-size: 15px;
         pointer-events: all;
         height: 30px;
         aspect-ratio: 1 / 1;
@@ -2514,7 +2514,7 @@ body:has(.modal:is([active])) {
   width: 58rem;
   height: fit-content;
   /* max-height: 32rem; */
-  padding: 32px;
+  padding: 30px;
   margin: auto;
   border-radius: var(--border-radius1);
   border: 1px solid var(--color1);
@@ -2572,6 +2572,7 @@ body:has(.modal:is([active])) {
   overflow-y: auto;
   scroll-behavior: smooth;
   scrollbar-width: none;
+  padding: 2px;
   height: 100%;
   width: 100%;
   border-radius: var(--border-radius2);
@@ -2803,7 +2804,10 @@ body:has(.modal:is([active])) {
 
 .share:hover,
 .bookmark:hover,
-.external:hover {
+.external:hover,
+.share:focus-visible,
+.bookmark:focus-visible,
+.external:focus-visible {
   background: var(--color3) !important;
   transition: background 0.15s;
 }
