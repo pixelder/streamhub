@@ -56,7 +56,7 @@ function loadSections() {
 }
 
 async function loadDiscoverContent( mediaType, sectionId) {
-
+  const section = document.getElementById(sectionId)
   const params = new URLSearchParams()
 
   const queryParameters = {
@@ -89,7 +89,7 @@ async function loadDiscoverContent( mediaType, sectionId) {
     }
   }
   
-  if (document.getElementById(sectionId)) {
+  if (section) {
     const url = `${BASE_URL}/discover/${mediaType}?api_key=${API_KEY}&watch_region=${watchRegion}&${params}&${OPTIONS}`;
     fetchContent(sectionId, url);
   }
