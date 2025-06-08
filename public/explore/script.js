@@ -432,7 +432,7 @@ function buildFilterHtml(params) {
 		`
 }
 
-async function setupExploreEventListeners(mediaType) {
+async function setupExploreEventListeners() {
 
 	const filters = document.querySelector('.filters');
 
@@ -444,17 +444,18 @@ async function setupExploreEventListeners(mediaType) {
 	let pageWait
 	window.addEventListener("scroll", () => {
 		if (window.scrollY > 260) {
-			document.querySelector('.button-container').classList.add('detach')
+			document.querySelector('.button-container')?.classList.add('detach')
 		} else {
-			document.querySelector('.button-container').classList.remove('detach')
+			document.querySelector('.button-container')?.classList.remove('detach')
 		}
 		const threshold = 180;
 		if (window.scrollY + document.body.offsetHeight  >= document.querySelector('main').clientHeight - threshold) {
+			const mediaType = isMovie ? 'movie' : 'tv';
 			console.log('hit border', currentPage)
 			if (!pageEnd) {
 				clearTimeout(pageWait)
 				pageWait = setTimeout(() => {
-					console.log('loading page', currentPage)
+					console.log('loading page',currentPage)
 					loadDiscoverContent(mediaType, `browse-${mediaType}s`);
 				}, (200));
 			}
