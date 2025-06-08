@@ -367,7 +367,7 @@ function setupFilterParams({ reset = false } = {}) {
 	const minRateNumber = document.getElementById("min-rating-number")
 	const sortBy = document.getElementById("sort")
 	const sortOrderButton = document.getElementById("sort-order");
-	const checkbox = sortOrderButton.querySelector('input[type="checkbox"]')
+	const checkbox = sortOrderButton?.querySelector('input[type="checkbox"]')
 	const yearPicker = document.getElementById("year-picker")
 	const countryFilter = document.getElementById("countryFilter")
 	const languageFilter = document.getElementById("languageFilter")
@@ -376,16 +376,16 @@ function setupFilterParams({ reset = false } = {}) {
 
 	if (reset) {
 		// On reset // after setFilterVariables()
-		sortBy.value = sortMode
-		checkbox.checked = false;
+		if (sortBy) sortBy.value = sortMode
+		if (checkbox) checkbox.checked = false;
 		sortOrder = 'desc'
-		yearPicker.value = currentYear
-		minVoteNumber.value = minVoteCount
-		minVoteSlider.value = minVoteCount
-		minRateNumber.value = minRate
-		minRateSlider.value = minRate
-		countryFilter.value = selectedCountry
-		languageFilter.value = selectedLanguage
+		if (yearPicker) yearPicker.value = currentYear
+		if (minVoteNumber) minVoteNumber.value = minVoteCount
+		if (minVoteSlider) minVoteSlider.value = minVoteCount
+		if (minRateNumber) minRateNumber.value = minRate
+		if (minRateSlider) minRateSlider.value = minRate
+		if (countryFilter) countryFilter.value = selectedCountry
+		if (languageFilter) languageFilter.value = selectedLanguage
 
 		searchBox.forEach(box => {
 			box.value = '';
@@ -399,44 +399,44 @@ function setupFilterParams({ reset = false } = {}) {
 	}
 
 	// Connect the fields with variables
-	sortBy.oninput = function () {
+	if (sortBy) sortBy.oninput = function () {
 		sortMode = this.value
 		sortOrder = checkbox.checked ? 'asc' : 'desc'
 	}
 
-	sortOrderButton.onclick = function () {
+	if (sortOrderButton) sortOrderButton.onclick = function () {
 		sortOrder = checkbox.checked ? 'asc' : 'desc'
 	}
 
-	yearPicker.oninput = function () {
+	if (yearPicker) yearPicker.oninput = function () {
 		currentYear = this.value
 	}
 
-	minVoteSlider.oninput = function () {
+	if (minVoteSlider) minVoteSlider.oninput = function () {
 		minVoteNumber.value = this.value
 		minVoteCount = this.value
 	}
 
-	minVoteNumber.oninput = function () {
+	if (minVoteNumber) minVoteNumber.oninput = function () {
 		minVoteSlider.value = this.value
 		minVoteCount = this.value
 	}
 
-	minRateSlider.oninput = function () {
+	if (minRateSlider) minRateSlider.oninput = function () {
 		minRateNumber.value = this.value
 		minRate = this.value
 	}
 
-	minRateNumber.oninput = function () {
+	if (minRateNumber) minRateNumber.oninput = function () {
 		minRateSlider.value = this.value
 		minRate = this.value
 	}
 
-	countryFilter.oninput = function () {
+	if (countryFilter) countryFilter.oninput = function () {
 		selectedCountry = this.value
 	}
 
-	languageFilter.oninput = function () {
+	if (languageFilter) languageFilter.oninput = function () {
 		selectedLanguage = this.value
 	}
 
@@ -573,12 +573,13 @@ function handleChipClick(genreId, type, genreContainer) {
 }
 
 function updateSelectedGenres(genreContainer) {
-	genreContainer.querySelectorAll('.chip').forEach(chip => {
+	genreContainer?.querySelectorAll('.chip').forEach(chip => {
 		const genreId = parseInt(chip.dataset.id);
 		chip.classList.toggle('selected', selectedGenres.includes(genreId));
 		chip.classList.toggle('excluded', excludedGenres.includes(genreId));
 	});
-	document.querySelector('.genre-counter p').innerText = `${selectedGenres.length || '0'} selected • ${excludedGenres.length || '0'} excluded`
+	const status = document.querySelector('.genre-counter p')
+	if (status) status.innerText = `${selectedGenres.length || '0'} selected • ${excludedGenres.length || '0'} excluded`
 }
 
 function resetSection() {
@@ -638,16 +639,16 @@ function filterEventHandler(event) {
 
 function searchResultFunction(sectionId) {
 	const section = document.querySelector(`${sectionId}`)
-	const type = section.getAttribute("type")
-	const searchBox = section.querySelector(".search-box input")
-	const resultsContainer = section.querySelector(".results")
-	const selectedContainer = section.querySelector(".select-container")
+	const type = section?.getAttribute("type")
+	const searchBox = section?.querySelector(".search-box input")
+	const resultsContainer = section?.querySelector(".results")
+	const selectedContainer = section?.querySelector(".select-container")
 
 	let searchWait
 	let currentSearchResults = [] // Store the latest search results
 	let selectedSearchItems = [] // Store full item objects for selected items
 
-	searchBox.oninput = function () {
+	if (searchBox) searchBox.oninput = function () {
 		const term = this.value;
 		if (term.length < 1) resetResults()
 		if (term.length < 3) return
@@ -792,7 +793,8 @@ function searchResultFunction(sectionId) {
 		// 	}, 200)
 		// }
 	}
-	const form = section.closest('.form-group')
+	const form = section?.closest('.form-group')
+	if (!form) return
 	form.removeEventListener("click", sectionEventListener)
 	form.addEventListener("click", sectionEventListener)
 }
