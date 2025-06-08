@@ -17,89 +17,143 @@ const CONFIG_PARAMS = [
 	{
 		'type' : 'anime',
 	 	'data' : { 
-			'title' : 'Anime',
-			'type' : 'tv',
-		 	'lang' : 'ja',
-		 	'genre' : 16,
-			'reg' : 'JP',
-			'voteCount' : 10
-		}
+			'title' : 'Explore Anime', 'type' : 'tv',	'lang' : 'ja',
+			'genre' : 16, 'reg' : 'JP', 'voteCount' : 10
+		},
+		'filters' : { 'genre' : 'hidden'}
 	},
 	{
 		'type' : 'anime-movies',
 	 	'data' : { 
-			'title' : 'Anime Movies',
-			'type' : 'movie',
-		 	'lang' : 'ja',
-		 	'genre' : 16,
-			'reg' : 'JP',
-			'voteCount' : 10
-		}
+			'title' : 'Explore Anime Movies',	'type' : 'movie',	'lang' : 'ja',
+			'genre' : 16, 'reg' : 'JP', 'voteCount' : 10
+		},
+		'filters' : { 'genre' : 'hidden', 'year': 'hidden'}
 	},
 	{
 		'type' : 'top-rated-movies',
 	 	'data' : { 
-			'title' : 'Top Rated Movies',
-			'type' : 'movie',
-		 	'sortBy' : 'vote_average',
-			'voteCount' : 10000,
-			'minRating' : 7,
-		}
+			'title' : 'Top Rated Movies',	'type' : 'movie',
+			'sortBy' : 'vote_average', 'voteCount' : 10000,	'minRating' : 7,
+		},
+		'filters' : {'sort' : 'hidden'}
 	},
 	{
 		'type' : 'top-rated-tv-shows',
 	 	'data' : { 
-			'title' : 'Top Rated TV Shows',
-			'type' : 'tv',
-		 	'sortBy' : 'vote_average',
-			'voteCount' : 3000,
-			'minRating' : 7,
-		}
+			'title' : 'Top Rated TV Shows',	'type' : 'tv',
+			'sortBy' : 'vote_average',	'voteCount' : 3000,	'minRating' : 7
+		},
+		'filters' : {'sort' : 'hidden'}
+		
 	},
 	{
 		'type' : 'hindi-movies',
 	 	'data' : { 
-			'title' : 'Hindi Movies',
-			'type' : 'movie',
-			'lang' : 'hi',
-		 	'reg' : 'IN'
+			'title' : 'Hindi Movies',	'type' : 'movie',	'lang' : 'hi', 'reg' : 'IN',
+			'voteCount' : 1, 'minRating' : 3
 		}
 	},
 	{
 		'type' : 'indian-tv-shows',
 	 	'data' : { 
-			'title' : 'Indian TV Shows',
-			'type' : 'tv',
-			'lang' : 'hi',
-		 	'reg' : 'IN',
-			'voteCount' : 10,
-			'minRating' : 3
+			'title' : 'Indian TV Shows', 'type' : 'tv',	'lang' : 'hi',
+			'reg' : 'IN', 'voteCount' : 10, 'minRating' : 3
 		}
+	},
+	{
+		'type' : 'studio',
+	 	'data' : [
+			{
+				'type': 'studio-ghibli',
+				'data' : {
+					'title' : 'Studio Ghibli', 'type': 'movie',
+					'company' : 10342, 'voteCount' : 10, 'minRating' : 3
+				},
+				'filters' : { 'genre': 'hidden', 'minRate': 'hidden', 'year': 'hidden'}
+			},
+			{
+				'type': 'marvel-studios',
+				'data' : {
+					'title' : 'Marvel Studios', 'type': 'movie',
+					'company' : 420, 'voteCount' : 10, 'minRating' : 3
+				},
+				'filters' : { 'genre': 'hidden', 'minRate': 'hidden', 'year': 'hidden'}
+			}
+		]
 	}
 ]
 
-function resolvedParams(params) {
+async function resolvedParams(params) {
 	let PARAMS = params
-	const preconf = CONFIG_PARAMS.find(item => item.type === params.type.toLowerCase())
+	let preconf = false
+	const isStudio = PARAMS.type === 'studio'
+	if (PARAMS.type === 'studio') {
+		preconf = CONFIG_PARAMS
+			.find(item => item.type === 'studio').data
+    	.find(studio => studio.type === params.title);
+	} else {
+		preconf = CONFIG_PARAMS.find(item => item.type === params.type.toLowerCase())
+	}
 	if (preconf) {
 		PARAMS = preconf.data
-		PARAMS.preconf = [true];
+		PARAMS.preconf = {}
 		PARAMS.preconf.title = preconf.type
+		PARAMS.preconf.filters = preconf.filters
+		if (isStudio) {
+			PARAMS.preconf.title = `studio&title=${preconf.type}`
+			setupMediaToggle(PARAMS, 'movie')
+		}
 	}
-	if (PARAMS.type !== 'tv' && PARAMS.type !== 'movie') return
-	return PARAMS
+	if (PARAMS.type === 'tv' || PARAMS.type === 'movie' || PARAMS.type === 'studio') return PARAMS
 }
 
+async function setupMediaToggle(params, DEF_TYPE) {
+	let PARAMS = params
+	const getActiveMedia = () => document.querySelector(".media-tab.active");
+	const buildMediaSwitch = function () {
+		return `
+			<div class="form-group">
+				<label>Media Type</label>
+				<div class='media-switch'>
+					<button class="media-tab active" data-type="movie" >Movie</button>
+					<button class="media-tab" data-type="tv">TV Shows</button>
+				</div>
+			</div>
+		`
+	}
+	whenExists('.button-container').then(() => {
+		document.querySelector('.button-container')
+			.insertAdjacentHTML('beforebegin', buildMediaSwitch(params))
+	}).then(() => {
+		document.querySelector('.media-switch').addEventListener('click', e => {
+			const btn = e.target.closest('button')
+			if (!btn) return
+			getActiveMedia().classList.remove('active')
+			btn.classList.add('active')
+			const section = btn.closest('section')
+			const mediaType = btn.dataset.type
+			PARAMS.type = mediaType
+			section.setAttribute('data-type', mediaType)
+			section.setAttribute('id', `browse-${mediaType}s`)
+			isMovie = mediaType === 'movie' ? true : false;
+			currentPage = 1
+			setFilterVariables(PARAMS)
+			renderGenreChips(mediaType, PARAMS.genre);
+			loadDiscoverContent(mediaType, section.id)
+		})
+	})
+}
 
 window.addEventListener('DOMContentLoaded', () => {
-  const handleRouting = () => {   
+  const handleRouting = async () => {   
     const urlParams = new URLSearchParams(window.location.search);
     let params = {}
     if (Number(urlParams.size)) {
-      for (let [key, value] of urlParams.entries()) {
+      for ( let [key, value] of urlParams.entries()) {
         params[key] = value
       }
-			params = resolvedParams(params)
+			params = await resolvedParams(params)
       loadExplorePage(params)
     }
   }
