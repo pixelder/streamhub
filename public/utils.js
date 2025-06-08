@@ -91,15 +91,17 @@ function populateSection(sectionId, items) {
   } else {
     container.innerHTML += renderGridItems(items, type);
   }
-  currentPage++
 
   if (items.length < 20) {
     pageEnd = true;
     const msg = document.querySelector('.result-message');
     if (!msg) return
     msg.classList.remove('loading');
-    msg.querySelector('label').innerText = 'No more results';
+    msg.querySelector('label').innerText = `No ${currentPage === 1 ? '' : 'more'} results`;
   }
+
+  currentPage++
+
 }
 
 function getProgressInfo(id, mediaType = 'movie', logData = null) {
@@ -1554,7 +1556,7 @@ async function bottomNavBar() {
           </a>
       </li> -->
       <li><a href="/explore" id="explore">
-              <i class="fa-solid fa-tower-cell"></i>
+              <i class="fa-solid fa-compass"></i>
               ${showLabel ? '<p>Explore</p>' : ''}
           </a>
       </li>
@@ -1605,8 +1607,8 @@ function enableHorizontalWheelScroll(container, factor = 1) {
     e.preventDefault();
     container.scrollLeft += e.deltaY * factor;
   }
-  container.addEventListener("wheel", scrollEvent);
-  container.addEventListener('mouseover', () => {
+  container?.addEventListener("wheel", scrollEvent);
+  container?.addEventListener('mouseover', () => {
     if (hovering) return
     hover = false
     hovering = true
@@ -1614,7 +1616,7 @@ function enableHorizontalWheelScroll(container, factor = 1) {
       hover = true;
     }, 400)
   })
-  container.addEventListener('mouseleave', () => {
+  container?.addEventListener('mouseleave', () => {
     hovering = false
     clearTimeout(hoverTimeout)
   })
