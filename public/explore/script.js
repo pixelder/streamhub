@@ -585,6 +585,7 @@ function setFilterVariables(params = null) {
 
 async function renderGenreChips(mediaType, selected = null) {
 	const genreContainer = document.getElementById("genreChips");
+	genreContainer.innerHTML = ''
 
 	const createChip = (genre, genreContainer) => {
 		const chip = document.createElement('div');
@@ -608,7 +609,7 @@ async function renderGenreChips(mediaType, selected = null) {
 			}
 		});
 
-		genreContainer.appendChild(chip);
+		genreContainer?.appendChild(chip);
 	}
 
 	const url = `${GENRE_URL}/${mediaType}/list?api_key=${API_KEY}`
