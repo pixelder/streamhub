@@ -216,129 +216,7 @@ async function buildExploreHtml(params) {
 				<h2>${sectionTitle}</h2>
 			</div>
 			<div class="filters">
-				<div class="form-group">
-					<div class="flow-row">
-							<label>Genre</label>
-							<div class="genre-counter"><p></p></div>
-					</div>
-					<div class="genre-chips" id="genreChips">
-					</div>
-				</div>
-				<div class="form-group">
-          <label>Sort by</label>
-          <div class="flow-row">
-            <select id="sort">
-                <option value="popularity" "selected">Popular</option>
-                <option value="vote_average">Rating</option>
-                <option value="${isMovie ? 'primary_release_date' : 'first_air_date'}">Date</option>
-                <option value="${isMovie ? 'title' : 'name'}">Name</option>
-            </select>
-            <label id="sort-order" class="selectable active">
-                <input type="checkbox" />
-                <span class="checkbox-button">
-                <i class="fa-solid fa-sort-down active"></i> 
-                <i class="fa-solid fa-sort-up passive"></i>
-                </span>
-            </label>
-          </div>
-        </div>
-        <div class="form-group">
-          <label>Year</label>
-          <input type="number" id="year-picker" min="1888" max="2099" step="1" value="" placeholder="eg. 2024" />
-        </div>
-        <div class="form-group">
-          <label>Minimum Rating</label>
-          <div class="min-rating">
-              <input id="min-rating-number" type="number" value="5" min="0" step="0.1" max="10">
-              <p>0</p>
-              <input id="min-rating-slider" type="range" value="5" min="0" step="0.1" max="10">
-              <p>10</p>
-          </div>
-        </div>
-        <div class="form-group button-container">
-          <button class="go-up"><i class="fa-solid fa-angles-up"></i></button>
-          <button class="filter-button"><i class="fa-solid fa-filter"></i></button>
-        </div>
-        <div class="filter-overlay"></div>
-        <div class="filter-menu">
-          <h3>More Filters</h3>
-          <button class="close-btn">
-            <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="32" height="32" viewBox="0,0,256,256">
-            <g fill="#e6e6fa" fill-rule="nonzero" stroke="none" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="10" stroke-dasharray="" stroke-dashoffset="0" font-family="none" font-weight="none" font-size="none" text-anchor="none" style="mix-blend-mode: normal"><g transform="scale(8,8)"><path d="M7.21875,5.78125l-1.4375,1.4375l8.78125,8.78125l-8.78125,8.78125l1.4375,1.4375l8.78125,-8.78125l8.78125,8.78125l1.4375,-1.4375l-8.78125,-8.78125l8.78125,-8.78125l-1.4375,-1.4375l-8.78125,8.78125z"></path></g></g>
-            </svg>
-          </button>
-          <div class="form-group">
-              <div class="flow-row">
-                <label for="search-with-cast">Cast</label>
-                <div class="caution">
-                  <i class="fa-solid fa-triangle-exclamation"></i>
-                  <p>For Movies Only</p>
-                </div>
-              </div>
-              <div class="search-container" id="search-with-cast" type="person">
-                  <div class="search-box">
-                    <form class="flow-row" action="javascript:void(0);">
-                      <input id="cast-input" type="search" placeholder="eg. Tom Cruise">
-                      <button type="reset" class="x-icon" >
-                        <i class="fa-solid fa-xmark" aria-hidden="true"></i>
-                      </button>
-                    </form>
-                    <div class="select-container">
-                    </div>
-                    <div class="result-container">
-                        <div class="results">
-                        </div>
-                    </div>
-                  </div>
-              </div>
-          </div>
-          <div class="form-group">
-            <label for="search-with-company">Production Company</label>
-            <div class="search-container" id="search-with-company" type="company">
-              <div class="search-box">
-                <form class="flow-row" action="javascript:void(0);">	
-                  <input id="company-input" type="search" placeholder="eg. Studio Ghibli">
-                  <button type="reset" class="x-icon" >
-                    <i class="fa-solid fa-xmark" aria-hidden="true"></i>
-                  </button>
-                </form>
-                <div class="select-container">
-                </div>
-                <div class="result-container">
-                  <div class="results">
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-  				<div class="flow-row">
-            <div class="form-group">
-              <label for="countryFilter">Country</label>
-              <select id="countryFilter">
-                  <option value="">Any</option>
-              </select>
-            </div>
-            <div class="form-group">
-              <label for="languageFilter">Language</label>
-              <select id="languageFilter">
-                  <option value="">Any</option>
-              </select>
-            </div>
-          </div>
-          <div class="form-group">
-            <label for="min-vote-slider">Minimum vote count</label>
-            <div class="vote-count">
-              <input id="min-vote-number" type="number" value="200" min="0" step="10">
-              <p>0</p>
-              <input id="min-vote-slider" type="range" value="200" min="0" step="1" max="1000">
-              <p>1000+</p>
-            </div>
-          </div>
-          <div class="form-group menu-buttons">
-            <button class="apply">Apply</button>
-            <button class="reset-button" onclick=setFilterVariables()>Reset</button>
-          </div>
-        </div>
+			 ${buildFilterHtml(params)}
       </div>
 			<div class="grid-container vertical-card"></div>
 			<div class="result-message">
@@ -364,6 +242,199 @@ async function buildExploreHtml(params) {
 		</div> 
 	` ;
 	return new Promise((resolve) => resolve(true))
+}
+
+function buildFilterHtml(params) {
+	const { genre, sort, year, minRate} = params.preconf?.filters ? params.preconf?.filters : false
+	const genreFilter = function () {
+		return `
+			<div class="form-group">
+				<div class="flow-row">
+						<label>Genre</label>
+						<div class="genre-counter"><p></p></div>
+				</div>
+				<div class="genre-chips" id="genreChips">
+				</div>
+			</div>
+		`
+	}
+
+	const sortFilter = function () {
+		return `
+			<div class="form-group">
+				<label>Sort by</label>
+				<div class="flow-row">
+					<select id="sort">
+							<option value="popularity" "selected">Popular</option>
+							<option value="vote_average">Rating</option>
+							<option value="${isMovie ? 'primary_release_date' : 'first_air_date'}">Date</option>
+							<option value="${isMovie ? 'title' : 'name'}">Name</option>
+					</select>
+					<label id="sort-order" class="selectable active">
+							<input type="checkbox" />
+							<span class="checkbox-button">
+							<i class="fa-solid fa-sort-down active"></i> 
+							<i class="fa-solid fa-sort-up passive"></i>
+							</span>
+					</label>
+				</div>
+			</div>
+		`
+	}
+
+	const yearFilter = function () {
+		return `
+			<div class="form-group">
+				<label>Year</label>
+				<input type="number" id="year-picker" min="1888" max="2099" step="1" value="" placeholder="eg. 2024" />
+			</div>
+		`
+	}
+
+	const minRateFilter = function () {
+		return `
+			<div class="form-group">
+				<label>Minimum Rating</label>
+				<div class="min-rating">
+						<input id="min-rating-number" type="number" value="5" min="0" step="0.1" max="10">
+						<p>0</p>
+						<input id="min-rating-slider" type="range" value="5" min="0" step="0.1" max="10">
+						<p>10</p>
+				</div>
+			</div>
+
+		`
+	}
+
+	const filterActions = function () {
+		return `
+			<div class="form-group button-container">
+				<button class="go-up"><i class="fa-solid fa-angles-up"></i></button>
+				<button class="filter-button"><i class="fa-solid fa-filter"></i></button>
+			</div>
+		`
+	}
+
+	const castSearchBox = function () {
+		return `
+			<div class="form-group">
+				<div class="flow-row">
+					<label for="search-with-cast">Cast</label>
+					<div class="caution">
+						<i class="fa-solid fa-triangle-exclamation"></i>
+						<p>For Movies Only</p>
+					</div>
+				</div>
+				<div class="search-container" id="search-with-cast" type="person">
+					<div class="search-box">
+						<form class="flow-row" action="javascript:void(0);">
+							<input id="cast-input" type="search" placeholder="eg. Tom Cruise">
+							<button type="reset" class="x-icon" >
+								<i class="fa-solid fa-xmark" aria-hidden="true"></i>
+							</button>
+						</form>
+						<div class="select-container">
+						</div>
+						<div class="result-container">
+								<div class="results">
+								</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		`
+	}
+
+	const companySearchBox = function () {
+		return `
+			<div class="form-group">
+				<label for="search-with-company">Production Company</label>
+				<div class="search-container" id="search-with-company" type="company">
+					<div class="search-box">
+						<form class="flow-row" action="javascript:void(0);">	
+							<input id="company-input" type="search" placeholder="eg. Studio Ghibli">
+							<button type="reset" class="x-icon" >
+								<i class="fa-solid fa-xmark" aria-hidden="true"></i>
+							</button>
+						</form>
+						<div class="select-container">
+						</div>
+						<div class="result-container">
+							<div class="results">
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		`
+	}
+
+	const countrySelectFilter = function () {
+		return `
+			<div class="form-group">
+				<label for="countryFilter">Country</label>
+				<select id="countryFilter">
+						<option value="">Any</option>
+				</select>
+			</div>
+		`
+	}
+	const languageSelectFilter = function () {
+		return `
+			<div class="form-group">
+				<label for="languageFilter">Language</label>
+				<select id="languageFilter">
+						<option value="">Any</option>
+				</select>
+			</div>
+		`
+	}
+
+	const minVoteFilter = function () {
+		return `
+			<div class="form-group">
+				<label for="min-vote-slider">Minimum vote count</label>
+				<div class="vote-count">
+					<input id="min-vote-number" type="number" value="200" min="0" step="10">
+					<p>0</p>
+					<input id="min-vote-slider" type="range" value="200" min="0" step="1" max="1000">
+					<p>1000+</p>
+				</div>
+			</div>
+		`
+	}
+
+	return `
+			${!genre ? genreFilter() : ''}
+			${!sort ? sortFilter() : ''}
+			${!year ? yearFilter() : ''}
+			${!minRate ? minRateFilter() : ''}
+			${filterActions()}
+			<div class="filter-overlay"></div>
+			<div class="filter-menu">
+				<h3>Filters</h3>
+				<button class="close-btn">
+					<svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="32" height="32" viewBox="0,0,256,256">
+					<g fill="#e6e6fa" fill-rule="nonzero" stroke="none" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="10" stroke-dasharray="" stroke-dashoffset="0" font-family="none" font-weight="none" font-size="none" text-anchor="none" style="mix-blend-mode: normal"><g transform="scale(8,8)"><path d="M7.21875,5.78125l-1.4375,1.4375l8.78125,8.78125l-8.78125,8.78125l1.4375,1.4375l8.78125,-8.78125l8.78125,8.78125l1.4375,-1.4375l-8.78125,-8.78125l8.78125,-8.78125l-1.4375,-1.4375l-8.78125,8.78125z"></path></g></g>
+					</svg>
+				</button>
+				${genre ? genreFilter() : ''}
+				${sort ? sortFilter() : ''}
+				${year ? yearFilter() : ''}
+				${minRate ? minRateFilter() : ''}
+				${castSearchBox()}
+				${companySearchBox()}
+				<div class="flow-row">
+					${countrySelectFilter()}
+					${languageSelectFilter()}
+				</div>
+				${minVoteFilter()}
+				<div class="form-group menu-buttons">
+					<button class="apply">Apply</button>
+					<button class="reset-button" onclick=setFilterVariables()>Reset</button>
+				</div>
+			</div>
+		`
 }
 
 async function setupExploreEventListeners(mediaType) {
