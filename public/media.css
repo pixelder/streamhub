@@ -79,13 +79,8 @@
   input[type="number"],
   input {
     width: 72px;
-    outline: 0;
-    border: 1px solid var(--color1);
-    border-radius: var(--border-radius2);
     padding: 6px 8px;
-    background-color: #30303d77;
     font-size: 12px;
-    color: var(--font-color1);
   }
 
 
@@ -480,7 +475,7 @@
 
       .form-group {
         display: flex;
-        flex: 0 1;
+        /* flex: 0 1; */
         max-width: unset;
         flex-direction: column;
       }
@@ -500,6 +495,14 @@
         font-size: 12px;
         margin-bottom: 4px;
         padding: 0px;
+      }
+
+      select, input, .chip {
+        border-radius : 6px;
+      }
+
+      .form-group:has(.media-switch) {
+        margin-left: auto;
       }
     }
 
@@ -529,7 +532,7 @@
     }
 
     .genre-chips {
-      width: calc(100vw - 1.2rem);
+      /* width: calc(100vw - 1.2rem); */
       min-height: 30px;
       margin-bottom: 2px;
     }
@@ -563,7 +566,7 @@
       /* max-height: 80% ; */
 
       .form-group {
-        flex: 1 0;
+        /* flex: 1 0; */
       }
 
       h3 {
@@ -876,9 +879,10 @@
   }
 
   .media-switch {
-    width: 144px;
+    width: 144px !important;
+    padding: 2px !important;
     height: 30px;
-    border-radius: 6px;
+    --radius: 6px;
   }
 
   .media-tab {
