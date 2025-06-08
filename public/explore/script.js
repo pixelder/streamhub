@@ -1,10 +1,10 @@
 const container = document.querySelectorAll('.cards-container')
-container.forEach(item => item.addEventListener('click', (e) => {
+container.forEach(item => item.addEventListener('click', async (e) => {
   const card = e.target.closest('.explore-card') 
 	if (!card) return
 	let params = {}
 	params = JSON.parse(JSON.stringify(card.dataset))
-	params = resolvedParams(params)
+	params = await resolvedParams(params)
 	loadExplorePage(params)
 }))
 
@@ -168,30 +168,26 @@ window.addEventListener('DOMContentLoaded', () => {
 function loadExplorePage(PARAMS) {
   if (!PARAMS) return
   const mediaType = PARAMS.type
+	isMovie = mediaType === 'movie' ? true : false;
   const title = PARAMS.title
-  let params = [];
-  params = new URLSearchParams(PARAMS);
+  const params = new URLSearchParams(PARAMS);
   const paramString = PARAMS.preconf ? `type=${PARAMS.preconf.title}` : params.toString() ;
 
 	!loc().includes(paramString) ? window.history.pushState('', '', `/explore?${paramString}`) : '';
-  document.querySelector('title').innerText = `${title ? title : mediaType === 'tv' ? 'Browse TV Series' : 'Browse Movies'} - Pixelstream`;
+  document.querySelector('title').innerText = `${title ? title : !isMovie ? 'Browse TV Series' : 'Browse Movies'} - Pixelstream`;
 	window.addEventListener('popstate', function () {
 		console.log('active');
 		window.location.href = `${loc()}`;
 	});
 	loc();
 
-  for (let [key, value] of params.entries()) {
-    params[key] = value
-  }
-  
 	isBrowsing = true;
-	buildExploreHtml(params).then(() => {
+	buildExploreHtml(PARAMS).then(() => {
 
-		setFilterVariables(params) // reset all filters variable to default set values
+		setFilterVariables(PARAMS) // reset all filters variable to default set values
 
-		renderGenreChips(mediaType, params.genre); // builds genre chips with name and id from api
-		renderNationAndLangSelector(params);
+		renderGenreChips(mediaType, PARAMS.genre); // builds genre chips with name and id from api
+		renderNationAndLangSelector(PARAMS);
 
 		loadDiscoverContent(mediaType, `browse-${mediaType}s`); // load initial content
 
@@ -200,16 +196,15 @@ function loadExplorePage(PARAMS) {
 		searchResultFunction("#search-with-cast")
 		searchResultFunction("#search-with-company")
 
-		setupExploreEventListeners(mediaType)
+		setupExploreEventListeners()
 	})
 
 }
 
 async function buildExploreHtml(params) {
-  const { type: mediaType, title, sort} = params
-	isMovie = mediaType === 'movie' ? true : false;
+  const { type: mediaType, title} = params
 	const main = document.querySelector('main');
-	const sectionTitle = title ? `${title}` :  mediaType === 'tv' ? 'Browse TV Series' : 'Browse Movies';
+	const sectionTitle = title ? `${title}` :  !isMovie ? 'Browse TV Series' : 'Browse Movies';
 	main.innerHTML = `
 		<section id="browse-${mediaType}s" data-type="${mediaType}">
 			<div class="section-header">
