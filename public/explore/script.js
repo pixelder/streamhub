@@ -564,14 +564,14 @@ function setupFilterParams({ reset = false } = {}) {
 }
 
 function setFilterVariables(params = null) {
-	const { genre, lang, reg, voteCount, minRating, sortBy} = params || '';
+	const { genre, lang, reg, voteCount, minRating, sortBy, company} = params || '';
 	selectedGenres = genre ? [Number(genre)] : []
 	excludedGenres = []
 	currentPage = 1
 	sortMode = sortBy ? sortBy : 'popularity';
 	sortOrder = 'desc'
 	selectedCast = []
-	selectedCompany = []
+	selectedCompany = company ? [Number(company)] : []
 	minVoteCount = voteCount ? voteCount : 200;
 	minRate = minRating ? minRating : 5;
 	currentYear = null
