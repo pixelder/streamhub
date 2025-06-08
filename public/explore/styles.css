@@ -1,5 +1,5 @@
 @import url('https://fonts.cdnfonts.com/css/reverie');
-@import url('https://fonts.cdnfonts.com/css/gloock-2');
+@import url('https://fonts.googleapis.com/css2?family=Raleway:wght@700&display=swap');
 
 #explore-content {
   min-height: unset;
@@ -37,7 +37,7 @@
   transition: border 0.2s, scale 0.2s;
 
   h3 {
-    font: normal calc(7 * 100) 22px var(--font-style2);
+    font: normal calc(7 * 100) 22px "Raleway";
     /* letter-spacing: 0.5px; */
     text-shadow: 0 0 8px #000c;
     text-align: center;
