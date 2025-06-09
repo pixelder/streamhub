@@ -53,7 +53,7 @@ section {
     font-weight: 500;
     padding: 0 10px;
     background-color: #242433 !important;
-    border: 1px solid var(--color3) !important;
+    border: 1px solid #242433 !important;
     border-radius: 8px !important;
     box-shadow: none;
     box-sizing: border-box;
