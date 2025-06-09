@@ -564,9 +564,9 @@
       top: 45%;
       /* max-height: 80% ; */
 
-      .form-group {
-        /* flex: 1 0; */
-      }
+      /* .form-group {
+        flex: 1 0;
+      } */
 
       h3 {
         font-size: 18px;
