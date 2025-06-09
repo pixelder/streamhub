@@ -186,8 +186,10 @@ async function fetchHistoryItems(section, sectionId, items) {
     }
   });
 
-  container.appendChild(fragment);
   container.classList.remove('loading')
+  if (!fragment.childElementCount) return
+  container.innerHTML = ''
+  container.appendChild(fragment);
   setupCheckboxListeners(sectionId);
 }
 
