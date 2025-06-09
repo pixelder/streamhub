@@ -332,7 +332,7 @@
   }
 
   .grid-container.loading {
-    height: 190px;
+    height: 190px !important;
   }
 
   .grid-item {
@@ -670,7 +670,7 @@
     .grid-item {
       aspect-ratio: 16 / 9 !important;
       max-width: unset;
-      height: 6.6rem;
+      height: 108px;
     }
 
     .item-container {
