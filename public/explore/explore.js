@@ -176,7 +176,7 @@ async function setupMediaToggle(params, DEF_TYPE) {
 			const mediaType = btn.dataset.type
 			setActiveMedia(btn, section, mediaType)
 			PARAMS.type = mediaType
-			setFilterVariables(PARAMS)
+			// setFilterVariables(PARAMS)
 			renderGenreChips(mediaType, PARAMS.genre);
 			currentPage = 1
 			loadDiscoverContent(mediaType, section.id)
@@ -212,7 +212,7 @@ function loadExplorePage(PARAMS) {
 		setupFilterParams();
 
 		searchResultFunction("#search-with-cast")
-		searchResultFunction("#search-with-company")
+		searchResultFunction("#search-with-company", {id : PARAMS.company, name:  PARAMS.title})
 
 		setupExploreEventListeners()
 	})
@@ -776,7 +776,7 @@ function filterEventHandler(event) {
 	}
 }
 
-function searchResultFunction(sectionId) {
+function searchResultFunction(sectionId, params) {
 	const section = document.querySelector(`${sectionId}`)
 	const type = section?.getAttribute("type")
 	const searchBox = section?.querySelector(".search-box input")
@@ -785,7 +785,7 @@ function searchResultFunction(sectionId) {
 
 	let searchWait
 	let currentSearchResults = [] // Store the latest search results
-	let selectedSearchItems = [] // Store full item objects for selected items
+	let selectedSearchItems = [ params ?? ''] // Store full item objects for selected items
 
 	if (searchBox) searchBox.oninput = function () {
 		const term = this.value;
@@ -932,6 +932,11 @@ function searchResultFunction(sectionId) {
 		// 	}, 200)
 		// }
 	}
+
+	if (params?.name) {
+		selectedContainer.appendChild(selectedHTML(params))
+	}
+
 	const form = section?.closest('.form-group')
 	if (!form) return
 	form.removeEventListener("click", sectionEventListener)
