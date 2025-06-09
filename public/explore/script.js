@@ -1,88 +1,86 @@
+const GENRE_URL = `https://api.themoviedb.org/3/genre`
+const IMAGE_92 = `https://image.tmdb.org/t/p/w92`
+
+let isMovie = null;
+
+const CONFIG_PARAMS = [
+	{
+		'type': 'anime',
+		'data': {
+			'title': 'Explore Anime', 'type': 'tv', 'lang': 'ja',
+			'genre': 16, 'reg': 'JP', 'voteCount': 10
+		},
+		'filters': { 'genre': 'hidden' }
+	},
+	{
+		'type': 'anime-movies',
+		'data': {
+			'title': 'Explore Anime Movies', 'type': 'movie', 'lang': 'ja',
+			'genre': 16, 'reg': 'JP', 'voteCount': 10
+		},
+		'filters': { 'genre': 'hidden', 'year': 'hidden' }
+	},
+	{
+		'type': 'top-rated-movies',
+		'data': {
+			'title': 'Top Rated Movies', 'type': 'movie',
+			'sortBy': 'vote_average', 'voteCount': 10000, 'minRating': 7,
+		},
+		'filters': { 'sort': 'hidden' }
+	},
+	{
+		'type': 'top-rated-tv-shows',
+		'data': {
+			'title': 'Top Rated TV Shows', 'type': 'tv',
+			'sortBy': 'vote_average', 'voteCount': 3000, 'minRating': 7
+		},
+		'filters': { 'sort': 'hidden' }
+
+	},
+	{
+		'type': 'hindi-movies',
+		'data': {
+			'title': 'Hindi Movies', 'type': 'movie', 'lang': 'hi', 'reg': 'IN',
+			'voteCount': 1, 'minRating': 3
+		}
+	},
+	{
+		'type': 'indian-tv-shows',
+		'data': {
+			'title': 'Indian TV Shows', 'type': 'tv', 'lang': 'hi',
+			'reg': 'IN', 'voteCount': 10, 'minRating': 3
+		}
+	},
+	{
+		'type': 'studio',
+		'data': [{
+			'type': 'studio-ghibli',
+			'data': {
+				'title': 'Studio Ghibli', 'type': 'movie',
+				'company': 10342, 'voteCount': 10, 'minRating': 3
+			},
+			'filters': { 'genre': 'hidden', 'minRate': 'hidden', 'year': 'hidden' }
+		},
+		{
+			'type': 'marvel-studios',
+			'data': {
+				'title': 'Marvel Studios', 'type': 'movie',
+				'company': 420, 'voteCount': 10, 'minRating': 3
+			},
+			'filters': { 'genre': 'hidden', 'minRate': 'hidden', 'year': 'hidden' }
+		}]
+	}
+]
+
 const container = document.querySelectorAll('.cards-container')
 container.forEach(item => item.addEventListener('click', async (e) => {
-  const card = e.target.closest('.explore-card') 
+	const card = e.target.closest('.explore-card')
 	if (!card) return
 	let params = {}
 	params = JSON.parse(JSON.stringify(card.dataset))
 	params = await resolvedParams(params)
 	loadExplorePage(params)
 }))
-
-const GENRE_URL = `https://api.themoviedb.org/3/genre`
-const IMAGE_92 = `https://image.tmdb.org/t/p/w92`
-
-let isMovie = null;
-
-const CONFIG_PARAMS = [ 
-	{
-		'type' : 'anime',
-	 	'data' : { 
-			'title' : 'Explore Anime', 'type' : 'tv',	'lang' : 'ja',
-			'genre' : 16, 'reg' : 'JP', 'voteCount' : 10
-		},
-		'filters' : { 'genre' : 'hidden'}
-	},
-	{
-		'type' : 'anime-movies',
-	 	'data' : { 
-			'title' : 'Explore Anime Movies',	'type' : 'movie',	'lang' : 'ja',
-			'genre' : 16, 'reg' : 'JP', 'voteCount' : 10
-		},
-		'filters' : { 'genre' : 'hidden', 'year': 'hidden'}
-	},
-	{
-		'type' : 'top-rated-movies',
-	 	'data' : { 
-			'title' : 'Top Rated Movies',	'type' : 'movie',
-			'sortBy' : 'vote_average', 'voteCount' : 10000,	'minRating' : 7,
-		},
-		'filters' : {'sort' : 'hidden'}
-	},
-	{
-		'type' : 'top-rated-tv-shows',
-	 	'data' : { 
-			'title' : 'Top Rated TV Shows',	'type' : 'tv',
-			'sortBy' : 'vote_average',	'voteCount' : 3000,	'minRating' : 7
-		},
-		'filters' : {'sort' : 'hidden'}
-		
-	},
-	{
-		'type' : 'hindi-movies',
-	 	'data' : { 
-			'title' : 'Hindi Movies',	'type' : 'movie',	'lang' : 'hi', 'reg' : 'IN',
-			'voteCount' : 1, 'minRating' : 3
-		}
-	},
-	{
-		'type' : 'indian-tv-shows',
-	 	'data' : { 
-			'title' : 'Indian TV Shows', 'type' : 'tv',	'lang' : 'hi',
-			'reg' : 'IN', 'voteCount' : 10, 'minRating' : 3
-		}
-	},
-	{
-		'type' : 'studio',
-	 	'data' : [
-			{
-				'type': 'studio-ghibli',
-				'data' : {
-					'title' : 'Studio Ghibli', 'type': 'movie',
-					'company' : 10342, 'voteCount' : 10, 'minRating' : 3
-				},
-				'filters' : { 'genre': 'hidden', 'minRate': 'hidden', 'year': 'hidden'}
-			},
-			{
-				'type': 'marvel-studios',
-				'data' : {
-					'title' : 'Marvel Studios', 'type': 'movie',
-					'company' : 420, 'voteCount' : 10, 'minRating' : 3
-				},
-				'filters' : { 'genre': 'hidden', 'minRate': 'hidden', 'year': 'hidden'}
-			}
-		]
-	}
-]
 
 async function resolvedParams(params) {
 	let PARAMS = params
@@ -91,7 +89,7 @@ async function resolvedParams(params) {
 	if (PARAMS.type === 'studio') {
 		preconf = CONFIG_PARAMS
 			.find(item => item.type === 'studio').data
-    	.find(studio => studio.type === params.title);
+			.find(studio => studio.type === params.title);
 	} else {
 		preconf = CONFIG_PARAMS.find(item => item.type === params.type.toLowerCase())
 	}
@@ -133,11 +131,11 @@ async function setupMediaToggle(params, DEF_TYPE) {
 			btn.classList.add('active')
 			const section = btn.closest('section')
 			const mediaType = btn.dataset.type
-			PARAMS.type = mediaType
 			section.setAttribute('data-type', mediaType)
 			section.setAttribute('id', `browse-${mediaType}s`)
 			isMovie = mediaType === 'movie' ? true : false;
 			currentPage = 1
+			PARAMS.type = mediaType
 			setFilterVariables(PARAMS)
 			renderGenreChips(mediaType, PARAMS.genre);
 			loadDiscoverContent(mediaType, section.id)
@@ -146,37 +144,36 @@ async function setupMediaToggle(params, DEF_TYPE) {
 }
 
 window.addEventListener('DOMContentLoaded', () => {
-  const handleRouting = async () => {   
-    const urlParams = new URLSearchParams(window.location.search);
-    let params = {}
-    if (Number(urlParams.size)) {
-      for ( let [key, value] of urlParams.entries()) {
-        params[key] = value
-      }
+	const handleRouting = async () => {
+		const urlParams = new URLSearchParams(window.location.search);
+		let params = {}
+		if (Number(urlParams.size)) {
+			for (let [key, value] of urlParams.entries()) {
+				params[key] = value
+			}
 			params = await resolvedParams(params)
-      loadExplorePage(params)
-    }
-  }
+			loadExplorePage(params)
+		}
+	}
 	topNavBar()
-  bottomNavBar()
+	bottomNavBar()
 	setActiveIcon('explore')
-  setUpScrollEvents()
-  handleRouting()
-  document.querySelector('main').style.display = 'flex';
+	setUpScrollEvents()
+	handleRouting()
+	document.querySelector('main').style.display = 'flex';
 })
 
 function loadExplorePage(PARAMS) {
-  if (!PARAMS) return
-  const mediaType = PARAMS.type
+	if (!PARAMS) return
+	const mediaType = PARAMS.type
 	isMovie = mediaType === 'movie' ? true : false;
-  const title = PARAMS.title
-  const params = new URLSearchParams(PARAMS);
-  const paramString = PARAMS.preconf ? `type=${PARAMS.preconf.title}` : params.toString() ;
+	const title = PARAMS.title
+	const params = new URLSearchParams(PARAMS);
+	const paramString = PARAMS.preconf ? `type=${PARAMS.preconf.title}` : params.toString();
 
 	!loc().includes(paramString) ? window.history.pushState('', '', `/explore?${paramString}`) : '';
-  document.querySelector('title').innerText = `${title ? title : !isMovie ? 'Browse TV Series' : 'Browse Movies'} - Pixelstream`;
+	document.querySelector('title').innerText = `${title ? title : !isMovie ? 'Explore TV Series' : 'Explore Movies'} - Pixelstream`;
 	window.addEventListener('popstate', function () {
-		console.log('active');
 		window.location.href = `${loc()}`;
 	});
 	loc();
@@ -198,13 +195,12 @@ function loadExplorePage(PARAMS) {
 
 		setupExploreEventListeners()
 	})
-
 }
 
 async function buildExploreHtml(params) {
-  const { type: mediaType, title} = params
+	const { type: mediaType, title } = params
 	const main = document.querySelector('main');
-	const sectionTitle = title ? `${title}` :  !isMovie ? 'Browse TV Series' : 'Browse Movies';
+	const sectionTitle = title ? `${title}` : !isMovie ? 'Explore TV Series' : 'Explore Movies';
 	main.innerHTML = `
 		<section id="browse-${mediaType}s" data-type="${mediaType}">
 			<div class="section-header">
@@ -240,7 +236,7 @@ async function buildExploreHtml(params) {
 }
 
 function buildFilterHtml(params) {
-	const { genre, sort, year, minRate} = params.preconf?.filters ? params.preconf?.filters : false
+	const { genre, sort, year, minRate } = params.preconf?.filters ? params.preconf?.filters : false
 	const genreFilter = function () {
 		return `
 			<div class="form-group">
@@ -449,13 +445,13 @@ async function setupExploreEventListeners() {
 			document.querySelector('.button-container')?.classList.remove('detach')
 		}
 		const threshold = 180;
-		if (window.scrollY + document.body.offsetHeight  >= document.querySelector('main').clientHeight - threshold) {
+		if (window.scrollY + document.body.offsetHeight >= document.querySelector('main').clientHeight - threshold) {
 			const mediaType = isMovie ? 'movie' : 'tv';
 			console.log('hit border', currentPage)
 			if (!pageEnd) {
 				clearTimeout(pageWait)
 				pageWait = setTimeout(() => {
-					console.log('loading page',currentPage)
+					console.log('loading page', currentPage)
 					loadDiscoverContent(mediaType, `browse-${mediaType}s`);
 				}, (200));
 			}
@@ -564,7 +560,7 @@ function setupFilterParams({ reset = false } = {}) {
 }
 
 function setFilterVariables(params = null) {
-	const { genre, lang, reg, voteCount, minRating, sortBy, company} = params || '';
+	const { genre, lang, reg, voteCount, minRating, sortBy, company } = params || '';
 	selectedGenres = genre ? [Number(genre)] : []
 	excludedGenres = []
 	currentPage = 1
