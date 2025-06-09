@@ -2115,8 +2115,12 @@ function setUpExpandableSection() {
   }
 
   document.querySelectorAll('.expandable .section-header ')
-    .forEach(item => item.addEventListener('click', (e) => {
-        handleSectionExpansion(e)
+    .forEach(item => {
+      item.addEventListener('click', handleSectionExpansion)
+      item.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+          handleSectionExpansion(e)
+        }
       })
-    )
+    })
 }
