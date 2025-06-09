@@ -201,6 +201,7 @@ header {
       padding: 4px 6px;
       height: unset;
       border-radius: 4px;  
+      transition: background 0.2s;
     }
     
     a:hover {
