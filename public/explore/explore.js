@@ -68,6 +68,14 @@ const CONFIG_PARAMS = [
 				'company': 420, 'voteCount': 10, 'minRating': 3
 			},
 			'filters': { 'genre': 'hidden', 'minRate': 'hidden', 'year': 'hidden' }
+		},
+		{
+			'type': 'production-ig',
+			'data': {
+				'title': 'Production I.G.', 'type': 'tv',
+				'company': 529, 'voteCount': 3, 'minRating': 3
+			},
+			'filters': { 'genre': 'hidden', 'minRate': 'hidden', 'year': 'hidden' }
 		}]
 	}
 ]
@@ -81,67 +89,6 @@ container.forEach(item => item.addEventListener('click', async (e) => {
 	params = await resolvedParams(params)
 	loadExplorePage(params)
 }))
-
-async function resolvedParams(params) {
-	let PARAMS = params
-	let preconf = false
-	const isStudio = PARAMS.type === 'studio'
-	if (PARAMS.type === 'studio') {
-		preconf = CONFIG_PARAMS
-			.find(item => item.type === 'studio').data
-			.find(studio => studio.type === params.title);
-	} else {
-		preconf = CONFIG_PARAMS.find(item => item.type === params.type.toLowerCase())
-	}
-	if (preconf) {
-		PARAMS = preconf.data
-		PARAMS.preconf = {}
-		PARAMS.preconf.title = preconf.type
-		PARAMS.preconf.filters = preconf.filters
-		if (isStudio) {
-			PARAMS.preconf.title = `studio&title=${preconf.type}`
-			setupMediaToggle(PARAMS, 'movie')
-		}
-	}
-	if (PARAMS.type === 'tv' || PARAMS.type === 'movie' || PARAMS.type === 'studio') return PARAMS
-}
-
-async function setupMediaToggle(params, DEF_TYPE) {
-	let PARAMS = params
-	const getActiveMedia = () => document.querySelector(".media-tab.active");
-	const buildMediaSwitch = function () {
-		return `
-			<div class="form-group">
-				<label>Media Type</label>
-				<div class='media-switch'>
-					<button class="media-tab active" data-type="movie" >Movie</button>
-					<button class="media-tab" data-type="tv">TV Shows</button>
-				</div>
-			</div>
-		`
-	}
-	whenExists('.button-container').then(() => {
-		document.querySelector('.button-container')
-			.insertAdjacentHTML('beforebegin', buildMediaSwitch(params))
-	}).then(() => {
-		document.querySelector('.media-switch').addEventListener('click', e => {
-			const btn = e.target.closest('button')
-			if (!btn) return
-			getActiveMedia().classList.remove('active')
-			btn.classList.add('active')
-			const section = btn.closest('section')
-			const mediaType = btn.dataset.type
-			section.setAttribute('data-type', mediaType)
-			section.setAttribute('id', `browse-${mediaType}s`)
-			isMovie = mediaType === 'movie' ? true : false;
-			currentPage = 1
-			PARAMS.type = mediaType
-			setFilterVariables(PARAMS)
-			renderGenreChips(mediaType, PARAMS.genre);
-			loadDiscoverContent(mediaType, section.id)
-		})
-	})
-}
 
 window.addEventListener('DOMContentLoaded', () => {
 	const handleRouting = async () => {
@@ -162,6 +109,81 @@ window.addEventListener('DOMContentLoaded', () => {
 	handleRouting()
 	document.querySelector('main').style.display = 'flex';
 })
+
+async function resolvedParams(params) {
+	let PARAMS = params
+	let preconf = false
+	const isStudio = PARAMS.type === 'studio'
+	if (PARAMS.type === 'studio') {
+		preconf = CONFIG_PARAMS
+			.find(item => item.type === 'studio').data
+			.find(studio => studio.type === params.title);
+	} else {
+		preconf = CONFIG_PARAMS.find(item => item.type === params.type.toLowerCase())
+	}
+	if (preconf) {
+		PARAMS = preconf.data
+		PARAMS.preconf = {}
+		PARAMS.preconf.title = preconf.type
+		PARAMS.preconf.filters = preconf.filters
+		if (isStudio) {
+			PARAMS.preconf.title = `studio&title=${preconf.type}`
+			setupMediaToggle(PARAMS, preconf.data.type)
+		}
+	}
+	if (PARAMS.type === 'tv' || PARAMS.type === 'movie' || PARAMS.type === 'studio') return PARAMS
+}
+
+async function setupMediaToggle(params, DEF_TYPE) {
+	console.log(DEF_TYPE)
+	let PARAMS = params
+	const setActiveMedia = (btn, section, mediaType) => {
+		document.querySelector(".media-tab.active").classList.remove('active')
+		btn.classList.add('active')
+		section.setAttribute('data-type', mediaType)
+		section.setAttribute('id', `browse-${mediaType}s`)
+		isMovie = mediaType === 'movie' ? true : false;
+	}
+	const updateActiveMedia = (DEF_TYPE) => {
+		const active = document.querySelector('.media-tab.active')
+		if (active.dataset.type !== DEF_TYPE) {
+			document.querySelectorAll('.media-tab').forEach(btn => {
+				btn.classList.toggle('active')
+			})
+		}
+	}
+	const buildMediaSwitch = function () {
+		return `
+			<div class="form-group">
+				<label>Media Type</label>
+				<div class='media-switch'>
+					<button class="media-tab active" data-type="movie" >Movie</button>
+					<button class="media-tab" data-type="tv">TV Shows</button>
+				</div>
+			</div>
+		`
+	}
+	whenExists('.button-container').then(() => {
+		document.querySelector('.button-container')
+			.insertAdjacentHTML('beforebegin', buildMediaSwitch(params))
+	}).then(() => {
+		updateActiveMedia(DEF_TYPE)
+		document.querySelector('.media-switch').addEventListener('click', e => {
+			const btn = e.target.closest('button')
+			if (!btn) return
+			const section = btn.closest('section')
+			const mediaType = btn.dataset.type
+			setActiveMedia(btn, section, mediaType)
+			PARAMS.type = mediaType
+			setFilterVariables(PARAMS)
+			renderGenreChips(mediaType, PARAMS.genre);
+			currentPage = 1
+			loadDiscoverContent(mediaType, section.id)
+		})
+	})
+}
+
+
 
 function loadExplorePage(PARAMS) {
 	if (!PARAMS) return
