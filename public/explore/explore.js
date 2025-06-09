@@ -80,21 +80,30 @@ const CONFIG_PARAMS = [
 	}
 ]
 
-const container = document.querySelectorAll('.cards-container')
-container.forEach(item => item.addEventListener('click', async (e) => {
-	const card = e.target.closest('.explore-card')
-	if (!card) return
-	let params = {}
-	params = JSON.parse(JSON.stringify(card.dataset))
-	params = await resolvedParams(params)
-	loadExplorePage(params)
-}))
+function exploreCardsEvent() {
+	const container = document.querySelectorAll('.cards-container')
+	const paramsHandler = async (e) => {
+		if (e.type === 'keydown' && e.key !== 'Enter') return
+		const card = e.target.closest('.explore-card')
+		if (!card) return
+		let params = {}
+		params = JSON.parse(JSON.stringify(card.dataset))
+		params = await resolvedParams(params)
+		loadExplorePage(params)
+	}
+	container.forEach(item => {
+		item.addEventListener('click', paramsHandler)
+		item.addEventListener('keydown', paramsHandler)
+	})
+}
 
 window.addEventListener('DOMContentLoaded', () => {
+	let exploring = false
 	const handleRouting = async () => {
 		const urlParams = new URLSearchParams(window.location.search);
 		let params = {}
 		if (Number(urlParams.size)) {
+			exploring = true
 			for (let [key, value] of urlParams.entries()) {
 				params[key] = value
 			}
@@ -106,7 +115,11 @@ window.addEventListener('DOMContentLoaded', () => {
 	bottomNavBar()
 	setActiveIcon('explore')
 	setUpScrollEvents()
-	handleRouting()
+	handleRouting().then(() => {
+		if (!exploring) {
+			exploreCardsEvent()
+		}
+	})
 	document.querySelector('main').style.display = 'flex';
 })
 
