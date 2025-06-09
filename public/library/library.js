@@ -8,10 +8,9 @@ const OPTIONS = 'include_adult=false&include_null_first_air_dates=false&language
 let isBrowsing = false;
 
 async function loadLibrary() {
-  window.history.replaceState('','','/library')
+  loadUserContent('bookmarks','bookmarks')
   loadUserContent('history', 'history')
   loadUserContent('continue-watching', 'watching')
-  loadUserContent('bookmarks','bookmarks')
   setUpExpandableSection()
 }
 

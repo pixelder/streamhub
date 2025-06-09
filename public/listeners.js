@@ -21,7 +21,6 @@ function globalAddEventListener (event) {
     if ((event.type === 'click' && !watchingOrHistory ||
         event.type === 'keydown' && event.key === 'Enter' && (!watchingOrHistory || event.shiftKey))) {
       if (!event.target.closest('.grid-options')) {
-        console.log(loc())
         openModal(gridItem.dataset);
         event.stopPropagation();
       } else {
