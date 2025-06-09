@@ -1247,13 +1247,16 @@ function scrollEpisodeIntoView(eno) {
 
 }
 
-function setupScrollEdgeMask(container) {
+function setupScrollEdgeMask(container, reset = null) {
   if (!container) return;
   // let isScrolling = false;
   // let scrollTimeout;
 
   const defMask = (dir) => `linear-gradient(to ${dir}, black 95%, #000000c4 97%, transparent)`;
+
   container.style.maskImage = defMask("right")
+
+  if (reset) return
 
   let lastScrollLeft = container.scrollLeft;
 
@@ -2076,11 +2079,13 @@ function setUpExpandableSection() {
       section.classList.remove('collapsed');
       const scroll = localStorage.getItem(`LAST_Y_POSSITION-${section.id}`) || 0;
       window.scrollTo({ top: scroll, behavior: 'instant' });
+
       if (!section.classList.contains('user-content')) {
         container.querySelectorAll('.grid-item').forEach((item, index) => {
           if (index >= 20) item.remove();
         });
       }
+      setupScrollEdgeMask(container, 'reset')
       document.getElementById('header').classList.remove('hidden');
       return
     }
