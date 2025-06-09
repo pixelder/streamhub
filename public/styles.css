@@ -1688,7 +1688,7 @@ body:has(.expandable.expanded) {
 
   input {
     border: 1px solid transparent !important;
-    border-radius: var(--border-radius2);
+    border-radius: unset !important;
     outline: none;
     background: transparent;
     box-shadow: none;
@@ -1699,8 +1699,6 @@ body:has(.expandable.expanded) {
     width: 100%;
     min-height: 100%;
     padding: 0 0px;
-    /* margin: var(--spacing); */
-    transition: margin 0.2s ease-in-out;
   }
 }
 
