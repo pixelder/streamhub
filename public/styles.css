@@ -191,7 +191,7 @@ header {
     max-height: 0px;
     overflow: hidden;
     opacity: 0;
-    translate: -12px;
+    translate: -12px 8px;
     box-shadow: 0 0 8px 2px #0008;
     transition: max-height 0.5s, opacity 0.15s, background 0.15s, border 0.15s;
     

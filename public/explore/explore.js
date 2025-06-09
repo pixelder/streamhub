@@ -135,7 +135,7 @@ async function resolvedParams(params) {
 }
 
 async function setupMediaToggle(params, DEF_TYPE) {
-	console.log(DEF_TYPE)
+
 	let PARAMS = params
 	const setActiveMedia = (btn, section, mediaType) => {
 		document.querySelector(".media-tab.active").classList.remove('active')
@@ -163,6 +163,7 @@ async function setupMediaToggle(params, DEF_TYPE) {
 			</div>
 		`
 	}
+	
 	whenExists('.button-container').then(() => {
 		document.querySelector('.button-container')
 			.insertAdjacentHTML('beforebegin', buildMediaSwitch(params))
@@ -182,8 +183,6 @@ async function setupMediaToggle(params, DEF_TYPE) {
 		})
 	})
 }
-
-
 
 function loadExplorePage(PARAMS) {
 	if (!PARAMS) return
