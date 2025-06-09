@@ -332,8 +332,7 @@
   }
 
   .grid-container.loading {
-    display: grid;
-    grid-template-rows: repeat(1, 50vw);
+    height: 190px;
   }
 
   .grid-item {

@@ -763,22 +763,16 @@ body:has(.expandable.expanded) {
 }
 
 .grid-container.loading {
-  display: grid !important;
-  grid-template-rows: repeat(1, 20vw);
-
+  height: 280px;
   .filler {
-    grid-column: span 7;
     display: flex;
     flex-direction: column;
     place-content: center;
     width: 100%;
-    /* 
-    aspect-ratio: 1 / 0.22; */
     background: var(--color5);
     border-radius: var(--border-radius1);
-    color: var(--color1);
+    color: var(--font-color3);
     text-shadow: none;
-    fill: var(--color1);
   }
 
   .icon {
@@ -789,6 +783,12 @@ body:has(.expandable.expanded) {
 
   .message {
     margin: 0 auto;
+    display: flex;
+    justify-content: center;
+    height: 30px;
+    width: 50%;
+    align-items: center;
+    gap: 6px;
   }
 }
 
