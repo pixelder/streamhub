@@ -1027,7 +1027,7 @@
     flex-direction: column;
     justify-content: space-between;
     gap: inherit;
-    min-height: fit-content;
+    min-height: fit-content !important;
     height: fit-content;
   }
 
@@ -1116,6 +1116,9 @@
     height: fit-content !important;
   } */
 
+  .modal-content:has(.ep-error) {
+    height: fit-content !important;
+  }
   .modal-content:has(#ytplayer) {
     width: 95% !important;
     height: auto !important;
@@ -1291,6 +1294,11 @@
 
   .episode-container {
     grid-template-columns: repeat(auto-fill, minmax(14rem, 1fr));
+  }
+
+  .ep-error {
+    height: 30px;
+    font-size: 12px;
   }
 
   .episode-width {

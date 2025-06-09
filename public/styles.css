@@ -2632,7 +2632,7 @@ body:has(.modal:is([active])) {
 /* 
 .modal-content:has(.tv-trailer) {
   height: 90% !important;
-  width: 69% !important;
+  width: 69% height!important;
   
   .modal-info {
     visibility: collapse;
@@ -2643,6 +2643,10 @@ body:has(.modal:is([active])) {
     gap: unset; 
   }
 } */
+
+.modal-content:has(.ep-error) .modal-media {
+    min-height: 348px;
+}
 
 .modal-content:has(#ytplayer) {
   height: 90% !important;
@@ -3047,6 +3051,21 @@ option {
   /* flex-direction: row; */
   gap: 12px;
   margin: 0 auto;
+}
+
+.ep-error {
+  width: fit-content;
+  display: flex;
+  align-items: center;
+  height: 32px;
+  border: 1px solid;
+  padding-inline: 8px;
+  gap: 6px;
+  font-size: 13px;
+  border-radius: var(--border-radius2);
+  color: #ff5855;
+  background: #2f111a;
+  text-shadow: none;
 }
 
 .episode-wrap {

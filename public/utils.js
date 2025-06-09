@@ -906,11 +906,19 @@ async function tvContent(data, sno, eno, ref) {
   const backdrop = data.backdrop_path
   const seasons = [...data.seasons].sort((a, b) => a.season_number - b.season_number).reverse();
   const containerClass = ref === "modal" ? "episode-wrap" : "episode-player";
-  const season = sno || data.seasons?.at(0)?.season_number || data.number_of_seasons
+  const season = sno || data.number_of_seasons || data.seasons?.at(0)?.season_number
   sno = sno ?? -1
   const { data: seasonData } = await fetchMetaData('tv', id, season);
   localStorage.setItem('seasonData', JSON.stringify(seasonData));
   const generateEpisodesHTML = (episodes, season) => {
+    if (!episodes.length) { 
+      return `
+        <div class="ep-error">
+          <i class="fa-solid fa-circle-exclamation"></i>
+          <p>No episodes available</p>
+        </div>
+      `
+    }
     let HTML = ''
     let epCount = 0;
     let logs = getLogData('history');
