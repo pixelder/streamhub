@@ -153,10 +153,10 @@ function renderGridItems(items, type = null) {
              <span class="grid-rating">
               <p class="rating">
                 ${rating && !upcoming
-          ? `<i class="fa-solid fa-star"></i>
-                  ${rating}`
-          : `<img class="nostar" src="assets/icons/nostar.svg">`
-        }
+                    ? `<i class="fa-solid fa-star"></i>
+                            ${rating}`
+                    : `<img class="nostar" src="/assets/icons/nostar.svg">`
+                  }
               </p>
              </span>
              <p>${year}</p>
