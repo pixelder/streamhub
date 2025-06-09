@@ -104,3 +104,46 @@ function globalAddEventListener (event) {
     return;
   }
 }
+
+if (document.querySelector('.expandable')) {
+  document.addEventListener('keydown', (event) => {
+    if (event.key !== 'Tab') return;
+  
+    const expandedSection = document.querySelector('.expandable.expanded');
+    if (!expandedSection) return;
+  
+    const FOCUSABLE_SELECTORS = `
+      a[href],
+      button:not([disabled]),
+      textarea:not([disabled]),
+      input:not([disabled]),
+      select:not([disabled]),
+      [tabindex]:not([tabindex="-1"])
+    `;
+  
+    const focusable = Array.from(expandedSection.querySelectorAll(FOCUSABLE_SELECTORS))
+      .filter(el => el.offsetParent !== null); // Exclude hidden elements
+  
+    if (focusable.length === 0) return;
+  
+    const currentFocus = document.activeElement;
+    const insideTrap = expandedSection.contains(currentFocus);
+    const shift = event.shiftKey;
+  
+    let index = focusable.indexOf(currentFocus);
+    if (!insideTrap) {
+      // Focus enters the trap — start at beginning
+      event.preventDefault();
+      focusable[0].focus();
+      return;
+    }
+  
+    index += shift ? -1 : 1;
+  
+    if (index < 0) index = focusable.length - 1;
+    if (index >= focusable.length) index = 0;
+  
+    event.preventDefault();
+    focusable[index].focus();
+  });
+}
