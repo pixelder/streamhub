@@ -1058,11 +1058,7 @@ function watchEventListeners(event, data) {
         //console.log(key)
         if (!key) {
           console.log('no trailer')
-          const noTrailer = document.createElement('div');
-          noTrailer.classList.add('temp-message')
-          noTrailer.innerText = `no trailer available`;
-          trailerBtn.appendChild(noTrailer)
-          setTimeout(() => { trailerBtn.removeChild(noTrailer) }, 2000);
+          toastMessage({el : trailerBtn, string : 'no trailer available', time: 2000})
           return
         }
         container.innerHTML = trailerIframe
