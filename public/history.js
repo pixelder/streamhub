@@ -274,7 +274,7 @@ function renderLogItems(data, item, tvData, type = null) {
                 ${rating 
                   ? `<i class="fa-solid fa-star"></i>
                     ${rating}`
-                  : `<img class="nostar" src="assets/icons/nostar.svg">`
+                  : `<img class="nostar" src="/assets/icons/nostar.svg">`
                   }
               </p>
             </span>
