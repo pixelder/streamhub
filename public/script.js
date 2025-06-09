@@ -174,9 +174,9 @@ async function fetchContent(sectionId, url) {
 
 document.addEventListener('DOMContentLoaded', () => {
 
-  async function buildHomePage() {
-    loadSections()
+  async function loadHomePage() {
     loadUserContent('continue-watching','watching');
+    loadSections()
     setUpExpandableSection()
     setActiveIcon('home')
   }
@@ -193,12 +193,12 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }
     if (path === '/' || path === '') {
-      buildHomePage()
+      loadHomePage()
     }
     if (path === '/movie' || path === '/tv') {
       params.mediaType = path.replace('/', '')
       openModal(params)
-      buildHomePage()
+      loadHomePage()
     } 
     if (path.includes('explore')) return
   }
