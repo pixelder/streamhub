@@ -16,6 +16,7 @@ function globalAddEventListener (event) {
   const watchingOrHistory = event.target.closest('#continue-watching .grid-item') || event.target.closest('#history .grid-item');
   //const bookmarks = event.target.closest('#bookmarks .grid-item');
   const gridItem = event.target.closest('.grid-item, .profile-item');
+  const section = event.target.closest('section');
   if (gridItem && !modalActive) {
     const { mediaType, id, name, sno, eno, index } = gridItem.dataset;
     if ((event.type === 'click' && !watchingOrHistory ||
@@ -27,7 +28,8 @@ function globalAddEventListener (event) {
         console.log('toggling bookmark')
         event.target.closest('.grid-options')?.classList.toggle('open');
         toggleBookmark('bookmarks', id, mediaType, sno, eno, index);
-        loadUserContent( 'bookmarks', 'bookmarks');
+        if (section.id !== 'bookmarks') return 
+        gridItem.remove()
       }
       return;
     }
@@ -53,7 +55,6 @@ function globalAddEventListener (event) {
         return;
       }
       if (event.target.closest('.options-menu')) {
-        const section = event.target.closest('section');
         if (event.target.closest('.remove')) {
           getConfirm({
             success: {title : 'Success!', message : 'Item removed from history.'},
@@ -65,7 +66,7 @@ function globalAddEventListener (event) {
               const logType = section.dataset.type
               removeFromLocalStorage(logType, Number(id), mediaType, sno, eno, index)
               console.log(sectionId,logType,'item removed')
-              loadUserContent( sectionId, logType);
+              gridItem.remove()
             }
           });
           event.preventDefault()
