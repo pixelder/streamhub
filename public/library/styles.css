@@ -45,8 +45,13 @@
   }
 }
 
-#bookmarks .grid-container:not(:has(.grid-item)) {
-  height: 280px;
+#bookmarks {
+  .grid-container:not(:has(.grid-item)) {
+    height: 280px;
+  }
+  .grid-item.placeholder {
+    aspect-ratio: 1 / 1.64;
+  }
 }
 
 #history .grid-container:not(:has(.grid-item)) {
@@ -79,7 +84,12 @@
     height: 108px !important;
   }
 
-  #bookmarks .grid-container:not(:has(.grid-item)) {
-    height: 190px;
+  #bookmarks {
+    .grid-container:not(:has(.grid-item)) {
+      height: 190px;
+    }
+    .grid-item.placeholder {
+      aspect-ratio: 1 / 1.64 !important;
+    }
   }
 }
