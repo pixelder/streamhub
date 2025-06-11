@@ -7,15 +7,15 @@
       display: none;
     }
   }
-  .grid-container.loading {
+  .grid-container.loading:not(:has(.grid-item)) {
     display: flex;
     .filler {
       width: 100%;
     }
   }
   
-  .grid-container.empty {
-    display: flex;
+  .grid-container.empty:not(:has(.grid-item)) {
+    display: flex !important;
     
     .empty {
       display: flex;
