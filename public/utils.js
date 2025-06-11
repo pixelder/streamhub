@@ -1540,7 +1540,6 @@ async function topNavBar() {
             <i class="fa-solid fa-xmark"></i>
           </button>
         </form>
-
       </ul>
     </nav>
   `
@@ -1780,25 +1779,23 @@ function getConfirm({ title, message, success, decline, state = 1, exitInterval 
   });
 }
 
-async function setupCheckboxListeners(sectionID) {
-
+let isActiveSelect = {}
+async function setupCheckboxListeners(sectionID, items) {
+  const section = document.querySelector(`#${sectionID}`)
   const container = document.querySelector(`#${sectionID} .grid-container`);
-  if (!container.querySelector('.grid-item')) return console.log('no data found for', sectionID)
-  console.log('data found for', sectionID)
-
-  if (container._cleanupCheckboxListeners) {
-    console.log("Cleaning up previous event listeners for", sectionID);
-    container._cleanupCheckboxListeners();
-  }
+  section.querySelector('.edit-button').disabled = false
 
   let selectedItems = [];
+  let logItems = items
+  const total = () => logItems.length
 
-  const selectAllBox = document.querySelector(
+  const MAIN_CHECKBOX = document.querySelector(
     `#${sectionID} .select-action .selectable input[type="checkbox"]`
   );
-  const checkboxes = container.querySelectorAll(
+  
+  const checkboxes = () => { return container.querySelectorAll(
     ".selectable input[type='checkbox']"
-  );
+  )}
 
   // --- Helper functions ---
   const displayCount = () => {
@@ -1806,11 +1803,11 @@ async function setupCheckboxListeners(sectionID) {
       `#${sectionID} .selection-count p`
     );
     if (message) {
-      message.innerText = `${selectedItems.length} / ${checkboxes.length}`;
+      message.innerText = `${selectedItems.length} / ${total()}`;
     }
   };
 
-  const setupSelectedItems = (checkbox) => {
+  const updateSelectedItems = (checkbox) => {
     const gridItem = checkbox.closest(".grid-item");
     if (!gridItem) return;
 
@@ -1826,8 +1823,8 @@ async function setupCheckboxListeners(sectionID) {
   };
 
   const resetEditing = () => {
-    selectAllBox.checked = false;
-    checkboxes.forEach(cb => cb.checked = false);
+    MAIN_CHECKBOX.checked = false;
+    checkboxes().forEach(cb => cb.checked = false);
     selectedItems = [];
     displayCount();
   };
@@ -1840,6 +1837,7 @@ async function setupCheckboxListeners(sectionID) {
     section.querySelectorAll(".selectable").forEach((item) =>
       item.classList.toggle("active")
     );
+    isActiveSelect[sectionID] = !isActiveSelect[sectionID]
 
     resetEditing();
 
@@ -1853,36 +1851,51 @@ async function setupCheckboxListeners(sectionID) {
     console.log(wasEditing);
     const checkbox = gridItem.querySelector(".selectable input[type='checkbox']");
     checkbox.checked = true;
-    setupSelectedItems(checkbox);
+    updateSelectedItems(checkbox);
   };
 
-  const selectAll = () => {
-    checkboxes.forEach((checkbox) => {
-      checkbox.checked = selectAllBox.checked;
-      setupSelectedItems(checkbox);
+  const toggleAllCheckbox = () => {
+    checkboxes().forEach((checkbox) => {
+      checkbox.checked = MAIN_CHECKBOX.checked;
     });
+
+    if (MAIN_CHECKBOX.checked) {
+      selectedItems = logItems.map(item => {
+        const base = {
+          id: String(item.id),
+          index: String(item.index),
+          mediaType: item.mediaType
+        };
+        if (item.data.sno && item.data.eno) {
+          base.sno = item.data.sno;
+          base.eno = item.data.eno;
+        }
+        return base;
+      });
+    } else {
+      selectedItems = []
+    }
+
+    console.log(selectedItems)
+
+    const observer = new MutationObserver((mutations) => {
+      mutations.forEach((mutation) => {
+        if (mutation.type === 'childList') {
+          container.querySelectorAll('.grid-item').forEach(item => {
+            const checkbox = item.querySelector('input[type="checkbox"]') ?? ''
+            if (checkbox)
+            checkbox.checked = MAIN_CHECKBOX.checked
+          })
+        }
+      });
+    });
+    observer.observe(container, {childList : true})
+    displayCount()
   };
 
   // --- End Helper functions ---
 
-  // Array to keep track of cleanup functions.
-  const cleanupFunctions = [];
-
-  // Attach change listeners to each checkbox.
-  checkboxes.forEach((checkbox) => {
-    const handler = function () {
-      setupSelectedItems(checkbox);
-      selectAllBox.checked = checkboxes.length == selectedItems.length;
-    };
-    checkbox.addEventListener("change", handler);
-    cleanupFunctions.push(() => {
-      checkbox.removeEventListener("change", handler);
-    });
-  });
-
-  // Action button click handler.
-  const onActionButtonClick = (e) => {
-    const section = e.target.closest("section");
+  section.addEventListener('click', (e) => {
     if (e.target.closest(".edit-button")) {
       toggleEditing(section);
       e.stopPropagation();
@@ -1891,53 +1904,74 @@ async function setupCheckboxListeners(sectionID) {
     if (e.target.closest(".delete-button")) {
       console.log("delete-button");
       e.stopPropagation();
+      const countString = pluralResolver(selectedItems.length, 'item' , 's')
       if (selectedItems.length < 1) return;
       getConfirm({
-        title: `Delete ${selectedItems.length} items ? `,// from '${sectionID}'?`,
-        success: {
-          title: "Success!",
-          message: `${selectedItems.length} items removed.`,// from ${sectionID}.`,
-        },
-        decline: {
-          title: "Cancelled!",
-          message: "Items not removed.",
-        },
+        title: `Delete ${countString} ? `,
+        success: { title: "Success!", message: `${countString} removed.` },
+        decline: { title: "Cancelled!", message: "Items not removed." },
         exitInterval: 2000,
       }).then((confirmed) => {
-        console.log("exited", confirmed);
         if (!confirmed) return;
-        const sectionId = section.id;
         const logType = section.dataset.type;
-        console.log(section.dataset);
+        const findLog = (LOG, log) => {
+          let isSameLog = LOG.MEDIATYPE === log.mediaType &&
+            Number(LOG.ID) === Number(log.id) &&
+            Number(LOG.INDEX) === Number(log.index);
+            if (isSameLog && LOG.SNO && LOG.ENO) {
+              isSameLog = String(LOG.SNO) === String(log.sno) &&
+              String(LOG.ENO) === String(log.eno)
+            }
+          return isSameLog;
+        }
         selectedItems.forEach((item) => {
           const { id, mediaType, index, sno, eno } = item;
           removeFromLocalStorage(logType, Number(id), mediaType, sno, eno, index)
-          console.log(id, mediaType, index, sno, eno);
+
+          section.querySelectorAll('.grid-item').forEach(obj => {
+            const {ID = obj.dataset.id, MEDIATYPE = obj.dataset.mediaType, INDEX= obj.dataset.index, SNO = obj.dataset.sno, ENO = obj.dataset.eno } = obj
+            const OBJ = {ID, MEDIATYPE, INDEX, SNO, ENO}            
+            const found_log = findLog(OBJ, item)
+            if (found_log) {
+              logItems = logItems.filter(log => {
+                const LOG = { id : log.id, mediaType: log.mediaType, index: log.index, sno: log.data.sno, eno: log.data.eno }
+                const found_log = findLog(OBJ, LOG)
+                return !found_log
+              })
+              obj.remove()
+            }
+          })
         });
-        console.log(sectionId, logType, "item removed");
-        loadUserContent(sectionId, logType);
+        console.log(logItems)
+        if (!logItems.length || !section.querySelector('.grid-item')) {
+          section.querySelector('.actions').style.display = 'flex'
+          container.classList.add('empty')
+        }
+        console.log(sectionID, logType, "item removed");
+        displayCount()
         toggleEditing(section);
       });
       return;
     }
-  };
-
-  const actionButtons = document.querySelector(`#${sectionID} .actions`);
-  if (actionButtons) {
-    // Remove any previously attached listener (if stored).
-    if (actionButtons._onActionButtonClick) {
-      actionButtons.removeEventListener(
-        "click",
-        actionButtons._onActionButtonClick
-      );
+    if (e.target.closest(`.select-action input[type="checkbox"]`)) {
+      toggleAllCheckbox()
     }
-    actionButtons._onActionButtonClick = onActionButtonClick;
-    actionButtons.addEventListener("click", onActionButtonClick);
-    cleanupFunctions.push(() => {
-      actionButtons.removeEventListener("click", onActionButtonClick);
-      delete actionButtons._onActionButtonClick;
-    });
-  }
+  })
+  // Attach change listeners for checkboxes.
+  container.addEventListener('change', (e) => {
+    const checkbox = e.target.closest(".selectable input[type='checkbox']")
+    if (!checkbox) return
+    updateSelectedItems(checkbox)
+    MAIN_CHECKBOX.checked = checkboxes().length === selectedItems.length
+  })
+
+  // checkboxes.forEach((checkbox) => {
+  //   const handler = function () {
+  //     updateSelectedItems(checkbox);
+  //     MAIN_CHECKBOX.checked = checkboxes.length == selectedItems.length;
+  //   };
+  //   checkbox.addEventListener("change", handler);
+  // });
 
   let isScrolling = false;
   let scrollTimeout;
@@ -1984,27 +2018,8 @@ async function setupCheckboxListeners(sectionID) {
 
   ["mousedown", "touchstart"].forEach((eventType) => {
     container.addEventListener(eventType, onGridItemMouseDown);
-    cleanupFunctions.push(() => {
-      container.removeEventListener(eventType, onGridItemMouseDown);
-    });
   });
 
-
-  // Attach the select-all listener.
-  if (selectAllBox) {
-    selectAllBox.addEventListener("click", selectAll);
-    cleanupFunctions.push(() => {
-      selectAllBox.removeEventListener("click", selectAll);
-    });
-  }
-
-  // Store a cleanup function on the container so that the next time this function is called,
-  // it can remove all the listeners that were added during the previous call.
-  container._cleanupCheckboxListeners = () => {
-    cleanupFunctions.forEach((fn) => fn());
-    delete container._cleanupCheckboxListeners;
-    console.log("Cleaned up event listeners for", sectionID);
-  };
 }
 
 async function waitForTrue(variable) {
