@@ -2,173 +2,182 @@
 <html lang="en">
 
 <head>
-    <title>Home | Pixelstream</title>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Home | Pixelstream</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <meta property="og:title" content="Pixelstream" />
-    <meta property="og:image" content="https://pixelstream.vercel.app/assets/meta/meta_dark.png">
-    <meta property="og:description" content="Watch your favorite movies and tv shows" />
+  <meta property="og:title" content="Pixelstream" />
+  <meta property="og:image" content="https://pixelstream.vercel.app/assets/meta/meta_dark.png">
+  <meta property="og:description" content="Watch your favorite movies and tv shows" />
 
-    <script src="https://kit.fontawesome.com/60a2eca232.js" crossorigin="anonymous"></script>
+  <script src="https://kit.fontawesome.com/60a2eca232.js" crossorigin="anonymous"></script>
 
-    <!-- local items -->
-    <link rel="stylesheet" href="styles.css" type="text/css">
-    <link rel="stylesheet" href="media.css" type="text/css">
-    <link rel="icon" href="assets/icons/favicon.png" type="image/png">
-    <script src="script.js" defer></script>
-    <script src="utils.js" defer></script>
-    <script src="history.js" defer></script>
-    <script src="listeners.js" defer></script>
+  <!-- local items -->
+  <link rel="stylesheet" href="styles.css" type="text/css">
+  <link rel="stylesheet" href="media.css" type="text/css">
+  <link rel="icon" href="assets/icons/favicon.png" type="image/png">
+  <script src="script.js" defer></script>
+  <script src="utils.js" defer></script>
+  <script src="history.js" defer></script>
+  <script src="listeners.js" defer></script>
 </head>
 
 <body>
-    <script>0</script>
-    <!-- Top Navbar -->
-    <header id="header"></header>
+  <script>0</script>
+  <!-- Top Navbar -->
+  <header id="header"></header>
 
-    <!-- Body Content -->
-    <main id="main-content">
-        <section id="continue-watching" class="user-content hr-grid-view expandable" data-type="watching">
-            <div class="section-header">
-                <h2>Continue Watching</h2>
-                <div class="select-action">
-                    <label class="select-all selectable">
-                        <input type="checkbox" />
-                        <span class="checkbox-button">
-                            <i class="fa-regular fa-square active"></i>
-                            <i class="fa-solid fa-square-check passive"></i>
-                        </span>
-                    </label>
-                    <div class="v-separator"></div>
-                    <div class="selection-count">
-                        <p></p>
-                    </div>
-                </div>
-                <div class="actions">
-                    <button class="delete-button">
-                        <i class="fa-solid fa-trash-can"></i>
-                    </button>
-                    <button class="edit-button">
-                        <i class="fa-solid fa-pen-to-square active"></i>
-                        <!-- <i class="fa-solid fa-pencil active"></i> -->
-                        <i class="fa-solid fa-xmark"></i>
-                    </button>
-                    <!-- <div class="expand-arrow">
-                        <i class="fa-solid fa-chevron-left"></i>
-                    </div> -->
-                    <div class="maximize" tabindex="0">
-                        <i class="fa-solid fa-angle-right"></i>
-                    </div>
-                    <div class="close-window" tabindex="0">
-                        <i class="fa-solid fa-xmark"></i>
-                    </div>
-                </div>
-            </div>
-            <div class="grid-container">
-            </div>
-        </section>
-        <section id="trending-movies" class="expandable">
-            <div class="section-header">
-                <h2>Trending Movies</h2>
-                <div class="actions">
-                    <!-- <div class="expand-arrow">
-                        <i class="fa-solid fa-chevron-left"></i>
-                    </div> -->
-                    <div class="maximize" tabindex="0">
-                        <i class="fa-solid fa-angle-right"></i>
-                    </div>
-                    <div class="close-window" tabindex="0">
-                        <i class="fa-solid fa-xmark"></i>
-                    </div>
-                </div>
-            </div>
-            <div class="grid-container loading vertical-card">
-                <div class="filler">
-                    <div class="message">
-                        <i class="fa-solid fa-spinner fa-spin"></i>
-                        <h4>Loading...</h4>
-                    </div>
-                </div>
-            </div>
-        </section>
-        <section id="trending-series" class="expandable">
-            <div class="section-header">
-                <h2>Trending Series</h2>
-                <div class="actions">
-                    <!-- <div class="expand-arrow">
-                        <i class="fa-solid fa-chevron-left"></i>
-                    </div> -->
-                    <div class="maximize" tabindex="0">
-                        <i class="fa-solid fa-angle-right"></i>
-                    </div>
-                    <div class="close-window" tabindex="0">
-                        <i class="fa-solid fa-xmark"></i>
-                    </div>
-                </div>
-            </div>
-            <div class="grid-container loading vertical-card">
-                <div class="filler">
-                    <div class="message">
-                        <i class="fa-solid fa-spinner fa-spin"></i>
-                        <h4>Loading...</h4>
-                    </div>
-                </div>
-            </div>
-        </section>
-        <section id="discover-streaming" class="expandable">
-            <div class="section-header">
-                <h2>Discover what's streaming</h2>
-                <div class="actions">
-                    <!-- <div class="expand-arrow">
-                        <i class="fa-solid fa-chevron-left"></i>
-                    </div> -->
-                    <div class="maximize" tabindex="0">
-                        <i class="fa-solid fa-angle-right"></i>
-                    </div>
-                    <div class="close-window" tabindex="0">
-                        <i class="fa-solid fa-xmark"></i>
-                    </div>
-                </div>
-            </div>
-            <div class="tab-menu">
-                <button class="tab active" data-network="213" data-provider="8">Netflix</button>
-                <button class="tab" data-network="1024" data-provider="2100">Amazon Prime</button>
-                <button class="tab" data-network="2552" data-provider="350">Apple TV+</button>
-                <button class="tab" data-network="" data-provider="1899">HBO Max</button>
-                <button class="tab" data-network="" data-provider="531">Paramount+</button>
-            </div>
-            <div class="tab-items">
-                <div class="media-switch">
-                    <button class="media-tab active" data-type="movie">Movies</button>
-                    <button class="media-tab" data-type="tv">TV Shows</button>
-                </div>
-                <div class="actions">
-                </div>
-                <div class="grid-container loading vertical-card">
-                    <div class="filler">
-                        <div class="message">
-                            <i class="fa-solid fa-spinner fa-spin"></i>
-                            <h4>Loading...</h4>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-        <div class="modal-overlay"></div>
-        <div id="info-modal" class="modal">
-            <div class="modal-content">
-                <div tabindex="0" id="modal-details">
-                    <!-- Dynamic content will be injected here -->
-                </div>
-            </div>
+  <!-- Body Content -->
+  <main id="main-content">
+    <section id="continue-watching" class="user-content hr-grid-view expandable" data-type="watching">
+      <div class="section-header">
+        <h2>Continue Watching</h2>
+        <div class="select-action">
+          <label class="select-all selectable">
+            <input type="checkbox" />
+            <span class="checkbox-button">
+              <i class="fa-regular fa-square active"></i>
+              <i class="fa-solid fa-square-check passive"></i>
+            </span>
+          </label>
+          <div class="v-separator"></div>
+          <div class="selection-count">
+            <p></p>
+          </div>
         </div>
-    </main>
-    <nav class="bottom-bar">
-        <!-- Dynamic bootom bar -->
-    </nav>
-    <footer>
-    </footer>
+        <div class="actions">
+          <button class="delete-button">
+            <i class="fa-solid fa-trash-can"></i>
+          </button>
+          <button class="edit-button">
+            <i class="fa-solid fa-pen-to-square active"></i>
+            <!-- <i class="fa-solid fa-pencil active"></i> -->
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+          <!-- <div class="expand-arrow">
+                        <i class="fa-solid fa-chevron-left"></i>
+                    </div> -->
+          <div class="maximize" tabindex="0">
+            <i class="fa-solid fa-angle-right"></i>
+          </div>
+          <div class="close-window" tabindex="0">
+            <i class="fa-solid fa-xmark"></i>
+          </div>
+        </div>
+      </div>
+      <div class="grid-container">
+      </div>
+    </section>
+    <section id="trending-movies" class="expandable">
+      <div class="section-header">
+        <h2>Trending Movies</h2>
+        <div class="actions">
+          <!-- <div class="expand-arrow">
+                        <i class="fa-solid fa-chevron-left"></i>
+                    </div> -->
+          <div class="maximize" tabindex="0">
+            <i class="fa-solid fa-angle-right"></i>
+          </div>
+          <div class="close-window" tabindex="0">
+            <i class="fa-solid fa-xmark"></i>
+          </div>
+        </div>
+      </div>
+      <div class="grid-container loading vertical-card">
+        <div class="filler">
+          <div class="message">
+            <div
+              style="height: 100%; aspect-ratio: 1 / 1; mask: url(/assets/icons/bars-rotate-fade.svg) no-repeat center; background: var(--font-color3);">
+            </div>
+            <!-- <i class="fa-solid fa-spinner fa-spin"></i> -->
+            <h4>Loading...</h4>
+          </div>
+        </div>
+      </div>
+    </section>
+    <section id="trending-series" class="expandable">
+      <div class="section-header">
+        <h2>Trending Series</h2>
+        <div class="actions">
+          <!-- <div class="expand-arrow">
+                        <i class="fa-solid fa-chevron-left"></i>
+                    </div> -->
+          <div class="maximize" tabindex="0">
+            <i class="fa-solid fa-angle-right"></i>
+          </div>
+          <div class="close-window" tabindex="0">
+            <i class="fa-solid fa-xmark"></i>
+          </div>
+        </div>
+      </div>
+      <div class="grid-container loading vertical-card">
+        <div class="filler">
+          <div class="message">
+            <div
+              style="height: 100%; aspect-ratio: 1 / 1; mask: url(/assets/icons/bars-rotate-fade.svg) no-repeat center; background: var(--font-color3);">
+            </div>
+            <!-- <i class="fa-solid fa-spinner fa-spin"></i> -->
+            <h4>Loading...</h4>
+          </div>
+        </div>
+      </div>
+    </section>
+    <section id="discover-streaming" class="expandable">
+      <div class="section-header">
+        <h2>Discover what's streaming</h2>
+        <div class="actions">
+          <!-- <div class="expand-arrow">
+                        <i class="fa-solid fa-chevron-left"></i>
+                    </div> -->
+          <div class="maximize" tabindex="0">
+            <i class="fa-solid fa-angle-right"></i>
+          </div>
+          <div class="close-window" tabindex="0">
+            <i class="fa-solid fa-xmark"></i>
+          </div>
+        </div>
+      </div>
+      <div class="tab-menu">
+        <button class="tab active" data-network="213" data-provider="8">Netflix</button>
+        <button class="tab" data-network="1024" data-provider="2100">Amazon Prime</button>
+        <button class="tab" data-network="2552" data-provider="350">Apple TV+</button>
+        <button class="tab" data-network="" data-provider="1899">HBO Max</button>
+        <button class="tab" data-network="" data-provider="531">Paramount+</button>
+      </div>
+      <div class="tab-items">
+        <div class="media-switch">
+          <button class="media-tab active" data-type="movie">Movies</button>
+          <button class="media-tab" data-type="tv">TV Shows</button>
+        </div>
+        <div class="actions">
+        </div>
+        <div class="grid-container loading vertical-card">
+          <div class="filler">
+            <div class="message">
+              <div
+                style="height: 100%; aspect-ratio: 1 / 1; mask: url(/assets/icons/bars-rotate-fade.svg) no-repeat center; background: var(--font-color3);">
+              </div>
+              <!-- <i class="fa-solid fa-spinner fa-spin"></i> -->
+              <h4>Loading...</h4>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <div class="modal-overlay"></div>
+    <div id="info-modal" class="modal">
+      <div class="modal-content">
+        <div tabindex="0" id="modal-details">
+          <!-- Dynamic content will be injected here -->
+        </div>
+      </div>
+    </div>
+  </main>
+  <nav class="bottom-bar">
+    <!-- Dynamic bootom bar -->
+  </nav>
+  <footer>
+  </footer>
 </body>
 
 </html>
