@@ -32,11 +32,9 @@ function fixLog() {
 async function logToLocalStorage(logType, id, mediaType, sno = null, eno = null, progress = null) {
   //console.log('logging', logType, id, mediaType, sno, eno, progress)
   const newLog = {
-    id: Number(id),
-    mediaType,
-    progress: progress,
-    index: Date.now(),
-    data: { sno: String(sno), eno: String(eno) }
+    mediaType, id: Number(id),
+    index: Date.now(), progress: progress,
+    data: { sno: sno ? String(sno) : null, eno: eno ? String(eno) : null }
   };
 
   if (logType === 'history') {
@@ -120,39 +118,87 @@ async function fetchHistoryItems(section, sectionId, items) {
   const container = section.querySelector('.grid-container');
   const type = container.classList.contains('vertical-card') ? 'vertical' : null;
   const logType = section.dataset.type;
-  const fragment = document.createDocumentFragment();
-  const existingItems = new Map();
 
+  if (!items.length) {
+    console.log('no data found for', sectionId);
+    container.querySelector('.filler')?.remove();
+    container.classList.remove('loading');
+    return;
+  } else {
+    console.log('data found for', sectionId);
+  }
+
+  if (sectionId !== 'bookmarks') {
+    setupCheckboxListeners(sectionId, items);
+  }
+
+  const existingItems = new Map();
   container.querySelectorAll("[data-id]").forEach(el => {
     const key = el.dataset.id + (el.dataset.index || '');
     existingItems.set(key, el);
   });
 
   const newItems = new Set(items.map(item => item.id + item.index));
-
-  // Sort items in descending order by date
   const SORTED_ITEMS = items.slice().sortDateDesc(false);
 
-  // Process all items and collect results
-  const results = await Promise.allSettled(SORTED_ITEMS
-    .map(async (item) => {
-      const { id, mediaType, index, data: { sno, eno } } = item;
-      const key = id + index; // unique key consisting id and index
-      if (existingItems.has(key)) { //search and remove or skip rendering if data with key exists
-        existingItems.delete(key);
-        return null;
-      }
+  const aborted = () => {
+    if (container.classList.contains('empty')) {
+      console.log('aborted')
+      // container.querySelectorAll('.grid-item').forEach(obj => obj.remove())
+      return true
+    }
+    return false
+  }
+  const placeholders = new Map();
+  const pending = new Set();
+  const concurrencyLimit = 4;
 
+  // 1. Insert placeholders in the correct order
+  for (const item of SORTED_ITEMS) {
+    container.classList.remove('loading');
+    container.querySelector('.filler')?.remove();
+
+    if (aborted()) break
+    const key = item.id + item.index;
+
+    if (existingItems.has(key)) {
+      existingItems.delete(key);
+      continue;
+    }
+
+    const { id, mediaType, index, data: { sno, eno } } = item;
+    
+    const placeholder = document.createElement('div');
+    placeholder.className = 'grid-item placeholder';
+    placeholder.dataset.id = id;
+    placeholder.dataset.index = index;
+    placeholder.dataset.mediaType = mediaType;
+    placeholder.dataset.sno = sno;
+    placeholder.dataset.eno = eno;
+    container.appendChild(placeholder);
+    placeholders.set(key, placeholder);
+  }
+
+  // 2. Start processing each item
+  for (const item of SORTED_ITEMS) {
+    if (aborted()) break
+    const { id, mediaType, index, data: { sno, eno } } = item;
+    const key = id + index;
+
+    if (!placeholders.has(key)) continue;
+
+    const task = (async () => {
       try {
         const { data } = await fetchMetaData(mediaType, id);
         let content;
+
         if (logType !== 'bookmarks' && mediaType === "tv") {
           const { data: tvData } = await fetchMetaData(mediaType, id, sno);
-          content = renderLogItems(data, item, tvData);
+          content = renderLogItems(sectionId, data, item, tvData);
         } else {
           data.media_type = mediaType;
           content = logType !== "bookmarks"
-            ? renderLogItems(data, item)
+            ? renderLogItems(sectionId, data, item)
             : renderGridItems([data], type);
         }
 
@@ -161,40 +207,39 @@ async function fetchHistoryItems(section, sectionId, items) {
         const newElement = wrapper.firstElementChild;
         newElement.dataset.id = id;
         newElement.dataset.index = index;
-        return newElement;
+
+        const placeholder = placeholders.get(key);
+        if (placeholder && placeholder.parentNode && !aborted()) {
+          container.replaceChild(newElement, placeholder);
+        }
+
       } catch (error) {
-        const msg = `Error fetching data for item ID ${id} for ${sectionId} : ${error.message}`
-        const data = { sectionId, logType, id, mediaType, sno, eno, index}
-        const actions = [ { name : 'Fix', task : 'remove'} ]
-        notifyAlert(msg, "error", data, actions)
-        return null;
+        const msg = `Error fetching data for item ID ${id} for ${sectionId} : ${error.message}`;
+        const data = { sectionId, logType, id, mediaType, sno, eno, index };
+        const actions = [{ name: 'Fix', task: 'remove' }];
+        notifyAlert(msg, "error", data, actions);
       }
-    })
-  );
+    })();
 
-  // Append elements in the original sorted order
-  results.forEach(result => {
-    if (result.status === 'fulfilled' && result.value !== null) {
-      fragment.appendChild(result.value);
+    if (aborted()) break
+    pending.add(task);
+    task.finally(() => pending.delete(task));
+    if (pending.size >= concurrencyLimit) {
+      await Promise.race(pending);
     }
-  });
+  }
 
-  // Remove old items that are no longer in the `items` list
+  await Promise.allSettled(pending);
+
+  // Remove old elements
   existingItems.forEach((el, key) => {
     if (!newItems.has(key)) {
       el.remove();
     }
   });
-
-  container.classList.remove('loading')
-  if (!fragment.childElementCount) return
-  container.innerHTML = ''
-  container.appendChild(fragment);
-  setupCheckboxListeners(sectionId);
 }
 
-
-function renderLogItems(data, item, tvData, type = null) {
+function renderLogItems(sectionId, data, item, tvData, type = null) {
   const [id, mediaType] = [item.id, item.mediaType];
   const index = item.index || null;
   const [sno, eno] = tvData ? [item.data.sno, item.data.eno] : ['', ''];
@@ -219,7 +264,7 @@ function renderLogItems(data, item, tvData, type = null) {
            data-media-type="${mediaType}" data-name="${name}"
            ${tvData ? `data-sno="${sno}" data-eno="${eno}"` : ''}>
         <div class="item-container"  draggable="true">
-          <label class="selectable">
+          <label class="selectable ${isActiveSelect[sectionId] ? 'active' : ''}">
             <input type="checkbox" />
             <span class="checkbox-button">
               <i class="fa-regular fa-square active"></i>
