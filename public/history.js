@@ -313,15 +313,15 @@ function renderLogItems(sectionId, data, item, tvData, type = null) {
             <span class="history-item-info">
               <h3>${capString(name, 40)}</h3>
               ${tvData ? `<p>${info}</p>` : ""}
-            </span>
-            <span class="grid-rating">
-              <p class="rating">
-                ${rating 
-                  ? `<i class="fa-solid fa-star"></i>
-                    ${rating}`
-                  : `<img class="nostar" src="/assets/icons/nostar.svg">`
-                  }
-              </p>
+              <span class="grid-rating">
+                <p class="rating">
+                  ${rating 
+                    ? `<i class="fa-solid fa-star"></i>
+                      ${rating}`
+                    : `<img class="nostar" src="/assets/icons/nostar.svg">`
+                    }
+                </p>
+              </span>
             </span>
             ${watchProgress(progress, ring)}
           </div>
