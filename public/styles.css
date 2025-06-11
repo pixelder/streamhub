@@ -2052,7 +2052,7 @@ body:has(.filter-menu) {
   }
 }
 
-#continue-watching {
+#continue-watching:not(.expanded) {
   &:not(:has(.grid-item)) {
     display: none !important;
     visibility: hidden;
@@ -2107,8 +2107,13 @@ body:has(.filter-menu) {
     height: 144px;
     aspect-ratio: 16 / 9;
     padding: 0;
-    background: var(--bg-color);
+    background: none;
+    box-shadow: none;
     border: none;
+  }
+
+  .grid-item.placeholder {
+    background: var(--color5);
   }
 
   .item-container {
