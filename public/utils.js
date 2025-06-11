@@ -1652,7 +1652,7 @@ function setUpScrollEvents() {
     const filter = document.querySelector('.button-container');
 
     const threshold = 56; //px
-    let end = (window.scrollY + 16 + window.innerHeight) >= (document.body.scrollHeight);
+    let end = (window.scrollY + 8 + window.innerHeight) >= (document.body.scrollHeight);
     let top = window.scrollY <= threshold
     const infScroll = document.querySelector('.result-message.loading')
 
@@ -2040,7 +2040,7 @@ function setUpExpandableSection() {
     // const collapsed = section.classList.contains('collapsed')
 
     if (windowBtns && !expanded) {
-      if (window.innerWidth < 400 && section.classList.contains('user-content')) return
+      // if (section.classList.contains('user-content')) return
       sectionFetching = true;
       currentPage = 1;
       section.classList.add('expanded');
@@ -2048,7 +2048,7 @@ function setUpExpandableSection() {
       localStorage.removeItem(`LAST_Y_POSSITION-${section.id}`)
       localStorage.setItem(`LAST_Y_POSSITION-${section.id}`, window.scrollY);
 
-      const y = section.getBoundingClientRect().top + window.scrollY - 10;
+      const y = section.getBoundingClientRect().top + window.scrollY - 8;
       window.scrollTo({ top: y, behavior: 'smooth' });
 
       let pageWait;
