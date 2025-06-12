@@ -1536,7 +1536,7 @@ async function topNavBar() {
         <form class="search-bar" onsubmit="return handleSearch(event)">
           <input type="search" id="search-input" placeholder="Search" />
           <i class="search-icon fa-solid fa-magnifying-glass"></i>
-          <button type="reset" class="x-icon" id="search-button"><!-- onclick="handleSearch(event)" -->
+          <button type="reset" class="x-icon" >
             <i class="fa-solid fa-xmark"></i>
           </button>
         </form>
@@ -2040,7 +2040,7 @@ function setUpExpandableSection() {
     // const collapsed = section.classList.contains('collapsed')
 
     if (windowBtns && !expanded) {
-      // if (section.classList.contains('user-content')) return
+      // if (window.innerWidth < 400 && section.classList.contains('user-content')) return
       sectionFetching = true;
       currentPage = 1;
       section.classList.add('expanded');
