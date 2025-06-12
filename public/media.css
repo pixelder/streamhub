@@ -88,7 +88,7 @@
   #search-input:focus,
   #search-input:not(:placeholder-shown) {
     padding-inline-start: 4px;
-    width: 100%;
+    width: 100% !important;
 
     &:not(:focus-visible) {
       box-shadow: 0 0 0 0px var(--color3);
