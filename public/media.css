@@ -28,6 +28,7 @@
 
     nav ul li.home {
       display: flex;
+      transition: scale 0.2s;
 
       a:after {
         font-size: 18px;
@@ -47,28 +48,55 @@
       padding: 0.4rem 0.6rem;
     }
 
+    #search-input {
+      height: 32px;
+    }
+
+  }
+
+  header:has(#search-input:focus,
+  #search-input:not(:placeholder-shown)) {
+    ul {
+      gap: 0;
+    }
+    .home {
+      scale: 0;
+      width: 0;
+      overflow: hidden;
+    }
   }
 
   #search-input {
     font-size: 14px;
-    height: 2rem;
+    height: 36px;
     width: 2rem;
-    padding-left: 10px;
     border-radius: 6px;
+    background-color: transparent;
+    transition: unset;
+  }
+
+  #search-input::placeholder {
+    font-weight: 400;
+    font-style: italic;
   }
 
   #search-input:focus-visible,
-  #search-button:focus-visible {
+  .x-icon:focus-visible {
     box-shadow: 0 0 0 0px var(--color3);
   }
 
   #search-input:focus,
   #search-input:not(:placeholder-shown) {
-    width: 10rem;
+    padding-inline-start: 4px;
+    width: 100%;
 
     &:not(:focus-visible) {
       box-shadow: 0 0 0 0px var(--color3);
     }
+  }
+
+  #search-input .x-icon {
+    min-height: 16px !important;
   }
 
   .search-icon,
@@ -893,75 +921,6 @@
 
   .media-tab:hover {
     background-color: var(--color3);
-  }
-
-  #search-results {
-    border: none;
-
-    .results-container {
-      padding: 8px 0.6rem 12px;
-      gap: 8px;
-
-      .grid-item {
-        height: 190px;
-        aspect-ratio: 1 / 1.6 !important;
-      }
-    }
-  }
-
-  #search-results h1 {
-    font-size: 1.25rem;
-    margin: 12px 0 0rem 0.6rem;
-  }
-
-  #search-results section.expanded {
-    gap: 8px;
-    justify-content: flex-start;
-    margin-bottom: 8px;
-  }
-
-  #search-results section h3 {
-    font-size: 1rem;
-    display: block;
-    width: 100%;
-  }
-
-  .profiles {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(10rem, 1fr));
-  }
-
-  .profile-item {
-    height: 84px;
-    border-radius: var(--border-radius1);
-    /* box-shadow: 0 10px 24px rgba(0, 0, 0, 0.7); */
-  }
-
-  .profile-item:hover {
-    transform: scale(0.96);
-    box-shadow: 0 4px 8px rgb(8, 8, 22);
-  }
-
-
-
-  .profile-item img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    aspect-ratio: 1 / 1.1;
-  }
-
-
-  .profile-item-info {
-    p {
-      padding: 0 0.2rem;
-      font-size: 12px;
-      line-height: 0.78rem;
-    }
-
-    .name {
-      font-size: 13px;
-    }
   }
 
   .modal-content {

@@ -120,7 +120,7 @@ header.detach {
   }
 
   #search-input {
-    height: 1.8rem;
+    height: 30px;
   }
 }
 
@@ -230,9 +230,11 @@ header {
 /* Search Bar Styling */
 .search-bar {
   position: relative;
-  margin-left: auto;
-  justify-self: flex-end;
+  display: flex;
+  flex: 1 1;
+  justify-content: flex-end;
   border: none;
+  width: 100%;
 }
 
 #search-input {
@@ -242,7 +244,7 @@ header {
   font-family: var(--font-style2);
   font-size: 14px;
   font-weight: 500;
-  padding-left: 12px;
+  padding: 0;
   color: var(--font-color1);
   background-color: var(--color3);
   outline: none;
@@ -260,6 +262,7 @@ input::placeholder {
 
 #search-input:focus,
 #search-input:not(:placeholder-shown) {
+  padding-inline: 8px 32px;
   width: 14rem;
   opacity: 1;
   cursor: text;
@@ -272,8 +275,12 @@ input::placeholder {
 }
 
 #search-input:focus-visible,
-#search-button:focus-visible {
+.x-icon:focus-visible {
   box-shadow: 0 0 0 2px var(--color3);
+}
+
+#search-input .x-icon {
+  background: var(--color2);
 }
 
 .search-icon,
@@ -285,7 +292,7 @@ input::placeholder {
   position: absolute;
   min-height: 50%;
   aspect-ratio: 1 / 1;
-  right: 0.4rem;
+  right: 6px;
   top: 50%;
   translate: 0 -50%;
   rotate: 90deg;
@@ -299,7 +306,7 @@ input::placeholder {
 
 .search-bar:has(#search-input:placeholder-shown) .search-icon,
 .search-bar:has(#search-input:not(:placeholder-shown)) .x-icon {
-  color: var(--font-color2);
+  color: var(--font-color1);
   opacity: 1;
   rotate: unset;
   pointer-events: all;
@@ -2383,138 +2390,6 @@ body:has(.filter-menu) {
       width: 250px;
       height: auto !important;
     }
-  }
-}
-
-/* Search Page */
-#search-results {
-  margin: 0;
-  height: fit-content;
-  width: 100%;
-
-  .results-container {
-    display: flex;
-    flex-direction: column;
-    gap: 1.4rem;
-    padding: 0.6rem 1.4rem 1.4rem 1.4rem;
-  }
-}
-
-#search-results h1 {
-  font-size: 1.6rem;
-  margin: 12px 1.4rem 0rem;
-  padding: 0;
-}
-
-#search-results {
-  section {
-    display: none;
-    min-height: unset;
-    margin: 0;
-    padding: var(--padding1);
-    border: 1px solid var(--color3);
-    border-radius: var(--border-radius1);
-    flex-wrap: wrap;
-    flex: 1;
-    gap: unset;
-    justify-content: flex-start;
-    transition: padding 0.2s;
-    overflow: hidden;
-
-    .grid-container {
-      pointer-events: none;
-      opacity: 0;
-      visibility: hidden;
-      height: 0;
-      transition: opacity 0.2s, height 0.2s ease-in-out;
-    }
-  }
-
-  section.expanded {
-    gap: 12px;
-    border: unset;
-    padding: 0px;
-    overflow: visible;
-
-    .grid-container {
-      pointer-events: all;
-      opacity: 1;
-      visibility: visible;
-      height: auto;
-      transition: opacity 0.2, height 0.2s ease-in-out;
-    }
-  }
-
-  section:has(.grid-item, .profile-item) {
-    display: flex;
-  }
-}
-
-#search-results section h3 {
-  font-size: 20px;
-  width: 100%;
-}
-
-.profiles {
-  grid-template-columns: repeat(auto-fill, minmax(12rem, 1fr));
-  /*justify-content: space-between; */
-}
-
-.profile-item {
-  visibility: visible;
-  display: flex;
-  gap: 8px;
-  height: 8rem;
-  max-width: 100%;
-  padding: var(--padding1);
-  overflow: hidden;
-  border: 1px solid var(--color3);
-  border-radius: var(--border-radius1);
-  background-color: var(--color5);
-  transition: transform 0.3s, box-shadow 0.3s, border 0.3s;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
-}
-
-
-.profile-item:hover {
-  transform: scale(1.03);
-  box-shadow: 0 6px 15px rgb(8, 8, 22);
-  border: 1px solid #383852e5;
-  cursor: pointer;
-}
-
-.profile-item span {
-  height: 100%;
-  border-radius: var(--border-radius1);
-  overflow: hidden;
-  /* min-width: 38%; */
-  aspect-ratio: 5/4;
-  display: flex;
-  justify-content: center;
-}
-
-.profile-item img {
-  width: 100%;
-  object-fit: cover;
-}
-
-.profile-item-info {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  justify-content: center;
-  height: 100%;
-  width: 100%;
-  text-align: left;
-
-  p {
-    font-size: 13px;
-    line-height: 0.92rem;
-  }
-
-  .name {
-    font-size: 14px;
-    font-weight: bold;
   }
 }
 
