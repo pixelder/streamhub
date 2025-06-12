@@ -132,7 +132,7 @@ function renderGridItems(items, type = null) {
       const upcoming = releaseDate?.isUpcoming()
       const image = item.poster_path
         ? `${IMAGE_342 + item.poster_path}`
-        : 'assets/images/no-image.png ';
+        : '/assets/images/no-image.png ';
       return `
          <div tabindex="0" class="grid-item" draggable="true" id="grid-item" data-id="${item.id}" data-media-type="${mediaType}">
            <div class="img-container">

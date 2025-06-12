@@ -249,7 +249,7 @@ function renderLogItems(sectionId, data, item, tvData, type = null) {
   const image = !tvData
     ? data.backdrop_path
       ? (IMAGE_342 + data.backdrop_path)
-      : 'assets/images/no-image-hr.png'
+      : '/assets/images/no-image-hr.png'
     : epData?.still_path
       ? (IMAGE_342 + epData?.still_path)
       : (IMAGE_342 + data.backdrop_path);
