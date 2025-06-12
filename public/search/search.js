@@ -6,19 +6,20 @@ const IMAGE_ORG = 'https://image.tmdb.org/t/p/original';
 
 let contWatching = false;
 
-function buildSearchPage(query) {
-
+function buildSearchPage(term) {
+  const query = escapeHTML(term)
   const input = document.getElementById('search-input')
   input.value = query;
+  input.placeholder = 'Search for movies, tv shows or a person'
   input.closest('form').setAttribute('action', `javascript:void(0);`)
   input.closest('form').removeAttribute('onsubmit', '')
   input.closest('form').onsubmit = () => input.blur()
 
   document.querySelector("title").innerText = query + ` - Pixelstream`
 
+  // <p class="search-title">Searching results for <b>"${query}"</b></p>
   document.getElementById('main-content').innerHTML = `
   <div id=search-results>
-    <h1 class="search-title">Searching Results for “${query}”</h1>
     <div class="results-container"></div>
     <div class="modal-overlay"></div>
     <div id="info-modal" class="modal">
@@ -47,47 +48,56 @@ async function getSearchResults(query) {
   const pages = { movie: 3, tv: 3, person: 5 }
 
   const finalResults = { movie: [], tv: [], person: [] };
-
+  document.querySelector(".results-container").innerHTML = ''
+  
   try {
-    mediaTypes.forEach(async (type) => {
-      fetchSearchResults(query, type, pages[type]).then((data) => {
-        data.sort((a, b) => popularity(b, type) - popularity(a, type))
-        data.filter(item => popularity(item, type) > 0.01);
-        data.forEach(item => item.media_type = type)
-        finalResults[type] = data.slice(0, isMobile() ? 20 : 14);
-        if (type === 'person') finalResults[type] = data.slice(0, isMobile() ? 20 : 12)
-        updateSearchResultsUI(type, finalResults, query)
-      })
+    const fetchAndRender = mediaTypes.map(async (type) => {
+      const data = await fetchSearchResults(query, type, pages[type])
+      data.sort((a, b) => popularity(b, type) - popularity(a, type))
+      data.filter(item => popularity(item, type) > 0.01);
+      data.forEach(item => item.media_type = type)
+      finalResults[type] = data.slice(0, isMobile() ? 20 : 14);
+      if (type === 'person') finalResults[type] = data.slice(0, isMobile() ? 20 : 12)
     })
+    await Promise.all(fetchAndRender)
+    mediaTypes.forEach(async (type) => populateSearchResults(type, finalResults))
+
   } catch (e) {
     console.error("Error fetching search results:", e);
-  }
-
-  try {
-    document.querySelector(".results-container").innerHTML = ''
-  } catch (e) {
-    console.log(e)
+  } finally {
+    updateUI(finalResults,query)
   }
 }
 
-function updateSearchResultsUI(type, results, query) {
+function updateUI(results, term) {
+  const query = escapeHTML(term)
 
   const length = Object.keys(results).reduce((sum, key) => {
     return sum + results[key].length;
   }, 0);
-  const searchTitle = document.querySelector('.search-title')
-  searchTitle.innerText = `${length < 1 ? `No` : `Search`} Results for “${query}”`
 
-  document.querySelector("title").innerText = query + ` - Pixelstream`
-  window.history.replaceState('', '', `/search?q=${query}`)
-
+  document.querySelector('.search-title')?.remove()
   const container = document.querySelector(".results-container")
 
-  if (length < 1) {
-    container.innerHTML = ""
+  if (!term.trim().length) {
+    container.insertAdjacentHTML('beforebegin', `
+      <p class="search-title"><em>>> type something to search <<</em></p>
+    `)
     return
   }
 
+  if (length < 1) {
+    container.insertAdjacentHTML('beforebegin', `
+      <p class="search-title">No results for <b>"${query}"</b></p>
+    `)
+  }
+
+  document.querySelector("title").innerText = query + ` - Pixelstream`
+  window.history.replaceState('', '', `/search?q=${query}`)
+}
+function populateSearchResults(type, results) {
+
+  const container = document.querySelector(".results-container")
   let section = document.getElementById(`${type}-results`);
 
   const populateResults = (type) => {
@@ -103,10 +113,8 @@ function updateSearchResultsUI(type, results, query) {
         </div>
       </section>
     `;
-
   }
-
-  if (!section) populateResults(type);
+  if (!section)  populateResults(type);
 }
 
 function renderProfile(items) {
@@ -116,7 +124,7 @@ function renderProfile(items) {
       const name = item.name || item.original_name;
       const image = item.profile_path
         ? `${IMAGE_300 + item.profile_path}`
-        : 'assets/images/no-image.png';
+        : '/assets/images/no-image.png';
       return `
         <div tabindex="0" class="profile-item" data-id="${item.id}" data-media-type="person">
           <span>
@@ -139,7 +147,7 @@ window.addEventListener('DOMContentLoaded', () => {
   setUpScrollEvents()
   activeSearchResults(getSearchResults,{  
     selector  : '#search-input',
-    minLength : 3,
+    minLength : 0,
     debounce : 300
   })
 })
