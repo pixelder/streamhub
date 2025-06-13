@@ -434,7 +434,7 @@ async function displayModal(mediaType, data) {
       prevBtn.id = 'prev-btn'
       prevBtn.dataset.id = prevData.at(-1).id
       prevBtn.dataset.mediaType = prevData.at(-1).mediaType
-      prevBtn.innerHTML = `<i class="fa-solid fa-arrow-left"></i>`
+      prevBtn.innerHTML = `<i class="fa-solid fa-angle-left"></i>`
       navContainer.appendChild(prevBtn)
     }
     if (fwdData.length) {
@@ -442,7 +442,7 @@ async function displayModal(mediaType, data) {
       fwdBtn.id = 'fwd-btn'
       fwdBtn.dataset.id = fwdData.at(-1).id
       fwdBtn.dataset.mediaType = fwdData.at(-1).mediaType
-      fwdBtn.innerHTML = `<i class="fa-solid fa-arrow-right"></i>`
+      fwdBtn.innerHTML = `<i class="fa-solid fa-angle-right"></i>`
       navContainer.appendChild(fwdBtn)
     }
     modalMedia.prepend(navContainer)
@@ -1191,6 +1191,7 @@ function modalEventsHandler(event, data) {
     const content = event.target.closest('.grid-item') 
     if (content) {
       if (currentMedia(content)) prevData.push(currentMedia(content))
+      fwdData = []
       const {id, mediaType} = content.dataset
       openModal({id, mediaType}, true)
       event.stopPropagation()
@@ -1220,6 +1221,7 @@ function modalEventsHandler(event, data) {
     const cast = event.target.closest('.cast a')
     if (cast) {
       if (currentMedia(cast)) prevData.push(currentMedia(cast));
+      fwdData = []
       const {id, mediaType} = cast.dataset
       openModal({id, mediaType}, true)
       event.stopPropagation()
