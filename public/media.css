@@ -894,8 +894,7 @@
   } */
 
   .tab:hover {
-    color: var(--font-color1);
-    background-color: var(--color3);
+    background-color: #334;
   }
 
   .tab-items {
