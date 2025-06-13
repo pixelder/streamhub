@@ -653,7 +653,7 @@ function populateCreditSection(data, type) {
       : data.profile_path 
         ? `${IMAGE_300 + data.profile_path}`
         : '/assets/images/no-image.png';
-        
+
     return `<div class="grid-item" data-id="${item.id}" data-media-type="${item.media_type}">
       <img loading="lazy" src="${image}">
       <div class="credit-item-info">
@@ -1116,18 +1116,19 @@ function modalEventsHandler(event, data) {
           return
         }
         container.innerHTML = trailerIframe
+        container.closest('#modal-details').scrollTo({top: 0})
         trailerBtn.innerHTML = `<i class="fa-solid fa-xmark"></i>Close`
       }
 
-      const trailer = document.getElementById('ytplayer')
+      const trailerEl = document.getElementById('ytplayer')
 
-      if (trailer) {
+      if (trailerEl) {
         container.innerHTML = '';
         trailerBtn.innerHTML = `<i class="fa-solid fa-video"></i>Trailer`
         return
       }
 
-      if (!trailer) playTrailer()
+      if (!trailerEl) playTrailer()
     }
 
     if (event.target.closest(".episode img")) {
