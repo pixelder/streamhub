@@ -186,8 +186,8 @@ async function loadWatchPage(mediaType, NAME = null, id, tvData = null) {
         setupScrollEdgeMask(container)
       });
     ['click', 'keydown'].forEach(eventType => {
-      document.removeEventListener(eventType, watchEventListeners)
-      document.addEventListener(eventType, watchEventListeners)
+      document.removeEventListener(eventType, modalEventsHandler)
+      document.addEventListener(eventType, modalEventsHandler)
     });
   }
 
