@@ -2515,6 +2515,7 @@ body:has(.modal:is([active])) {
   display: flex;
   gap: 6px;
   height: 30px;
+  position: absolute;
 }
 
 #prev-btn, #fwd-btn {
@@ -2522,6 +2523,10 @@ body:has(.modal:is([active])) {
   aspect-ratio: 1/1;
   background: var(--color3);
   border-radius: var(--border-radius2);
+}
+
+.modal-media:has(#person-details) .nav-btn-container {
+  position: relative;
 }
 
 .modal:has(#ytplayer) {
@@ -2860,6 +2865,7 @@ body:has(.modal:is([active])) {
 }
 
 .cast a {
+  text-decoration-color: transparent;
   transition: color 0.2s, text-decoration 0.2s;
 }
 

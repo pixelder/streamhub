@@ -950,14 +950,9 @@
   }
 
   .nav-btn-container {
-    position: absolute;
     height: 24px;
     font-size: 12px;
     z-index: 1;
-  }
-  
-  .modal-media:has(#person-details) .nav-btn-container {
-    position: relative;
   }
 
   .trailer-container {
