@@ -10,8 +10,8 @@
   .results-container {
     display: flex;
     flex-direction: column;
-    gap: 1.4rem;
-    padding: 0.6rem 1.4rem 1.4rem 1.4rem;
+    gap: 1.6rem;
+    padding: 16px 1.4rem 1.4rem 1.4rem;
   }
 }
 
@@ -137,8 +137,8 @@
     border: none;
 
     .results-container {
-      padding: 8px 0.6rem 12px;
-      gap: 8px;
+      padding: 10px 0.6rem 12px;
+      gap: 18px;
 
       .grid-item {
         height: 190px;
