@@ -1230,9 +1230,8 @@
   .modal-genre a {
     width: fit-content;
     text-wrap: nowrap;
-    font-size: 0.7rem;
-    padding: 0.08rem 0.2rem;
-
+    font-size: 11px;
+    padding: 2px 4px;
   }
 
   .tv-actions {
