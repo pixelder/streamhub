@@ -151,7 +151,7 @@ async function fetchHistoryItems(section, sectionId, items) {
   }
   const placeholders = new Map();
   const pending = new Set();
-  const concurrencyLimit = 4;
+  const concurrencyLimit = 6;
 
   // 1. Insert placeholders in the correct order
   for (const item of SORTED_ITEMS) {
