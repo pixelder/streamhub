@@ -298,7 +298,7 @@ async function fetchMetaData(mediaType = null, id = null, season = null, credits
 
 let modalController = null;
 
-function openModal(data) {
+function openModal(data, nav = null) {
   if (modalController) modalController.abort();
   modalController = new AbortController();
   const signal = modalController.signal;
@@ -317,6 +317,11 @@ function openModal(data) {
     const bar = document.querySelector(selector)
     if (bar.classList.contains('detach')) bar.classList.add('hidden')
   })
+
+  if (!nav) {
+    prevData = []
+    fwdData = []
+  }
 
   fetchMetaData(mediaType, id, null, credits)
     .then(({ mediaType, data }) => {
@@ -361,10 +366,16 @@ function getCountryCertification(data, mediaType) {
 
 let isViewingDetails = false
 
-function displayModal(mediaType, data) {
+let fwdData = []
+let prevData = []
+
+async function displayModal(mediaType, data) {
   const modal = document.getElementById('info-modal');
   const modalContent = document.querySelector('.modal-content');
   const details = document.getElementById('modal-details');
+  details.setAttribute('data-id', data.id)
+  details.setAttribute('data-media-type', mediaType)
+
   document.documentElement.style.setProperty(
     '--modal-backdrop',
     `url(${data.backdrop_path ? IMAGE_ORG + data.backdrop_path : ''})`
@@ -375,8 +386,8 @@ function displayModal(mediaType, data) {
   const contentLogoHTML = getContentLogoHTML(data);
 
   mediaType !== 'person'
-    ? details.innerHTML = buildMediaDetailsHTML(data, mediaType, contentLogoHTML)
-    : details.innerHTML = buildPersonDetailsHTML(data);
+    ? details.innerHTML = await buildMediaDetailsHTML(data, mediaType, contentLogoHTML)
+    : details.innerHTML = await buildPersonDetailsHTML(data);
 
   if (mediaType === 'movie') {
     insertMovieActions(data, mediaType);
@@ -412,6 +423,32 @@ function displayModal(mediaType, data) {
 
   initializeModalListeners(mediaType, data, modalContent, details);
 
+  if (prevData.length || fwdData.length) {
+    const modalMedia = document.querySelector('.modal-media')
+    const navContainer = document.createElement('div')
+    navContainer.className = 'nav-btn-container'
+    navContainer.style.cssText = 'width: 100%; flex: 1 0 auto;'
+    
+    if (prevData.length) {
+      const prevBtn = document.createElement('button')
+      prevBtn.id = 'prev-btn'
+      prevBtn.dataset.id = prevData.at(-1).id
+      prevBtn.dataset.mediaType = prevData.at(-1).mediaType
+      prevBtn.innerHTML = `<i class="fa-solid fa-arrow-left"></i>`
+      navContainer.appendChild(prevBtn)
+    }
+    if (fwdData.length) {
+      const fwdBtn = document.createElement('button')
+      fwdBtn.id = 'fwd-btn'
+      fwdBtn.dataset.id = fwdData.at(-1).id
+      fwdBtn.dataset.mediaType = fwdData.at(-1).mediaType
+      fwdBtn.innerHTML = `<i class="fa-solid fa-arrow-right"></i>`
+      navContainer.appendChild(fwdBtn)
+    }
+    modalMedia.prepend(navContainer)
+  }
+
+
   modal.setAttribute('active', '')
   // modal.classList.add('active');
   details.focus();
@@ -431,24 +468,27 @@ function getContentLogoHTML(data) {
   `;
 }
 
-function buildMediaDetailsHTML(data, mediaType, contentLogoHTML) {
+async function buildMediaDetailsHTML(data, mediaType, contentLogoHTML) {
   const name = data.name || data.title || data.original_title;
   const releaseDate = data.release_date || data.first_air_date || data.air_date || '';
   const formattedDate = convertDate(releaseDate) || null;
   const genresHTML = data.genres
     .slice(0, 5)
-    .map(genre => `<a href="#">${genre.name}</a>`)
+    .map(genre => `
+      <a href="/explore?type=${mediaType}&genre=${genre.id}" title="Explore ${genre.name} ${mediaType === 'movie' ? 'movies': 'tv shows'}">
+      ${genre.name}
+      </a>
+    `)
     .join(' ');
   const castHTML = data.credits?.cast
     .slice(0, 5)
-    .map(cast => cast.name)
+    .map(cast => `<a data-id="${cast.id}" data-media-type="person">${cast.name}</a>`)
     .join(', ');
   const companyHTML = (data.production_companies || [])
     .slice(0, 2)
     .map(item => item.name)
     .join(' • ')
-  //console.log(companyHTML)
-  //console.log(data)
+
   const { rated } = getCountryCertification(data, mediaType);
   const rating = truncate(data.vote_average, 1)
   let released = true;
@@ -485,7 +525,7 @@ function buildMediaDetailsHTML(data, mediaType, contentLogoHTML) {
         ${castHTML ? `<p class="cast">Cast : ${castHTML} </p>` : `<p><em>No cast information available</em></p>`}
         ${companyHTML ? `<p class="company">${companyHTML}</p>` : ''}
         <p class="tags">
-          ${extractYear(formattedDate)} • 
+          ${extractYear(formattedDate) ?? 'N/A'} • 
           ${rated !== '' ? `${rated} • ` : ''} 
           ${data.original_language.toUpperCase()} 
           ${mediaType === 'movie' ? `• ${runtime(data.runtime)}` : `• ${pluralResolver(data.number_of_seasons, 'season', 's')}`}
@@ -511,7 +551,7 @@ function tmdbGenderResolver(id) {
   if (id === 3) return `Other`
 }
 
-function buildPersonDetailsHTML(data) {
+async function buildPersonDetailsHTML(data) {
 
   const links = [
     { id: data.id, url: `https://tmdb.org/person/${data.id}`, icon: "tmdb_short.svg", page: "tmdb" },
@@ -523,7 +563,7 @@ function buildPersonDetailsHTML(data) {
   ];
 
   return `
-    <div class="modal-media" ${isMobile() ? '' : `style="flex-direction:row ;justify-content: flex-start !important;"`}>
+    <div class="modal-media" ${isMobile() ? '' : `style="flex-wrap: wrap; flex-direction: unset;"`}>
       ${data.profile_path ? `
         <div class="modal-cover portrait" style="display:flex">
             <img style="opacity:1" loading="lazy" src="${IMAGE_300 + data.profile_path}">
@@ -795,11 +835,11 @@ function initializeModalListeners(mediaType, data, modalContent, details) {
     });
   }
 
-  const watchHandler = (e) => watchEventListeners(e, data);
-  document.modalWatchHandler = watchHandler;
+  const eventHandler = (e) => modalEventsHandler(e, data);
+  document.modalWatchHandler = eventHandler;
 
   ['click', 'keydown'].forEach(eventType => {
-    details.addEventListener(eventType, watchHandler);
+    details.addEventListener(eventType, eventHandler);
   });
 
   // Create a named function for the scroll event
@@ -1016,8 +1056,8 @@ async function tvContent(data, sno, eno, ref) {
   return season
 }
 
-function watchEventListeners(event, data) {
-  console.log('i ran');
+function modalEventsHandler(event, data) {
+  console.log('modal event');
   if (event.type === 'click' || event.type === 'keydown' && event.key === 'Enter') {
     if (event.target.classList.contains("watch-btn")) {
 
@@ -1140,6 +1180,48 @@ function watchEventListeners(event, data) {
       toggleBookmark('bookmarks', id, mediaType, sno, eno, index);
       manageBookmark(mediaType, id)
       console.log('toggling bookmark')
+      event.stopPropagation()
+    }
+
+    const currentMedia = (el) => {
+      const id = el.closest('#modal-details').dataset.id
+      const mediaType = el.closest('#modal-details').dataset.mediaType
+      return {id, mediaType}
+    }
+    const content = event.target.closest('.grid-item') 
+    if (content) {
+      if (currentMedia(content)) prevData.push(currentMedia(content))
+      const {id, mediaType} = content.dataset
+      openModal({id, mediaType}, true)
+      event.stopPropagation()
+    }
+
+    if (event.target.closest('.nav-btn-container')) {
+      const prevBtn = event.target.closest('#prev-btn')
+      if (prevBtn) {
+        if (currentMedia(prevBtn)) fwdData = [currentMedia(prevBtn)];
+        const {id, mediaType} = prevBtn.dataset
+        prevData.pop()
+        openModal({id, mediaType}, true)
+        event.stopPropagation()
+      }
+
+      const fwdBtn = event.target.closest('#fwd-btn')
+      if (fwdBtn) {
+        if (currentMedia(fwdBtn)) prevData.push(currentMedia(fwdBtn));
+        const {id, mediaType} = fwdBtn.dataset
+        fwdData.pop()
+        openModal({id, mediaType}, true)
+        event.stopPropagation()
+      }
+
+    }
+
+    const cast = event.target.closest('.cast a')
+    if (cast) {
+      if (currentMedia(cast)) prevData.push(currentMedia(cast));
+      const {id, mediaType} = cast.dataset
+      openModal({id, mediaType}, true)
       event.stopPropagation()
     }
   }

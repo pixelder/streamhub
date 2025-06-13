@@ -21,14 +21,14 @@ function buildSearchPage(term) {
   document.getElementById('main-content').innerHTML = `
   <div id=search-results>
     <div class="results-container"></div>
-    <div class="modal-overlay"></div>
-    <div id="info-modal" class="modal">
-        <div class="modal-content">
-          <div id="modal-details">
-          </div>
-        </div>
-    </div> 
   </div>
+  <div class="modal-overlay"></div>
+  <div id="info-modal" class="modal">
+    <div class="modal-content">
+      <div id="modal-details">
+      </div>
+    </div>
+  </div> 
   `
   const container = document.querySelector('.results-container')
   container.addEventListener('click', (e) => {

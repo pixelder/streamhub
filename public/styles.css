@@ -1455,11 +1455,13 @@ body:has(.expandable.expanded) {
     background-color: var(--color3);
     border: 1px solid var(--color1);
     filter: brightness(1.2);
+    order: -2;
   }
 
   .chip.excluded {
     color: var(--font-color3);
     filter: opacity(0.7);
+    order: -1;
   }
 }
 
@@ -2508,6 +2510,20 @@ body:has(.modal:is([active])) {
   border : unset; outline : unset;
 }
 
+
+.nav-btn-container {
+  display: flex;
+  gap: 6px;
+  height: 30px;
+}
+
+#prev-btn, #fwd-btn {
+  height: 100%;
+  aspect-ratio: 1/1;
+  background: var(--color3);
+  border-radius: var(--border-radius2);
+}
+
 .modal:has(#ytplayer) {
   .modal-content::before {
     width: 100%;
@@ -2588,6 +2604,7 @@ body:has(.modal:is([active])) {
     max-width: unset;
   }
 
+  .nav-btn-container,
   .releasing-on,
   .remaining-time,
   .watched-check {
@@ -2766,20 +2783,23 @@ body:has(.modal:is([active])) {
 
 .modal-cover {
   position: relative;
-  display: inline-block;
+  display: flex;
   aspect-ratio: 2 / 3;
-  object-fit: cover;
-  /*     mask-image: linear-gradient(to top, transparent 0%, black 5%);
- */
+  max-height: 100%;
+  justify-content: center;
 }
 
 .modal-cover>img {
+  object-fit: cover;
   opacity: 0;
   height: 100%;
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
   border-radius: var(--border-radius2);
 }
 
+.modal-media:has(.nav-btn-container) .modal-cover {
+  height: calc(100% - 42px);
+}
 
 .modal-media>span {
   display: flex;
@@ -2837,6 +2857,16 @@ body:has(.modal:is([active])) {
   font-size: 0.875rem;
   line-height: 0.96rem;
   text-shadow: 0 0 2px #000;
+}
+
+.cast a {
+  transition: color 0.2s, text-decoration 0.2s;
+}
+
+.cast a:hover {
+  cursor: pointer;
+  color: var(--progress-color);
+  text-decoration: underline;
 }
 
 .company {
@@ -2906,12 +2936,12 @@ body:has(.modal:is([active])) {
   scroll-behavior: smooth;
 }
 
-.modal-info a {
+.modal-genre a {
   text-decoration: none;
   color: var(--font-color2);
-  font-size: 0.74rem;
+  font-size: 12px;
   text-wrap: nowrap;
-  padding: 0.12rem 0.24rem;
+  padding: 2px 6px;
   background-color: #222233;
   border: 1px solid var(--color2);
   border-radius: var(--border-radius2);
@@ -2998,7 +3028,7 @@ option {
   flex-wrap: wrap;
   flex: 1;
   justify-content: space-between;
-  gap: 12px;
+  gap: 8px 12px;
 }
 
 .episode-items .img-container {
@@ -3108,6 +3138,7 @@ option {
 
 #person-details {
   display: flex;
+  flex: 1 1;
   flex-direction: column;
   gap: 8px;
 

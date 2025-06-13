@@ -663,7 +663,7 @@
 
   .progress-bar {
     height: 4px;
-    margin-block-start: 3px;
+    margin-block-start: 4px;
   }
 
 
@@ -718,13 +718,13 @@
     }
 
     .history-item-info {
-      gap: 0;
+      gap: 2px;
     }
 
     .history-item-info h3 {
       font-size: 13px;
       width: fit-content;
-      line-height: 15px;
+      line-height: 14px;
       text-shadow: 0 0 3px #000;
     }
 
@@ -949,6 +949,17 @@
     scrollbar-width: none;
   }
 
+  .nav-btn-container {
+    position: absolute;
+    height: 24px;
+    font-size: 12px;
+    z-index: 1;
+  }
+  
+  .modal-media:has(#person-details) .nav-btn-container {
+    position: relative;
+  }
+
   .trailer-container {
     position: absolute;
     visibility: hidden;
@@ -1061,7 +1072,6 @@
     max-height: fit-content;
     min-height: fit-content;
     justify-content: normal;
-    z-index: 1000;
   }
 
   .modal:has(#ytplayer) {
@@ -1217,7 +1227,7 @@
     overflow-x: auto;
   }
 
-  .modal-info a {
+  .modal-genre a {
     width: fit-content;
     text-wrap: nowrap;
     font-size: 0.7rem;
