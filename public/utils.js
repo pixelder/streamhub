@@ -643,13 +643,19 @@ function populateCreditSection(data, type) {
   let HTML = ''
   const credits = data.combined_credits
   // use  https://api.themoviedb.org/3/credit/{credit_id} to get appear date of a tv show
-
+  
   const itemHTML = (item, data) => {
     const title = item.title || item.original_title || item.name || item.original_name;
     const year = extractYear(item.release_date || item.first_air_date) || '';
     const mediaType = item.media_type === 'tv' ? 'TV' : 'Movie';
+    const image = item.poster_path
+      ? `${IMAGE_300 + item.poster_path}`
+      : data.profile_path 
+        ? `${IMAGE_300 + data.profile_path}`
+        : '/assets/images/no-image.png';
+        
     return `<div class="grid-item" data-id="${item.id}" data-media-type="${item.media_type}">
-      <img loading="lazy" src="${IMAGE_300 + (item.poster_path || data.profile_path)}">
+      <img loading="lazy" src="${image}">
       <div class="credit-item-info">
         <p class="credit-name">${item.job || item.character || `N/A`}</p>
         <p class="credit-media-title"> ${title || 'Title not specified'} ${year ? `(${year})` : ''}</p>
