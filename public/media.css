@@ -250,6 +250,7 @@
 
   section h2 {
     font-size: 20px;
+    transition: scale 0.2s, width 0.2s, opacity 0.2s;
   }
 
   /* .section-header {
@@ -257,6 +258,7 @@
   } */
 
   .select-action {
+    position: absolute;
     font-size: 12px;
     height: 30px;
     border-radius: var(--border-radius1);
@@ -264,11 +266,9 @@
 
   section:has(.delete-button.active) {
     h2 {
-      display: none;
-    }
-
-    .select-action {
-      margin-right: auto;
+      scale: 0;
+      width: 0;
+      opacity: 0;
     }
   }
 

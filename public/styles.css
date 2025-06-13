@@ -542,13 +542,12 @@ section:has(.grid-item) .actions {
 }
 
 .actions .delete-button {
-  position: absolute;
   /* color: #ff2c2c; */
   background: #2f111a;
   color: #ff5855;
   opacity: 0;
   scale: 0;
-  transition: scale 0.2s ease-in-out;
+  transition: scale 0.2s, opacity 0.2s ease-in-out;
 }
 
 .actions:has(.delete-button.active) .delete-button {
@@ -559,10 +558,7 @@ section:has(.grid-item) .actions {
 
 section:has(.delete-button.active) .select-action {
   scale: unset;
-  width: auto;
   opacity: 1;
-  transition: opacity 0.2s, scale 0.2s ease-in-out;
-  transition-delay: 0.1s;
 }
 
 
@@ -570,7 +566,6 @@ section:has(.delete-button.active) .select-action {
   display: flex;
   scale: 0;
   opacity: 0;
-  width: 0;
   height: 32px;
   align-items: center;
   text-wrap: nowrap;
@@ -578,8 +573,7 @@ section:has(.delete-button.active) .select-action {
   border-radius: var(--border-radius2);
   /* border: 1px solid #3838528c; */
   background: var(--color5) !important;
-  transition: opacity 0.1s, scale 0.1s ease-in-out;
-  transition-delay: 0.1s;
+  transition: opacity 0.2s, scale 0.2s ease-in-out;
 }
 
 
