@@ -526,12 +526,13 @@ function setupLogging(id, mediaType) {
       updatePageStatus(progress);
     }
 
-    if (progress > 90) {
+    if (progress > 85) {
       logToLocalStorage('history', Number(id), mediaType, currentSeason, currentEpisode, 100);
       if (mediaType === 'movie') {
         removeFromLocalStorage('watching', Number(id), mediaType);
         return
-      } else {
+      } 
+      if (mediaType === 'tv') {
         getNextEpisode(id, currentSeason, currentEpisode).then((ep) => {
           if (ep) {
             logToLocalStorage('watching', Number(id), 'tv', ep.season_number, ep.episode_number);
