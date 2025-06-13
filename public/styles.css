@@ -2512,17 +2512,21 @@ body:has(.modal:is([active])) {
 
 
 .nav-btn-container {
-  display: flex;
-  gap: 6px;
-  height: 30px;
   position: absolute;
+  display: flex;
+  height: 32px;
+  font-size: 14px;
+  gap: 4px;
+
+  button {
+    border-radius: 8px;
+  }
 }
 
 #prev-btn, #fwd-btn {
   height: 100%;
   aspect-ratio: 1/1;
   background: var(--color3);
-  border-radius: var(--border-radius2);
 }
 
 .modal-media:has(#person-details) .nav-btn-container {
