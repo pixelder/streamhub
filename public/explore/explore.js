@@ -105,7 +105,7 @@ window.addEventListener('DOMContentLoaded', () => {
 		if (Number(urlParams.size)) {
 			exploring = true
 			for (let [key, value] of urlParams.entries()) {
-				params[key] = value
+				params[key] = escapeHTML(value)
 			}
 			params = await resolvedParams(params)
 			loadExplorePage(params)
@@ -127,7 +127,7 @@ async function resolvedParams(params) {
 	let PARAMS = params
 	let preconf = false
 	const isStudio = PARAMS.type === 'studio'
-	if (PARAMS.type === 'studio') {
+	if (isStudio) {
 		preconf = CONFIG_PARAMS
 			.find(item => item.type === 'studio').data
 			.find(studio => studio.type === params.title);
@@ -136,14 +136,31 @@ async function resolvedParams(params) {
 	}
 	if (preconf) {
 		PARAMS = preconf.data
-		PARAMS.preconf = {}
-		PARAMS.preconf.title = preconf.type
-		PARAMS.preconf.filters = preconf.filters
-		if (isStudio) {
-			PARAMS.preconf.title = `studio&title=${preconf.type}`
-			setupMediaToggle(PARAMS, preconf.data.type)
+		PARAMS.preconf = {
+			'title' : preconf.type,
+			'filters' : preconf.filters
 		}
 	}
+	if (isStudio) {
+		let DEF_TYPE = 'movie'
+		if (preconf) {
+			PARAMS.preconf.title = `studio&title=${preconf.type}`
+			DEF_TYPE = preconf.data.type
+		}
+		if (!preconf) {
+			const tvText = ['tv', 'television']
+			if (tvText.some(txt => PARAMS.title.toLowerCase().includes(txt))) {
+				DEF_TYPE = 'tv';
+			}
+			PARAMS.type = DEF_TYPE
+			PARAMS.preconf = {
+				'title' : 'studio',
+				'filters' : {'genre': 'hidden', 'minRate' : 'hidden', 'year': 'hidden'}
+			}
+		}
+		setupMediaToggle(PARAMS, DEF_TYPE)
+	}
+
 	if (PARAMS.type === 'tv' || PARAMS.type === 'movie' || PARAMS.type === 'studio') return PARAMS
 }
 
