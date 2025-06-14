@@ -643,6 +643,7 @@ function populateCreditSection(data, type) {
   let HTML = ''
   const credits = data.combined_credits
   // use  https://api.themoviedb.org/3/credit/{credit_id} to get appear date of a tv show
+  // has appearing episode count. very inconsistent
   
   const itemHTML = (item, data) => {
     const title = item.title || item.original_title || item.name || item.original_name;
@@ -668,7 +669,6 @@ function populateCreditSection(data, type) {
   if (type === 'cast') {
     credits.cast.map(item => {
       HTML += itemHTML(item, data)
-      //console.log(item)
     })
   }
 
@@ -676,7 +676,6 @@ function populateCreditSection(data, type) {
     credits.crew.filter(item => item.department === type)
       .map(item => {
         HTML += itemHTML(item, data)
-        //console.log(item)
       })
   }
   return HTML
@@ -1925,7 +1924,6 @@ async function setupCheckboxListeners(sectionID, items) {
   const toggleEditing = (section, gridItem) => {
     const editBtn = section.querySelector(".edit-button");
     editBtn.querySelectorAll("i").forEach((i) => i.classList.toggle("active"));
-
     section.querySelector(".delete-button")?.classList.toggle("active");
     section.querySelectorAll(".selectable").forEach((item) =>
       item.classList.toggle("active")
@@ -1933,6 +1931,8 @@ async function setupCheckboxListeners(sectionID, items) {
     isActiveSelect[sectionID] = !isActiveSelect[sectionID]
 
     section.querySelector('.select-all').setAttribute('tabindex', isActiveSelect[sectionID] ? '0' : '-1')
+    section.querySelectorAll('.options-buttons')
+      .forEach(op => op.setAttribute('tabindex', isActiveSelect[sectionID] ? '-1' : '0'))
 
     resetEditing();
 
