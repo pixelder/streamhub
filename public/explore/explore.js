@@ -223,9 +223,9 @@ function loadExplorePage(PARAMS) {
 		loadDiscoverContent(mediaType, `browse-${mediaType}s`); // load initial content
 
 		setupFilterParams();
-
+		console.log(PARAMS)
 		searchResultFunction("#search-with-cast")
-		searchResultFunction("#search-with-company", {id : PARAMS.company, name:  PARAMS.title})
+		searchResultFunction("#search-with-company", {id : PARAMS.company, name:  PARAMS.company ? PARAMS.title : ''})
 
 		setupExploreEventListeners()
 	})
