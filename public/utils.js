@@ -482,12 +482,12 @@ async function buildMediaDetailsHTML(data, mediaType, contentLogoHTML) {
     .join(' ');
   const castHTML = data.credits?.cast
     .slice(0, 5)
-    .map(cast => `<a data-id="${cast.id}" data-media-type="person">${cast.name}</a>`)
+    .map(cast => `<a href="javascript:void(0)" data-id="${cast.id}" data-media-type="person">${cast.name}</a>`)
     .join(', ');
   const companyHTML = (data.production_companies || [])
     .slice(0, 2)
-    .map(item => item.name)
-    .join(' • ')
+    .map(item => `<a href="/explore?type=studio&company=${item.id}&title=${item.name}"> ${item.name}</a>`)
+    .join(' • ');
 
   const { rated } = getCountryCertification(data, mediaType);
   const rating = truncate(data.vote_average, 1)
