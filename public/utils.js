@@ -1883,7 +1883,7 @@ async function setupCheckboxListeners(sectionID, items) {
   const total = () => logItems.length
 
   const MAIN_CHECKBOX = document.querySelector(
-    `#${sectionID} .select-action .selectable input[type="checkbox"]`
+    `#${sectionID} .select-all input[type="checkbox"]`
   );
   
   const checkboxes = () => { return container.querySelectorAll(
@@ -1931,6 +1931,8 @@ async function setupCheckboxListeners(sectionID, items) {
       item.classList.toggle("active")
     );
     isActiveSelect[sectionID] = !isActiveSelect[sectionID]
+
+    section.querySelector('.select-all').setAttribute('tabindex', isActiveSelect[sectionID] ? '0' : '-1')
 
     resetEditing();
 
@@ -1986,6 +1988,55 @@ async function setupCheckboxListeners(sectionID, items) {
     displayCount()
   };
 
+  const deleteAction = () => {
+    const countString = pluralResolver(selectedItems.length, 'item' , 's')
+    if (!selectedItems.length || !isActiveSelect[sectionID]) return;
+    getConfirm({
+      title: `Delete ${countString} ? `,
+      success: { title: "Success!", message: `${countString} removed.` },
+      decline: { title: "Cancelled!", message: "Items not removed." },
+      exitInterval: 2000,
+    }).then((confirmed) => {
+      if (!confirmed) return;
+      const logType = section.dataset.type;
+      const findLog = (LOG, log) => {
+        let isSameLog = LOG.MEDIATYPE === log.mediaType &&
+          Number(LOG.ID) === Number(log.id) &&
+          Number(LOG.INDEX) === Number(log.index);
+          if (isSameLog && LOG.SNO && LOG.ENO) {
+            isSameLog = String(LOG.SNO) === String(log.sno) &&
+            String(LOG.ENO) === String(log.eno)
+          }
+        return isSameLog;
+      }
+      selectedItems.forEach((item) => {
+        const { id, mediaType, index, sno, eno } = item;
+        removeFromLocalStorage(logType, Number(id), mediaType, sno, eno, index)
+        section.querySelectorAll('.grid-item').forEach(obj => {
+          const {ID = obj.dataset.id, MEDIATYPE = obj.dataset.mediaType, INDEX= obj.dataset.index, SNO = obj.dataset.sno, ENO = obj.dataset.eno } = obj
+          const OBJ = {ID, MEDIATYPE, INDEX, SNO, ENO}            
+          const found_log = findLog(OBJ, item)
+          if (found_log) {
+            logItems = logItems.filter(log => {
+              const LOG = { id : log.id, mediaType: log.mediaType, index: log.index, sno: log.data.sno, eno: log.data.eno }
+              const found_log = findLog(OBJ, LOG)
+              return !found_log
+            })
+            obj.remove()
+          }
+        })
+      });
+      console.log(logItems)
+      if (!logItems.length || !section.querySelector('.grid-item')) {
+        section.querySelector('.actions').style.display = 'flex'
+        container.classList.add('empty')
+      }
+      console.log(sectionID, logType, "item removed");
+      displayCount()
+      toggleEditing(section);
+    });
+    return;
+  }
   // --- End Helper functions ---
 
   section.addEventListener('click', (e) => {
@@ -1996,66 +2047,54 @@ async function setupCheckboxListeners(sectionID, items) {
     }
     if (e.target.closest(".delete-button")) {
       console.log("delete-button");
+      deleteAction()
       e.stopPropagation();
-      const countString = pluralResolver(selectedItems.length, 'item' , 's')
-      if (selectedItems.length < 1) return;
-      getConfirm({
-        title: `Delete ${countString} ? `,
-        success: { title: "Success!", message: `${countString} removed.` },
-        decline: { title: "Cancelled!", message: "Items not removed." },
-        exitInterval: 2000,
-      }).then((confirmed) => {
-        if (!confirmed) return;
-        const logType = section.dataset.type;
-        const findLog = (LOG, log) => {
-          let isSameLog = LOG.MEDIATYPE === log.mediaType &&
-            Number(LOG.ID) === Number(log.id) &&
-            Number(LOG.INDEX) === Number(log.index);
-            if (isSameLog && LOG.SNO && LOG.ENO) {
-              isSameLog = String(LOG.SNO) === String(log.sno) &&
-              String(LOG.ENO) === String(log.eno)
-            }
-          return isSameLog;
-        }
-        selectedItems.forEach((item) => {
-          const { id, mediaType, index, sno, eno } = item;
-          removeFromLocalStorage(logType, Number(id), mediaType, sno, eno, index)
-
-          section.querySelectorAll('.grid-item').forEach(obj => {
-            const {ID = obj.dataset.id, MEDIATYPE = obj.dataset.mediaType, INDEX= obj.dataset.index, SNO = obj.dataset.sno, ENO = obj.dataset.eno } = obj
-            const OBJ = {ID, MEDIATYPE, INDEX, SNO, ENO}            
-            const found_log = findLog(OBJ, item)
-            if (found_log) {
-              logItems = logItems.filter(log => {
-                const LOG = { id : log.id, mediaType: log.mediaType, index: log.index, sno: log.data.sno, eno: log.data.eno }
-                const found_log = findLog(OBJ, LOG)
-                return !found_log
-              })
-              obj.remove()
-            }
-          })
-        });
-        console.log(logItems)
-        if (!logItems.length || !section.querySelector('.grid-item')) {
-          section.querySelector('.actions').style.display = 'flex'
-          container.classList.add('empty')
-        }
-        console.log(sectionID, logType, "item removed");
-        displayCount()
-        toggleEditing(section);
-      });
-      return;
-    }
-    if (e.target.closest(`.select-action input[type="checkbox"]`)) {
-      toggleAllCheckbox()
+      return
     }
   })
+  
   // Attach change listeners for checkboxes.
-  container.addEventListener('change', (e) => {
-    const checkbox = e.target.closest(".selectable input[type='checkbox']")
-    if (!checkbox) return
-    updateSelectedItems(checkbox)
-    MAIN_CHECKBOX.checked = checkboxes().length === selectedItems.length
+  section.addEventListener('change', (e) => {
+    if (e.target.closest(`.select-action input[type="checkbox"]`)) {
+      toggleAllCheckbox()
+      e.stopPropagation()
+      return
+    }
+    const checkbox = e.target.closest(".grid-item .selectable input[type='checkbox']")
+    if (checkbox) {
+      updateSelectedItems(checkbox)
+      MAIN_CHECKBOX.checked = checkboxes().length === selectedItems.length
+      e.stopPropagation()
+      return
+    }
+  })
+
+  section.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+      const main_checkbox = e.target.closest(`.select-all`)
+      if (main_checkbox) {
+        const cb = main_checkbox.querySelector('input[type="checkbox"]')
+        cb.checked = !cb.checked
+        toggleAllCheckbox()
+        e.stopPropagation()
+        return
+      }
+      const item = e.target.closest(".grid-item")
+      if (item) {
+        const checkbox = item.querySelector(".selectable input[type='checkbox']")
+        checkbox.checked = !checkbox.checked
+        console.log(item, checkbox)
+        updateSelectedItems(checkbox)
+        MAIN_CHECKBOX.checked = checkboxes().length === selectedItems.length
+        e.stopPropagation()
+        return
+      }
+    }
+    if (e.key === 'Delete' && isActiveSelect[sectionID] && selectedItems.length) {
+      deleteAction()
+      e.stopPropagation()
+      return
+    }
   })
 
   // checkboxes.forEach((checkbox) => {
