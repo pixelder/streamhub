@@ -1811,6 +1811,7 @@ function getConfirm({ title, message, success, decline, state = 1, exitInterval 
     </div>
   `;
   document.querySelector('main').appendChild(overlay);
+  const prevActive = document.activeElement;
   document.getElementById('decline').focus();
   return new Promise((resolve) => {
     const handleDialog = (e) => {
@@ -1846,6 +1847,7 @@ function getConfirm({ title, message, success, decline, state = 1, exitInterval 
         ['click', 'keydown'].forEach((type) =>
           overlay.removeEventListener(type, handleDialog)
         );
+        prevActive.focus()
       }
     };
 
