@@ -2373,7 +2373,7 @@ body:has(.filter-menu) {
 
 .user-content.hr-grid-view.expandable.expanded {
   .grid-container {
-    grid-template-columns: repeat(auto-fill, minmax(13rem, 1fr)) !important;
+    grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr)) !important;
     height: fit-content;
     max-height: calc(100% - 10px);
     overflow-y: auto !important;
