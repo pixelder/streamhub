@@ -129,6 +129,7 @@ function globalAddEventListener (event) {
       container.querySelectorAll(FOCUSABLE_SELECTORS)
     ).filter(el => el.offsetParent !== null);
 
+    console.log(focusable)
     if (focusable.length === 0) return;
 
     const current = document.activeElement;
