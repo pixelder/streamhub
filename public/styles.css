@@ -1319,7 +1319,6 @@ body:has(.expandable.expanded) {
   /* position: relative; */
   display: flex;
   /* justify-content: center; */
-  overflow: auto;
   flex-wrap: wrap;
   width: 100%;
   margin: 6px 0 12px;
