@@ -105,13 +105,18 @@ function globalAddEventListener (event) {
   }
 }
 
-if (document.querySelector('.expandable')) {
+(function enableTabTrap() {
   document.addEventListener('keydown', (event) => {
     if (event.key !== 'Tab') return;
-  
-    const expandedSection = document.querySelector('.expandable.expanded');
-    if (!expandedSection) return;
-  
+
+    // Find the trap container
+    const selectors = ['.modal[active] #modal-details', '.expandable.expanded', '.dialog', '.filter-menu[active]']
+    const container = selectors.map((selector) => document.querySelector(selector))
+      .find((el) => el);
+      
+    if (!container) return;
+
+    // Gather all focusable elements within the trap
     const FOCUSABLE_SELECTORS = `
       a[href],
       button:not([disabled]),
@@ -120,30 +125,37 @@ if (document.querySelector('.expandable')) {
       select:not([disabled]),
       [tabindex]:not([tabindex="-1"])
     `;
-  
-    const focusable = Array.from(expandedSection.querySelectorAll(FOCUSABLE_SELECTORS))
-      .filter(el => el.offsetParent !== null); // Exclude hidden elements
-  
+    const focusable = Array.from(
+      container.querySelectorAll(FOCUSABLE_SELECTORS)
+    ).filter(el => el.offsetParent !== null);
+
     if (focusable.length === 0) return;
-  
-    const currentFocus = document.activeElement;
-    const insideTrap = expandedSection.contains(currentFocus);
-    const shift = event.shiftKey;
-  
-    let index = focusable.indexOf(currentFocus);
-    if (!insideTrap) {
-      // Focus enters the trap — start at beginning
+
+    const current = document.activeElement;
+
+    if (!container.contains(current)) {
+      // If the focus is outside, move to the first
       event.preventDefault();
       focusable[0].focus();
       return;
     }
-  
-    index += shift ? -1 : 1;
-  
-    if (index < 0) index = focusable.length - 1;
-    if (index >= focusable.length) index = 0;
-  
-    event.preventDefault();
-    focusable[index].focus();
+
+    // Find current index
+    let index = focusable.indexOf(current);
+    if (index === -1) return;
+
+    // Loop forward or backward
+    if (event.shiftKey) {
+      if (index === 0) {
+        event.preventDefault();
+        focusable[focusable.length - 1].focus();
+      }
+    } else {
+      if (index === focusable.length - 1) {
+        event.preventDefault();
+        focusable[0].focus();
+      }
+    }
   });
-}
+})();
+
