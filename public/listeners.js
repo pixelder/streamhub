@@ -134,23 +134,27 @@ function globalAddEventListener (event) {
     const current = document.activeElement;
 
     if (!container.contains(current)) {
-      // If the focus is outside, move to the first
+      event.preventDefault()
+      focusable[0].focus();
+      return;
+    }
+
+    // Loop forward or backward
+    let index = focusable.indexOf(current);
+    if (index === -1) {
       event.preventDefault();
       focusable[0].focus();
       return;
     }
 
-    // Find current index
-    let index = focusable.indexOf(current);
-    if (index === -1) return;
-
-    // Loop forward or backward
     if (event.shiftKey) {
+      // Loop backwards
       if (index === 0) {
         event.preventDefault();
         focusable[focusable.length - 1].focus();
       }
     } else {
+      // Loop forwards
       if (index === focusable.length - 1) {
         event.preventDefault();
         focusable[0].focus();
