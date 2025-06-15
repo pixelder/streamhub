@@ -845,6 +845,7 @@ function searchResultFunction(sectionId, params) {
 			resultsContainer.innerHTML = "No Results"
 			return
 		}
+		section.setAttribute('expanded', '')
 		data.forEach((item) => {
 			const dataExists = selectedSearchItems.some(
 				(selected) => Number(selected.id) === item.id,
@@ -860,6 +861,7 @@ function searchResultFunction(sectionId, params) {
 		result.classList.add("result")
 		result.setAttribute("data-id", item.id)
 		result.setAttribute("data-name", item.name)
+		result.setAttribute("tabindex", "0")
 		let IMG = '/assets/images/no-image-transparent-dark.svg'
 		if (type === `person` && item.profile_path) IMG = `${IMAGE_92 + item.profile_path}`
 		if (type === `company` && item.logo_path) IMG = `${IMAGE_92 + item.logo_path}`
@@ -872,6 +874,7 @@ function searchResultFunction(sectionId, params) {
 		selectedItem.classList.add("select-item")
 		selectedItem.setAttribute("data-id", item.id)
 		selectedItem.setAttribute("data-name", item.name)
+		selectedItem.setAttribute("tabindex", "0")
 		selectedItem.innerText = item.name
 		return selectedItem
 	}
@@ -902,8 +905,7 @@ function searchResultFunction(sectionId, params) {
 		if (!inserted) resultsContainer.appendChild(newEl)
 	}
 	const sectionEventListener = (e) => {
-
-		console.log('clicked on section')
+		console.log('search section')
 		const result = e.target.closest(".result")
 		const select = e.target.closest(".select-item")
 		const id = result?.getAttribute("data-id") || select?.getAttribute("data-id")
@@ -968,7 +970,10 @@ function searchResultFunction(sectionId, params) {
 
 	const form = section?.closest('.form-group')
 	if (!form) return
-	form.removeEventListener("click", sectionEventListener)
 	form.addEventListener("click", sectionEventListener)
+	form.addEventListener("keydown", (e) => {
+		if (e.key !== 'Enter') return
+		sectionEventListener(e)
+	})
 }
 
