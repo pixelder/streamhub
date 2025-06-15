@@ -511,7 +511,6 @@ async function setupExploreEventListeners() {
 	document.body.addEventListener("focus", function (event) {
 		if (!event.target.closest('.search-container')) return
 		const target = event.target;
-		console.log(target.tagName)
 		switch (target.tagName) {
 			case "INPUT":
 				// case "TEXTAREA":
@@ -633,39 +632,141 @@ async function renderGenreChips(mediaType, selected = null) {
 	const genreContainer = document.getElementById("genreChips");
 	genreContainer.innerHTML = ''
 
+	const chipList = []
 	const createChip = (genre, genreContainer) => {
-		const chip = document.createElement('div');
+		const chip = document.createElement('button');
 		chip.classList.add('chip');
 		chip.textContent = genre.name;
 		chip.dataset.id = genre.id;
-		if (chip.dataset.id.toString() === selected?.toString()) chip.classList.add('selected')
-
-		let clickTimer = null;
-
-		chip.addEventListener('click', () => {
-			if (clickTimer) {
-				clearTimeout(clickTimer);
-				clickTimer = null;
-				handleChipClick(genre.id, 'double', genreContainer);
-			} else {
-				clickTimer = setTimeout(() => {
-					clickTimer = null;
-					handleChipClick(genre.id, 'single', genreContainer);
-				}, 300);
-			}
-		});
-
+		chipList.push(genre.id)
+		if ( selected?.toString() === chip.dataset.id.toString()) {
+			chip.classList.add('selected')
+		}
 		genreContainer?.appendChild(chip);
 	}
 
 	const url = `${GENRE_URL}/${mediaType}/list?api_key=${API_KEY}`
-	fetchFromURL(url).then((data) => {
-		data.genres.forEach(genre => {
-			createChip(genre, genreContainer)
-		});
-	})
+	fetchFromURL(url)
+		.then((data) => {
+			data.genres.forEach(genre => {
+				createChip(genre, genreContainer)
+			})
+		})
+		.then(() => {
+			const touched = document.querySelectorAll(`.chip.selected`)
+			const touchedList = Array.from(touched)
+
+			touchedList.forEach(chip => {
+				const position = Array.from(document.querySelectorAll('.chip'))[0]
+				genreContainer.insertBefore(chip, position)
+			})
+		})
+
+	let clickTimer = null;
+
+	genreContainer?.addEventListener('click', async (e) => {
+		const chip = e.target.closest('.chip');
+		if (!chip) return;
+		const { id } = chip.dataset;
+
+		if (clickTimer) {
+			clearTimeout(clickTimer);
+			clickTimer = null;
+			await handleChipClick(id, 'double', chipList);
+			updateSelectedGenres(genreContainer);
+			resetSection();
+		} else {
+			clickTimer = setTimeout(async () => {
+				clickTimer = null;
+				await handleChipClick(id, 'single', chipList);
+				updateSelectedGenres(genreContainer);
+				resetSection();
+			}, 300);
+		}
+	});
 
 	enableHorizontalWheelScroll(genreContainer, 2)
+}
+
+async function handleChipClick(genreId, type, chipList) {
+
+	genreId = parseInt(genreId);
+	const chip = document.querySelector(`.chip[data-id="${genreId}"]`)
+	const parent = chip.parentElement;
+	const unTouched = document.querySelectorAll('.chip:not(.excluded, .selected)')
+	const order = (second = null) => {
+		const i = chipList.findIndex(el => el === Number(chip.dataset.id))
+		let index = 0
+		Array.from(document.querySelectorAll('.chip')).forEach(item => {
+			if (item.classList.contains('selected')) {
+				if (second) {
+					index++
+					return
+				}
+				const j = chipList.findIndex(el => el === Number(item.dataset.id))
+				if (i > j) index++
+			}
+			if (second && item.classList.contains('excluded')) {
+				const j = chipList.findIndex(el => el === Number(item.dataset.id))
+				if (i > j) index++
+			}
+		})
+		return Array.from(document.querySelectorAll('.chip'))[index]
+	}
+
+	const ADD = (second = null) => {
+		const position = second
+			? order(second)//unTouched[0]
+			: order()
+		parent.insertBefore(chip, position)
+	}
+
+	const REMOVE = () => {
+		const unTouchedList = Array.from(unTouched)
+		unTouchedList.push(chip)
+		unTouchedList.forEach(chip => {
+			const index = chipList.findIndex(el => el === Number(chip.dataset.id))
+			const position = unTouched[index]
+			parent.insertBefore(chip, position)
+		})
+	}
+
+	if (type === 'single') {
+		// Check if it's in the excludedGenres list
+		if (excludedGenres.includes(genreId)) {
+			// Single click on excluded genre -> remove from excludedGenres only
+			excludedGenres = excludedGenres.filter(id => id !== genreId);
+			REMOVE()
+		} else if (selectedGenres.includes(genreId)) {
+			// Single click on selected genre -> remove from selectedGenres
+			selectedGenres = selectedGenres.filter(id => id !== genreId);
+			REMOVE()
+		} else {
+			// Single click on unselected genre -> add to selectedGenres
+			selectedGenres.push(genreId);
+			ADD()
+		}
+	} else if (type === 'double') {
+		// Double click to exclude
+		if (!excludedGenres.includes(genreId)) {
+			excludedGenres.push(genreId);
+			selectedGenres = selectedGenres.filter(id => id !== genreId); // Ensure it's not in selectedGenres
+			ADD(true)
+		} else {
+			excludedGenres = excludedGenres.filter(id => id !== genreId);
+			REMOVE()
+		}
+	}
+}
+
+function updateSelectedGenres(container) {
+	container?.querySelectorAll('.chip').forEach(chip => {
+		const genreId = parseInt(chip.dataset.id);
+		chip.classList.toggle('selected', selectedGenres.includes(genreId));
+		chip.classList.toggle('excluded', excludedGenres.includes(genreId));
+	});
+	const status = document.querySelector('.genre-counter p')
+	if (status) status.innerText = `${selectedGenres.length || '0'} selected • ${excludedGenres.length || '0'} excluded`
 }
 
 async function renderNationAndLangSelector(params = null) {
@@ -709,45 +810,6 @@ async function renderNationAndLangSelector(params = null) {
 		console.log(e)
 		notifyAlert(e)
 	})
-}
-
-function handleChipClick(genreId, type, genreContainer) {
-	genreId = parseInt(genreId);
-
-	if (type === 'single') {
-		// Check if it's in the excludedGenres list
-		if (excludedGenres.includes(genreId)) {
-			// Single click on excluded genre -> remove from excludedGenres only
-			excludedGenres = excludedGenres.filter(id => id !== genreId);
-		} else if (selectedGenres.includes(genreId)) {
-			// Single click on selected genre -> remove from selectedGenres
-			selectedGenres = selectedGenres.filter(id => id !== genreId);
-		} else {
-			// Single click on unselected genre -> add to selectedGenres
-			selectedGenres.push(genreId);
-		}
-	} else if (type === 'double') {
-		// Double click to exclude
-		if (!excludedGenres.includes(genreId)) {
-			excludedGenres.push(genreId);
-			selectedGenres = selectedGenres.filter(id => id !== genreId); // Ensure it's not in selectedGenres
-		} else {
-			excludedGenres = excludedGenres.filter(id => id !== genreId);
-		}
-	}
-
-	updateSelectedGenres(genreContainer);
-	resetSection();
-}
-
-function updateSelectedGenres(genreContainer) {
-	genreContainer?.querySelectorAll('.chip').forEach(chip => {
-		const genreId = parseInt(chip.dataset.id);
-		chip.classList.toggle('selected', selectedGenres.includes(genreId));
-		chip.classList.toggle('excluded', excludedGenres.includes(genreId));
-	});
-	const status = document.querySelector('.genre-counter p')
-	if (status) status.innerText = `${selectedGenres.length || '0'} selected • ${excludedGenres.length || '0'} excluded`
 }
 
 function resetSection() {
