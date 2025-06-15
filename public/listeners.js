@@ -125,25 +125,27 @@ function globalAddEventListener (event) {
       select:not([disabled]),
       [tabindex]:not([tabindex="-1"])
     `;
-    const focusable = Array.from(
+    const focusable = () => Array.from(
       container.querySelectorAll(FOCUSABLE_SELECTORS)
     ).filter(el => el.offsetParent !== null);
 
-    if (focusable.length === 0) return;
+    focusable()
+    
+    if (focusable().length === 0) return;
 
     const current = document.activeElement;
 
     if (!container.contains(current)) {
       event.preventDefault()
-      focusable[0].focus();
+      focusable()[0].focus();
       return;
     }
 
     // Loop forward or backward
-    let index = focusable.indexOf(current);
+    let index = focusable().indexOf(current);
     if (index === -1) {
       event.preventDefault();
-      focusable[0].focus();
+      focusable()[0].focus();
       return;
     }
 
@@ -151,13 +153,13 @@ function globalAddEventListener (event) {
       // Loop backwards
       if (index === 0) {
         event.preventDefault();
-        focusable[focusable.length - 1].focus();
+        focusable()[focusable().length - 1].focus();
       }
     } else {
       // Loop forwards
-      if (index === focusable.length - 1) {
+      if (index === focusable().length - 1) {
         event.preventDefault();
-        focusable[0].focus();
+        focusable()[0].focus();
       }
     }
   });
