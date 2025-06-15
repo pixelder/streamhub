@@ -294,7 +294,7 @@ function buildFilterHtml(params) {
 						<label>Genre</label>
 						<div class="genre-counter"><p></p></div>
 				</div>
-				<div class="genre-chips" id="genreChips">
+				<div class="genre-chips" id="genreChips" tabindex="0">
 				</div>
 			</div>
 		`
@@ -377,8 +377,8 @@ function buildFilterHtml(params) {
 						<div class="select-container">
 						</div>
 						<div class="result-container">
-								<div class="results">
-								</div>
+							<div class="results" tabindex="-1">
+							</div>
 						</div>
 					</div>
 				</div>
@@ -401,7 +401,7 @@ function buildFilterHtml(params) {
 						<div class="select-container">
 						</div>
 						<div class="result-container">
-							<div class="results">
+							<div class="results" tabindex="-1">
 							</div>
 						</div>
 					</div>
@@ -853,6 +853,7 @@ function searchResultFunction(sectionId, params) {
 			if (dataExists) return
 			const resultEl = resultHTML(item)
 			resultsContainer.appendChild(resultEl)
+			resultsContainer.firstChild.focus()
 		})
 	}
 
