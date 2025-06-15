@@ -350,6 +350,10 @@ input[type="range"] {
   cursor: pointer;
 }
 
+input[type="range"]:focus-visible {
+  border-color: var(--color1) !important;
+}
+
 input[type="range"]::-moz-range-thumb {
   width: 12px;
   height: 24px;
@@ -422,7 +426,8 @@ button:active {
 }
 
 button:focus-visible {
-  outline: 2px inset var(--font-color3) !important;
+  /* outline: 2px inset var(--font-color3) !important; */
+  outline: revert;
   filter: brightness(1.4);
 }
 
@@ -1448,15 +1453,20 @@ body:has(.expandable.expanded) {
     background-color: var(--color3);
     border: 1px solid var(--color1);
     filter: brightness(1.2);
-    order: -2;
+    /* order: -2; */
   }
 
   .chip.excluded {
     color: var(--font-color3);
     filter: opacity(0.7);
-    order: -1;
+    /* order: -1; */
+  }
+  .chip:focus-visible {
+    outline: none !important;
+    border-color: var(--color2) !important;
   }
 }
+
 
 .button-container {
   flex: 1;
@@ -3068,11 +3078,10 @@ option {
   mask-image: linear-gradient(to top, rgba(0, 0, 0, 0.2) 0%, black 35%, black 75%, rgba(0, 0, 0, 0.4) 100%);
 }
 
-.episode-items img:focus-visible {
+/* .episode-items img:focus-visible {
   outline: none;
   border: 2px inset var(--font-color3);
-}
-
+} */
 
 .episode-info {
   flex: inherit;

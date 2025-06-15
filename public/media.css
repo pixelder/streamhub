@@ -567,7 +567,7 @@
     .chip {
       padding-inline: var(--padding1);
       font-size: 12px;
-      height: 30px;
+      height: 30px !important;
     }
 
     .button-container {

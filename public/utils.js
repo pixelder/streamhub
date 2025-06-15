@@ -510,7 +510,7 @@ async function buildMediaDetailsHTML(data, mediaType, contentLogoHTML) {
           ${rating
             ? `<i class="fa-solid fa-star"></i>
                     ${rating}`
-            : `<img class="nostar" src="assets/icons/nostar.svg">`
+            : `<img class="nostar" src="/assets/icons/nostar.svg">`
           }
           </p>
           <span class="modal-genre">
@@ -668,6 +668,7 @@ function populateCreditSection(data, type) {
 
   if (type === 'cast') {
     credits.cast.map(item => {
+      if (item.adult) return
       HTML += itemHTML(item, data)
     })
   }
@@ -675,6 +676,7 @@ function populateCreditSection(data, type) {
   if (type !== 'cast') {
     credits.crew.filter(item => item.department === type)
       .map(item => {
+        if (item.adult) return
         HTML += itemHTML(item, data)
       })
   }
@@ -979,15 +981,15 @@ async function tvContent(data, sno, eno, ref) {
       const rating = truncate(episode.vote_average, 1)
       const IMAGE = episode.still_path
         ? IMAGE_300 + episode.still_path
-        : backdrop ? IMAGE_300 + backdrop : 'assets/images/no-image-hr.svg';
+        : backdrop ? IMAGE_300 + backdrop : '/assets/images/no-image-hr.svg';
       epCount++
       HTML += `
         <div id="${epCount}" class="episode episode-width" 
           data-name="${data.name}" data-id="${id}" data-media-type="tv"
           data-season="${season}" data-episode="${episode.episode_number}" data-epname="${episode.name}">
           <div class="episode-items">
-            <div class="img-container">
-              <img tabindex="0" src="${IMAGE}" loading="lazy" alt="Episode ${episode.episode_number}">
+            <div tabindex="0" class="img-container">
+              <img src="${IMAGE}" loading="lazy" alt="Episode ${episode.episode_number}">
               ${watchProgress(progress)}
             </div>
             <div class="episode-info">
@@ -1130,7 +1132,7 @@ function modalEventsHandler(event, data) {
       if (!trailerEl) playTrailer()
     }
 
-    if (event.target.closest(".episode img")) {
+    if (event.target.closest(".episode .img-container")) {
       const episodeElement = event.target.closest(".episode");
 
       const sanitizedData = Object.fromEntries(
@@ -2086,8 +2088,6 @@ async function setupCheckboxListeners(sectionID, items) {
         console.log(item, checkbox)
         updateSelectedItems(checkbox)
         MAIN_CHECKBOX.checked = checkboxes().length === selectedItems.length
-        e.stopPropagation()
-        return
       }
     }
     if (e.key === 'Delete' && isActiveSelect[sectionID] && selectedItems.length) {
