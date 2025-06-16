@@ -1810,8 +1810,8 @@ function getConfirm({ title, message, success, decline, state = 1, exitInterval 
         </span>
       </div>
       <div class="dialog-buttons">
-        <button tabindex="0" id="decline">Cancel</button>
-        <button tabindex="0" id="accept"><i class="fa-solid fa-trash-can"></i>&nbsp;Delete</button>
+        <button id="decline">Cancel</button>
+        <button id="accept"><i class="fa-solid fa-trash-can"></i>&nbsp;Delete</button>
       </div>
     </div>
   `;
@@ -2165,7 +2165,6 @@ async function waitForTrue(variable) {
 }
 
 const scrollHandlers = new WeakMap();
-
 function setUpExpandableSection() {
 
   const handleSectionExpansion = (e) => {
