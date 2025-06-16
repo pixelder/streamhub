@@ -123,7 +123,11 @@ async function loadWatchPage(mediaType, NAME = null, id, tvData = null) {
       <div class="watch-page">
         <div class="player-container">
           <div class="player">
-          <div class="loading">Loading player...</div> <!-- Placeholder until iframe loads -->
+          <div class="loading">
+            <div style="height: 30px; aspect-ratio: 1 / 1; background: var(--font-color1);
+              mask: url(/assets/icons/bars-rotate-fade.svg) no-repeat center;">
+            </div>&nbsp;Loading player...
+          </div>
             <div class="iframe-container"></div>
             <div class="player-toolbar">
               <div class="provider-menu">
