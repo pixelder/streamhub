@@ -1,6 +1,3 @@
-
-
-
 function getLogData(logType) {
   const jsonData = localStorage.getItem(logType);
   return jsonData ? JSON.parse(jsonData) : [];
@@ -139,26 +136,20 @@ async function fetchHistoryItems(section, sectionId, items) {
   });
 
   const newItems = new Set(items.map(item => item.id + item.index));
+
   const SORTED_ITEMS = items.slice().sortDateDesc(false);
 
-  const aborted = () => {
-    if (container.classList.contains('empty')) {
-      console.log('aborted')
-      // container.querySelectorAll('.grid-item').forEach(obj => obj.remove())
-      return true
-    }
-    return false
-  }
+  if (container.classList.contains('empty')) return;
+
+  container.classList.remove('loading');
+  container.querySelector('.filler')?.remove();
+
+  // Store a map for placeholders -> item info
   const placeholders = new Map();
-  const pending = new Set();
-  const concurrencyLimit = 10;
 
-  // 1. Insert placeholders in the correct order
   for (const item of SORTED_ITEMS) {
-    container.classList.remove('loading');
-    container.querySelector('.filler')?.remove();
+    if (container.classList.contains('empty')) break;
 
-    if (aborted()) break
     const key = item.id + item.index;
 
     if (existingItems.has(key)) {
@@ -166,37 +157,40 @@ async function fetchHistoryItems(section, sectionId, items) {
       continue;
     }
 
-    const { id, mediaType, index, data: { sno, eno } } = item;
-    
+    // Create a placeholder
     const placeholder = document.createElement('div');
     placeholder.className = 'grid-item placeholder';
-    placeholder.dataset.id = id;
-    placeholder.dataset.index = index;
-    placeholder.dataset.mediaType = mediaType;
-    placeholder.dataset.sno = sno;
-    placeholder.dataset.eno = eno;
+    placeholder.dataset.id = item.id;
+    placeholder.dataset.index = item.index;
+    placeholder.dataset.mediaType = item.mediaType;
+    placeholder.dataset.sno = item.data.sno;
+    placeholder.dataset.eno = item.data.eno;
+
     container.appendChild(placeholder);
-    placeholders.set(key, placeholder);
+    placeholders.set(placeholder, item);
   }
 
-  // 2. Start processing each item
-  for (const item of SORTED_ITEMS) {
-    if (aborted()) break
-    const { id, mediaType, index, data: { sno, eno } } = item;
-    const key = id + index;
+  // IntersectionObserver to load on-demand
+  const options = {
+    root: null,
+    rootMargin: "100px",
+    threshold: 0
+  };
 
-    if (!placeholders.has(key)) continue;
+  const pending = new Set();
+  const concurrencyLimit = 10;
 
-    const task = (async () => {
+  function loadItem(placeholder, item) {
+    return (async () => {
       try {
-        const { data } = await fetchMetaData(mediaType, id);
+        const { data } = await fetchMetaData(item.mediaType, item.id);
         let content;
 
-        if (logType !== 'bookmarks' && mediaType === "tv") {
-          const { data: tvData } = await fetchMetaData(mediaType, id, sno);
+        if (logType !== 'bookmarks' && item.mediaType === "tv") {
+          const { data: tvData } = await fetchMetaData(item.mediaType, item.id, item.data.sno);
           content = renderLogItems(sectionId, data, item, tvData);
         } else {
-          data.media_type = mediaType;
+          data.media_type = item.mediaType;
           content = logType !== "bookmarks"
             ? renderLogItems(sectionId, data, item)
             : renderGridItems([data], type);
@@ -204,34 +198,52 @@ async function fetchHistoryItems(section, sectionId, items) {
 
         const wrapper = document.createElement("div");
         wrapper.innerHTML = content;
-        const newElement = wrapper.firstElementChild;
-        newElement.dataset.id = id;
-        newElement.dataset.index = index;
 
-        const placeholder = placeholders.get(key);
-        if (placeholder && placeholder.parentNode && !aborted()) {
+        const newElement = wrapper.firstElementChild;
+        newElement.dataset.id = item.id;
+        newElement.dataset.index = item.index;
+
+        if (placeholder.isConnected) {
           container.replaceChild(newElement, placeholder);
         }
-
       } catch (error) {
-        const msg = `Error fetching data for item ID ${id} for ${sectionId} : ${error.message}`;
-        const data = { sectionId, logType, id, mediaType, sno, eno, index };
-        const actions = [{ name: 'Fix', task: 'remove' }];
-        notifyAlert(msg, "error", data, actions);
+        console.error(error);
+        notifyAlert(error.message, "error", {});
       }
     })();
+  }
 
-    if (aborted()) break
-    pending.add(task);
-    task.finally(() => pending.delete(task));
-    if (pending.size >= concurrencyLimit) {
-      await Promise.race(pending);
+  const intersectionObserver = new IntersectionObserver((entries) => {
+    for (const entry of entries) {
+      if (entry.isIntersecting) {
+        const placeholder = entry.target;
+
+        intersectionObserver.unobserve(placeholder);
+        const item = placeholders.get(placeholder);
+        if (!item) continue;
+
+        if (pending.size >= concurrencyLimit) {
+          // wait for some to complete
+          Promise.race(pending).then(() => {
+            pending.delete(this);
+          });
+        }
+
+        const task = loadItem(placeholder, item);
+        pending.add(task);
+        task.finally(() => pending.delete(task));
+      }
     }
+  }, options);
+
+  // Observe all placeholders
+  for (const [placeholder] of placeholders) {
+    intersectionObserver.observe(placeholder);
   }
 
   await Promise.allSettled(pending);
 
-  // Remove old elements
+  // Remove orphaned elements
   existingItems.forEach((el, key) => {
     if (!newItems.has(key)) {
       el.remove();
