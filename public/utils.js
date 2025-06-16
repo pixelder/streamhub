@@ -385,14 +385,11 @@ async function displayModal(mediaType, data) {
     '--modal-backdrop',
     `url(${data.backdrop_path ? IMAGE_ORG + data.backdrop_path : ''})`
   );
-
   modalContent.style.setProperty('--modal-backdrop-opacity', 1);
 
-  const contentLogoHTML = getContentLogoHTML(data);
-
   mediaType !== 'person'
-    ? details.innerHTML = await buildMediaDetailsHTML(data, mediaType, contentLogoHTML)
-    : details.innerHTML = await buildPersonDetailsHTML(data);
+    ? await buildMediaDetailsHTML(data, mediaType, details)
+    : await buildPersonDetailsHTML(data, details);
 
   if (mediaType === 'movie') {
     insertMovieActions(data, mediaType);
@@ -453,7 +450,6 @@ async function displayModal(mediaType, data) {
     modalMedia.prepend(navContainer)
   }
 
-
   modal.setAttribute('active', '')
   // modal.classList.add('active');
   details.focus();
@@ -473,14 +469,15 @@ function getContentLogoHTML(data) {
   `;
 }
 
-async function buildMediaDetailsHTML(data, mediaType, contentLogoHTML) {
+async function buildMediaDetailsHTML(data, mediaType, container) {
   const name = data.name || data.title || data.original_title;
   const releaseDate = data.release_date || data.first_air_date || data.air_date || '';
   const formattedDate = convertDate(releaseDate) || null;
+  const contentLogoHTML = getContentLogoHTML(data);
   const genresHTML = data.genres
     .slice(0, 5)
     .map(genre => `
-      <a href="/explore?type=${mediaType}&genre=${genre.id}" title="Explore ${genre.name} ${mediaType === 'movie' ? 'movies': 'tv shows'}">
+      <a href="/explore?type=${mediaType}&genre=${genre.id}" title="Explore ${genre.name} ${mediaType === 'movie' ? 'movies' : 'tv shows'}">
       ${genre.name}
       </a>
     `)
@@ -503,7 +500,7 @@ async function buildMediaDetailsHTML(data, mediaType, contentLogoHTML) {
   const timeLeft = data.runtime - Math.floor(data.runtime * Number(progress) / 100);
   const watch_progress = `${runtime(timeLeft, 'long')} remaining`;
 
-  const detailsBodyHTML = `
+  const detailsHTML = `
     <div class="trailer-container"></div>
     <div class="modal-media">
       <!-- <div class="modal-cover">
@@ -546,7 +543,8 @@ async function buildMediaDetailsHTML(data, mediaType, contentLogoHTML) {
       : ''
     }
   `;
-  return detailsBodyHTML;
+
+  container.innerHTML = detailsHTML
 }
 
 function tmdbGenderResolver(id) {
@@ -556,7 +554,7 @@ function tmdbGenderResolver(id) {
   if (id === 3) return `Other`
 }
 
-async function buildPersonDetailsHTML(data) {
+async function buildPersonDetailsHTML(data, container) {
 
   const links = [
     { id: data.id, url: `https://tmdb.org/person/${data.id}`, icon: "tmdb_short.svg", page: "tmdb" },
@@ -567,7 +565,7 @@ async function buildPersonDetailsHTML(data) {
     { id: data.external_ids?.youtube_id, url: `https://www.youtube.com/${data.external_ids?.youtube_id}`, icon: "yt_full.png", page: "youtube" }
   ];
 
-  return `
+  const detailsHTML = `
     <div class="modal-media" ${isMobile() ? '' : `style="flex-wrap: wrap; flex-direction: unset;"`}>
       ${data.profile_path ? `
         <div class="modal-cover portrait" style="display:flex">
@@ -596,9 +594,12 @@ async function buildPersonDetailsHTML(data) {
     </div>
     <div class="person-credits">
       <h2>Credits </h2>
-        ${creditResolver(data)}
+      <div class="credit-container" style="all:inherit;">
+      </div>
     </div>
     `
+    container.innerHTML = detailsHTML
+    creditResolver(data)
 }
 
 function creditResolver(data) {
@@ -615,78 +616,97 @@ function creditResolver(data) {
 
   const departments = [... new Set(crewCredits.map(item => item.department))]
 
-  let HTML = ''
-  const sectionHTML = (data, type) => {
-    return `
-      <div class="credit-section">
-        <div class="section-header" style="padding-top: unset !important">
-          <p class="credit-type">${type === "cast" ? 'Cast' : type}</p>
-          <div class="expand-arrow"><i class="fa-solid fa-chevron-left"></i></div>
-        </div>
-        <div class="grid-container ${type}">
-            ${populateCreditSection(data, type)}
-        </div>
+  const sectionHTML = (type) => {
+    const section = document.createElement('div')
+    section.className = 'credit-section'
+    section.innerHTML = `
+      <div class="section-header" style="padding-top: unset !important">
+        <p class="credit-type">${type === "cast" ? 'Cast' : type}</p>
+        <div class="expand-arrow"><i class="fa-solid fa-chevron-left"></i></div>
+      </div>
+      <div class="grid-container ${type}">
       </div>
     `
+    return section
   }
+
+  const container = document.querySelector('.credit-container')
 
   creditOrder.forEach(credit => {
     if (credit === 'cast') {
-      HTML += sectionHTML(data, credit)
+      container.appendChild(sectionHTML(credit))
+      populateCreditSection(data, credit)
     }
     if (credit === 'crew') {
       departments.forEach(dep => {
-        HTML += sectionHTML(data, dep)
+        container.appendChild(sectionHTML(dep))
+        populateCreditSection(data, dep)
       })
     }
-  })
-
-  return HTML
+  })  
 }
 
 function populateCreditSection(data, type) {
-  let HTML = ''
-  const credits = data.combined_credits
-  // use  https://api.themoviedb.org/3/credit/{credit_id} to get appear date of a tv show
-  // has appearing episode count. very inconsistent
-  
-  const itemHTML = (item, data) => {
-    const title = item.title || item.original_title || item.name || item.original_name;
-    const year = extractYear(item.release_date || item.first_air_date) || '';
-    const mediaType = item.media_type === 'tv' ? 'TV' : 'Movie';
-    const image = item.poster_path
-      ? `${IMAGE_300 + item.poster_path}`
-      : data.profile_path 
-        ? `${IMAGE_300 + data.profile_path}`
-        : '/assets/images/no-image.png';
+  const container = document.querySelector(`.credit-section .grid-container.${type}`);
+  const credits = type === 'cast'
+    ? data.combined_credits.cast
+    : data.combined_credits.crew.filter(c => c.department === type);
 
-    return `<div class="grid-item" data-id="${item.id}" data-media-type="${item.media_type}">
-      <img loading="lazy" src="${image}">
-      <div class="credit-item-info">
-        <p class="credit-name">${item.job || item.character || `N/A`}</p>
-        <p class="credit-media-title"> ${title || 'Title not specified'} ${year ? `(${year})` : ''}</p>
-        <p>${mediaType}</p>
-      </div>
-    </div>
-    `
-  }
+  // IntersectionObserver callback: when placeholder enters viewport, swap in the real item
+  const io = new IntersectionObserver((entries, obs) => {
+    entries.forEach(entry => {
+      if (!entry.isIntersecting) return;
+      const placeholder = entry.target;
+      const { item, profileData } = placeholder._creditData;
+      
+      // build the actual grid-item
+      const gridItem = document.createElement('div');
+      gridItem.className = 'grid-item';
+      gridItem.dataset.id = item.id;
+      gridItem.dataset.mediaType = item.media_type;
+      const title = item.title || item.original_title || item.name || item.original_name || 'Title not specified';
+      const year = extractYear(item.release_date || item.first_air_date);
+      const mediaType = item.media_type === 'tv' ? 'TV' : 'Movie';
+      const imgSrc = item.poster_path
+        ? IMAGE_300 + item.poster_path
+        : profileData.profile_path
+          ? IMAGE_300 + profileData.profile_path
+          : '/assets/images/no-image.png';
 
-  if (type === 'cast') {
-    credits.cast.map(item => {
-      if (item.adult) return
-      HTML += itemHTML(item, data)
-    })
-  }
+      gridItem.innerHTML = `
+        <img loading="lazy" src="${imgSrc}">
+        <div class="credit-item-info">
+          <p class="credit-name">${item.job || item.character || 'N/A'}</p>
+          <p class="credit-media-title">${title}${year ? ` (${year})` : ''}</p>
+          <p>${mediaType}</p>
+        </div>
+      `;
 
-  if (type !== 'cast') {
-    credits.crew.filter(item => item.department === type)
-      .map(item => {
-        if (item.adult) return
-        HTML += itemHTML(item, data)
-      })
-  }
-  return HTML
+      // replace placeholder and stop observing it
+      placeholder.replaceWith(gridItem);
+      obs.unobserve(placeholder);
+    });
+  }, {
+    rootMargin: '200px 0px', // start loading a bit before it enters
+    threshold: 0.1
+  });
+
+  // create all placeholders up front, attach data, and observe them
+  credits.forEach(item => {
+    if (item.adult) return;
+
+    const ph = document.createElement('div');
+    ph.className = 'grid-item placeholder';
+    // stash the data so we can build later
+    ph._creditData = { item, profileData: data };
+    container.appendChild(ph);
+    io.observe(ph);
+  });
 }
+
+
+// use  https://api.themoviedb.org/3/credit/{credit_id} to get appear date of a tv show
+// has appearing episode count. very inconsistent
 
 function pluralResolver(count, str, suf) {
   if (count !== 1) return `${count} ${str}${suf}`
