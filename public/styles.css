@@ -2006,15 +2006,13 @@ body:has(.filter-menu) {
     width: 100%;
     height: fit-content;
     flex-direction: row;
-    /* justify-content: space-around; */
     align-items: center;
     padding: var(--padding1);
-    color: var(--font-color2);
+    color: #ff5855;
     font-size: 14px;
-    /* font-weight: 600; */
-    border: 1px dashed var(--error);
+    border: 1px dashed;
     border-radius: var(--border-radius2);
-    --bg-warn: rgba(166, 25, 46, 0.10);
+    --bg-warn: #2f111a;
     --bg-warn2: rgba(166, 25, 46, 0.30);
     background: repeating-linear-gradient(45deg,
         var(--bg-warn),
