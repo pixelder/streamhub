@@ -263,7 +263,7 @@ input::placeholder {
 #search-input:focus,
 #search-input:not(:placeholder-shown) {
   padding-inline: 8px 32px;
-  width: 14rem;
+  width: 16rem;
   opacity: 1;
   cursor: text;
 
