@@ -92,6 +92,7 @@ function globalAddEventListener (event) {
         window.history.pushState('', '', '/')
       }
       document.getElementById('modal-details').innerHTML = '';
+      document.documentElement.removeAttribute('style')
       modal.removeAttribute('active','');
       ['#header' , '.bottom-bar'].forEach(selector => {
         const bar = document.querySelector(selector)
