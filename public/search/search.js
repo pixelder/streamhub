@@ -109,35 +109,40 @@ function populateSearchResults(type, results) {
           <div class="expand-arrow"><i class="fa-solid fa-chevron-left"></i></div>
         </div>
         <div class="grid-container ${type === "person" ? "profiles" : "vertical-card"} ">
-          ${type === "person" ? renderProfile(results[type]) : renderGridItems(results[type], type = 'vertical')}
         </div>
       </section>
     `;
   }
-  if (!section)  populateResults(type);
+  if (!section)  {
+    populateResults(type);
+    results[type].forEach(item => {
+      document.querySelector(`#${type}-results .grid-container`)
+        ?.appendChild(type === 'person' ? renderProfile(item) : renderGridItems(item))
+    })
+  }
 }
 
-function renderProfile(items) {
+function renderProfile(item) {
+  const profile = document.createElement('div')
+  profile.className = 'profile-item'
+  profile.dataset.id = item.id
+  profile.dataset.mediaType = 'person'
+  profile.tabIndex = 0
 
-  return items
-    .map(item => {
-      const name = item.name || item.original_name;
-      const image = item.profile_path
-        ? `${IMAGE_300 + item.profile_path}`
-        : '/assets/images/no-image.png';
-      return `
-        <div tabindex="0" class="profile-item" data-id="${item.id}" data-media-type="person">
-          <span>
-            <img src="${image}" loading="lazy" alt="${name}">
-          </span>
-          <div class="profile-item-info">
-            <p class="name">${capString(name, 30)}</p>
-            <p><em>${item.known_for_department}</em><p>
-          </div>
-        </div>
-      `;
-    })
-    .join('');
+  const name = item.name || item.original_name;
+  const image = item.profile_path
+    ? `${IMAGE_300 + item.profile_path}`
+    : '/assets/images/no-image.png';
+  profile.innerHTML =  `
+    <span>
+      <img src="${image}" loading="lazy" alt="${name}">
+    </span>
+    <div class="profile-item-info">
+      <p class="name">${capString(name, 30)}</p>
+      <p><em>${item.known_for_department}</em><p>
+    </div>
+  `;
+  return profile
 }
 
 window.addEventListener('DOMContentLoaded', () => {

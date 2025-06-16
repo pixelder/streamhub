@@ -151,13 +151,11 @@ async function fetchHistoryItems(section, sectionId, items) {
     if (container.classList.contains('empty')) break;
 
     const key = item.id + item.index;
-
     if (existingItems.has(key)) {
       existingItems.delete(key);
       continue;
     }
 
-    // Create a placeholder
     const placeholder = document.createElement('div');
     placeholder.className = 'grid-item placeholder';
     placeholder.dataset.id = item.id;
@@ -193,18 +191,16 @@ async function fetchHistoryItems(section, sectionId, items) {
           data.media_type = item.mediaType;
           content = logType !== "bookmarks"
             ? renderLogItems(sectionId, data, item)
-            : renderGridItems([data], type);
+            : renderGridItems(data, type);
         }
 
-        const wrapper = document.createElement("div");
-        wrapper.innerHTML = content;
-
-        const newElement = wrapper.firstElementChild;
-        newElement.dataset.id = item.id;
-        newElement.dataset.index = item.index;
+        if (!content.dataset.id || !content.dataset.index) {
+          content.dataset.id = item.id;
+          content.dataset.index = item.index;
+        }
 
         if (placeholder.isConnected) {
-          container.replaceChild(newElement, placeholder);
+          container.replaceChild(content, placeholder);
         }
       } catch (error) {
         console.error(error);
@@ -252,8 +248,17 @@ async function fetchHistoryItems(section, sectionId, items) {
 }
 
 function renderLogItems(sectionId, data, item, tvData, type = null) {
-  const [id, mediaType] = [item.id, item.mediaType];
-  const index = item.index || null;
+  const logItem = document.createElement('div')
+  logItem.className = 'grid-item';
+  logItem.dataset.id = item.id
+  logItem.dataset.mediaType = item.mediaType
+  logItem.dataset.index = item.index || null
+  if (tvData) {
+    logItem.dataset.sno = item.data.sno
+    logItem.dataset.eno = item.data.eno
+  }
+  logItem.tabIndex = 0;
+
   const [sno, eno] = tvData ? [item.data.sno, item.data.eno] : ['', ''];
   const epData = tvData ? tvData?.episodes?.find(ep => ep.episode_number === Number(eno)) : '';
   const progress = Number(item.progress) || 0;
@@ -270,76 +275,72 @@ function renderLogItems(sectionId, data, item, tvData, type = null) {
   const rating = truncate(!tvData ? data.vote_average : epData?.vote_average, 1);
   //const runTime = !tvData ? data.runtime : epData.runtime;
 
-  return `
-      <div tabindex="0" aria-pressed="true" class="grid-item"
-           data-id="${id}"  data-index="${index}" 
-           data-media-type="${mediaType}" data-name="${name}"
-           ${tvData ? `data-sno="${sno}" data-eno="${eno}"` : ''}>
-        <div class="item-container"  draggable="true">
-          <label class="selectable ${isActiveSelect[sectionId] ? 'active' : ''}">
-            <input type="checkbox" />
-            <span class="checkbox-button">
-              <i class="fa-regular fa-square active"></i>
-              <i class="fa-solid fa-square-check passive"></i>
-            </span>
-          </label>
-          <div class="grid-actions">
-            <div class="grid-options">
-              <div class="flow-row">
-                <h4>Actions</h4>
-                <div tabindex="0" class="options-buttons">
-                  <i class="options-icon fa-solid fa-ellipsis-vertical"></i>
-                  <!-- <i class="options-x-icon fa-solid fa-xmark"></i> -->
-                  <div class="options-x-icon">
-                    <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="20" height="20" viewBox="0,0,256,256">
-                    <g fill="#e6e6fa" fill-rule="nonzero" stroke="none" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="10" stroke-dasharray="" stroke-dashoffset="0" font-family="none" font-weight="none" font-size="none" text-anchor="none" style="mix-blend-mode: normal"><g transform="scale(8,8)"><path d="M7.21875,5.78125l-1.4375,1.4375l8.78125,8.78125l-8.78125,8.78125l1.4375,1.4375l8.78125,-8.78125l8.78125,8.78125l1.4375,-1.4375l-8.78125,-8.78125l8.78125,-8.78125l-1.4375,-1.4375l-8.78125,8.78125z"></path></g></g>
-                    </svg>
-									</div>
-                </div>
-              </div>
-              <hr>
-              <div class="options-menu">
-                ${progress < 99 ? `
-                <div class="flow-row mark-item" data-type="watched">
-                  <button tabindex="0"><i class="fa-solid fa-eye"></i></button>
-                  <p>Mark As Watched</p>
-                </div>` 
-                : `
-                <div class="flow-row mark-item" data-type="unwatch">
-                  <button tabindex="0"><i class="fa-solid fa-eye-slash"></i></button>
-                  <p>Mark Unwatched</p>
-                </div>`}
-                <div class="flow-row view-details">
-                  <button tabindex="0"><i class="fa-solid fa-square-arrow-up-right"></i></button>
-                  <p>Details</p>
-                </div>
-                <div class="flow-row remove">
-                  <button tabindex="0"><i class="fa-solid fa-trash-can"></i></button>
-                  <p>Remove</p>
-                </div>
+  logItem.innerHTML = `
+    <div class="item-container"  draggable="true">
+      <label class="selectable ${isActiveSelect[sectionId] ? 'active' : ''}">
+        <input type="checkbox" />
+        <span class="checkbox-button">
+          <i class="fa-regular fa-square active"></i>
+          <i class="fa-solid fa-square-check passive"></i>
+        </span>
+      </label>
+      <div class="grid-actions">
+        <div class="grid-options">
+          <div class="flow-row">
+            <h4>Actions</h4>
+            <div tabindex="0" class="options-buttons">
+              <i class="options-icon fa-solid fa-ellipsis-vertical"></i>
+              <!-- <i class="options-x-icon fa-solid fa-xmark"></i> -->
+              <div class="options-x-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="20" height="20" viewBox="0,0,256,256">
+                <g fill="#e6e6fa" fill-rule="nonzero" stroke="none" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="10" stroke-dasharray="" stroke-dashoffset="0" font-family="none" font-weight="none" font-size="none" text-anchor="none" style="mix-blend-mode: normal"><g transform="scale(8,8)"><path d="M7.21875,5.78125l-1.4375,1.4375l8.78125,8.78125l-8.78125,8.78125l1.4375,1.4375l8.78125,-8.78125l8.78125,8.78125l1.4375,-1.4375l-8.78125,-8.78125l8.78125,-8.78125l-1.4375,-1.4375l-8.78125,8.78125z"></path></g></g>
+                </svg>
               </div>
             </div>
           </div>
-          <img src="${image}" loading="lazy">
-          <div class="grid-item-info">
-            <span class="history-item-info">
-              <h3>${capString(name, 40)}</h3>
-              ${tvData ? `<p>${info}</p>` : ""}
-              <span class="grid-rating">
-                <p class="rating">
-                  ${rating 
-                    ? `<i class="fa-solid fa-star"></i>
-                      ${rating}`
-                    : `<img class="nostar" src="/assets/icons/nostar.svg">`
-                    }
-                </p>
-              </span>
-            </span>
-            ${watchProgress(progress, ring)}
+          <hr>
+          <div class="options-menu">
+            ${progress < 99 ? `
+            <div class="flow-row mark-item" data-type="watched">
+              <button tabindex="0"><i class="fa-solid fa-eye"></i></button>
+              <p>Mark As Watched</p>
+            </div>` 
+            : `
+            <div class="flow-row mark-item" data-type="unwatch">
+              <button tabindex="0"><i class="fa-solid fa-eye-slash"></i></button>
+              <p>Mark Unwatched</p>
+            </div>`}
+            <div class="flow-row view-details">
+              <button tabindex="0"><i class="fa-solid fa-square-arrow-up-right"></i></button>
+              <p>Details</p>
+            </div>
+            <div class="flow-row remove">
+              <button tabindex="0"><i class="fa-solid fa-trash-can"></i></button>
+              <p>Remove</p>
+            </div>
           </div>
         </div>
       </div>
+      <img src="${image}" loading="lazy">
+      <div class="grid-item-info">
+        <span class="history-item-info">
+          <h3>${capString(name, 40)}</h3>
+          ${tvData ? `<p>${info}</p>` : ""}
+          <span class="grid-rating">
+            <p class="rating">
+              ${rating 
+                ? `<i class="fa-solid fa-star"></i>
+                  ${rating}`
+                : `<img class="nostar" src="/assets/icons/nostar.svg">`
+                }
+            </p>
+          </span>
+        </span>
+        ${watchProgress(progress, ring)}
+      </div>
+    </div>
   `;
+  return logItem
 }
 
 async function loadUserContent(sectionId, logType) {

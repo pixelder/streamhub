@@ -79,17 +79,23 @@ function populateSection(sectionId, items) {
   const container = document.querySelector(`#${sectionId} .grid-container`);
   const type = container.classList.contains('vertical-card') ? 'vertical' : null;
   if (!isBrowsing && !sectionFetching) {
-    container.innerHTML = renderGridItems(items, type)
     container.classList.remove('loading');
+    items.forEach(item => {
+      container.appendChild(renderGridItems(item, type))
+    })
     return
   }
 
   // console.log(currentPage, container.innerHTML)
   if (currentPage === 1) {
     container.innerHTML = '';
-    container.innerHTML = renderGridItems(items, type);
+    items.forEach(item => {
+      container.appendChild(renderGridItems(item, type))
+    })
   } else {
-    container.innerHTML += renderGridItems(items, type);
+    items.forEach(item => {
+      container.appendChild(renderGridItems(item, type))
+    }) 
   }
 
   if (items.length < 20) {
@@ -116,55 +122,59 @@ function getProgressInfo(id, mediaType = 'movie', logData = null) {
   return progress
 }
 
-function renderGridItems(items, type = null) {
+function renderGridItems(item, type = null) {
   let logs = getLogData('history');
-  return items
-    .map(item => {
-      const id = item.id;
-      const mediaType = item.media_type;
-      const bookmark = logExists('bookmarks', id, mediaType);
-      const progress = getProgressInfo(id, mediaType, logs)
-      const ring = type === 'vertical' ? 1 : null;
-      const title = item.title || item.name;
-      const rating = truncate(item.vote_average, 1);
-      const year = extractYear(item.release_date || item.first_air_date) || 'N/A';
-      const releaseDate = new ReleaseDate(item.release_date || item.first_air_date)
-      const upcoming = releaseDate?.isUpcoming()
-      const image = item.poster_path
-        ? `${IMAGE_342 + item.poster_path}`
-        : '/assets/images/no-image.png ';
-      return `
-         <div tabindex="0" class="grid-item" draggable="true" id="grid-item" data-id="${item.id}" data-media-type="${mediaType}">
-           <div class="img-container">
-            <div class="grid-actions bookmarks">
-              <div class="grid-options ${bookmark ? 'open' : ''}">
-                <div tabindex="0" class="options-buttons">
-                  <i class="options-icon fa-regular fa-bookmark"></i>
-                  <i class="options-x-icon fa-solid fa-bookmark"></i>
-                </div>
-              </div>
-            </div>
-            <img src="${image}" loading="lazy" alt="${title}">
-            ${watchProgress(progress, ring)}
-            ${upcoming ? `<div class="upcoming">Upcoming</div>` : ''}
-           </div>
-           <div class="grid-item-info">
-             <p>${capString(title, 40)}</p>
-             <span class="grid-rating">
-              <p class="rating">
-                ${rating && !upcoming
-                    ? `<i class="fa-solid fa-star"></i>
-                            ${rating}`
-                    : `<img class="nostar" src="/assets/icons/nostar.svg">`
-                  }
-              </p>
-             </span>
-             <p>${year}</p>
-           </div>
-         </div>
-       `;
-    })
-    .join('');
+  const gridItem = document.createElement('div')
+  gridItem.className = 'grid-item'
+  gridItem.id = 'grid-item'
+  gridItem.dataset.id = item.id
+  gridItem.dataset.mediaType = item.media_type
+  gridItem.tabIndex = 0
+  gridItem.draggable = true
+
+  const id = item.id;
+  const mediaType = item.media_type;
+  const bookmark = logExists('bookmarks', id, mediaType);
+  const progress = getProgressInfo(id, mediaType, logs)
+  const ring = type === 'vertical' ? 1 : null;
+  const title = item.title || item.name;
+  const rating = truncate(item.vote_average, 1);
+  const year = extractYear(item.release_date || item.first_air_date) || 'N/A';
+  const releaseDate = new ReleaseDate(item.release_date || item.first_air_date)
+  const upcoming = releaseDate?.isUpcoming()
+  const image = item.poster_path
+    ? `${IMAGE_342 + item.poster_path}`
+    : '/assets/images/no-image.png ';
+
+  gridItem.innerHTML =  `
+      <div class="img-container">
+      <div class="grid-actions bookmarks">
+        <div class="grid-options ${bookmark ? 'open' : ''}">
+          <div tabindex="0" class="options-buttons">
+            <i class="options-icon fa-regular fa-bookmark"></i>
+            <i class="options-x-icon fa-solid fa-bookmark"></i>
+          </div>
+        </div>
+      </div>
+      <img src="${image}" loading="lazy" alt="${title}">
+      ${watchProgress(progress, ring)}
+      ${upcoming ? `<div class="upcoming">Upcoming</div>` : ''}
+      </div>
+      <div class="grid-item-info">
+        <p>${capString(title, 40)}</p>
+        <span class="grid-rating">
+        <p class="rating">
+          ${rating && !upcoming
+              ? `<i class="fa-solid fa-star"></i>
+                ${rating}`
+              : `<img class="nostar" src="/assets/icons/nostar.svg">`
+            }
+        </p>
+        </span>
+        <p>${year}</p>
+      </div>
+  `
+  return gridItem
 }
 
 function notifyAlert(msg, type = null, data = null, actions = null) {
