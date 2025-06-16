@@ -97,7 +97,9 @@ function globalAddEventListener (event) {
         const bar = document.querySelector(selector)
         if (document.querySelectorAll('.expandable.expanded').length) return
         bar.classList.remove('hidden')
-        document.querySelector('.button-container').style.bottom = '80px';
+        if (document.querySelector('.button-container')) {
+          document.querySelector('.button-container').style.bottom = '80px';
+        }
       })
       isViewingDetails = false
       event.stopPropagation();

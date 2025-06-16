@@ -317,8 +317,9 @@ function openModal(data, nav = null) {
     const bar = document.querySelector(selector)
     if (bar.classList.contains('detach')) {
       bar.classList.add('hidden')
-      if (selector !== '.bottom-bar') return
-      document.querySelector('.button-container').style.bottom = '20px';
+      if (selector === '.bottom-bar' && document.querySelector('.button-container')) {
+        document.querySelector('.button-container').style.bottom = '20px';
+      }
     }
   })
 
