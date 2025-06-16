@@ -3247,7 +3247,7 @@ option {
       scale: unset !important;
 
       img {
-        aspect-ratio: unset;
+        aspect-ratio: 2/3;
         width: unset;
       }
 
