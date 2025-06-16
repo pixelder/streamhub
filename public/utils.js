@@ -315,7 +315,11 @@ function openModal(data, nav = null) {
 
   ['#header', '.bottom-bar'].forEach(selector => {
     const bar = document.querySelector(selector)
-    if (bar.classList.contains('detach')) bar.classList.add('hidden')
+    if (bar.classList.contains('detach')) {
+      bar.classList.add('hidden')
+      if (selector !== '.bottom-bar') return
+      document.querySelector('.button-container').style.bottom = '20px';
+    }
   })
 
   if (!nav) {
@@ -1767,7 +1771,7 @@ function setUpScrollEvents() {
         hideTimeout = setTimeout(() => {
           // header.classList.add('detach');
           (isMobile() && bottomBar) ? bottomBar.classList.add('hidden') : ''; //.style.bottom = '-4rem' : '';
-          (isMobile() && filter) ? filter.style.bottom = '1.4rem' : '';
+          (isMobile() && filter) ? filter.style.bottom = '20px' : '';
         }, 150);
       }
     } else if ((window.scrollY <= lastScrollY) || end) {
@@ -1775,7 +1779,7 @@ function setUpScrollEvents() {
       clearTimeout(hideTimeout); // Cancel any pending hide
       // if (top) header.classList.remove('detach');
       (isMobile() && bottomBar) ? bottomBar.classList.remove('hidden') : '';
-      (isMobile() && filter) ? filter.style.bottom = '5rem' : '';
+      (isMobile() && filter) ? filter.style.bottom = '80px' : '';
     }
     lastScrollY = window.scrollY;
   });
