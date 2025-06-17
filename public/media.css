@@ -465,6 +465,10 @@
 
   /* Browse Page */
 
+  body:has(.bottom-bar.hidden) .button-container {
+    bottom: 20px !important;
+  }
+
   #browse-movies,
   #browse-tvs {
     .grid-container {
