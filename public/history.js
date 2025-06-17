@@ -24,7 +24,7 @@ function fixLog() {
 
   const historyData = getLogData('history');
   localStorage.removeItem('history');
-  localStorage.setItem(logType, JSON.stringify(historyData));
+  localStorage.setItem('watching', JSON.stringify(historyData));
 }
 
 // Modified logToLocalStorage to assign a unique index to each log entry
