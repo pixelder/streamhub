@@ -669,8 +669,8 @@ function populateCreditSection(data, type) {
       // build the actual grid-item
       const gridItem = document.createElement('div');
       gridItem.className = 'grid-item';
-      gridItem.dataset.id = item.id;
-      gridItem.dataset.mediaType = item.media_type;
+      Object.assign(gridItem.dataset, {id: item.id, mediaType: item.media_type})
+
       const title = item.title || item.original_title || item.name || item.original_name || 'Title not specified';
       const year = extractYear(item.release_date || item.first_air_date);
       const mediaType = item.media_type === 'tv' ? 'TV' : 'Movie';
