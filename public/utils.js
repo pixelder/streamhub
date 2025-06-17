@@ -388,7 +388,7 @@ async function displayModal(mediaType, data) {
   details.setAttribute('data-id', data.id)
   details.setAttribute('data-media-type', mediaType)
 
-  document.documentElement.style.setProperty(
+  modalContent.style.setProperty(
     '--modal-backdrop',
     `url(${data.backdrop_path ? IMAGE_ORG + data.backdrop_path : ''})`
   );
