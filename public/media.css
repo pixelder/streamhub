@@ -465,8 +465,12 @@
 
   /* Browse Page */
 
-  body:has(.bottom-bar.hidden) .button-container {
+  body:has(.bottom-bar.hidden:not(.detach)) .button-container {
     bottom: 20px !important;
+  }
+
+  body:has(.bottom-bar.detach:not(.hidden)) .button-container {
+    bottom: 80px !important;
   }
 
   #browse-movies,
