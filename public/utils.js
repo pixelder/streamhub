@@ -441,16 +441,16 @@ async function displayModal(mediaType, data) {
     if (prevData.length) {
       const prevBtn = document.createElement('button')
       prevBtn.id = 'prev-btn'
-      prevBtn.dataset.id = prevData.at(-1).id
-      prevBtn.dataset.mediaType = prevData.at(-1).mediaType
+      const {id, mediaType} = prevData.at(-1)
+      Object.assign(prevBtn.dataset, {id, mediaType})
       prevBtn.innerHTML = `<i class="fa-solid fa-angle-left"></i>`
       navContainer.appendChild(prevBtn)
     }
     if (fwdData.length) {
       const fwdBtn = document.createElement('button')
       fwdBtn.id = 'fwd-btn'
-      fwdBtn.dataset.id = fwdData.at(-1).id
-      fwdBtn.dataset.mediaType = fwdData.at(-1).mediaType
+      const {id, mediaType} = fwdData.at(-1)
+      Object.assign(fwdBtn.dataset, {id, mediaType})
       fwdBtn.innerHTML = `<i class="fa-solid fa-angle-right"></i>`
       navContainer.appendChild(fwdBtn)
     }
