@@ -685,7 +685,7 @@ body:has(.expandable.expanded) {
     height: calc(100% - 10px);
     mask-image: unset !important;
 
-    .grid-item {
+    .grid-item:not(.placeholder) {
       height: auto;
       aspect-ratio: unset;
     }
@@ -812,6 +812,10 @@ body:has(.expandable.expanded) {
     align-items: center;
     gap: 6px;
   }
+}
+
+.grid-item.placeholder {
+  aspect-ratio: 1 / 1.64 !important;
 }
 
 .grid-item {
@@ -2127,7 +2131,7 @@ body:has(.filter-menu) {
     z-index: 0;
     min-width: fit-content;
     height: 144px;
-    aspect-ratio: 16 / 9;
+    aspect-ratio: 16 / 9 !important;
     padding: 0;
     background: none;
     box-shadow: none;
