@@ -989,57 +989,51 @@ async function tvContent(data, sno, eno, ref) {
   sno = sno ?? -1
   const { data: seasonData } = await fetchMetaData('tv', id, season);
   localStorage.setItem('seasonData', JSON.stringify(seasonData));
-  const generateEpisodesHTML = (episodes, season) => {
-    if (!episodes.length) { 
-      return `
-        <div class="ep-error">
-          <i class="fa-solid fa-circle-exclamation"></i>
-          <p>No episodes available</p>
-        </div>
-      `
-    }
-    let HTML = ''
-    let epCount = 0;
-    let logs = getLogData('history');
-    episodes?.map(episode => {
-      const epLog = logs ? logs.filter(log => {
-        return Number(log.id) === Number(id) && log.mediaType === 'tv' &&
-          String(log.data.sno) === String(episode.season_number) &&
-          String(log.data.eno) === String(episode.episode_number)
-      }) : '';
-      const airDate = new ReleaseDate(episode.air_date)
-      const upcoming = airDate.isUpcoming()
-      const progress = Number(epLog.sortDateDesc(false)[0]?.progress) || 0;
-      const rating = truncate(episode.vote_average, 1)
-      const IMAGE = episode.still_path
-        ? IMAGE_300 + episode.still_path
-        : backdrop ? IMAGE_300 + backdrop : '/assets/images/no-image-hr.svg';
-      epCount++
-      HTML += `
-        <div id="${epCount}" class="episode episode-width" 
-          data-name="${data.name}" data-id="${id}" data-media-type="tv"
-          data-season="${season}" data-episode="${episode.episode_number}" data-epname="${episode.name}">
-          <div class="episode-items">
-            <div tabindex="0" class="img-container">
-              <img src="${IMAGE}" loading="lazy" alt="Episode ${episode.episode_number}">
-              ${watchProgress(progress)}
-            </div>
-            <div class="episode-info">
-              <h3>${episode.episode_number}. ${episode.name}</h3>
-              <p>${rating && !upcoming
-          ? `Rated: ${rating}`
-          : `Not yet rated`}
-              </p>
-              <p>${convertDate(episode.air_date) || ""}</p>
-            </div>
-            <div class="synopsis">
-              <p class="overview">${episode.overview || "No overview available"}</p>
-            </div>
-          </div>
-        </div>
-      `
+
+  const buildEpisodeHTML = (episode, season, count) => {
+    const ep = document.createElement('div')
+    ep.className = 'episode episode-width';
+    ep.id = count;
+    Object.assign(ep.dataset, {
+      name: data.name, id, mediaType: "tv",
+      season, episode: episode.episode_number,
+      epname: episode.name
     });
-    return HTML;
+
+    let logs = getLogData('history');
+    
+    const epLog = logs ? logs.filter(log => {
+      return Number(log.id) === Number(id) && log.mediaType === 'tv' &&
+        String(log.data.sno) === String(episode.season_number) &&
+        String(log.data.eno) === String(episode.episode_number)
+    }) : '';
+    const airDate = new ReleaseDate(episode.air_date)
+    const upcoming = airDate.isUpcoming()
+    const progress = Number(epLog.sortDateDesc(false)[0]?.progress) || 0;
+    const rating = truncate(episode.vote_average, 1)
+    const IMAGE = episode.still_path
+      ? IMAGE_300 + episode.still_path
+      : backdrop ? IMAGE_300 + backdrop : '/assets/images/no-image-hr.svg';
+    ep.innerHTML = `
+      <div class="episode-items">
+        <div tabindex="0" class="img-container">
+          <img src="${IMAGE}" loading="lazy" alt="Episode ${episode.episode_number}">
+          ${watchProgress(progress)}
+        </div>
+        <div class="episode-info">
+          <h3>${episode.episode_number}. ${episode.name}</h3>
+          <p>${rating && !upcoming
+      ? `Rated: ${rating}`
+      : `Not yet rated`}
+          </p>
+          <p>${convertDate(episode.air_date) || ""}</p>
+        </div>
+        <div class="synopsis">
+          <p class="overview">${episode.overview || "No overview available"}</p>
+        </div>
+      </div>
+    `
+    return ep;
   }
 
   const tvInfo = `
@@ -1055,12 +1049,33 @@ async function tvContent(data, sno, eno, ref) {
     </div>
     <div class="season-info">
       <div class="episode-container ${containerClass}" id="episode-container">
-        ${generateEpisodesHTML(seasonData.episodes, season)}
       </div>
     </div>`;
 
+  const populateEpisodes = async function (container, data, season) {
+    container.innerHTML = "";
+    if (!data.episodes.length) {
+      const errDiv = document.createElement("div");
+      errDiv.className = "ep-error";
+      errDiv.innerHTML = `
+        <i class="fa-solid fa-circle-exclamation"></i>
+        <p>No episodes available</p>
+      `;
+      container.appendChild(errDiv);
+      return;
+    }
+    const frag = document.createDocumentFragment();
+    data.episodes.forEach((ep, i) =>
+      frag.appendChild(buildEpisodeHTML(ep, season, i+1))
+    );
+    container.appendChild(frag);
+  }
+
+
   if (ref === "modal") {
     document.querySelector("#modal-details").innerHTML += tvInfo;
+    const episodeContainer = document.getElementById('episode-container')
+    populateEpisodes(episodeContainer, seasonData, season)
   } else {
     const epName = seasonData.episodes.find(episode => episode.episode_number === Number(eno))?.name
     const title = `S${sno}:E${eno} ${epName || ""}`
@@ -1069,6 +1084,9 @@ async function tvContent(data, sno, eno, ref) {
     document.querySelector(".player-episodes").innerHTML = tvInfo;
     const episodeContainer = document.getElementById('episode-container')
     episodeContainer.classList.add('player-styling');
+
+    populateEpisodes(episodeContainer, seasonData, season)
+
     whenInView('.player-styling', () => scrollEpisodeIntoView(eno));
     enableHorizontalWheelScroll(episodeContainer, 3);
 
@@ -1083,10 +1101,12 @@ async function tvContent(data, sno, eno, ref) {
       const { data: tvData } = selectedSeason !== sno
         ? await fetchMetaData('tv', id, selectedSeason)
         : { data: seasonData };
-
+      
       localStorage.setItem('seasonData', JSON.stringify(tvData));
-      document.getElementById('episode-container').innerHTML = generateEpisodesHTML(tvData.episodes, selectedSeason);
-      document.querySelector('.play-trailer')?.setAttribute('data-sno', selectedSeason);
+      const episodeContainer = document.getElementById('episode-container')
+      populateEpisodes(episodeContainer, tvData, selectedSeason).then(() => {
+        document.querySelector('.play-trailer')?.setAttribute('data-sno', selectedSeason);
+      })
       event.stopPropagation()
       return
     }
