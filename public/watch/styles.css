@@ -7,7 +7,7 @@
   overflow-y: visible;
   scrollbar-width: none;
   scroll-snap-type: x mandatory;
-  border-radius: var(--border-radius1);
+  border-radius: unset;
   mask-image: linear-gradient(to right, black 95%, #000000c4 97%, transparent);
   transition: mask-image 0.3s ease-in-out !important;
 }
