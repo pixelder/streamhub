@@ -125,8 +125,7 @@ function populateSearchResults(type, results) {
 function renderProfile(item) {
   const profile = document.createElement('div')
   profile.className = 'profile-item'
-  profile.dataset.id = item.id
-  profile.dataset.mediaType = 'person'
+  Object.assign(profile.dataset, {id : item.id, mediaType: 'person'})
   profile.tabIndex = 0
 
   const name = item.name || item.original_name;
