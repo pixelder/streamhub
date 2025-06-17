@@ -224,12 +224,9 @@ async function fetchHistoryItems(section, sectionId, items) {
     rendered += batchSize;
 
     for (const item of batch) {
-      
       if (existingItems.has(item.id + item.index)) continue;
-
       const placeholder = document.createElement('div');
       placeholder.className = 'grid-item placeholder';
-      console.log(item)
       const {id, mediaType, index} = item
       const {sno, eno} = item.data
       Object.assign(placeholder.dataset, {id, mediaType, index });

@@ -153,6 +153,8 @@ async function resolvedParams(params) {
 				DEF_TYPE = 'tv';
 			}
 			PARAMS.type = DEF_TYPE
+			PARAMS.minRating = '0' 
+			PARAMS.voteCount = '0'
 			PARAMS.preconf = {
 				'title' : 'studio',
 				'filters' : {'genre': 'hidden', 'minRate' : 'hidden', 'year': 'hidden'}
