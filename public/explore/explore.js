@@ -446,36 +446,36 @@ function buildFilterHtml(params) {
 	}
 
 	return `
-			${!genre ? genreFilter() : ''}
-			${!sort ? sortFilter() : ''}
-			${!year ? yearFilter() : ''}
-			${!minRate ? minRateFilter() : ''}
-			${filterActions()}
-			<div class="filter-overlay"></div>
-			<div class="filter-menu">
-				<h3>Filters</h3>
-				<button class="close-btn">
-					<svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="32" height="32" viewBox="0,0,256,256">
-					<g fill="#e6e6fa" fill-rule="nonzero" stroke="none" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="10" stroke-dasharray="" stroke-dashoffset="0" font-family="none" font-weight="none" font-size="none" text-anchor="none" style="mix-blend-mode: normal"><g transform="scale(8,8)"><path d="M7.21875,5.78125l-1.4375,1.4375l8.78125,8.78125l-8.78125,8.78125l1.4375,1.4375l8.78125,-8.78125l8.78125,8.78125l1.4375,-1.4375l-8.78125,-8.78125l8.78125,-8.78125l-1.4375,-1.4375l-8.78125,8.78125z"></path></g></g>
-					</svg>
-				</button>
-				${genre ? genreFilter() : ''}
-				${sort ? sortFilter() : ''}
-				${year ? yearFilter() : ''}
-				${minRate ? minRateFilter() : ''}
-				${castSearchBox()}
-				${companySearchBox()}
-				<div class="flow-row">
-					${countrySelectFilter()}
-					${languageSelectFilter()}
-				</div>
-				${minVoteFilter()}
-				<div class="form-group menu-buttons">
-					<button class="apply">Apply</button>
-					<button class="reset-button" onclick=setFilterVariables()>Reset</button>
-				</div>
+		${!genre ? genreFilter() : ''}
+		${!sort ? sortFilter() : ''}
+		${!year ? yearFilter() : ''}
+		${!minRate ? minRateFilter() : ''}
+		${filterActions()}
+		<div class="filter-overlay"></div>
+		<div class="filter-menu">
+			<h3>Filters</h3>
+			<button class="close-btn">
+				<svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="32" height="32" viewBox="0,0,256,256">
+				<g fill="#e6e6fa" fill-rule="nonzero" stroke="none" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="10" stroke-dasharray="" stroke-dashoffset="0" font-family="none" font-weight="none" font-size="none" text-anchor="none" style="mix-blend-mode: normal"><g transform="scale(8,8)"><path d="M7.21875,5.78125l-1.4375,1.4375l8.78125,8.78125l-8.78125,8.78125l1.4375,1.4375l8.78125,-8.78125l8.78125,8.78125l1.4375,-1.4375l-8.78125,-8.78125l8.78125,-8.78125l-1.4375,-1.4375l-8.78125,8.78125z"></path></g></g>
+				</svg>
+			</button>
+			${genre ? genreFilter() : ''}
+			${sort ? sortFilter() : ''}
+			${year ? yearFilter() : ''}
+			${minRate ? minRateFilter() : ''}
+			${castSearchBox()}
+			${companySearchBox()}
+			<div class="flow-row">
+				${countrySelectFilter()}
+				${languageSelectFilter()}
 			</div>
-		`
+			${minVoteFilter()}
+			<div class="form-group menu-buttons">
+				<button class="apply">Apply</button>
+				<button class="reset-button" onclick=setFilterVariables()>Reset</button>
+			</div>
+		</div>
+	`
 }
 
 async function setupExploreEventListeners() {
@@ -569,39 +569,31 @@ function setupFilterParams({ reset = false } = {}) {
 		sortMode = this.value
 		sortOrder = checkbox.checked ? 'asc' : 'desc'
 	}
-
 	if (sortOrderButton) sortOrderButton.onclick = function () {
 		sortOrder = checkbox.checked ? 'asc' : 'desc'
 	}
-
 	if (yearPicker) yearPicker.oninput = function () {
 		currentYear = this.value
 	}
-
 	if (minVoteSlider) minVoteSlider.oninput = function () {
 		minVoteNumber.value = this.value
 		minVoteCount = this.value
 	}
-
 	if (minVoteNumber) minVoteNumber.oninput = function () {
 		minVoteSlider.value = this.value
 		minVoteCount = this.value
 	}
-
 	if (minRateSlider) minRateSlider.oninput = function () {
 		minRateNumber.value = this.value
 		minRate = this.value
 	}
-
 	if (minRateNumber) minRateNumber.oninput = function () {
 		minRateSlider.value = this.value
 		minRate = this.value
 	}
-
 	if (countryFilter) countryFilter.oninput = function () {
 		selectedCountry = this.value
 	}
-
 	if (languageFilter) languageFilter.oninput = function () {
 		selectedLanguage = this.value
 	}
@@ -922,9 +914,9 @@ function searchResultFunction(sectionId, params) {
 	const resultHTML = function (item) {
 		const result = document.createElement("div")
 		result.classList.add("result")
-		result.setAttribute("data-id", item.id)
-		result.setAttribute("data-name", item.name)
-		result.setAttribute("tabindex", "0")
+		Object.assign(result.dataset, {id: item.id, 'name': item.name})
+		result.tabIndex = 0;
+
 		let IMG = '/assets/images/no-image-transparent-dark.svg'
 		if (type === `person` && item.profile_path) IMG = `${IMAGE_92 + item.profile_path}`
 		if (type === `company` && item.logo_path) IMG = `${IMAGE_92 + item.logo_path}`
@@ -935,9 +927,8 @@ function searchResultFunction(sectionId, params) {
 	const selectedHTML = function (item) {
 		const selectedItem = document.createElement("div")
 		selectedItem.classList.add("select-item")
-		selectedItem.setAttribute("data-id", item.id)
-		selectedItem.setAttribute("data-name", item.name)
-		selectedItem.setAttribute("tabindex", "0")
+		Object.assign(selectedItem.dataset, {id: item.id, 'name': item.name})
+		selectedItem.tabIndex = 0;
 		selectedItem.innerText = item.name
 		return selectedItem
 	}
