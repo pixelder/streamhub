@@ -13,6 +13,8 @@ function fixLog() {
         console.log('fixing log')
         item.index = Date.now() + Math.floor(Math.random() * 1000);
       }
+      if (item.data.sno === 'NaN' || item.data.sno === 'null') item.data.sno = ''
+      if (item.data.eno === 'NaN' || item.data.eno === 'null') item.data.eno = ''
       return item;
     });
     localStorage.setItem(logType, JSON.stringify(updatedLog));
