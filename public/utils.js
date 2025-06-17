@@ -1411,10 +1411,10 @@ function setupScrollEdgeMask(container, reset = null) {
   const updateMask = () => {
     const maxScroll = container.scrollWidth - container.clientWidth;
     const scrollLeft = container.scrollLeft;
-    const buffer = 20;
+    const buffer = 16;
 
     const getMask = () => {
-      if (scrollLeft >= maxScroll - buffer) return defMask("left")
+      if (scrollLeft && maxScroll && scrollLeft >= maxScroll - buffer) return defMask("left")
       // if (isScrolling) return 'linear-gradient(to right, transparent, #000000c4 3%, black 5%, black 95%, #000000c4 97%, transparent)'
       return defMask("right")
     }
