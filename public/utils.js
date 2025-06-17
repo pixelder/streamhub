@@ -512,7 +512,7 @@ async function buildMediaDetailsHTML(data, mediaType, container) {
     .join(', ');
   const companyHTML = (data.production_companies || [])
     .slice(0, 2)
-    .map(item => `<a href="/explore?type=studio&company=${item.id}&title=${item.name}" title="Visit Production Company"> ${item.name}</a>`)
+    .map(item => `<a href="/explore?type=studio&company=${item.id}&title=${item.name}" title="Explore Company Page"> ${item.name}</a>`)
     .join(' • ');
 
   const { rated } = getCountryCertification(data, mediaType);
