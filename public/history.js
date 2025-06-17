@@ -275,17 +275,8 @@ async function fetchHistoryItems(section, sectionId, items) {
 }
 
 function renderLogItems(sectionId, data, item, tvData, type = null) {
-  const logItem = document.createElement('div')
-  logItem.className = 'grid-item';
-  logItem.dataset.id = item.id
-  logItem.dataset.mediaType = item.mediaType
-  logItem.dataset.index = item.index || null
-  if (tvData) {
-    logItem.dataset.sno = item.data.sno
-    logItem.dataset.eno = item.data.eno
-  }
-  logItem.tabIndex = 0;
 
+  const {id, mediaType, index} = item
   const [sno, eno] = tvData ? [item.data.sno, item.data.eno] : ['', ''];
   const epData = tvData ? tvData?.episodes?.find(ep => ep.episode_number === Number(eno)) : '';
   const progress = Number(item.progress) || 0;
@@ -301,7 +292,15 @@ function renderLogItems(sectionId, data, item, tvData, type = null) {
   const info = `S${sno}:E${eno} ` + (epData?.name || '');
   const rating = truncate(!tvData ? data.vote_average : epData?.vote_average, 1);
   //const runTime = !tvData ? data.runtime : epData.runtime;
-
+  
+  const logItem = document.createElement('div')
+  logItem.className = 'grid-item';
+  Object.assign(logItem.dataset, {id, mediaType, name, index : index || null})
+  if (tvData) {
+    Object.assign(logItem.dataset, {sno, eno})
+  }
+  logItem.tabIndex = 0;
+  
   logItem.innerHTML = `
     <div class="item-container"  draggable="true">
       <label class="selectable ${isActiveSelect[sectionId] ? 'active' : ''}">
