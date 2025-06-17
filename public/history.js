@@ -131,6 +131,15 @@ async function fetchHistoryItems(section, sectionId, items) {
     setupCheckboxListeners(sectionId, items);
   }
 
+  // Sort by descending
+  const SORTED_ITEMS = items.slice().sortDateDesc(false);
+
+  if (container.classList.contains('empty')) return;
+
+  container.classList.remove('loading');
+  container.querySelector('.filler')?.remove();
+
+  // Keep track to avoid duplicates
   const existingItems = new Map();
   container.querySelectorAll("[data-id]").forEach(el => {
     const key = el.dataset.id + (el.dataset.index || '');
@@ -139,47 +148,18 @@ async function fetchHistoryItems(section, sectionId, items) {
 
   const newItems = new Set(items.map(item => item.id + item.index));
 
-  const SORTED_ITEMS = items.slice().sortDateDesc(false);
-
-  if (container.classList.contains('empty')) return;
-
-  container.classList.remove('loading');
-  container.querySelector('.filler')?.remove();
-
-  // Store a map for placeholders -> item info
-  const placeholders = new Map();
-
-  for (const item of SORTED_ITEMS) {
-    if (container.classList.contains('empty')) break;
-
-    const key = item.id + item.index;
-    if (existingItems.has(key)) {
-      existingItems.delete(key);
-      continue;
-    }
-
-    const placeholder = document.createElement('div');
-    placeholder.className = 'grid-item placeholder';
-    placeholder.dataset.id = item.id;
-    placeholder.dataset.index = item.index;
-    placeholder.dataset.mediaType = item.mediaType;
-    placeholder.dataset.sno = item.data.sno;
-    placeholder.dataset.eno = item.data.eno;
-
-    container.appendChild(placeholder);
-    placeholders.set(placeholder, item);
-  }
-
-  // IntersectionObserver to load on-demand
+  // intersection observation settings
   const options = {
-    root: null,
-    rootMargin: "100px",
+    root: container,
+    rootMargin: "60px",
     threshold: 0
   };
-
+  
+  const batchSize = 10
   const pending = new Set();
   const concurrencyLimit = 10;
 
+  // Loading item when its intersection happens
   function loadItem(placeholder, item) {
     return (async () => {
       try {
@@ -196,9 +176,8 @@ async function fetchHistoryItems(section, sectionId, items) {
             : renderGridItems(data, type);
         }
 
-        if (!content.dataset.id || !content.dataset.index) {
-          content.dataset.id = item.id;
-          content.dataset.index = item.index;
+        if (!content.dataset.id && !content.dataset.index) {
+          Object.assign(content.dataset, {id : item.id, index : item.index})
         }
 
         if (placeholder.isConnected) {
@@ -211,6 +190,7 @@ async function fetchHistoryItems(section, sectionId, items) {
     })();
   }
 
+  // IntersectionObserver for placeholders
   const intersectionObserver = new IntersectionObserver((entries) => {
     for (const entry of entries) {
       if (entry.isIntersecting) {
@@ -222,9 +202,7 @@ async function fetchHistoryItems(section, sectionId, items) {
 
         if (pending.size >= concurrencyLimit) {
           // wait for some to complete
-          Promise.race(pending).then(() => {
-            pending.delete(this);
-          });
+          Promise.race(pending).then((p) => pending.delete(p));
         }
 
         const task = loadItem(placeholder, item);
@@ -234,12 +212,59 @@ async function fetchHistoryItems(section, sectionId, items) {
     }
   }, options);
 
-  // Observe all placeholders
-  for (const [placeholder] of placeholders) {
-    intersectionObserver.observe(placeholder);
+  // pagination
+  let rendered = 0;
+
+  const placeholders = new Map();
+
+  function renderBatch(){
+    if (rendered >= SORTED_ITEMS.length) return;
+
+    const batch = SORTED_ITEMS.slice(rendered, rendered + batchSize);
+    rendered += batchSize;
+
+    for (const item of batch) {
+      
+      if (existingItems.has(item.id + item.index)) continue;
+
+      const placeholder = document.createElement('div');
+      placeholder.className = 'grid-item placeholder';
+      console.log(item)
+      const {id, mediaType, index} = item
+      const {sno, eno} = item.data
+      Object.assign(placeholder.dataset, {id, mediaType, index });
+      if (sno && eno) {
+        Object.assign(placeholder.dataset, { sno, eno });
+      }
+
+      container.appendChild(placeholder);
+      placeholders.set(placeholder, item);
+      intersectionObserver.observe(placeholder);
+    }
+
+    // If there are more, observe a sentinel for pagination
+    if (rendered < SORTED_ITEMS.length) {
+      const sentinel = document.createElement("div");
+
+      sentinel.className = "load-sentinel";
+      container.appendChild(sentinel);
+
+      const paginationObserver = new IntersectionObserver((entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) {
+            paginationObserver.unobserve(sentinel);
+            sentinel.remove();
+            renderBatch();
+          }
+        }
+      }, options);
+
+      paginationObserver.observe(sentinel);
+    }
   }
 
-  await Promise.allSettled(pending);
+  // Initial render
+  renderBatch();
 
   // Remove orphaned elements
   existingItems.forEach((el, key) => {
