@@ -78,37 +78,55 @@ async function handleSearch(event) {
 function populateSection(sectionId, items) {
   const container = document.querySelector(`#${sectionId} .grid-container`);
   const type = container.classList.contains('vertical-card') ? 'vertical' : null;
+
   if (!isBrowsing && !sectionFetching) {
     container.classList.remove('loading');
-    items.forEach(item => {
-      container.appendChild(renderGridItems(item, type))
-    })
-    return
+    container.innerHTML = '';
   }
-
-  // console.log(currentPage, container.innerHTML)
   if (currentPage === 1) {
     container.innerHTML = '';
-    items.forEach(item => {
-      container.appendChild(renderGridItems(item, type))
-    })
-  } else {
-    items.forEach(item => {
-      container.appendChild(renderGridItems(item, type))
-    }) 
   }
+
+  // Set up IntersectionObserver to populate when in view
+  const io = new IntersectionObserver((entries, obs) => {
+    entries.forEach(entry => {
+      if (!entry.isIntersecting) return;
+
+      const placeholder = entry.target;
+      const item = placeholder._item;
+      const rendered = renderGridItems(item, type);
+      placeholder.replaceWith(rendered);
+      obs.unobserve(placeholder);
+    });
+  }, {
+    root : container,
+    rootMargin: '60px',
+    threshold: 0.1
+  });
+
+  items.forEach(item => {
+    // create a placeholder first
+    const ph = document.createElement('div');
+    ph.className = 'grid-item placeholder';
+    ph._item = item;
+
+    container.appendChild(ph);
+    io.observe(ph);
+  });
 
   if (items.length < 20) {
     pageEnd = true;
     const msg = document.querySelector('.result-message');
-    if (!msg) return
+    if (!msg) return;
     msg.classList.remove('loading');
     msg.querySelector('label').innerText = `No ${currentPage === 1 ? '' : 'more'} results`;
   }
 
-  currentPage++
-
+  if (isBrowsing || sectionFetching) {
+    currentPage++;
+  }
 }
+
 
 function getProgressInfo(id, mediaType = 'movie', logData = null) {
   let logs = logData
@@ -126,9 +144,8 @@ function renderGridItems(item, type = null) {
   let logs = getLogData('history');
   const gridItem = document.createElement('div')
   gridItem.className = 'grid-item'
-  gridItem.id = 'grid-item'
-  gridItem.dataset.id = item.id
-  gridItem.dataset.mediaType = item.media_type
+  gridItem.id = 'grid-item';
+  Object.assign(gridItem.dataset, { id : item.id,  mediaType : item.media_type});
   gridItem.tabIndex = 0
   gridItem.draggable = true
 
@@ -694,7 +711,8 @@ function populateCreditSection(data, type) {
       obs.unobserve(placeholder);
     });
   }, {
-    rootMargin: '200px 0px', // start loading a bit before it enters
+    root: container,
+    rootMargin: '60px', // start loading a bit before it enters
     threshold: 0.1
   });
 
