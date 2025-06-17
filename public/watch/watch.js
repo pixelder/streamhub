@@ -68,12 +68,6 @@ const providers = [
   { ds: "9", name: "AutoEmbed+" }
 ];
 
-window.onload = function () {
-  topNavBar()
-  bottomNavBar()
-  setUpScrollEvents()
-}
-
 async function loadWatchPage(mediaType, NAME = null, id, tvData = null) {
   //console.log('loading watchpage')
   const season = tvData?.season;

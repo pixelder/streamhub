@@ -22,6 +22,12 @@
         tvData = { season : `<%= season %>`, episode : `<%= episode %>`, epname : ``}
     };
 
+    window.onload = function () {
+        topNavBar()
+        bottomNavBar()
+        setUpScrollEvents()
+    }
+
     document.addEventListener("DOMContentLoaded", () => {
         loadWatchPage(`<%= mediaType %>`, name, `<%= id %>`, tvData);
     });
