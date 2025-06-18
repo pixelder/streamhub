@@ -2535,7 +2535,7 @@ body:has(.modal:is([active])) {
 #prev-btn, #fwd-btn {
   height: 100%;
   aspect-ratio: 1/1;
-  background: var(--color3);
+  background: #2a2a3e;
 }
 
 .modal-media:has(#person-details) .nav-btn-container {
