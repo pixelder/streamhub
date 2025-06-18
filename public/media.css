@@ -465,7 +465,7 @@
 
   /* Browse Page */
 
-  body:has(.bottom-bar.hidden:not(.detach)) .button-container {
+  body:has(.bottom-bar.hidden) .button-container {
     bottom: 20px !important;
   }
 
