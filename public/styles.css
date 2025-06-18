@@ -2018,9 +2018,9 @@ body:has(.filter-menu) {
     --bg-warn2: rgba(166, 25, 46, 0.30);
     background: repeating-linear-gradient(45deg,
         var(--bg-warn),
-        var(--bg-warn) 5%,
-        var(--bg-warn2) 5%,
-        var(--bg-warn2) 10%);
+        var(--bg-warn) 8px,
+        var(--bg-warn2) 8px,
+        var(--bg-warn2) 16px);
     background-size: cover;
 
     .icon {
