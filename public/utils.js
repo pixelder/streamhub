@@ -1487,7 +1487,7 @@ function cappedOverview() {
 function shareItem(mediaType, id, name) {
   const shareData = {
     text: `${name}`,
-    url: `${window.location.href}${mediaType}?id=${id}`,
+    url: `${window.location.protocol +'//'+ window.location.host +'/'}${mediaType}?id=${id}`,
   };
 
   const btn = document.querySelector(".share");
@@ -1497,6 +1497,7 @@ function shareItem(mediaType, id, name) {
     try {
       await navigator.share(shareData);
     } catch (err) {
+      if (err.name !== 'TypeError') return
       const msg = 'Copied link to clipboard!';
       console.log(msg);
       toastMessage({ el: btn, string: msg, time: 3000 })
