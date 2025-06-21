@@ -243,12 +243,12 @@ async function loadWatchPage(mediaType, NAME = null, id, tvData = null) {
 }
 
 async function animeEpisodeCounter(metadata, tvData) {
-  //console.log('counting anime ep no.')
-  if (document.querySelectorAll('.episode')[0]?.dataset.id > Number(tvData.eno)) return tvData.eno
+  //console.log('counting anime ep no.', tvData)
+  if (document.querySelectorAll('.episode')[0]?.id > String(tvData.eno)) return tvData.eno
 
   let epCount = 0
   const { sno, eno } = tvData
-  if (!metadata.season) return epCount
+  if (!metadata.seasons) return epCount
   metadata?.seasons.forEach(season => {
     //console.log(season.season_number, Number(sno), Number(eno) )
     if (season.season_number === 0 || season.season_number > Number(sno)) return
@@ -264,9 +264,9 @@ async function animeEpisodeCounter(metadata, tvData) {
 
 async function resolveSource(source, mediaType, id, tvData) {
   //console.log('resolving source')
-  if (source === 100) {
+  if (source === 100 || source === 101) {
     const { data, ep } = await animeResolver(mediaType, id, tvData);
-    console.log('AniID: ', data.id);
+    console.log('AniID: ', data.id, ep);
     return { ID: data.id, ep };
   }
   return { ID: id };
@@ -363,6 +363,7 @@ async function getSourceIframe(source, mediaType, id, season = null, episode = n
 
   const tvData = { sno: season, eno: episode }
   const { ID: ID, ep } = await resolveSource(source, mediaType, id, tvData)
+
   const urlPath = `${mediaType}/${ID}${season && episode ? `/${season}/${episode}` : ''}`
 
   const { version, format } = settings ? settings : [null];
