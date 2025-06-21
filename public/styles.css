@@ -2461,9 +2461,11 @@ body:has(.modal:is([active])) {
   transition: width 0.2s;
 }
 
-/* .modal-content:has(.releasing-on) {
-  max-height: 32rem;
-} */
+.modal-media:has(.releasing-on) {
+  .modal-info-logo img {
+    max-width: 45%;
+  }
+}
 
 .modal-content::before {
   content: '';
