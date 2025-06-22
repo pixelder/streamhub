@@ -687,12 +687,12 @@ async function handleChipClick(genreId, type, chipList) {
 	genreId = parseInt(genreId);
 	const chip = document.querySelector(`.chip[data-id="${genreId}"]`)
 	const parent = chip.parentElement;
-	const unTouched = document.querySelectorAll('.chip:not(.excluded, .selected)')
-	const order = (second = null) => {
+	const unTouched = () => document.querySelectorAll('.chip:not(.excluded, .selected)')
+	const order = ({second, remove} = {}) => {
 		const i = chipList.findIndex(el => el === Number(chip.dataset.id))
 		let index = 0
 		Array.from(document.querySelectorAll('.chip')).forEach(item => {
-			if (item.classList.contains('selected')) {
+			if (!remove && item.classList.contains('selected')) {
 				if (second) {
 					index++
 					return
@@ -700,9 +700,17 @@ async function handleChipClick(genreId, type, chipList) {
 				const j = chipList.findIndex(el => el === Number(item.dataset.id))
 				if (i > j) index++
 			}
-			if (second && item.classList.contains('excluded')) {
+			if (!remove && second && item.classList.contains('excluded')) {
 				const j = chipList.findIndex(el => el === Number(item.dataset.id))
 				if (i > j) index++
+			}
+			if (remove) {
+			   if (item.classList.contains('selected') || item.classList.contains('excluded')) {
+			      index++
+			   } else {
+    				const j = chipList.findIndex(el => el === Number(item.dataset.id))
+				    if (i > j) index++
+			   }
 			}
 		})
 		return Array.from(document.querySelectorAll('.chip'))[index]
@@ -710,19 +718,21 @@ async function handleChipClick(genreId, type, chipList) {
 
 	const ADD = (second = null) => {
 		const position = second
-			? order(second)//unTouched[0]
+			? order({second: true})//unTouched[0]
 			: order()
 		parent.insertBefore(chip, position)
 	}
 
 	const REMOVE = () => {
-		const unTouchedList = Array.from(unTouched)
-		unTouchedList.push(chip)
-		unTouchedList.forEach(chip => {
-			const index = chipList.findIndex(el => el === Number(chip.dataset.id))
-			const position = unTouched[index]
-			parent.insertBefore(chip, position)
-		})
+	  const position = order({remove: true})
+		parent.insertBefore(chip, position)
+//		const unTouchedList = () => Array.from(unTouched())
+//		unTouchedList().push(chip)
+//		unTouchedList().forEach(chip => {
+//			const index = chipList.findIndex(el => el === Number(chip.dataset.id))
+//			const position = unTouched()[index - (chipList.length - unTouched().length)]
+//			parent.insertBefore(chip, position)
+//		})
 	}
 
 	if (type === 'single') {
