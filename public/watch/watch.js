@@ -193,6 +193,7 @@ async function loadWatchPage(mediaType, NAME = null, id, tvData = null) {
   setUpPlayer(source, mediaType, id, season, episode);
 
   // Add event listeners to dropdown items
+  let leaveTimeout = null
   let persistant = false;
   const providerMenu = document.querySelector('.providers');
 
@@ -200,13 +201,17 @@ async function loadWatchPage(mediaType, NAME = null, id, tvData = null) {
     document.querySelector('.provider-menu').addEventListener(type, (e) => {
 
       if (e.type === 'mouseover' && !persistant) {
+        clearTimeout(leaveTimeout)
         providerMenu.classList.add('show')
       }
       if (e.type === 'mouseout' && !persistant) {
-        providerMenu.classList.remove('show')
+        leaveTimeout = setTimeout(() => {
+          providerMenu.classList.remove('show')
+        }, 250)
       }
 
       if (e.type === 'click' && e.target.closest('.provider-change')) {
+        clearTimeout(leaveTimeout)
         persistant = true
         providerMenu.classList.add('show')
       }
