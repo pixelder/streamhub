@@ -411,9 +411,13 @@ async function displayModal(mediaType, data) {
   );
   modalContent.style.setProperty('--modal-backdrop-opacity', 1);
 
-  mediaType !== 'person'
-    ? await buildMediaDetailsHTML(data, mediaType, details)
-    : await buildPersonDetailsHTML(data, details);
+  try {
+    mediaType !== 'person'
+      ? await buildMediaDetailsHTML(data, mediaType, details)
+      : await buildPersonDetailsHTML(data, details);
+  } catch (error) {
+    console.log(error)
+  }
 
   if (mediaType === 'movie') {
     insertMovieActions(data, mediaType);
@@ -648,7 +652,7 @@ function creditResolver(data) {
         <p class="credit-type">${type === "cast" ? 'Cast' : type}</p>
         <div class="expand-arrow"><i class="fa-solid fa-chevron-left"></i></div>
       </div>
-      <div class="grid-container ${type}">
+      <div class="grid-container ${type.split(' ').join('-')}">
       </div>
     `
     return section
@@ -671,7 +675,9 @@ function creditResolver(data) {
 }
 
 function populateCreditSection(data, type) {
-  const container = document.querySelector(`.credit-section .grid-container.${type}`);
+  const container = document.querySelector(`
+    .credit-section .grid-container.${CSS.escape(type.split(' ').join('-'))}
+  `);
   const credits = type === 'cast'
     ? data.combined_credits.cast
     : data.combined_credits.crew.filter(c => c.department === type);
@@ -711,7 +717,7 @@ function populateCreditSection(data, type) {
       obs.unobserve(placeholder);
     });
   }, {
-    root: container,
+    root: document.querySelector('#modal-details'),
     rootMargin: '60px', // start loading a bit before it enters
     threshold: 0.1
   });
