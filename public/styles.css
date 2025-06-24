@@ -7,7 +7,7 @@
   margin: 0;
   padding: 0;
   scroll-behavior: smooth !important;
-  scrollbar-color: var(--color1) #222233;
+  scrollbar-color: var(--color1) var(--color3);
   scrollbar-gutter: stable;
 
   @supports (-webkit-appearance:none) and (contain:paint) and (not (-moz-appearance:button)) {
