@@ -3221,6 +3221,10 @@ option {
       height: 0;
       transition: opacity 0.2s, height 0.2s ease-in-out;
     }
+
+    .grid-item.placeholder {
+      aspect-ratio: unset !important;
+    }
   }
 
   .credit-section.expanded {
