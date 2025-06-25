@@ -12,51 +12,33 @@ const providers = [
   { ds: "1", name: "VidLink" },
   {
     ds: "2", name: "VidPlay",
-    settings: [
-      {
-        type: "version",
-        label: [
-          { active: false, value: "v2" },
-          { active: true, value: "v3" }
-        ],
-        switches: [
-          { value: "2", active: false },
-          { value: "3", active: true }
-        ]
-      }
-    ]
+    settings: [{
+      type: "version",
+      switches: [
+        { value: "2", active: true , label: "v2"},
+        { value: "3", active: false, label: "v3" }
+      ]
+    }]
   },
   {
     ds: "100", name: "Anime", hiddenOn: 'movie',
-    settings: [
-      {
-        type: "format",
-        label: [
-          { active: true, value: "Sub" },
-          { active: false, value: "Dub" }
-        ],
-        switches: [
-          { value: "sub", active: true },
-          { value: "dub", active: false }
-        ]
-      }
-    ]
+    settings: [{
+      type: "format",
+      switches: [
+        { value: "sub", active: true, label: "Sub" },
+        { value: "dub", active: false, label: "Dub" }
+      ]
+    }]
   },
   {
     ds: "101", name: "Anime2", hiddenOn: 'movie',
-    settings: [
-      {
-        type: "format",
-        label: [
-          { active: false, value: "Sub" },
-          { active: true, value: "Dub" }
-        ],
-        switches: [
-          { value: "0", active: false },
-          { value: "1", active: true }
-        ]
-      }
-    ]
+    settings: [{
+      type: "format",
+      switches: [
+        { value: "0", active: false, label: "Sub" },
+        { value: "1", active: true, label: "Dub" }
+      ]
+    }]
   },
   { ds: "8", name: "VidFast" },
   { ds: "6", name: "111Movies" },
@@ -80,15 +62,17 @@ async function loadWatchPage(mediaType, NAME = null, id, tvData = null) {
     const generateSettingsHTML = (settingsArray, ds) => {
       if (!settingsArray || !Array.isArray(settingsArray)) return '';
       return settingsArray
-        .map(({ type, label, switches }) => {
+        .map(({ type, switches }) => {
           const switchesHTML = switches.map(sw => {
-            const activeClass = sw.active ? ' active' : '';
-            return `<button class="switch${activeClass}" data-type=${type} data-${type}="${sw.value}"></button>`;
+            const isActive = sw.active ? ' active' : '';
+            return `<button class="switch${isActive}" data-type=${type} data-${type}="${sw.value}"></button>`;
           }).join('');
           return `
             <span class="provider-settings" data-source="${ds}">
-              <p class="type ${type}" data-status="${label.find(item => item.active).active}">${label.find(item => item.active).value}</p>
-              <div class="switch-buttons" data-active=${label.find(item => item.active).value} data-inactive=${label.find(item => !item.active).value} >
+              <p class="type ${type}">
+                ${switches.find(item => item.active).label}
+              </p>
+              <div class="switch-buttons">
                 ${switchesHTML}
               </div>
             </span>
@@ -140,7 +124,9 @@ async function loadWatchPage(mediaType, NAME = null, id, tvData = null) {
                     </div>
                     <hr>
                   </div>
-                  ${buildProviderHTML()}
+                  <div class="provider-list">
+                    ${buildProviderHTML()}
+                  </div>
                 </div>
               </div>
               <div class="media-download">
@@ -345,11 +331,12 @@ function setProviderSettings(item) {
   item.querySelectorAll('.switch').forEach(btn => {
     btn.classList.toggle('active');
   })
+  const ds = item.dataset.source
   const label = item.querySelector(".type")
-  const button = item.querySelector(".switch-buttons")
-  const status = label.dataset.status
-  label.innerText = `${button.dataset[status === 'true' ? 'inactive' : 'active']}`
-  label.setAttribute('data-status', `${status === 'true' ? '' : 'true'}`)
+  label.innerText = providers.find(item => item.ds === ds)
+    .settings[0].switches.find(sw => !sw.active).label
+  providers.find(item => item.ds === ds)
+    .settings[0].switches.map(sw => sw.active = !sw.active)
   return getProviderSettings(item)
 }
 
