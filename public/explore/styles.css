@@ -28,8 +28,8 @@
 .explore-card {
   display: grid;
   place-content: center;
-  border: 1px solid #ffffff1a;
-  border-radius: 8px;
+  /* border: 1px solid #ffffff1a; */
+  border-radius: 10px;
   aspect-ratio: 16 / 9;
   cursor: pointer;
   position: relative;
