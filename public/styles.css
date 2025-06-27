@@ -1263,6 +1263,7 @@ body:has(.expandable.expanded) {
   display: flex;
   flex-direction: column;
   gap: 0;
+  padding: 0px 1.4rem;
 
   .grid-container {
     min-height: unset;
