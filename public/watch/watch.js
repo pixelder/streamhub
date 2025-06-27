@@ -260,7 +260,7 @@ async function resolveSource(source, mediaType, id, tvData) {
   //console.log('resolving source')
   if (source === 100 || source === 101) {
     const { data, ep } = await animeResolver(mediaType, id, tvData);
-    console.log('AniID: ', data.id, ep);
+    console.log('AniID: ',data.id,ep);
     return { ID: data.id, ep };
   }
   return { ID: id };
@@ -493,12 +493,16 @@ function setupLogging(id, mediaType) {
 
   };
 
+  let historyEntry = false;
+  let loggedToHistory = false;
+  let historyIndex = null;
   const postMsgLogging = (e) => {
     if (e) clearTimeout(defaultLogWait);
     const allowedOrigin = e.origin === 'https://vidsrc.cc';
     if (e.data.type === 'MEDIA_DATA' && !allowedOrigin) return;
     if (!logFlag) return
     logFlag = false;
+    // console.log(e)
     // const { season, episode} = e.data.data
     // console.log(season , currentSeason, episode, currentEpisode)
     // if ((Number(season) !== Number(currentSeason)) || (Number(episode) !== Number(currentEpisode) )) {
@@ -513,14 +517,22 @@ function setupLogging(id, mediaType) {
     const progress = truncate(100 * (currentTime / duration), 2);
 
     if (5 < progress && progress < 85) {
-      ['watching'].forEach(logType => {
-        logToLocalStorage(logType, Number(id), mediaType, currentSeason, currentEpisode, progress);
+      ['watching', 'history'].forEach(logType => {
+        if (logType === 'history') {
+          if (historyEntry) removeFromLocalStorage('history', Number(id), mediaType, currentSeason, currentEpisode, historyIndex)
+          if (!historyEntry) historyEntry = true
+        }
+        historyIndex = Date.now();
+        logToLocalStorage(logType, Number(id), mediaType, currentSeason, currentEpisode, progress, historyIndex);
       });
       localStorage.setItem(id, newSource);
       updatePageStatus(progress);
     }
 
     if (progress > 85) {
+      if (loggedToHistory) return
+      loggedToHistory = true
+      removeFromLocalStorage('history', Number(id), mediaType, currentSeason, currentEpisode, historyIndex)
       logToLocalStorage('history', Number(id), mediaType, currentSeason, currentEpisode, 100);
       if (mediaType === 'movie') {
         removeFromLocalStorage('watching', Number(id), mediaType);
