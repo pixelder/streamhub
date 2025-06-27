@@ -443,6 +443,8 @@ function showIframe(iframe) {
   cropToFit()
 }
 
+let historyIndex = Date.now();
+
 function setupLogging(id, mediaType) {
   let defaultLogWait;
   let logInterval;
@@ -495,7 +497,6 @@ function setupLogging(id, mediaType) {
 
   let historyEntry = false;
   let loggedToHistory = false;
-  let historyIndex = Date.now();
   const postMsgLogging = (e) => {
     if (e) clearTimeout(defaultLogWait);
     const allowedOrigin = e.origin === 'https://vidsrc.cc';
