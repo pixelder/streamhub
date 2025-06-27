@@ -490,23 +490,24 @@ async function setupExploreEventListeners() {
 	});
 
 	let pageWait
-	window.addEventListener("scroll", () => {
-		if (window.scrollY > 260) {
+	document.body.addEventListener("scroll", () => {
+		if (document.body.scrollTop > 260) {
 			document.querySelector('.button-container')?.classList.add('detach')
 		} else {
 			document.querySelector('.button-container')?.classList.remove('detach')
 		}
 		const threshold = 180;
-		if (window.scrollY + document.body.offsetHeight >= document.querySelector('main').clientHeight - threshold) {
+		if (document.body.scrollTop >= document.body.scrollTopMax - threshold) {
 			const mediaType = isMovie ? 'movie' : 'tv';
-			console.log('hit border', currentPage)
-			if (!pageEnd) {
-				clearTimeout(pageWait)
-				pageWait = setTimeout(() => {
-					console.log('loading page', currentPage)
-					loadDiscoverContent(mediaType, `browse-${mediaType}s`);
-				}, (200));
+			if (pageEnd) {
+				console.log('End of results')
+				return
 			}
+			clearTimeout(pageWait)
+			pageWait = setTimeout(() => {
+				console.log('loading page', currentPage)
+				loadDiscoverContent(mediaType, `browse-${mediaType}s`);
+			}, (200));
 		}
 	})
 
@@ -839,7 +840,7 @@ function filterEventHandler(event) {
 			event.stopPropagation();
 		}
 		if (event.target.closest('.go-up')) {
-			window.scrollTo({ top: 0 })
+			document.body.scrollTo({ top: 0 })
 		}
 		if (event.target.closest('.filter-overlay, .close-btn, .apply')) {
 			filterMenu.style.display = 'none';

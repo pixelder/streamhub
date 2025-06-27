@@ -344,7 +344,7 @@ function renderLogItems(sectionId, data, item, tvData, type = null) {
           </div>
         </div>
       </div>
-      <img src="${image}" loading="lazy">
+      <img src="${image}">
       <div class="grid-item-info">
         <span class="history-item-info">
           <h3>${capString(name, 40)}</h3>

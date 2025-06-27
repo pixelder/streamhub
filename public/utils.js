@@ -99,7 +99,7 @@ function populateSection(sectionId, items) {
       obs.unobserve(placeholder);
     });
   }, {
-    root : container,
+    root : document.querySelector('body'),
     rootMargin: '60px',
     threshold: 0.1
   });
@@ -173,7 +173,7 @@ function renderGridItems(item, type = null) {
           </div>
         </div>
       </div>
-      <img src="${image}" loading="lazy" alt="${title}">
+      <img src="${image}">
       ${watchProgress(progress, ring)}
       ${upcoming ? `<div class="upcoming">Upcoming</div>` : ''}
       </div>
@@ -1522,10 +1522,10 @@ function toastMessage({ el, string, time }) {
   }
   message.innerHTML = `<p>${string}</p>`
   const rect = el.getBoundingClientRect();
-  const x = parseFloat((rect.left + window.scrollX).toFixed(0));
-  const y = parseFloat((rect.top + window.scrollY).toFixed(0));
-  message.setAttribute('style', `top: ${y + 40}px; left: ${x - 70}px;`);
+  const x = parseFloat((rect.left + document.body.scrollTop).toFixed(0));
+  const y = parseFloat((rect.top + document.body.scrollTop).toFixed(0));
   document.body.appendChild(message)
+  message.setAttribute('style', `top: ${y + rect.height + 2}px; left: ${(2*x + rect.width - message.clientWidth) / 2}px;`);
 
   let toastTimeout = setTimeout(() => {
     document.body.removeChild(message)
@@ -1810,19 +1810,19 @@ function backdropAnim(details, modalContent) {
 }
 
 function setUpScrollEvents() {
-  let lastScrollY = window.scrollY;
+  let lastScrollY = document.body.scrollTop;
   let isScrollingDown = false;
   let hideTimeout;
 
-  window.addEventListener('scroll', () => {
+  document.body.addEventListener('scroll', () => {
 
     const header = document.querySelector('header');
     const bottomBar = document.querySelector('.bottom-bar');
     const filter = document.querySelector('.button-container');
 
     const threshold = 56; //px
-    let end = (window.scrollY + 8 + window.innerHeight) >= (document.body.scrollHeight);
-    let top = window.scrollY <= threshold
+    let end = document.body.scrollTop + 8  >= document.body.scrollTopMax;
+    let top = document.body.scrollTop <= threshold
     const infScroll = document.querySelector('.result-message.loading')
 
     if (end && !infScroll) {
@@ -1836,7 +1836,7 @@ function setUpScrollEvents() {
       header.classList.add('detach')
     }
 
-    if (window.scrollY > lastScrollY && !end) {
+    if (document.body.scrollTop > lastScrollY && !end) {
       // Scrolling down
       if (!isScrollingDown) {
         isScrollingDown = true;
@@ -1847,14 +1847,14 @@ function setUpScrollEvents() {
           (isMobile() && filter) ? filter.style.bottom = '20px' : '';
         }, 150);
       }
-    } else if ((window.scrollY <= lastScrollY) || end) {
+    } else if ((document.body.scrollTop <= lastScrollY) || end) {
       isScrollingDown = false;
       clearTimeout(hideTimeout); // Cancel any pending hide
       // if (top) header.classList.remove('detach');
       (isMobile() && bottomBar) ? bottomBar.classList.remove('hidden') : '';
       (isMobile() && filter) ? filter.style.bottom = '80px' : '';
     }
-    lastScrollY = window.scrollY;
+    lastScrollY = document.body.scrollTop;
   });
 }
 
@@ -2254,10 +2254,10 @@ function setUpExpandableSection() {
       section.classList.add('expanded');
       section.classList.remove('collapsed')
       localStorage.removeItem(`LAST_Y_POSSITION-${section.id}`)
-      localStorage.setItem(`LAST_Y_POSSITION-${section.id}`, window.scrollY);
+      localStorage.setItem(`LAST_Y_POSSITION-${section.id}`, document.body.scrollTop);
 
-      const y = section.getBoundingClientRect().top + window.scrollY - 8;
-      window.scrollTo({ top: y, behavior: 'smooth' });
+      const y = section.getBoundingClientRect().top + document.body.scrollTop - 8;
+      document.body.scrollTo({ top: y, behavior: 'smooth' });
 
       let pageWait;
       const loadPageOnScroll = () => {
@@ -2305,7 +2305,7 @@ function setUpExpandableSection() {
       section.classList.remove('expanded');
       section.classList.remove('collapsed');
       const scroll = localStorage.getItem(`LAST_Y_POSSITION-${section.id}`) || 0;
-      window.scrollTo({ top: scroll, behavior: 'instant' });
+      document.body.scrollTo({ top: scroll, behavior: 'instant' });
 
       if (!section.classList.contains('user-content')) {
         container.querySelectorAll('.grid-item').forEach((item, index) => {
@@ -2321,11 +2321,11 @@ function setUpExpandableSection() {
       return
       // let scroll = localStorage.getItem(`LAST_Y_POSSITION-${section.id}`);
       // if (!scroll) {
-      //   localStorage.setItem(`LAST_Y_POSSITION-${section.id}`, window.scrollY);
-      //   // scroll = window.scrollY
+      //   localStorage.setItem(`LAST_Y_POSSITION-${section.id}`, document.body.scrollTop);
+      //   // scroll = document.body.scrollTop
       // } else {
       //   localStorage.removeItem(`LAST_Y_POSSITION-${section.id}`)
-      //   window.scrollTo({ top: scroll, behavior: 'instant' });
+      //   document.body.scrollTo({ top: scroll, behavior: 'instant' });
       // }
       // section.classList.remove('expanded')
       // section.classList.toggle('collapsed')
