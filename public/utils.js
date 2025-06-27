@@ -490,7 +490,7 @@ function getContentLogoHTML(data) {
   return `
     <span>
       <div class="modal-info-logo">
-        ${logoPath ? `<img src="${IMAGE_342}${logoPath}" loading="lazy" alt="Logo">` : ''}
+        ${logoPath ? `<img src="${IMAGE_342}${logoPath}" alt="Logo">` : ''}
       </div>
       <div class="modal-info">
         ${!logoPath ? `<h1>${name.toUpperCase()}</h1>` : ''}
@@ -532,7 +532,7 @@ async function buildMediaDetailsHTML(data, mediaType, container) {
     <div class="trailer-container"></div>
     <div class="modal-media">
       <!-- <div class="modal-cover">
-        <img src="${IMAGE_300 + data.poster_path}" loading="lazy" alt="${name}">
+        <img src="${IMAGE_300 + data.poster_path}" alt="${name}">
       </div> -->
       ${contentLogoHTML}
         <span class="ratings-genre">
@@ -597,7 +597,7 @@ async function buildPersonDetailsHTML(data, container) {
     <div class="modal-media" ${isMobile() ? '' : `style="flex-wrap: wrap; flex-direction: unset;"`}>
       ${data.profile_path ? `
         <div class="modal-cover portrait" style="display:flex">
-            <img style="opacity:1" loading="lazy" src="${IMAGE_300 + data.profile_path}">
+            <img style="opacity:1" src="${IMAGE_300 + data.profile_path}">
         </div>` : ''
     }
       <div id="person-details">
@@ -614,7 +614,7 @@ async function buildPersonDetailsHTML(data, container) {
         <div class="item-actions">
           ${links.filter(link => link.id).map(link => `
             <a class="external" title="visit ${link.page} page" href="${link.url}" target="_blank" rel="noopener noreferrer">
-              <img loading="lazy" src="/assets/icons/${link.icon}">
+              <img src="/assets/icons/${link.icon}">
             </a>
           `).join('')}
         </div>
@@ -704,7 +704,7 @@ function populateCreditSection(data, type) {
           : '/assets/images/no-image.png';
 
       gridItem.innerHTML = `
-        <img loading="lazy" src="${imgSrc}">
+        <img src="${imgSrc}">
         <div class="credit-item-info">
           <p class="credit-name">${item.job || item.character || 'N/A'}</p>
           <p class="credit-media-title">${title}${year ? ` (${year})` : ''}</p>

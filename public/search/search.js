@@ -134,7 +134,7 @@ function renderProfile(item) {
     : '/assets/images/no-image.png';
   profile.innerHTML =  `
     <span>
-      <img src="${image}" loading="lazy" alt="${name}">
+      <img src="${image}" alt="${name}">
     </span>
     <div class="profile-item-info">
       <p class="name">${capString(name, 30)}</p>
