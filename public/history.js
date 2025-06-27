@@ -28,11 +28,11 @@ function fixLog() {
 }
 
 // Modified logToLocalStorage to assign a unique index to each log entry
-async function logToLocalStorage(logType, id, mediaType, sno = null, eno = null, progress = null) {
+async function logToLocalStorage(logType, id, mediaType, sno = null, eno = null, progress = null, index = null) {
   //console.log('logging', logType, id, mediaType, sno, eno, progress)
   const newLog = {
     mediaType, id: Number(id),
-    index: Date.now(), progress: progress,
+    index: index || Date.now(), progress: progress,
     data: { sno: sno ? String(sno) : null, eno: eno ? String(eno) : null }
   };
 
