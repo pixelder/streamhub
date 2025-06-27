@@ -1855,7 +1855,7 @@ function setUpScrollEvents() {
       isScrollingDown = false;
       clearTimeout(hideTimeout); // Cancel any pending hide
       // if (top) header.classList.remove('detach');
-      (isMobile() && bottomBar) ? bottomBar.classList.remove('hidden') : '';
+      (isMobile() && bottomBar && !infScroll) ? bottomBar.classList.remove('hidden') : '';
       (isMobile() && filter) ? filter.style.bottom = '80px' : '';
     }
     lastScrollY = document.body.scrollTop;
