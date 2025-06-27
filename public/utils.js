@@ -1513,6 +1513,8 @@ function shareItem(mediaType, id, name) {
 
 }
 
+let toastTimeout
+
 function toastMessage({ el, string, time }) {
   let message = document.querySelector('.temp-message')
   message?.remove()
@@ -1527,7 +1529,8 @@ function toastMessage({ el, string, time }) {
   document.body.appendChild(message)
   message.setAttribute('style', `top: ${y + rect.height + 2}px; left: ${(2*x + rect.width - message.clientWidth) / 2}px;`);
 
-  let toastTimeout = setTimeout(() => {
+  clearTimeout(toastTimeout)
+  toastTimeout = setTimeout(() => {
     document.body.removeChild(message)
   }, time);
 
@@ -1821,7 +1824,8 @@ function setUpScrollEvents() {
     const filter = document.querySelector('.button-container');
 
     const threshold = 56; //px
-    let end = document.body.scrollTop + 8  >= document.body.scrollTopMax;
+    
+    let end = document.body.clientHeight + document.body.scrollTop + 8 >= document.body.scrollHeight;
     let top = document.body.scrollTop <= threshold
     const infScroll = document.querySelector('.result-message.loading')
 
