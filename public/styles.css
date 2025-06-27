@@ -506,6 +506,7 @@ section:has(.grid-item) .actions {
 .actions {
   button,
   div {
+    position: relative;
     height: 32px;
     aspect-ratio: 1/1;
     display: flex;
