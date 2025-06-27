@@ -21,10 +21,7 @@
 }
 
 .player-styling {
-  .episode-width {
-    min-width: unset;
-    max-width: fit-content;
-  }
+
  .episode {
     all: unset;
     height: 100%;
