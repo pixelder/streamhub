@@ -2076,7 +2076,7 @@ async function setupCheckboxListeners(sectionID, items) {
     if (!selectedItems.length || !isActiveSelect[sectionID]) return;
     getConfirm({
       title: `Delete ${countString} ? `,
-      success: { title: "Success!", message: `${countString} removed.` },
+      success: { title: "Removed!", message: `${countString} removed successfully.` },
       decline: { title: "Cancelled!", message: "Items not removed." },
       exitInterval: 2000,
     }).then((confirmed) => {
