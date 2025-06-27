@@ -2522,7 +2522,6 @@ body:has(.modal:is([active])) {
   height: 100%;
   width: 100%;
   border-radius: var(--border-radius2);
-  scroll-snap-type: y mandatory;
 }
 
 #modal-details:focus-visible {
@@ -2648,7 +2647,6 @@ body:has(.modal:is([active])) {
   overflow: hidden;
   transition: height 0.2s;
   z-index: 3;
-  scroll-snap-align: start;
 }
 
 .trailer-container:has(#ytplayer) {
@@ -2996,19 +2994,11 @@ option {
   background-color: #30303d;
 }
 
-.season-info {
-  min-height: 100%;
-  scroll-snap-align: start;
-}
-
 .episode-container {
   display: flex;
   /* flex-direction: row; */
   gap: 12px;
   margin: 0 auto;
-  height: 100%;
-  overflow-y: auto;
-  scroll-snap-type: y mandatory;
 }
 
 .ep-error {
@@ -3029,8 +3019,7 @@ option {
 .episode-wrap {
   display: grid !important;
   grid-template-columns: repeat(auto-fill, minmax(20rem, 1fr));
-  align-items: center;
-  scroll-snap-type: y mandatory;
+  justify-content: center;
 }
 
 /*only for the player page */
