@@ -845,6 +845,10 @@ body:has(.expandable.expanded) {
   }
 }
 
+.grid-container .grid-item:not(.grid-item ~ .grid-item) {
+  animation: unset !important;
+}
+
 .grid-item:is(:hover,:focus-visible) {
   scale: 1.03;
   box-shadow: 0 6px 15px rgb(8, 8, 22);
@@ -1071,11 +1075,11 @@ body:has(.expandable.expanded) {
     position: absolute;
     opacity: 0;
     scale: 0;
-    transition: all 0.2s ease-in-out;
+    transition: opacity 0.2s, scale 0.2s ease-in-out;
   }
 
   .active {
-    transition: all 0.2s ease-in-out;
+    transition: opacity 0.2s, scale 0.2s ease-in-out;
   }
 }
 
@@ -1186,7 +1190,7 @@ body:has(.expandable.expanded) {
   /* var(--border-radius1) 0 0; */
   cursor: pointer;
   font-size: 0.8125rem;
-  transition: background-color 0.3s, color 0.3s, border-radius 0.3s;
+  transition: background-color 0.3s, color 0.3s;
 }
 
 .tab.active {
