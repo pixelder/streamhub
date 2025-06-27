@@ -1,3 +1,5 @@
+const { name } = require("ejs");
+
 const API_KEY = "213d830aae3a2f7b67e37f157405a42e";
 const BASE_URL = 'https://api.tmdb.org/3';
 const IMAGE_300 = 'https://image.tmdb.org/t/p/w300';
@@ -124,11 +126,11 @@ async function buildSuggestedResult(data, type) {
 
 function buildResultHTML(item, type) {
 		const result = document.createElement("button")
+    Object.assign(result.dataset, {
+      id: item.id, mediaType: type, name: item.name || item.title,
+      year: extractYear(item.release_date) || ''
+    })
 		result.classList.add("result")
-		result.setAttribute("data-id", item.id)
-		result.setAttribute("data-name", item.name || item.title)
-    result.setAttribute("data-media-type", type)
-    result.setAttribute("data-year", extractYear(item.release_date) || '')
 		let IMG = '/assets/images/no-image-transparent-dark.svg'
     if (item.poster_path) IMG = `${IMAGE_300 + item.poster_path}`
 		result.innerHTML = `<div class="img-container"><img src='${IMG}' loading="lazy" alt=""></div><p>${item.name || item.title}</p>`
@@ -534,9 +536,7 @@ async function buildFileEntry(file) {
   if (!tr) {
     tr = document.createElement('tr');
     tr.classList.add('result-row');
-    tr.setAttribute('data-index', index);
-    tr.setAttribute('data-size', size);
-    tr.setAttribute('data-quality', quality);
+    Object.assign(tr.dataset, {index, size, quality})
 
     tr.innerHTML = `
       <td class="file-cell">

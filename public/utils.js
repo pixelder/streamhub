@@ -402,8 +402,7 @@ async function displayModal(mediaType, data) {
   const modal = document.getElementById('info-modal');
   const modalContent = document.querySelector('.modal-content');
   const details = document.getElementById('modal-details');
-  details.setAttribute('data-id', data.id)
-  details.setAttribute('data-media-type', mediaType)
+  Object.assign(details.dataset,{id: data.id, mediaType})
 
   modalContent.style.setProperty(
     '--modal-backdrop',
