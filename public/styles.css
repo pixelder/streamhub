@@ -2074,7 +2074,7 @@ body:has(.filter-menu) {
   button {
     flex: 1 0;
     border-radius: 8px;
-    background: #30303d77;
+    background: var(--color3);
     /* transition: filter 0.2s; */
   }
 
