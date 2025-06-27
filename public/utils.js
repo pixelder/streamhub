@@ -1016,7 +1016,7 @@ async function tvContent(data, sno, eno, ref) {
 
   const buildEpisodeHTML = (episode, season, count) => {
     const ep = document.createElement('div')
-    ep.className = 'episode episode-width';
+    ep.className = `episode ${ref === 'modal' ? 'episode-width' : ''}`;
     ep.id = count;
     Object.assign(ep.dataset, {
       name: data.name, id, mediaType: "tv",
