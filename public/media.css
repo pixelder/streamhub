@@ -811,7 +811,7 @@
     min-width: fit-content;
     width: auto;
     max-width: 75%;
-    border-radius: 18px;
+    border-radius: 16px;
 
     h2 {
       font-size: 20px;
@@ -819,7 +819,7 @@
     }
 
     .message-box {
-      border-radius: 8px;
+      border-radius: 6px;
       .icon {
         font-size: 1.2rem;
       }
@@ -836,7 +836,7 @@
 
       /* /* gap: var(--padding1); */
       button {
-        border-radius: 8px;
+        border-radius: 6px;
         padding: 0 2rem;
       }
     }
