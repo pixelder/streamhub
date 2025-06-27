@@ -495,7 +495,7 @@ function setupLogging(id, mediaType) {
 
   let historyEntry = false;
   let loggedToHistory = false;
-  let historyIndex = null;
+  let historyIndex = Date.now();
   const postMsgLogging = (e) => {
     if (e) clearTimeout(defaultLogWait);
     const allowedOrigin = e.origin === 'https://vidsrc.cc';
@@ -522,7 +522,6 @@ function setupLogging(id, mediaType) {
           if (historyEntry) removeFromLocalStorage('history', Number(id), mediaType, currentSeason, currentEpisode, historyIndex)
           if (!historyEntry) historyEntry = true
         }
-        historyIndex = Date.now();
         logToLocalStorage(logType, Number(id), mediaType, currentSeason, currentEpisode, progress, historyIndex);
       });
       localStorage.setItem(id, newSource);
