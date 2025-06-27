@@ -57,7 +57,7 @@ function globalAddEventListener (event) {
       if (event.target.closest('.options-menu')) {
         if (event.target.closest('.remove')) {
           getConfirm({
-            success: {title : 'Success!', message : 'Item removed from history.'},
+            success: {title : 'Removed!', message : 'Item removed successfully.'},
             decline: {title : 'Canceled!', message : 'Item not removed. '}
           }).then(confirmed => { 
             console.log('exited',confirmed)
