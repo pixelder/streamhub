@@ -50,12 +50,7 @@ const providers = [
   { ds: "9", name: "AutoEmbed+" }
 ];
 
-async function loadWatchPage(mediaType, NAME = null, id, tvData = null) {
-  //console.log('loading watchpage')
-  const season = tvData?.season;
-  const episode = tvData?.episode;
-  currentSeason = Number(season);
-  currentEpisode = episode;
+function pageHTML(mediaType) {
 
   const buildProviderHTML = () => {
 
@@ -97,56 +92,64 @@ async function loadWatchPage(mediaType, NAME = null, id, tvData = null) {
     return `${providersHTML}`
   };
 
-  const templateHTML = `
-      <div class="watch-page">
-        <div class="player-container">
-          <div class="player">
-          <div class="loading">
-            <div style="height: 30px; aspect-ratio: 1 / 1; background: var(--font-color1);
-              mask: url(/assets/icons/bars-rotate-fade.svg) no-repeat center;">
-            </div>&nbsp;Loading player...
-          </div>
-            <div class="iframe-container"></div>
-            <div class="player-toolbar">
-              <div class="provider-menu">
-                <button class="provider-change">
-                  <i class="fa-solid fa-server"></i>
-                </button>
-                <div class="providers">
-                  <div class="pv-header">
-                    <div class="flow-row">
-                      <h4>Providers</h4>
-                      <button class="close-btn">
-                        <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="32" height="32" viewBox="0,0,256,256">
-                        <g fill="#e6e6fa" fill-rule="nonzero" stroke="none" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="10" stroke-dasharray="" stroke-dashoffset="0" font-family="none" font-weight="none" font-size="none" text-anchor="none" style="mix-blend-mode: normal"><g transform="scale(8,8)"><path d="M7.21875,5.78125l-1.4375,1.4375l8.78125,8.78125l-8.78125,8.78125l1.4375,1.4375l8.78125,-8.78125l8.78125,8.78125l1.4375,-1.4375l-8.78125,-8.78125l8.78125,-8.78125l-1.4375,-1.4375l-8.78125,8.78125z"></path></g></g>
-                        </svg>
-										  </button>
-                    </div>
-                    <hr>
+  return `
+    <div class="watch-page">
+      <div class="player-container">
+        <div class="player">
+        <div class="loading">
+          <div style="height: 30px; aspect-ratio: 1 / 1; background: var(--font-color1);
+            mask: url(/assets/icons/bars-rotate-fade.svg) no-repeat center;">
+          </div>&nbsp;Loading player...
+        </div>
+          <div class="iframe-container"></div>
+          <div class="player-toolbar">
+            <div class="provider-menu">
+              <button class="provider-change">
+                <i class="fa-solid fa-server"></i>
+              </button>
+              <div class="providers">
+                <div class="pv-header">
+                  <div class="flow-row">
+                    <h4>Providers</h4>
+                    <button class="close-btn">
+                      <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="32" height="32" viewBox="0,0,256,256">
+                      <g fill="#e6e6fa" fill-rule="nonzero" stroke="none" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="10" stroke-dasharray="" stroke-dashoffset="0" font-family="none" font-weight="none" font-size="none" text-anchor="none" style="mix-blend-mode: normal"><g transform="scale(8,8)"><path d="M7.21875,5.78125l-1.4375,1.4375l8.78125,8.78125l-8.78125,8.78125l1.4375,1.4375l8.78125,-8.78125l8.78125,8.78125l1.4375,-1.4375l-8.78125,-8.78125l8.78125,-8.78125l-1.4375,-1.4375l-8.78125,8.78125z"></path></g></g>
+                      </svg>
+                    </button>
                   </div>
-                  <div class="provider-list">
-                    ${buildProviderHTML()}
-                  </div>
+                  <hr>
+                </div>
+                <div class="provider-list">
+                  ${buildProviderHTML()}
                 </div>
               </div>
-              <div class="media-download">
-                <button class="download">Download</button>
-                <div class="get-dwnload"></div>
-              </div>
-              <div class="go-fullscreen">
-                <button class="iframefullscreen" title="Go fullscreen">
-                  <i class="fa-solid fa-up-right-and-down-left-from-center"></i>
-                </button>
-              </div>
+            </div>
+            <div class="media-download">
+              <button class="download">Download</button>
+              <div class="get-dwnload"></div>
+            </div>
+            <div class="go-fullscreen">
+              <button class="iframefullscreen" title="Go fullscreen">
+                <i class="fa-solid fa-up-right-and-down-left-from-center"></i>
+              </button>
             </div>
           </div>
         </div>
-        <div class="now-playing"></div>
-        <div class="player-episodes"></div>
       </div>
-    `;
+      <div class="now-playing"></div>
+      <div class="player-episodes"></div>
+    </div>
+  `;
+}
 
-  document.querySelector("#main-content").innerHTML = templateHTML
+async function loadWatchPage(mediaType, NAME = null, id, tvData = null) {
+  //console.log('loading watchpage')
+  const season = tvData?.season;
+  const episode = tvData?.episode;
+  currentSeason = Number(season);
+  currentEpisode = episode;
+
+  document.querySelector("#main-content").innerHTML = pageHTML(mediaType)
 
   const { data } = await fetchMetaData(mediaType, id)
   const name = data.title ?? data.name
@@ -510,7 +513,7 @@ function setupLogging(id, mediaType) {
     const progress = truncate(100 * (currentTime / duration), 2);
 
     if (5 < progress && progress < 85) {
-      ['watching', 'history'].forEach(logType => {
+      ['watching'].forEach(logType => {
         logToLocalStorage(logType, Number(id), mediaType, currentSeason, currentEpisode, progress);
       });
       localStorage.setItem(id, newSource);
