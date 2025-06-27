@@ -497,7 +497,7 @@ async function setupExploreEventListeners() {
 			document.querySelector('.button-container')?.classList.remove('detach')
 		}
 		const threshold = 180;
-		if (document.body.scrollTop >= document.body.scrollTopMax - threshold) {
+		if (document.body.clientHeight + document.body.scrollTop >= document.body.scrollHeight - threshold) {
 			const mediaType = isMovie ? 'movie' : 'tv';
 			if (pageEnd) {
 				console.log('End of results')
