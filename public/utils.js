@@ -1821,12 +1821,11 @@ function setUpScrollEvents() {
 
     const header = document.querySelector('header');
     const bottomBar = document.querySelector('.bottom-bar');
-    const filter = document.querySelector('.button-container');
+    const scrolled = document.body.scrollTop
 
     const threshold = 56; //px
-    
-    let end = document.body.clientHeight + document.body.scrollTop + 8 >= document.body.scrollHeight;
-    let top = document.body.scrollTop <= threshold
+    let end = document.body.clientHeight + scrolled + 8 >= document.body.scrollHeight;
+    let top = scrolled <= threshold
     const infScroll = document.querySelector('.result-message.loading')
 
     if (end && !infScroll) {
@@ -1840,25 +1839,21 @@ function setUpScrollEvents() {
       header.classList.add('detach')
     }
 
-    if (document.body.scrollTop > lastScrollY && !end) {
+    if (scrolled > lastScrollY && !end) {
       // Scrolling down
       if (!isScrollingDown) {
         isScrollingDown = true;
         clearTimeout(hideTimeout);
         hideTimeout = setTimeout(() => {
-          // header.classList.add('detach');
-          (isMobile() && bottomBar) ? bottomBar.classList.add('hidden') : ''; //.style.bottom = '-4rem' : '';
-          (isMobile() && filter) ? filter.style.bottom = '20px' : '';
+          (isMobile() && bottomBar) ? bottomBar.classList.add('hidden') : '';
         }, 150);
       }
-    } else if ((document.body.scrollTop <= lastScrollY) || end) {
+    } else if ((scrolled <= lastScrollY)) {
       isScrollingDown = false;
       clearTimeout(hideTimeout); // Cancel any pending hide
-      // if (top) header.classList.remove('detach');
-      (isMobile() && bottomBar && !infScroll) ? bottomBar.classList.remove('hidden') : '';
-      (isMobile() && filter) ? filter.style.bottom = '80px' : '';
+      (isMobile() && bottomBar) ? bottomBar.classList.remove('hidden') : '';
     }
-    lastScrollY = document.body.scrollTop;
+    lastScrollY = scrolled;
   });
 }
 
