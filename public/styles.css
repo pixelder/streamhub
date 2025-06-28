@@ -1276,9 +1276,9 @@ body:has(.expandable.expanded) {
   }
 
   .result-message {
-    display: flex;
+    display: none;
     flex-direction: column;
-    margin: 2rem auto 0rem;
+    margin: 2rem auto 30px;
     text-shadow: none;
     color: #757592;
     border: 1px solid var(--color1);
@@ -1315,9 +1315,14 @@ body:has(.expandable.expanded) {
   }
 }
 
+.result-message.empty {
+  display: flex !important;
+}
+
 .result-message.loading {
+  display: flex !important;
   background: var(--color5);
-  margin: 1.2rem 0rem !important;
+  margin-block: 1.2rem 30px !important;
   width: 100%;
 
   .message,

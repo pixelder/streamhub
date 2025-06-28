@@ -492,7 +492,7 @@
     }
 
     .result-message {
-      margin: 16px 0 4px !important;
+      margin: 16px 0 12px !important;
 
       label {
         font-size: 1.2rem;

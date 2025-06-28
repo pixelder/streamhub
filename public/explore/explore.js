@@ -497,12 +497,14 @@ async function setupExploreEventListeners() {
 			document.querySelector('.button-container')?.classList.remove('detach')
 		}
 		const threshold = 180;
+
 		if (document.body.clientHeight + document.body.scrollTop >= document.body.scrollHeight - threshold) {
 			const mediaType = isMovie ? 'movie' : 'tv';
 			if (pageEnd) {
 				console.log('End of results')
 				return
 			}
+			document.querySelector('.result-message').classList.add('loading');
 			clearTimeout(pageWait)
 			pageWait = setTimeout(() => {
 				console.log('loading page', currentPage)
@@ -817,6 +819,7 @@ function resetSection() {
 		const msg = document.querySelector('.result-message');
 		msg.querySelector('label').innerText = 'Loading...'
 		msg.classList.add('loading')
+		msg.classList.remove('empty')
 		gridContainer.innerHTML = '';
 		currentPage = 1;
 		pageEnd = false;

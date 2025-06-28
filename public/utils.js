@@ -78,6 +78,8 @@ async function handleSearch(event) {
 function populateSection(sectionId, items) {
   const container = document.querySelector(`#${sectionId} .grid-container`);
   const type = container.classList.contains('vertical-card') ? 'vertical' : null;
+  const msg = document.querySelector('.result-message');
+  if (msg) msg.classList.remove('empty');
 
   if (!isBrowsing && !sectionFetching) {
     container.classList.remove('loading');
@@ -116,12 +118,12 @@ function populateSection(sectionId, items) {
 
   if (items.length < 20) {
     pageEnd = true;
-    const msg = document.querySelector('.result-message');
+    
     if (!msg) return;
-    msg.classList.remove('loading');
+    msg.classList.add('empty');
     msg.querySelector('label').innerText = `No ${currentPage === 1 ? '' : 'more'} results`;
   }
-
+  if (msg) msg.classList.remove('loading');
   if (isBrowsing || sectionFetching) {
     currentPage++;
   }
@@ -1816,18 +1818,20 @@ function setUpScrollEvents() {
   let isScrollingDown = false;
   let hideTimeout;
 
-  document.body.addEventListener('scroll', () => {
+  document.body.addEventListener('scroll', (e) => {
 
     const header = document.querySelector('header');
     const bottomBar = document.querySelector('.bottom-bar');
     const scrolled = document.body.scrollTop
 
     const threshold = 56; //px
-    let end = document.body.clientHeight + scrolled + 8 >= document.body.scrollHeight;
+    let end = document.body.clientHeight + scrolled + 16 >= document.body.scrollHeight;
     let top = scrolled <= threshold
     const infScroll = document.querySelector('.result-message.loading')
+    
 
     if (end && !infScroll) {
+      clearTimeout(hideTimeout)
       bottomBar.classList.remove('detach', 'hidden')
     } else {
       bottomBar.classList.add('detach')
@@ -1847,7 +1851,7 @@ function setUpScrollEvents() {
           (isMobile() && bottomBar) ? bottomBar.classList.add('hidden') : '';
         }, 150);
       }
-    } else if ((scrolled <= lastScrollY)) {
+    } else if (scrolled <= lastScrollY) {
       isScrollingDown = false;
       clearTimeout(hideTimeout); // Cancel any pending hide
       (isMobile() && bottomBar) ? bottomBar.classList.remove('hidden') : '';
