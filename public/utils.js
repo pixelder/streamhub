@@ -1223,11 +1223,11 @@ function modalEventsHandler(event, data) {
       //sourceValidator(mediaType, id, season, episode)
 
       const title = `${mediaType === "movie" ? name : `S${season}:E${episode} ${name}`}`;
-      const info = `<h2>${name}</h2>
-                    <h4>S${season}:E${episode} ${epname}</h4>`;
       const tvData = { season, episode, epname };
 
       if (document.getElementById('episode-container').classList.contains('player-styling')) {
+        const info = `<h2>${name}</h2>
+              <h4>S${season}:E${episode} ${epname}</h4>`;
         currentSeason = season;
         currentEpisode = episode;
         const source = getLoggedSource(Number(id)) || 1;

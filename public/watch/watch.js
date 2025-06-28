@@ -8,6 +8,10 @@ let currentSeason = null;
 let currentEpisode = null;
 let newSource = 1
 
+let historyEntry = false;
+let loggedToHistory = false;
+let historyIndex = Date.now();
+
 const providers = [
   { ds: "1", name: "VidLink" },
   {
@@ -169,13 +173,13 @@ async function loadWatchPage(mediaType, NAME = null, id, tvData = null) {
   if (mediaType == 'tv') {
     tvContent(data, season, episode, ref = "player")
       .then(() => {
-        const container = document.getElementById('episode-container')
-        setupScrollEdgeMask(container)
+        const container = document.getElementById('episode-container');
+        setupScrollEdgeMask(container);
+        ['click', 'keydown'].forEach(eventType => {
+          container.removeEventListener(eventType, modalEventsHandler)
+          container.addEventListener(eventType, modalEventsHandler)
+        });
       });
-    ['click', 'keydown'].forEach(eventType => {
-      document.removeEventListener(eventType, modalEventsHandler)
-      document.addEventListener(eventType, modalEventsHandler)
-    });
   }
 
   let source = getLoggedSource(id) || 1;
@@ -236,67 +240,6 @@ async function loadWatchPage(mediaType, NAME = null, id, tvData = null) {
   })
 }
 
-async function animeEpisodeCounter(metadata, tvData) {
-  //console.log('counting anime ep no.', tvData)
-  if (document.querySelectorAll('.episode')[0]?.id > String(tvData.eno)) return tvData.eno
-
-  let epCount = 0
-  const { sno, eno } = tvData
-  if (!metadata.seasons) return epCount
-  metadata?.seasons.forEach(season => {
-    //console.log(season.season_number, Number(sno), Number(eno) )
-    if (season.season_number === 0 || season.season_number > Number(sno)) return
-    if (season.season_number === Number(sno)) {
-      epCount += Number(eno)
-    } else {
-      epCount += season.episode_count
-    }
-  })
-
-  return epCount
-}
-
-async function resolveSource(source, mediaType, id, tvData) {
-  //console.log('resolving source')
-  if (source === 100 || source === 101) {
-    const { data, ep } = await animeResolver(mediaType, id, tvData);
-    console.log('AniID: ',data.id,ep);
-    return { ID: data.id, ep };
-  }
-  return { ID: id };
-}
-
-async function animeResolver(mediaType, id, tvData) {
-  //console.log('fetching ani list id ')
-  const { data: metadata } = await fetchMetaData(mediaType, id)
-  const ep = await animeEpisodeCounter(metadata, tvData)
-  const title = metadata.original_name || metadata.original_title || metadata.name || metadata.title
-  //console.log(title)
-  const query = `
-    query {
-      Media(search: "${title}", type: ANIME) {
-        id
-        idMal
-        title {
-          romaji
-          english
-        }
-      }
-    }
-  `;
-
-  const response = await fetch("https://graphql.anilist.co", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ query }),
-  });
-
-  const data = await response.json();
-  return { data: data.data.Media, ep }
-}
-
 function setUpPlayer(source, mediaType, id, season = null, episode = null, settings = [null]) {
   loc();
 
@@ -317,6 +260,9 @@ function setUpPlayer(source, mediaType, id, season = null, episode = null, setti
     }
   });
 
+  historyEntry = false;
+  loggedToHistory = false;
+  historyIndex = Date.now();
   loadSource(source, mediaType, id, season, episode, settings)
 }
 
@@ -351,6 +297,65 @@ function getProviderSettings(item) {
   //console.log(settings[type])
   if (!settings) return
   return settings
+}
+
+async function animeEpisodeCounter(metadata, tvData) {
+  //console.log('counting anime ep no.', tvData)
+  if (document.querySelectorAll('.episode')[0]?.id > String(tvData.eno)) return tvData.eno
+
+  let epCount = 0
+  const { sno, eno } = tvData
+  if (!metadata.seasons) return epCount
+  metadata?.seasons.forEach(season => {
+    //console.log(season.season_number, Number(sno), Number(eno) )
+    if (season.season_number === 0 || season.season_number > Number(sno)) return
+    if (season.season_number === Number(sno)) {
+      epCount += Number(eno)
+    } else {
+      epCount += season.episode_count
+    }
+  })
+
+  return epCount
+}
+
+async function animeResolver(mediaType, id, tvData) {
+  //console.log('fetching ani list id ')
+  const { data: metadata } = await fetchMetaData(mediaType, id)
+  const ep = await animeEpisodeCounter(metadata, tvData)
+  const title = metadata.original_name || metadata.original_title || metadata.name || metadata.title
+  //console.log(title)
+  const query = `
+    query {
+      Media(search: "${title}", type: ANIME) {
+        id
+        idMal
+        title {
+          romaji
+          english
+        }
+      }
+    }
+  `;
+
+  const response = await fetch("https://graphql.anilist.co", {
+    method: "POST",
+    headers: { "Content-Type": "application/json", },
+    body: JSON.stringify({ query }),
+  });
+
+  const data = await response.json();
+  return { data: data.data.Media, ep }
+}
+
+async function resolveSource(source, mediaType, id, tvData) {
+  //console.log('resolving source')
+  if (source === 100 || source === 101) {
+    const { data, ep } = await animeResolver(mediaType, id, tvData);
+    console.log('AniID: ',data.id,ep);
+    return { ID: data.id, ep };
+  }
+  return { ID: id };
 }
 
 async function getSourceIframe(source, mediaType, id, season = null, episode = null, settings = [null]) {
@@ -436,14 +441,12 @@ function getLoggedSource(id) {
 
 function showIframe(iframe) {
   //console.log('source iframe is loaded')
-  iframe.style.display = "block";
+  iframe.style.display = "initial";
   document.querySelector(".loading").style.display = "none";
   const { id, mediaType } = iframe.dataset
   setupLogging(Number(id), mediaType)
   cropToFit()
 }
-
-let historyIndex = Date.now();
 
 function setupLogging(id, mediaType) {
   let defaultLogWait;
@@ -457,7 +460,11 @@ function setupLogging(id, mediaType) {
     wait(taskId, duration)
       .then(() => {
         ['watching', 'history'].forEach(logType => {
-          logToLocalStorage(logType, Number(id), mediaType, currentSeason, currentEpisode, null);
+          if (logType === 'history') {
+            if (historyEntry) removeFromLocalStorage('history', Number(id), mediaType, currentSeason, currentEpisode, historyIndex)
+            if (!historyEntry) historyEntry = true
+          }
+          logToLocalStorage(logType, Number(id), mediaType, currentSeason, currentEpisode, null, historyIndex);
         });
         localStorage.setItem(id, newSource);
       })
@@ -495,8 +502,6 @@ function setupLogging(id, mediaType) {
 
   };
 
-  let historyEntry = false;
-  let loggedToHistory = false;
   const postMsgLogging = (e) => {
     if (e) clearTimeout(defaultLogWait);
     const allowedOrigin = e.origin === 'https://vidsrc.cc';
