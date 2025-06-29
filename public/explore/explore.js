@@ -682,6 +682,7 @@ async function renderGenreChips(mediaType, selected = null) {
 				resetSection();
 			}, 300);
 		}
+		setTimeout(() => genreContainer.scrollTo({left:0}), 100)
 	});
 
 	enableHorizontalWheelScroll(genreContainer, 2)
@@ -759,6 +760,7 @@ async function handleChipClick(genreId, type, chipList) {
 			REMOVE()
 		}
 	}
+
 }
 
 function updateSelectedGenres(container) {
