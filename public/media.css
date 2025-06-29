@@ -472,7 +472,7 @@
     bottom: 20px !important;
   }
 
-  body:has(.bottom-bar:not(.hidden)) .button-container {
+  body:has(.bottom-bar.detach:not(.hidden)) .button-container {
     bottom: 80px !important;
   }
 
@@ -494,7 +494,7 @@
     .result-message {
       margin: 16px 0 12px !important;
 
-      label {
+      .text {
         font-size: 1.2rem;
         font-weight: 700;
       }
@@ -508,6 +508,10 @@
     .flow-row {
       gap: 12px;
     }
+    
+    /* .result-message.loading {
+      margin-bottom: 30px !important;
+    } */
 
     .filters {
       gap: 0.36rem;
@@ -585,7 +589,7 @@
 
     .button-container {
       position: fixed;
-      bottom: 5.4rem;
+      bottom: 80px;
       right: 1rem;
       z-index: 2;
       margin: unset;

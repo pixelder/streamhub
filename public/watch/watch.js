@@ -559,6 +559,7 @@ function setupLogging(id, mediaType) {
 
   // Start initial log delay
   defaultLogWait = setTimeout(() => {
+    clearInterval(logInterval)
     defLoggingSys(20);
   }, 100000);
 

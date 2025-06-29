@@ -263,7 +263,7 @@ async function buildExploreHtml(params) {
       </div>
 			<div class="grid-container vertical-card"></div>
 			<div class="result-message">
-					<label>Loading...</label>
+					<div class="text">Loading...</div>
 					<hr class="hr">
 					<div class="message">
 							<p>Have you tried</p>
@@ -510,6 +510,8 @@ async function setupExploreEventListeners() {
 				console.log('loading page', currentPage)
 				loadDiscoverContent(mediaType, `browse-${mediaType}s`);
 			}, (200));
+		} else {
+			document.querySelector('.result-message').classList.remove('loading');
 		}
 	})
 
@@ -817,7 +819,7 @@ function resetSection() {
 		const mediaType = isMovie ? 'movie' : 'tv';
 		const gridContainer = document.querySelector(".grid-container")
 		const msg = document.querySelector('.result-message');
-		msg.querySelector('label').innerText = 'Loading...'
+		msg.querySelector('.text').innerText = 'Loading...'
 		msg.classList.add('loading')
 		msg.classList.remove('empty')
 		gridContainer.innerHTML = '';
