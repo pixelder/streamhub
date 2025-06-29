@@ -121,7 +121,7 @@ function populateSection(sectionId, items) {
     
     if (!msg) return;
     msg.classList.add('empty');
-    msg.querySelector('label').innerText = `No ${currentPage === 1 ? '' : 'more'} results`;
+    msg.querySelector('.text').innerText = `No ${currentPage === 1 ? '' : 'more'} results`;
   }
   if (msg) msg.classList.remove('loading');
   if (isBrowsing || sectionFetching) {
@@ -1816,7 +1816,7 @@ function backdropAnim(details, modalContent) {
 function setUpScrollEvents() {
   let lastScrollY = document.body.scrollTop;
   let isScrollingDown = false;
-  let hideTimeout;
+  let hideTimeout, showTimeout;
 
   document.body.addEventListener('scroll', (e) => {
 
@@ -1826,35 +1826,56 @@ function setUpScrollEvents() {
 
     const threshold = 56; //px
     let end = document.body.clientHeight + scrolled + 16 >= document.body.scrollHeight;
-    let top = scrolled <= threshold
-    const infScroll = document.querySelector('.result-message.loading')
-    
+    let top = scrolled <= threshold;
+    let infScrolling = false
+    const infScroll = () => {
+      const msg = document.querySelector('.result-message')
+      if (msg) {
+        if (msg.classList.contains('loading')) {
+          bottomBar.classList.add('hidden');
+          infScrolling = true
+        }
+        if (msg.classList.contains('empty')) {
+          infScrolling = false
+        }
+      }
+    }
 
-    if (end && !infScroll) {
-      clearTimeout(hideTimeout)
-      bottomBar.classList.remove('detach', 'hidden')
+    if (end) {
+      infScroll()
+      if (infScrolling) return
+      clearTimeout(hideTimeout);
+      clearTimeout(showTimeout);
+      bottomBar.classList.remove('detach','hidden')
     } else {
       bottomBar.classList.add('detach')
     }
+
     if (top) {
       header.classList.remove('detach')
     } else {
       header.classList.add('detach')
     }
 
-    if (scrolled > lastScrollY && !end) {
+    if (scrolled > lastScrollY) {
       // Scrolling down
       if (!isScrollingDown) {
+        infScroll()
         isScrollingDown = true;
         clearTimeout(hideTimeout);
+        clearTimeout(showTimeout);
         hideTimeout = setTimeout(() => {
           (isMobile() && bottomBar) ? bottomBar.classList.add('hidden') : '';
         }, 150);
       }
-    } else if (scrolled <= lastScrollY) {
+    }
+    if (scrolled <= lastScrollY) {
       isScrollingDown = false;
       clearTimeout(hideTimeout); // Cancel any pending hide
-      (isMobile() && bottomBar) ? bottomBar.classList.remove('hidden') : '';
+      clearTimeout(showTimeout);
+      showTimeout = setTimeout(() => {
+          (isMobile() && bottomBar) ? bottomBar.classList.remove('hidden') : '';
+      }, 10);
     }
     lastScrollY = scrolled;
   });
