@@ -918,7 +918,7 @@ function searchResultFunction(sectionId, params) {
 			if (dataExists) return
 			const resultEl = resultHTML(item)
 			resultsContainer.appendChild(resultEl)
-			resultsContainer.firstChild.focus()
+			// resultsContainer.firstChild.focus()
 		})
 	}
 
