@@ -682,7 +682,6 @@ async function renderGenreChips(mediaType, selected = null) {
 				resetSection();
 			}, 300);
 		}
-		setTimeout(() => genreContainer.scrollTo({left:0}), 100)
 	});
 
 	enableHorizontalWheelScroll(genreContainer, 2)
@@ -764,6 +763,7 @@ async function handleChipClick(genreId, type, chipList) {
 }
 
 function updateSelectedGenres(container) {
+	container?.scrollTo({left:0})
 	container?.querySelectorAll('.chip').forEach(chip => {
 		const genreId = parseInt(chip.dataset.id);
 		chip.classList.toggle('selected', selectedGenres.includes(genreId));
