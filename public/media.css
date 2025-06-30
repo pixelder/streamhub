@@ -921,6 +921,7 @@
 
   .tab-items .grid-container {
     gap: inherit;
+    height: 190px;
   }
 
   .media-switch {
