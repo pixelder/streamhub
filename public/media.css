@@ -366,6 +366,10 @@
     height: 190px !important;
   }
 
+  .grid-container .grid-item:not(.grid-item ~ .grid-item) {
+    animation: unset !important;
+  }
+
   .grid-item {
     aspect-ratio: unset !important;
     height: fit-content;
