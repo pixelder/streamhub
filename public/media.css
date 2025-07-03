@@ -936,10 +936,6 @@
     font-size: 12px;
   }
 
-  .media-tab:hover {
-    background-color: var(--color3);
-  }
-
   .modal-content {
     width: 95%;
     height: fit-content;
