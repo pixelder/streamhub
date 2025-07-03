@@ -821,7 +821,7 @@ body:has(.expandable.expanded) {
 
 .grid-item.placeholder {
   aspect-ratio: 1 / 1.64 !important;
-  animation: unset !important;
+  /* animation: unset !important; */
 }
 
 .grid-item {
@@ -843,10 +843,6 @@ body:has(.expandable.expanded) {
   .grid-actions {
     transition: scale 0.2s;
   }
-}
-
-.grid-container .grid-item:not(.grid-item ~ .grid-item) {
-  animation: unset !important;
 }
 
 .grid-item:is(:hover,:focus-visible) {
@@ -1915,7 +1911,7 @@ body:has(.expandable.expanded) {
 /* Fade-in and slide-in effect */
 @keyframes appearing {
   from {
-    opacity: 0.6;
+    opacity: 0.4;
     scale: 0.94;
   }
 
@@ -2154,10 +2150,12 @@ body:has(.filter-menu) {
     background: none;
     box-shadow: none;
     border: none;
+    animation: unset;
   }
 
   .grid-item.placeholder {
     background: var(--color5);
+    /* animation: unse 0.3s; */
   }
 
   .item-container {
@@ -2167,6 +2165,7 @@ body:has(.filter-menu) {
     border: 1px solid #ffffff1a;
     border-radius: inherit;
     transition: scale 0.2s, border 0.2s ease-in-out;
+    animation: appearing 0.3s;
   }
 
   .grid-item img {
