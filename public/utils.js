@@ -1527,8 +1527,8 @@ function toastMessage({ el, string, time }) {
   }
   message.innerHTML = `<p>${string}</p>`
   const rect = el.getBoundingClientRect();
-  const x = parseFloat((rect.left + document.body.scrollTop).toFixed(0));
-  const y = parseFloat((rect.top + document.body.scrollTop).toFixed(0));
+  const x = parseFloat((rect.left).toFixed(0));
+  const y = parseFloat((rect.top).toFixed(0));
   document.body.appendChild(message)
   message.setAttribute('style', `top: ${y + rect.height + 2}px; left: ${(2*x + rect.width - message.clientWidth) / 2}px;`);
 
