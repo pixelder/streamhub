@@ -2880,9 +2880,9 @@ body:has(.modal:is([active])) {
   bottom: 0rem;
   height: 100%;
   width: 82%;
-  background: #112;
+  background: #111122;
   filter: blur(30px);
-  opacity: 0.7;
+  opacity: 0.5;
 }
 
 .modal:has(.modal-info > h1) .modal-info {
