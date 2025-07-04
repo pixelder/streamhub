@@ -79,6 +79,7 @@ function populateSection(sectionId, items) {
   const container = document.querySelector(`#${sectionId} .grid-container`);
   const type = container.classList.contains('vertical-card') ? 'vertical' : null;
   const msg = document.querySelector('.result-message');
+
   if (msg) msg.classList.remove('empty');
 
   if (!isBrowsing && !sectionFetching) {
@@ -89,46 +90,48 @@ function populateSection(sectionId, items) {
     container.innerHTML = '';
   }
 
-  // Set up IntersectionObserver to populate when in view
-  const io = new IntersectionObserver((entries, obs) => {
-    entries.forEach(entry => {
-      if (!entry.isIntersecting) return;
+  let index = 0; // Track next item to render
 
-      const placeholder = entry.target;
-      const item = placeholder._item;
-      const rendered = renderGridItems(item, type);
-      placeholder.replaceWith(rendered);
-      obs.unobserve(placeholder);
-    });
+  const io = new IntersectionObserver((entries, obs) => {
+    for (const entry of entries) {
+      if (!entry.isIntersecting) continue;
+
+      const target = entry.target;
+      obs.unobserve(target);
+
+      index++;
+      if (index < items.length) {
+        const item = items[index];
+        const rendered = renderGridItems(item, type);
+        container.appendChild(rendered);
+        io.observe(rendered);  // observe the newly added element
+      }
+    }
   }, {
-    root : document.querySelector('body'),
+    root: document.body,
     rootMargin: '60px',
     threshold: 0.1
   });
 
-  items.forEach(item => {
-    // create a placeholder first
-    const ph = document.createElement('div');
-    ph.className = 'grid-item placeholder';
-    ph._item = item;
-
-    container.appendChild(ph);
-    io.observe(ph);
-  });
+  if (items.length > 0) {
+    const firstItem = renderGridItems(items[0], type);
+    container.appendChild(firstItem);
+    io.observe(firstItem); // start observing the first rendered item
+  }
 
   if (items.length < 20) {
     pageEnd = true;
-    
-    if (!msg) return;
-    msg.classList.add('empty');
-    msg.querySelector('.text').innerText = `No ${currentPage === 1 ? '' : 'more'} results`;
+    if (msg) {
+      msg.classList.add('empty');
+      msg.querySelector('.text').innerText = `No ${currentPage === 1 ? '' : 'more'} results`;
+    }
   }
+
   if (msg) msg.classList.remove('loading');
   if (isBrowsing || sectionFetching) {
     currentPage++;
   }
 }
-
 
 function getProgressInfo(id, mediaType = 'movie', logData = null) {
   let logs = logData
