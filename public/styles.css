@@ -2470,7 +2470,7 @@ body:has(.modal:is([active])) {
   /* max-height: 32rem; */
   padding: 30px;
   margin: auto;
-  border-radius: var(--border-radius1);
+  border-radius: 16px;
   border: 1px solid var(--color1);
   /* 3838526b */
   backdrop-filter: brightness(0.2);
