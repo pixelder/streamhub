@@ -2496,9 +2496,9 @@ body:has(.modal:is([active])) {
   background-image: var(--modal-backdrop);
   background-repeat: no-repeat;
   background-size: 100% 100%;
-  background-position: 0rem 0rem;
+  background-position: 2rem 0rem;
   mask-image: url(assets/images/mask.png);
-  mask-size: 116% 116%;
+  mask-size: 112% 116%;
   mask-position: calc(100% + 1.8rem) -2.6rem;
   mask-repeat: no-repeat;
   transition: opacity 0.2s ease-in-out;
