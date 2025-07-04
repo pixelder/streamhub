@@ -1830,6 +1830,15 @@ function setUpScrollEvents() {
     let end = document.body.clientHeight + scrolled + 16 >= document.body.scrollHeight;
     let top = scrolled <= threshold;
     let infScrolling = false
+
+    if (top) {
+      header.classList.remove('detach')
+    } else {
+      header.classList.add('detach')
+    }
+
+    if (!bottomBar) return
+
     const infScroll = () => {
       const msg = document.querySelector('.result-message')
       if (msg) {
@@ -1851,34 +1860,29 @@ function setUpScrollEvents() {
       bottomBar.classList.remove('detach','hidden')
     } else {
       bottomBar.classList.add('detach')
-      console.log('End. adding detach')
     }
 
-    if (top) {
-      header.classList.remove('detach')
-    } else {
-      header.classList.add('detach')
-    }
 
     if (scrolled > lastScrollY) {
-      // Scrolling down
       if (!isScrollingDown) {
+        if (bottomBar.classList.contains('hidden')) return
         infScroll()
         isScrollingDown = true;
         clearTimeout(hideTimeout);
         clearTimeout(showTimeout);
         hideTimeout = setTimeout(() => {
-          (isMobile() && bottomBar) ? bottomBar.classList.add('hidden') : '';
+          bottomBar.classList.add('hidden')
         }, 150);
       }
     }
     if (scrolled <= lastScrollY) {
       isScrollingDown = false;
       clearTimeout(hideTimeout); // Cancel any pending hide
-      clearTimeout(showTimeout);
+      if (!bottomBar.classList.contains('hidden')) return
       showTimeout = setTimeout(() => {
-          (isMobile() && bottomBar) ? bottomBar.classList.remove('hidden') : '';
-      }, 10);
+          bottomBar.classList.remove('hidden')
+          console.log('showing')
+      }, 150);
     }
     lastScrollY = scrolled;
   });
@@ -2321,7 +2325,7 @@ function setUpExpandableSection() {
       ['#header', '.bottom-bar'].forEach(selector => {
         document.querySelector(selector).classList.add('hidden')
       })
-      
+
       return
     }
 
