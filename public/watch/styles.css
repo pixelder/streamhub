@@ -75,6 +75,7 @@
 
   .episode-items .img-container {
     width: 100%;
+    height: unset;
     border-radius: var(--border-radius1);
     border: 1px solid var(--color3);
     transition: border 0.2s ;

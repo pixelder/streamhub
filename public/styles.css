@@ -2902,7 +2902,6 @@ body:has(.modal:is([active])) {
 }
 
 .modal-info p {
-  padding: 0rem 5% 0rem 0;
   font-size: 0.875rem;
   line-height: 0.96rem;
   text-shadow: 0 0 2px #000;
@@ -3083,7 +3082,7 @@ option {
   display: flex;
   justify-content: center;
   position: relative;
-  width: 45%;
+  height: 108px;
   aspect-ratio: 16 / 9;
   overflow: hidden;
   border-radius: var(--border-radius2);

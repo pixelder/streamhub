@@ -1307,6 +1307,7 @@
 
   .episode-items .img-container {
     width: 45%;
+    height: unset;
 
     .progress-bar {
       --margin: 4px;
