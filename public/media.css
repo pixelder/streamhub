@@ -1141,6 +1141,10 @@
       height: auto;
     }
 
+    .modal-info::before {
+      all: unset;
+    }
+
     /* .modal-info>h1 {
       margin-top: unset !important;
     } */

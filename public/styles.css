@@ -2858,7 +2858,7 @@ body:has(.modal:is([active])) {
 }
 
 .modal-info-logo img {
-  max-width: 60%;
+  max-width: 65%;
   height: 100%;
   object-fit: contain;
 }
@@ -2871,6 +2871,18 @@ body:has(.modal:is([active])) {
   width: 100%;
   max-height: 55%;
   gap: 8px;
+}
+
+.modal-info::before {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  bottom: 0rem;
+  height: 100%;
+  width: 82%;
+  background: #112;
+  filter: blur(30px);
+  opacity: 0.7;
 }
 
 .modal:has(.modal-info > h1) .modal-info {
