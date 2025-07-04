@@ -429,7 +429,7 @@ async function displayModal(mediaType, data) {
     const userData = getLogData('watching')?.find(item => item.id === data.id)?.data;
     const sno = isViewingDetails ? userData?.sno : null;
     const eno = isViewingDetails ? userData?.eno : null;
-    modalContent.style.height = !isMobile() ? '32rem' : '70%';
+    modalContent.style.height = !isMobile() ? '35rem' : '70%';
 
     tvContent(data, sno, eno, 'modal')
       .then((season) => {
@@ -441,7 +441,7 @@ async function displayModal(mediaType, data) {
   }
 
   if (mediaType === 'person') {
-    modalContent.style.height = !isMobile() ? '32rem' : '70%';
+    modalContent.style.height = !isMobile() ? '35rem' : '70%';
     const section = document.querySelectorAll('.credit-section')
 
     section[0].classList.add('expanded')
@@ -600,7 +600,7 @@ async function buildPersonDetailsHTML(data, container) {
         <div class="modal-cover portrait" style="display:flex">
             <img style="opacity:1" src="${IMAGE_300 + data.profile_path}">
         </div>` : ''
-    }
+      }
       <div id="person-details">
         <h2 class="name">${data.name} ${data.birthday ? `<em>(${extractYear(data.birthday)} - ${data.deathday ? extractYear(data.deathday) : ''})
           </em>` : ''}

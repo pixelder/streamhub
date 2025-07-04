@@ -1911,7 +1911,7 @@ body:has(.expandable.expanded) {
 /* Fade-in and slide-in effect */
 @keyframes appearing {
   from {
-    opacity: 0.4;
+    opacity: 0.1;
     scale: 0.94;
   }
 
@@ -2465,7 +2465,7 @@ body:has(.modal:is([active])) {
 .modal-content {
   box-sizing: border-box;
   position: relative;
-  width: 58rem;
+  width: 1045px;
   height: fit-content;
   /* max-height: 32rem; */
   padding: 30px;
@@ -2478,11 +2478,11 @@ body:has(.modal:is([active])) {
   transition: width 0.2s;
 }
 
-.modal-media:has(.releasing-on) {
+/* .modal-media:has(.releasing-on) {
   .modal-info-logo img {
     max-width: 45%;
   }
-}
+} */
 
 .modal-content::before {
   content: '';
@@ -2675,10 +2675,10 @@ body:has(.modal:is([active])) {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  min-height: 23.5rem;
-  height: 23.5rem;
+  min-height: 26.2rem;
+  height: 26.2rem;
   width: 100%;
-  gap: 12px;
+  gap: 12px 24px;
 }
 
 .modal-actions {
@@ -2822,7 +2822,7 @@ body:has(.modal:is([active])) {
   position: relative;
   display: flex;
   aspect-ratio: 2 / 3;
-  max-height: 100%;
+  max-height: 97%;
   justify-content: center;
 }
 
@@ -2831,11 +2831,11 @@ body:has(.modal:is([active])) {
   opacity: 0;
   height: 100%;
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
-  border-radius: var(--border-radius2);
+  border-radius: var(--border-radius1);
 }
 
 .modal-media:has(.nav-btn-container) .modal-cover {
-  height: calc(100% - 42px);
+  height: calc(100% - 45px);
 }
 
 .modal-media>span {
@@ -2843,7 +2843,7 @@ body:has(.modal:is([active])) {
   flex-direction: column;
   justify-content: flex-end;
   gap: 1.4rem;
-  width: 50%;
+  width: 42%;
   height: 100%;
   transition: max-width 1s ease-in-out;
   margin-top: auto;
@@ -2853,12 +2853,12 @@ body:has(.modal:is([active])) {
   display: flex;
   flex-direction: row;
   max-width: 100%;
-  max-height: 35%;
+  max-height: 32%;
   align-items: flex-end;
 }
 
 .modal-info-logo img {
-  max-width: 65%;
+  max-width: 60%;
   height: 100%;
   object-fit: contain;
 }
@@ -3169,6 +3169,10 @@ option {
     -webkit-line-clamp: 10;
     max-height: 10rem !important;
   }
+}
+
+.modal-media:has(#person-details) {
+  min-height: 25rem;
 }
 
 #person-details {

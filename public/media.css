@@ -302,6 +302,7 @@
     .grid-container {
       .grid-item {
         height: fit-content;
+        aspect-ratio: 1/1.7;
       }
     }
   }
@@ -371,10 +372,10 @@
   }
 
   .grid-item {
-    aspect-ratio: unset !important;
-    height: fit-content;
+    height: 190px !important;
     /* max-width: calc((100dvw - 1.2rem - 0.72rem) / 3); */
     min-width: 112px;
+    max-width: unset;
     padding: 5px;
     border-radius: var(--border-radius1);
     scroll-snap-align: start;
@@ -719,7 +720,7 @@
     .grid-item {
       aspect-ratio: 16 / 9.5 !important;
       max-width: unset;
-      height: 108px;
+      height: 108px !important;
     }
 
     .item-container {
