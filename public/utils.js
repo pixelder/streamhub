@@ -1817,9 +1817,11 @@ function setUpScrollEvents() {
   let lastScrollY = document.body.scrollTop;
   let isScrollingDown = false;
   let hideTimeout, showTimeout;
-
-  document.body.addEventListener('scroll', (e) => {
-
+  
+  document.body.addEventListener('scroll', () => {
+    
+    if (document.querySelector('.expandable.expanded')) return
+ 
     const header = document.querySelector('header');
     const bottomBar = document.querySelector('.bottom-bar');
     const scrolled = document.body.scrollTop
@@ -1849,6 +1851,7 @@ function setUpScrollEvents() {
       bottomBar.classList.remove('detach','hidden')
     } else {
       bottomBar.classList.add('detach')
+      console.log('End. adding detach')
     }
 
     if (top) {
@@ -2315,7 +2318,10 @@ function setUpExpandableSection() {
         scrollHandlers.set(container, loadPageOnScroll);
       }
 
-      document.getElementById('header').classList.add('hidden');
+      ['#header', '.bottom-bar'].forEach(selector => {
+        document.querySelector(selector).classList.add('hidden')
+      })
+      
       return
     }
 
