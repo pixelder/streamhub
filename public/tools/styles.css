@@ -303,7 +303,7 @@ pre {
   opacity: unset;
   padding: 12px;
   /* border: 1px solid #383852; */
-  border-radius: 12px;
+  border-radius: 16px;
   overflow: hidden;
   background-color: var(--color5);
   transition: padding 0.15s, height 0.15s;
@@ -567,6 +567,7 @@ pre {
 
   .results-table {
     padding: 8px;
+    border-radius: 12px;
   }
 
   .result-row {
