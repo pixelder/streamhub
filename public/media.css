@@ -956,8 +956,9 @@
     height: unset;
     width: 100%;
     mask-image: url(assets/images/mask_mobile.png);
-    mask-position: 50% 45%;
+    mask-position: 52% 45%;
     mask-size: 122% 122%;
+    background-position: unset;
     filter: brightness(0.75);
   }
 

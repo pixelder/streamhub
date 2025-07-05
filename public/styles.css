@@ -2568,6 +2568,7 @@ body:has(.modal:is([active])) {
     mask-image: url(assets/images/mask_mobile.png);
     mask-position: 50% 33%;
     mask-size: 111% 117%;
+    background-position: unset;
     top: 15px;
     scale: 1.03;
   }
