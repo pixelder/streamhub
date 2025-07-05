@@ -379,7 +379,7 @@ async function getSourceIframe(source, mediaType, id, season = null, episode = n
       src = `https://vidlink.pro/${urlPath}?poster=false`;
       break;
     case 2:
-      src = `https://vidsrc.cc/v${version || 3}/embed/${urlPath}`;
+      src = `https://vidsrc.cc/v${version || 2}/embed/${urlPath}`;
       break;
     case 3:
       src = `https://vidsrc.icu/embed/${urlPath}`;
