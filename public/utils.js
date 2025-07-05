@@ -515,7 +515,7 @@ async function buildMediaDetailsHTML(data, mediaType, container) {
     `)
     .join(' ');
   const castHTML = data.credits?.cast
-    .slice(0, 5)
+    .slice(0, 7)
     .map(cast => `<a href="javascript:void(0)" data-id="${cast.id}" data-media-type="person">${cast.name}</a>`)
     .join(', ');
   const companyHTML = (data.production_companies || [])
