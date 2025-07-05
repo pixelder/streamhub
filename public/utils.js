@@ -108,8 +108,8 @@ function populateSection(sectionId, items) {
       }
     }
   }, {
-    root: document.body,
-    rootMargin: '60px',
+    root: isBrowsing ? document.body : container,
+    rootMargin: '60px 200px',
     threshold: 0.1
   });
 
