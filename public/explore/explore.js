@@ -38,17 +38,17 @@ const CONFIG_PARAMS = [
 
 	},
 	{
-		'type': 'hindi-movies',
+		'type': 'indian-movies',
 		'data': {
-			'title': 'Hindi Movies', 'type': 'movie', 'lang': 'hi', 'reg': 'IN',
+			'title': 'Indian Movies', 'type': 'movie', 'reg': 'IN',
 			'voteCount': 1, 'minRating': 3
 		}
 	},
 	{
 		'type': 'indian-tv-shows',
 		'data': {
-			'title': 'Indian TV Shows', 'type': 'tv', 'lang': 'hi',
-			'reg': 'IN', 'voteCount': 10, 'minRating': 3
+			'title': 'Indian TV Shows', 'type': 'tv',
+			'reg': 'IN', 'voteCount': 3, 'minRating': 3
 		}
 	},
 	{
