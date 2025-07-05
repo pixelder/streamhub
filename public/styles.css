@@ -691,7 +691,7 @@ body:has(.expandable.expanded) {
     mask-image: unset !important;
 
     .grid-item:not(.placeholder) {
-      height: auto;
+      height: auto !important;
       aspect-ratio: unset;
     }
   }

@@ -88,5 +88,8 @@
       min-width: unset;
       aspect-ratio: unset !important;
     }
+    .grid-item:not(.placeholder) {
+      height: auto !important;
+    }
   }
 }

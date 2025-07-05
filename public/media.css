@@ -492,7 +492,7 @@
     }
 
     .grid-item {
-      flex: 1 1 auto;
+      height: auto !important;
       min-width: unset;
     }
 
@@ -720,9 +720,10 @@
     .grid-item {
       aspect-ratio: 16 / 9.5 !important;
       max-width: unset;
+    }
+    &:not(.expanded) .grid-item {
       height: 108px !important;
     }
-
     .item-container {
       display: flex;
     }
