@@ -1826,12 +1826,12 @@ function setUpScrollEvents() {
  
     const header = document.querySelector('header');
     const bottomBar = document.querySelector('.bottom-bar');
-    const scrolled = document.body.scrollTop
+    const scrolled = document.body.scrollTop;
 
     const threshold = 56; //px
     let end = document.body.clientHeight + scrolled + 16 >= document.body.scrollHeight;
     let top = scrolled <= threshold;
-    let infScrolling = false
+    let infScrolling = false;
 
     if (top) {
       header.classList.remove('detach')
@@ -1840,6 +1840,7 @@ function setUpScrollEvents() {
     }
 
     if (!bottomBar) return
+    const hidden = bottomBar.classList.contains('hidden');
 
     const infScroll = () => {
       const msg = document.querySelector('.result-message')
@@ -1866,11 +1867,9 @@ function setUpScrollEvents() {
 
 
     if (scrolled > lastScrollY) {
-      if (!isScrollingDown) {
-        if (bottomBar.classList.contains('hidden')) return
+      if (!isScrollingDown && !hidden) {
         infScroll()
         isScrollingDown = true;
-        clearTimeout(hideTimeout);
         clearTimeout(showTimeout);
         hideTimeout = setTimeout(() => {
           bottomBar.classList.add('hidden')
@@ -1880,11 +1879,11 @@ function setUpScrollEvents() {
     if (scrolled <= lastScrollY) {
       isScrollingDown = false;
       clearTimeout(hideTimeout); // Cancel any pending hide
-      if (!bottomBar.classList.contains('hidden')) return
-      showTimeout = setTimeout(() => {
-          bottomBar.classList.remove('hidden')
-          console.log('showing')
-      }, 150);
+      if (hidden) {
+        showTimeout = setTimeout(() => {
+            bottomBar.classList.remove('hidden')
+        }, 150);
+      }
     }
     lastScrollY = scrolled;
   });
