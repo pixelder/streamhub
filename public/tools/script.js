@@ -503,7 +503,9 @@ async function fetchAndRender({ payload, output, signal, resultsDiv }) {
   } catch (err) {
     error = true;
     console.log(err);
-    const string = err.name === 'AbortError' ? `The operation was aborted!` : `${err.message}`;
+    let string = err.message;
+    if (string.includes('403')) string = `Error while fetching. Try Again!`;
+    if (err.name === 'AbortError') string = `The operation was aborted!`;
     updateStatus({ type: 'error', string, expire: true });
     output.textContent = `${string}`;
 
