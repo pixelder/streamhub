@@ -1449,8 +1449,8 @@ body:has(.expandable.expanded) {
     display: flex;
     width: fit-content;
     align-items: center;
-    padding-inline: 10px;
-    font-size: 0.875rem;
+    padding-inline: 12px;
+    font-size: 14px;
     text-wrap: nowrap;
     background-color: var(--color5);
     border: 1px solid var(--color3);
@@ -2006,8 +2006,8 @@ body:has(.filter-menu) {
   justify-items: center;
   padding: calc(var(--padding1) * var(--spacing));
   border: 1px solid var(--color2);
-  border-radius: 20px;
-  background: var(--color5);
+  border-radius: 24px;
+  background: var(--bg-color);
   text-shadow: none;
 
   h2 {
@@ -2028,7 +2028,7 @@ body:has(.filter-menu) {
     color: #ff5855;
     font-size: 14px;
     border: 1px dashed;
-    border-radius: 8px;
+    border-radius: 10px;
     --bg-warn: #2f111a;
     /* --bg-warn2: rgba(166, 25, 46, 0.30); */
     /* background: repeating-linear-gradient(45deg,
@@ -2076,7 +2076,7 @@ body:has(.filter-menu) {
 
   button {
     flex: 1 0;
-    border-radius: 8px;
+    border-radius: 10px;
     background: var(--color3);
     /* transition: filter 0.2s; */
   }
