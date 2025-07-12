@@ -2416,7 +2416,7 @@ body:has(.filter-menu) {
     gap: 12px;
 
     .grid-item {
-      width: 250px;
+      /* width: 250px; */
       height: auto !important;
     }
   }
