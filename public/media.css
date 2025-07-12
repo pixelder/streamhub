@@ -869,6 +869,8 @@
       position: initial;
       height: 42px;
       padding: 6px;
+      gap: 6px;
+      background: unset;
 
       .tab {
         height: 100%;

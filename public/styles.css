@@ -1128,10 +1128,11 @@ body:has(.expandable.expanded) {
     right: 100px;
     z-index: 2;
     height: 60px;
-    padding: 10px 0px;
+    padding: 10px;
     margin: unset;
     border: unset;
-    gap: 6px;
+    gap: 10px;
+    background: inherit;
 
     .tab {
       padding: 10px 16px;
