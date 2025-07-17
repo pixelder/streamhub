@@ -1890,7 +1890,6 @@ function setUpScrollEvents() {
 }
 
 function getConfirm({ title, message, success, decline, state = 1, exitInterval = 700 } = {}) {
-
   let successIcon
   let declineIcon
   switch (state) {
@@ -1941,22 +1940,29 @@ function getConfirm({ title, message, success, decline, state = 1, exitInterval 
       if (isEscapeKey || (isClick && isOverlayClick)) {
         handleCancel(dialogButtons, messageBox);
         resolve(false);
-      } else if ((isDecline || isAccept) && (isClick || isEnterKey)) {
-        if (isDecline) {
-          handleCancel(dialogButtons, messageBox);
-          resolve(false);
-        } else {
+        e.stopPropagation();
+      }
+      if ((isDecline || isAccept) && (isClick || isEnterKey)) {
+        if (isAccept) {
           handleAccept(dialogButtons, messageBox);
           resolve(true);
+          e.stopPropagation();
+        } else {
+          handleCancel(dialogButtons, messageBox);
+          resolve(false);
+          e.stopPropagation();
         }
       }
 
       if (isEscapeKey || isClick || isEnterKey) {
-        setTimeout(() => document.querySelector('main').removeChild(overlay), exitInterval);
+        setTimeout(() => {
+          document.querySelector('main').removeChild(overlay)
+          prevActive.focus()
+        }, exitInterval);
         ['click', 'keydown'].forEach((type) =>
           overlay.removeEventListener(type, handleDialog)
         );
-        prevActive.focus()
+        e.stopPropagation()
       }
     };
 
@@ -2121,7 +2127,7 @@ async function setupCheckboxListeners(sectionID, items) {
       }
       selectedItems.forEach((item) => {
         const { id, mediaType, index, sno, eno } = item;
-        removeFromLocalStorage(logType, Number(id), mediaType, sno, eno, index)
+        // removeFromLocalStorage(logType, Number(id), mediaType, sno, eno, index)
         section.querySelectorAll('.grid-item').forEach(obj => {
           const {ID = obj.dataset.id, MEDIATYPE = obj.dataset.mediaType, INDEX= obj.dataset.index, SNO = obj.dataset.sno, ENO = obj.dataset.eno } = obj
           const OBJ = {ID, MEDIATYPE, INDEX, SNO, ENO}            
@@ -2156,7 +2162,6 @@ async function setupCheckboxListeners(sectionID, items) {
       return;
     }
     if (e.target.closest(".delete-button")) {
-      console.log("delete-button");
       deleteAction()
       e.stopPropagation();
       return
