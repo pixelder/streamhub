@@ -280,11 +280,11 @@ function renderLogItems(sectionId, data, item, tvData, type = null) {
   const ring = type === 'vertical' ? 1 : null;
   const image = !tvData
     ? data.backdrop_path
-      ? (IMAGE_342 + data.backdrop_path)
+      ? (IMAGE_500 + data.backdrop_path)
       : '/assets/images/no-image-hr.png'
     : epData?.still_path
-      ? (IMAGE_342 + epData?.still_path)
-      : (IMAGE_342 + data.backdrop_path);
+      ? (IMAGE_500 + epData?.still_path)
+      : (IMAGE_500 + data.backdrop_path);
   const name = (data.title || data.name);
   const info = `S${sno}:E${eno} ` + (epData?.name || '');
   const rating = truncate(!tvData ? data.vote_average : epData?.vote_average, 1);

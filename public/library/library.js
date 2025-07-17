@@ -2,6 +2,7 @@ const API_KEY = "213d830aae3a2f7b67e37f157405a42e";
 const BASE_URL = 'https://api.tmdb.org/3';
 const IMAGE_300 = 'https://image.tmdb.org/t/p/w300';
 const IMAGE_342 = 'https://image.tmdb.org/t/p/w342';
+const IMAGE_500 = 'https://image.tmdb.org/t/p/w500';
 const IMAGE_ORG = 'https://image.tmdb.org/t/p/original'
 const OPTIONS = 'include_adult=false&include_null_first_air_dates=false&language=en-US';
 

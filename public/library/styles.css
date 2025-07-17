@@ -83,6 +83,7 @@
   #bookmarks {
     .grid-container:not(:has(.grid-item)) {
       height: 190px;
+      gap: 6px;
     }
     .grid-item {
       min-width: unset;

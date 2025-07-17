@@ -2117,6 +2117,9 @@ body:has(.filter-menu) {
 /* Continue Watching */
 #continue-watching,
 #history {
+  .grid-item.placeholder {
+      aspect-ratio: 16 / 9 !important;
+  }
 
   .grid-item-info, img {
     transition: filter 0.15s;
@@ -2147,7 +2150,7 @@ body:has(.filter-menu) {
     z-index: 0;
     min-width: fit-content;
     height: 144px;
-    aspect-ratio: 16 / 9 !important;
+    aspect-ratio: 16 / 9;
     padding: 0;
     background: none;
     box-shadow: none;
@@ -2377,7 +2380,7 @@ body:has(.filter-menu) {
   }
 
   .history-item-info h3 {
-    flex: 1 1 80%;
+    flex: 1 1 77%;
     font-size: 18px;
     width: fit-content;
     line-height: 18px;
