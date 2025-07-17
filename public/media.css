@@ -874,9 +874,9 @@
 
     .tab-menu {
       position: initial;
-      height: 50px;
-      padding: 10px;
-      gap: 8px;
+      height: 42px;
+      padding: 6px;
+      gap: 6px;
       background: unset;
 
       .tab {
@@ -889,9 +889,9 @@
     .tab-items {
       height: calc(100% - 48px);
       margin: 0;
-      padding: 10px;
+      padding: 6px;
       border-top: 1px solid var(--color3);
-      gap: 10px;
+      gap: 8px;
 
       .grid-container {
         height: calc(100% - 32px);
