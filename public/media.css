@@ -728,9 +728,11 @@
 
     .grid-item {
       max-width: unset;
+      border-radius: 6px;
     }
+
     &:not(.expanded) .grid-item {
-      height: 120px !important;
+      height: 112px !important;
     }
     .item-container {
       display: flex;
