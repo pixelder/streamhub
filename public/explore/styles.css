@@ -38,7 +38,7 @@
   transition: border 0.2s, scale 0.2s;
 
   h3 {
-    font: italic calc(7*100) 22px "Playfair Display";
+    font: italic calc(8*100) 22px "Playfair Display";
     /* text-shadow: 0 0 8px #000c; */
     /* text-shadow: none; */
     text-align: center;
@@ -115,6 +115,10 @@
     align-items: center;
     justify-content: start;
     padding: 24px;
+
+    h3 {
+      font-weight: 700;
+    }
   }
 
   .backdrop {
