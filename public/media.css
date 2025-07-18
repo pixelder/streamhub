@@ -376,7 +376,7 @@
   .grid-item {
     height: var(--item-height) !important;
     /* max-width: calc((100dvw - 1.2rem - 0.72rem) / 3); */
-    min-width: 120px;
+    /* min-width: 120px; */
     max-width: unset;
     padding: 5px;
     border-radius: var(--border-radius1);
