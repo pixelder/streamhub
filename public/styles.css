@@ -948,6 +948,7 @@ body:has(.expandable.expanded) {
   font-weight: bold;
   width: fit-content;
   height: fit-content;
+  margin-top: 1px;
 
   i {
     /* line-height: 0.5rem; */
@@ -961,6 +962,9 @@ body:has(.expandable.expanded) {
     gap: 3px;
   }
 
+  .nostar {
+    margin-top: 1px;
+  }
 }
 
 .grid-item-info>p:nth-last-child(1) {

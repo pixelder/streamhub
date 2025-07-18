@@ -449,6 +449,7 @@
 
     .nostar {
       height: 11px !important;
+      margin-bottom: 1px !important;
     }
 
     .rating {
