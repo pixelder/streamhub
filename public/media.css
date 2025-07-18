@@ -379,7 +379,7 @@
     /* min-width: 120px; */
     max-width: unset;
     padding: 5px;
-    border-radius: var(--border-radius1);
+    border-radius: 8px;
     scroll-snap-align: start;
     /* box-shadow: 0 10px 24px rgba(0, 0, 0, 0.7); */
   }
@@ -392,6 +392,7 @@
 
   .grid-item .img-container {
     margin-bottom: 2px;
+    border-radius: 4px;
 
     .progress-bar {
       --margin: 4px;
@@ -399,7 +400,7 @@
   }
 
   .grid-item img {
-    border-radius: var(--border-radius2);
+    border-radius: inherit;
     aspect-ratio: 1 / 1.38;
     object-fit: cover;
     width: 100%;
@@ -929,6 +930,7 @@
   }
 
   .tab-items {
+    border-radius: 0 0 12px 12px;
     padding: 6px;
     gap: 6px;
   }

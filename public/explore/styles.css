@@ -1,5 +1,5 @@
 @import url('https://fonts.cdnfonts.com/css/reverie');
-@import url('https://fonts.googleapis.com/css2?family=Raleway:wght@700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap');
 
 #explore-content {
   min-height: unset;
@@ -12,7 +12,7 @@
   gap: 12px;
   
   h2 {
-    font: italic bold 24px 'Reverie', sans-serif;
+    font: normal bold 26px 'Reverie', sans-serif;
     filter: brightness(0.8);
     text-shadow: none;
   }
@@ -38,13 +38,21 @@
   transition: border 0.2s, scale 0.2s;
 
   h3 {
-    font: normal calc(7 * 100) 22px "Raleway";
+    /* font: normal calc(7 * 100) 22px "Raleway"; */
     /* letter-spacing: 0.5px; */
+    /* text-shadow: 0 0 8px #000c; */
+
+    font: italic calc(7*100) 22px "Playfair Display";
     text-shadow: 0 0 8px #000c;
     text-align: center;
     z-index: 1;
-  } 
+    /* text-shadow: -1px -1px 0 var(--color), 1px -1px 0 var(--color), -1px 1px 0 var(--color), 1px 1px 0 var(--color); */
+    /* --color: var(--color5); */
+    filter: brightness(0.8);
+  }
+  
 }
+
 
 .explore-card:hover {
   border-color: var(--color2);
@@ -70,7 +78,7 @@
     gap: 8px;
 
     h2 {
-      font-size: 22px;
+      font-size: 24px;
     }
   }
 
