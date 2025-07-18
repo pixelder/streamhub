@@ -38,19 +38,18 @@
   transition: border 0.2s, scale 0.2s;
 
   h3 {
-    /* font: normal calc(7 * 100) 22px "Raleway"; */
-    /* letter-spacing: 0.5px; */
-    /* text-shadow: 0 0 8px #000c; */
-
     font: italic calc(7*100) 22px "Playfair Display";
-    text-shadow: 0 0 8px #000c;
+    /* text-shadow: 0 0 8px #000c; */
+    /* text-shadow: none; */
     text-align: center;
     z-index: 1;
-    /* text-shadow: -1px -1px 0 var(--color), 1px -1px 0 var(--color), -1px 1px 0 var(--color), 1px 1px 0 var(--color); */
-    /* --color: var(--color5); */
+    --color: var(--color5);
+    --width: 0.5px;
+    --neg-width: calc(var(--width) * (-1));
+    text-shadow: var(--neg-width) var(--neg-width) 0 var(--color), var(--width) var(--neg-width) 0 var(--color), var(--neg-width) var(--width) 0 var(--color), var(--width) var(--width) 0 var(--color);
     filter: brightness(0.8);
   }
-  
+
 }
 
 
