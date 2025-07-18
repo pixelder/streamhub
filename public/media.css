@@ -901,7 +901,7 @@
   }
 
   .tab-menu {
-    border-radius: 8px 8px 0 0;
+    border-radius: 12px 12px 0 0;
     padding: 6px;
     overflow-x: auto;
     gap: 6px;
