@@ -163,11 +163,11 @@ async function fetchHistoryItems(section, sectionId, items) {
   function loadItem(placeholder, item) {
     return (async () => {
       try {
-        const { data } = await fetchMetaData(item.mediaType, item.id);
+        const { data } = await fetchMetaData({mediaType: item.mediaType, id: item.id, options : 0});
         let content;
 
         if (logType !== 'bookmarks' && item.mediaType === "tv") {
-          const { data: tvData } = await fetchMetaData(item.mediaType, item.id, item.data.sno);
+          const { data: tvData } = await fetchMetaData({mediaType: item.mediaType, id: item.id, season: item.data.sno, options: 0});
           content = renderLogItems(sectionId, data, item, tvData);
         } else {
           data.media_type = item.mediaType;

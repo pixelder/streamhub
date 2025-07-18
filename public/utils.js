@@ -307,7 +307,7 @@ async function fetchFromURL(url) {
 }
 
 //fetch Metadata
-async function fetchMetaData(mediaType = null, id = null, season = null, credits = null, options = 1) {
+async function fetchMetaData({mediaType = null, id = null, season = null, credits = null, options = 1}) {
 
   try {
     let url;
@@ -357,7 +357,7 @@ function openModal(data, nav = null) {
     fwdData = []
   }
 
-  fetchMetaData(mediaType, id, null, credits)
+  fetchMetaData({mediaType, id, credits})
     .then(({ mediaType, data }) => {
       if (signal.aborted) return;
       displayModal(mediaType, data);
@@ -1015,7 +1015,7 @@ async function tvContent(data, sno, eno, ref) {
   const containerClass = ref === "modal" ? "episode-wrap" : "episode-player";
   const season = sno || data.number_of_seasons || data.seasons?.at(0)?.season_number
   sno = sno ?? -1
-  const { data: seasonData } = await fetchMetaData('tv', id, season);
+  const { data: seasonData } = await fetchMetaData({mediaType : 'tv', id, season});
   localStorage.setItem('seasonData', JSON.stringify(seasonData));
 
   const buildEpisodeHTML = (episode, season, count) => {
@@ -1127,7 +1127,7 @@ async function tvContent(data, sno, eno, ref) {
     if (event.target.matches('#season-dropdown')) {
       const selectedSeason = event.target.value;
       const { data: tvData } = selectedSeason !== sno
-        ? await fetchMetaData('tv', id, selectedSeason)
+        ? await fetchMetaData({mediaType: 'tv', id, season: selectedSeason})
         : { data: seasonData };
       
       localStorage.setItem('seasonData', JSON.stringify(tvData));
@@ -1373,7 +1373,7 @@ function escapeHTML(str) {
 }
 
 async function sourceValidator(mediaType, id, season = null, eno = null) {
-  const { data } = await fetchMetaData(mediaType, id, season)
+  const { data } = await fetchMetaData({mediaType, id, season, options: 0})
   const episode = data.episodes.filter(ep => ep.episode_number === Number(eno))[0].episode_number
 
   return { id: Number(id), season: data.season_number, episode }
@@ -1544,7 +1544,7 @@ function toastMessage({ el, string, time }) {
 }
 
 async function getNextEpisode(id, sno, eno) {
-  const { data: currentSeason } = await fetchMetaData('tv', id, sno)
+  const { data: currentSeason } = await fetchMetaData({mediaType: 'tv', id, season: sno, options: 0})
   const currentIndex = currentSeason.episodes.findIndex(
     ep => ep.episode_number === Number(eno)
   );
@@ -1553,7 +1553,7 @@ async function getNextEpisode(id, sno, eno) {
     return currentSeason.episodes[currentIndex + 1];
   }
 
-  const { data: nextSeason } = await fetchMetaData('tv', id, Number(sno) + 1)
+  const { data: nextSeason } = await fetchMetaData({mediaType: 'tv', id, season: Number(sno) + 1, options: 0})
   if (nextSeason && nextSeason.episodes && nextSeason.episodes.length > 0) {
     //console.log(nextSeason.episodes[0].air_date)
     return nextSeason.episodes[0];

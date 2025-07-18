@@ -155,7 +155,7 @@ async function loadWatchPage(mediaType, NAME = null, id, tvData = null) {
 
   document.querySelector("#main-content").innerHTML = pageHTML(mediaType)
 
-  const { data } = await fetchMetaData(mediaType, id)
+  const { data } = await fetchMetaData({mediaType, id, options: 0})
   const name = data.title ?? data.name
 
   const title = `${mediaType === "movie"
@@ -321,7 +321,7 @@ async function animeEpisodeCounter(metadata, tvData) {
 
 async function animeResolver(mediaType, id, tvData) {
   //console.log('fetching ani list id ')
-  const { data: metadata } = await fetchMetaData(mediaType, id)
+  const { data: metadata } = await fetchMetaData({mediaType, id, options: 0})
   const ep = await animeEpisodeCounter(metadata, tvData)
   const title = metadata.original_name || metadata.original_title || metadata.name || metadata.title
   //console.log(title)
