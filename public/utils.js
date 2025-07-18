@@ -180,7 +180,7 @@ function renderGridItems(item, type = null) {
       </div>
       <img src="${image}">
       ${watchProgress(progress, ring)}
-      ${upcoming ? `<div class="upcoming">Upcoming</div>` : ''}
+      ${upcoming ? `<div class="upcoming"><div class="text"></div></div>` : ''}
       </div>
       <div class="grid-item-info">
         <p>${capString(title, 40)}</p>
