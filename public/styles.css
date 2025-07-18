@@ -2483,11 +2483,14 @@ body:has(.modal:is([active])) {
   transition: width 0.2s;
 }
 
-/* .modal-media:has(.releasing-on) {
-  .modal-info-logo img {
+.modal-content:has(.releasing-on) {
+  /* .modal-info-logo img {
     max-width: 45%;
+  } */
+  .modal-media > span {
+    height: 90%;
   }
-} */
+}
 
 .modal-content::before {
   content: '';
