@@ -858,7 +858,7 @@ body:has(.expandable.expanded) {
   border-radius: var(--border-radius1);
   background-color: var(--color5);
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-  transition: scale 0.2s, border 0.2s, box-shadow 0.2s;
+  transition: scale 0.3s, border 0.3s, box-shadow 0.3s;
   animation: appearing 0.3s;
   /* box-shadow: 0 10px 24px rgba(0, 0, 0, 0.7); */
 
