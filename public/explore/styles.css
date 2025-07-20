@@ -47,7 +47,7 @@
     --width: 0.5px;
     --neg-width: calc(var(--width) * (-1));
     text-shadow: var(--neg-width) var(--neg-width) 0 var(--color), var(--width) var(--neg-width) 0 var(--color), var(--neg-width) var(--width) 0 var(--color), var(--width) var(--width) 0 var(--color);
-    filter: brightness(0.8);
+    filter: brightness(0.9);
   }
 
 }
