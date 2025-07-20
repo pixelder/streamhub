@@ -1,3 +1,5 @@
+const blacklist = { movie:[11845], tv:[], person:[] }
+
 function truncate(num, precision) {
   return Math.floor(num * Math.pow(10, precision)) / Math.pow(10, precision);
 }
@@ -75,7 +77,9 @@ async function handleSearch(event) {
 }
 
 // Populate a section with content
-function populateSection(sectionId, items) {
+function populateSection(sectionId, results) {
+  const items = results.filter(item => !blacklist[item.media_type].includes(item.id))
+  const deleted = results.length - items.length
   const container = document.querySelector(`#${sectionId} .grid-container`);
   const type = container.classList.contains('vertical-card') ? 'vertical' : null;
   const msg = document.querySelector('.result-message');
@@ -119,7 +123,7 @@ function populateSection(sectionId, items) {
     io.observe(firstItem); // start observing the first rendered item
   }
 
-  if (items.length < 20) {
+  if (items.length < 20 - deleted) {
     pageEnd = true;
     if (msg) {
       msg.classList.add('empty');
