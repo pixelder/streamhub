@@ -950,7 +950,7 @@
     width: 144px !important;
     padding: 2px !important;
     height: 30px;
-    --radius: 6px;
+    --radius: 8px;
   }
 
   .media-tab {
