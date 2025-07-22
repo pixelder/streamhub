@@ -2,89 +2,16 @@ const API_KEY = "213d830aae3a2f7b67e37f157405a42e";
 const BASE_URL = 'https://api.tmdb.org/3';
 const IMAGE_300 = 'https://image.tmdb.org/t/p/w300';
 
+const output = document.getElementById("output");
+const resultsDiv = document.getElementById("results");
+const status = document.getElementById("status-info");
+
 function changeValue(id, delta) {
   const input = document.getElementById(id);
   let value = parseFloat(input.value) || 0;
   value = Math.max(0, value + delta);
   input.value = parseFloat(value.toFixed(2)).toString();
 }
-
-let statusTimeout
-function updateStatus({ type = 'log', icon = null, string, time = 5000, expire = false, remove = false }) {
-  const container = document.getElementById('status-info')
-  container.innerHTML = ''
-  if (remove) return
-  const msg = document.createElement("div");
-  msg.className = `message ${type}`;
-  let iconDiv = null
-  if (icon) {
-    iconDiv = document.createElement("div");
-    iconDiv.innerHTML = icon;
-  }
-
-  if (type === 'error') {
-    iconDiv = document.createElement("div")
-    iconDiv.innerHTML = '<i class="fa-solid fa-circle-exclamation"></i>'
-  }
-  if (type === 'warn') {
-    iconDiv = document.createElement("div")
-    iconDiv.innerHTML = '<i class="fa-solid fa-triangle-exclamation btn"></i>'
-  }
-  // if (type === 'success') {
-  // }
-
-  if (iconDiv) {
-    iconDiv.className = 'icon';
-    msg.appendChild(iconDiv)
-  }
-  const span = document.createElement('span')
-  span.textContent = `${string}`
-  msg.appendChild(span)
-
-  clearTimeout(statusTimeout)
-  container.appendChild(msg);
-  if (expire) {
-    statusTimeout = setTimeout(async () => { container.textContent = '' }, time)
-  }
-}
-
-function toggleFields() {
-  const mediaType = document.getElementById("mediaType").value;
-  const tvinfo = document.querySelectorAll(".tv-input");
-  const yearinfo = document.getElementById("year-input");
-  const limit = document.getElementById("maxsize")
-  const isMovie = mediaType === "movie";
-
-  yearinfo.style.display = isMovie ? "flex" : "none";
-  if (isMovie) {
-    tvinfo.forEach(input => input.classList.add('hidden'));
-    yearinfo.classList.remove('hidden')
-  } else {
-    tvinfo.forEach(input => input.classList.remove('hidden'));
-    yearinfo.classList.add('hidden')
-  }
-  limit.value = isMovie ? 12 : 4;
-  document.querySelector('.suggestion-container')?.remove()
-}
-
-function initiateForm() {
-  // document.getElementById('mediaType').value = 'movie';
-  toggleFields();
-
-  const form = document.getElementById("form");
-  form.addEventListener('submit', e => {
-    e.preventDefault();
-    const submit = e.submitter.id === 'scrape'
-    const reset = e.submitter.id === 'reset'
-    if (submit) scrape();
-    if (reset) resetFormEntries(e.submitter)
-  })
-
-  activeSearchResults(getActiveResults, { selector: '#name', minLength: 0, debounce: 1000})
-
-}
-
-
 
 async function getActiveResults(query) {
   if (query.length < 2) {
@@ -141,14 +68,73 @@ async function sortByPopularity(data, type) {
   return data
 }
 
+let statusTimeout
+function updateStatus({ type = 'log', icon = null, string, time = 5000, expire = false, remove = false }) {
+  const container = status;
+  container.innerHTML = '';
+  if (remove) return;
+  const msg = document.createElement("div");
+  msg.className = `message ${type}`;
+
+  const icons = {
+    error: '<i class="fa-solid fa-circle-exclamation"></i>',
+    warn: '<i class="fa-solid fa-triangle-exclamation btn"></i>'
+  };
+
+  if (icon || icons[type]) {
+    const iconDiv = document.createElement("div");
+    iconDiv.innerHTML = icon || icons[type];
+    iconDiv.className = 'icon';
+    msg.appendChild(iconDiv);
+  }
+
+  const span = document.createElement('span');
+  span.textContent = string;
+  msg.appendChild(span);
+  clearTimeout(statusTimeout);
+  container.appendChild(msg);
+
+  if (expire) {
+    statusTimeout = setTimeout(() => container.textContent = '', time);
+  }
+}
+
+function toggleFields() {
+  const type = document.getElementById("mediaType").value;
+  const year = document.getElementById("year-input");
+  const tvInputs = document.querySelectorAll(".tv-input");
+  const isMovie = type === 'movie';
+
+  year.style.display = isMovie ? "flex" : "none";
+  tvInputs.forEach(el => el.classList.toggle('hidden', isMovie));
+  year.classList.toggle('hidden', !isMovie);
+  document.getElementById("maxsize").value = isMovie ? 12 : 4;
+  document.querySelector('.suggestion-container')?.remove();
+}
+
+function initiateForm() {
+  // document.getElementById('mediaType').value = 'movie';
+  toggleFields();
+
+  const form = document.getElementById("form");
+  form.addEventListener('submit', e => {
+    e.preventDefault();
+    const submit = e.submitter.id === 'scrape'
+    const reset = e.submitter.id === 'reset'
+    if (submit) scrape();
+    if (reset) resetFormEntries(e.submitter)
+  })
+
+  activeSearchResults(getActiveResults, { selector: '#name', minLength: 0, debounce: 1000})
+
+}
 async function populateFields(item) {
   document.getElementById('name').value = item.dataset.name
   document.getElementById('year').value = item.dataset.year
 }
 
 function resetUI() {
-  parsedCount = 0;
-  parsable = 0;
+  parsedCount = parsable = 0;
   const btn = document.getElementById("scrape");
   const cancel_btn = document.getElementById("reset")
   btn.disabled = false;
@@ -185,6 +171,8 @@ function resetFormEntries(btn) {
 const SERVER = 'https://alpha-scraper.onrender.com'
 // const SERVER = "http://192.168.29.122:3000";
 
+let payload = {};
+let raw = { raw: [], file: [] };
 let controller;
 let parsedCount = 0;
 let parsable = 0;
@@ -202,7 +190,6 @@ const SCRAPE_RETRY_DELAY = 2_000;
 const STATUS_CLEAR_DELAY = 5_000;
 const CLIENTID_WAIT_DELAY = 2_000;
 const CLIENTID_WAIT_MAX = 50_000;
-
 
 async function initWebSocket({ retries = 5, attempt = 0 } = {}) {
   console.log('initializing websocket connection', attempt)
@@ -315,18 +302,68 @@ window.addEventListener('DOMContentLoaded', () => {
   initWebSocket(); // Establish WebSocket connection once at page load
 });
 
+async function checkForWebSocket({ signal } = {}) {
+  if (!opened || !ws || ws.readyState !== WebSocket.OPEN) {
+    updateStatus({ type: 'warn', string: 'Reconnecting to server...' });
+    if (aborted) return false;
+    clearTimeout(initTimeout);
+    await new Promise(resolve => {
+      initTimeout = setTimeout(async () => {
+        await initWebSocket();
+        resolve();
+      }, SCRAPE_RETRY_DELAY);
+    });
+  }
+
+  if (!clientId && !aborted) {
+    updateStatus({ type: 'warn', string: 'Waiting for server connection...' });
+
+    const waitForClientId = new Promise((resolve) => {
+      const interval = setInterval(() => {
+        if (clientId) {
+          clearInterval(interval);
+          resolve(true);
+        }
+      }, CLIENTID_WAIT_DELAY);
+    });
+
+    const timeout = new Promise((_, reject) =>
+      setTimeout(() => reject(new Error("Timeout waiting for clientId")), CLIENTID_WAIT_MAX)
+    );
+
+    const abortListener = new Promise((_, reject) =>
+      signal?.addEventListener("abort", () => {
+        const error = new Error("The operation was aborted!");
+        error.name = 'AbortError';
+        reject(error);
+      })
+    );
+
+    try {
+      await Promise.race([waitForClientId, timeout, abortListener]);
+    } catch (err) {
+      if (err.name === 'AbortError') {
+        updateStatus({ type: 'error', string: err.message, expire: true });
+      } else {
+        updateStatus({ type: 'error', string: err.message, expire: true });
+      }
+      resetUI();
+      return false;
+    }
+  }
+  return true;
+}
+
 async function scrape() {
-  aborted = false
+  aborted = false;
+  payload = {};
+  raw = { raw: [], file: [] };
   controller = new AbortController();
   const signal = controller.signal;
 
   const btn = document.getElementById("scrape");
   const cancel_btn = document.getElementById("reset");
   cancel_btn.classList.add('cancel');
-
-  const output = document.getElementById("output");
-  const resultsDiv = document.getElementById("results");
-  const status = document.getElementById("status-info");
 
   status.innerHTML = "";
   resultsDiv.innerHTML = "";
@@ -339,12 +376,11 @@ async function scrape() {
     e.preventDefault();
     if (!e.target.matches(".cancel")) return;
     if (controller) controller.abort();
-    updateStatus({ type: "error", string: "The operataion was aborted", expire: true })
+    updateStatus({ type: "error", string: "The operation was aborted!", expire: true })
     resetUI();
     aborted = true;
     clearTimeout(initTimeout)
   }, { once: true });
-
 
   updateStatus({ type: 'log', icon: '<i class="fa fa-spinner fa-spin"></i>', string: 'Fetching data...' });
   output.textContent = "";
@@ -367,7 +403,7 @@ async function scrape() {
     return;
   }
 
-  const payload = {
+  payload = {
     mediaType,
     name,
     server: server_key,
@@ -375,61 +411,18 @@ async function scrape() {
     ...(maxsize ? { limit: maxsize } : {})
   };
 
-  // Ensure WebSocket is connected
-  if (!opened || !ws || ws.readyState !== WebSocket.OPEN) {
-    updateStatus({ type: 'warn', string: 'Reconnecting to server...' });
-    if (aborted) return
-    clearTimeout(initTimeout)
-    initTimeout = setTimeout(async () => {
-      await initWebSocket();
-    }, SCRAPE_RETRY_DELAY)
-  }
+  const ready = await checkForWebSocket({ signal });
+  if (!ready) return;
 
-  // Wait for clientId with timeout fallback
-  if (!clientId && !aborted) {
-    updateStatus({ type: 'warn', string: 'Waiting for server connection...' });
+  const table = document.createElement('table');
+  const tbody = document.createElement('tbody');
+  table.appendChild(tbody);
+  resultsDiv.appendChild(table);
 
-    const waitForClientId = new Promise((resolve) => {
-      const interval = setInterval(() => {
-        if (clientId) {
-          clearInterval(interval);
-          resolve(true);
-        }
-      }, CLIENTID_WAIT_DELAY);
-    });
-
-    const timeout = new Promise((_, reject) => setTimeout(() => {
-      reject(new Error("Timeout waiting for clientId"))
-    }, CLIENTID_WAIT_MAX)
-    );
-
-    try {
-      await Promise.race([
-        waitForClientId,
-        timeout,
-        new Promise((_, reject) => signal.addEventListener("abort", () => {
-          const error = new Error()
-          error.name = 'AbortError'
-          reject(error)
-        }
-        ))
-      ]);
-
-    } catch (err) {
-      console.log(err)
-      if (err.name === 'AbortError') {
-        const string = 'The operation was aborted!';
-        updateStatus({ type: 'error', string, expire: true });
-      }
-      resetUI();
-      return;
-    }
-  }
-  await fetchAndRender({ payload, output, signal, resultsDiv });
+  fetchAndRender({ payload, signal });
 }
 
-async function fetchAndRender({ payload, output, signal, resultsDiv }) {
-
+async function fetchAndRender({payload, signal }) {
   try {
     const res = await fetch(`${SERVER}/fetch`, {
       method: "POST",
@@ -442,28 +435,23 @@ async function fetchAndRender({ payload, output, signal, resultsDiv }) {
     });
 
     if (!res.ok) {
-      const error = new Error();
-      error.name = res.statusText;
-      error.status = res.status;
-      error.message = JSON.parse(await res.text()).message;
-      throw error;
+      const text = await res.text();
+      throw Object.assign(new Error(JSON.parse(text).message), {
+        name: res.statusText,
+        status: res.status
+      });
     }
 
     const decoder = new TextDecoder();
     const reader = res.body.getReader();
     let buffer = '';
-    let raw = { raw: [], file: [] };
     parsedCount = 0;
     parsable = 0;
-
-    const table = document.createElement('table');
-    const tbody = document.createElement('tbody');
-    table.appendChild(tbody);
-    resultsDiv.appendChild(table);
 
     while (true) {
       const { done, value } = await reader.read();
       if (done) break;
+
       buffer += decoder.decode(value, { stream: true });
       const lines = buffer.split('\n');
       buffer = lines.pop();
@@ -471,72 +459,64 @@ async function fetchAndRender({ payload, output, signal, resultsDiv }) {
       for (const line of lines) {
         if (!line.trim()) continue;
 
+        let response;
         try {
-          const response = JSON.parse(line);
-
-          if (response.status === 'file') {
-            parsedCount++;
-            raw.file.push(response);
-            output.textContent = JSON.stringify(raw, null, 2);
-            const string = `📦 Processing ${parsable - parsedCount} of ${pluralResolver(parsable, 'file', 's')}...`;
-            updateStatus({ type: 'log', string });
-            buildFileEntry(response.result);
-          }
-
-          if (response.status === 'raw') {
-            raw.raw.push(response);
-            output.textContent = JSON.stringify(raw, null, 2);
-            parsable = response.results.length;
-            const string = `📦 Processing ${pluralResolver(parsable, 'file', 's')}...`;
-            updateStatus({ type: 'log', string });
-            for (const file of response.results) {
-              buildFileEntry(file);
-            }
-          }
+          response = JSON.parse(line);
         } catch (e) {
           console.error('Stream parse error:', e);
           output.textContent = `Stream parse error: ${e.message}`;
+          continue;
         }
+
+        const { status, option = null, result, results } = response;
+
+        if (status === 'file') {
+          parsedCount++;
+          if (option) parsable = result ? 1 : 0;
+          raw.file.push(response);
+          buildFileEntry(result);
+        }
+        if (status === 'raw') {
+          raw.raw.push(response);
+          if (option) parsedCount = results.length;
+          for (const file of results) buildFileEntry(file, option);
+        }
+
+        output.textContent = JSON.stringify(raw, null, 2);
+        const parsedString = pluralResolver(status === 'file' ? parsable - parsedCount : parsable, 'file', 's');
+        updateStatus({ type: 'log', string: `📦 Processing ${parsedString}...` });
       }
     }
 
   } catch (err) {
     error = true;
-    console.log(err);
-    let string = err.message;
-    if (string.includes('403')) string = `Error while fetching. Try Again!`;
-    if (err.name === 'AbortError') string = `The operation was aborted!`;
+    console.error(err);
+    let string = err.message.includes('403') ? 'Error while fetching. Try Again!' : err.message;
+    if (err.name === 'AbortError') string = 'The operation was aborted!';
     updateStatus({ type: 'error', string, expire: true });
-    output.textContent = `${string}`;
+    output.textContent = string;
 
   } finally {
     if (parsedCount) {
-      const string = ` Received ${pluralResolver(parsedCount, 'file', 's')}.`;
-      updateStatus({ type: 'success', icon: '🎉', string });
+      updateStatus({ type: 'success', icon: '🎉', string: `Received ${pluralResolver(parsedCount, 'file', 's')}.` });
+    } else if (!error) {
+      updateStatus({ type: 'warn', string: 'No valid results received.', expire: true });
     }
-    if (!parsedCount && !error) {
-      const string = 'No valid results received.';
-      updateStatus({ type: 'warn', string, expire: true });
-    }
-
-    document.querySelectorAll('.action-cell').forEach(item => {
-      if (item.querySelector('.fa-spinner')) item.innerHTML = `<i class="fa-solid fa-triangle-exclamation btn"></i>`;
-    });
-
     resetUI();
   }
 }
 
-async function buildFileEntry(file) {
+async function buildFileEntry(file, option = null) {
   const tbody = document.querySelector('tbody');
-  const { size, index, quality, file_name } = file;
-  let tr = document.querySelector(`.result-row[data-index="${index}"]`);
-  const actionHTML = await buildActionHTML(file)
+  const { size, index, quality, file_name, id } = file;
+  let tr = document.querySelector(`#${id}`);
+  const actionHTML = await buildActionHTML(file, option)
 
   if (!tr) {
     tr = document.createElement('tr');
     tr.classList.add('result-row');
-    Object.assign(tr.dataset, {index, size, quality})
+    tr.id = makeid(8);
+    Object.assign(tr.dataset, {index, size, quality});
 
     tr.innerHTML = `
       <td class="file-cell">
@@ -550,22 +530,37 @@ async function buildFileEntry(file) {
       <td class="action-cell">${actionHTML}</td>`;
     tbody.appendChild(tr);
   } else {
-    if (file_name) {
-      tr.querySelector('.file-name').innerText = file_name;
-    }
-    if (size) {
-      tr.querySelector('.file-size').innerText = `Size: ${size}`;
-    }
+    if (file_name) tr.querySelector('.file-name').innerText = file_name;
+    if (size) tr.querySelector('.file-size').innerText = `Size: ${size}`;
     tr.querySelector('.action-cell').innerHTML = actionHTML;
   }
 }
 
-async function buildActionHTML(file) {
-  const { url, drive_link, file_name } = file;
+async function buildActionHTML(file, option = null) {
+  const { url, link, drive_link, file_name, page, directory } = file;
   const intent = (link) => `intent://${link.replace('https://', '')}#Intent;scheme=https;type=video/*;end;`;
 
-  if (!url && !drive_link) return `<i class="fa fa-spinner fa-spin btn">`
+  if (!url && !drive_link && option !== 'select') return `<i class="fa fa-spinner fa-spin btn">`
+  if (option === 'select') {
+    return ` 
+      ${page ? `
+        <a href="${page}" target="_blank">
+          <button title="Open source website"><i class="fa-solid fa-globe"></i></button>
+        </a>
+      `: ''}
+      ${link ? `
+        <button onclick="fetchLink(this)" title="Fetch this link" data-link="${link}">
+          <i class="fa-solid fa-screwdriver-wrench btn"></i>
+        </button>
+      ` : ''}
+    `;
+  }
   return `
+    ${directory ? `
+      <a href="${directory}" target="_blank">
+        <button title="Open directory"><i class="fa-solid fa-globe"></i></button>
+      </a>
+    `: ''}
     ${url ? `
       <button title="Open in external player" onclick="openLinkExternal(this)" data-link="${intent(url)}">
         <i class="fa-solid fa-arrow-up-right-from-square"></i>
@@ -575,11 +570,45 @@ async function buildActionHTML(file) {
       </button>
       <a href="${url}" download="${file_name}" target="_self">
         <button title="Download"><i class="fa-solid fa-download"></i></button>
-      </a>` : ''}
+      </a>
+    ` : ''}
     ${drive_link ? `
       <a href="${drive_link}" target="_blank">
         <button title="Open Drive Page"><i class="fa-solid fa-server"></i></button>
-      </a>` : ''}`;
+      </a>
+    ` : ''}
+  `
+}
+
+async function fetchLink(btn) {
+  btn.disabled = true;
+  btn.title = 'Please wait...fetching link'
+  btn.innerHTML = `<i class="fa fa-spinner fa-spin btn"></i>`
+
+  controller = new AbortController();
+  const signal = controller.signal;
+  payload.resolve = {
+    id: btn.closest('tr').id,
+    link: btn.dataset.link
+  }
+
+  const ready = await checkForWebSocket({ signal });
+  if (!ready) return;
+
+  fetchAndRender({payload, signal}).then(() => {
+    btn.disabled = false;
+    btn.title = 'Fetch Link';
+    btn.innerHTML = `<i class="fa-solid fa-screwdriver-wrench btn"></i>`
+    // document.querySelectorAll('.action-cell').forEach(cell => {
+    //   const spinner = cell.querySelector('.fa-spinner');
+    //   if (spinner) cell.innerHTML = `<i class="fa-solid fa-triangle-exclamation btn"></i>`;
+    // });
+  })
+}
+
+function makeid(len) {
+  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
+  return Array.from({ length: len }, () => chars[Math.floor(Math.random() * chars.length)]).join('');
 }
 
 async function copyLink(btn) {

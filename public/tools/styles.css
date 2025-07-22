@@ -181,10 +181,6 @@ section {
   align-items: center;
   width: fit-content;
   max-height: 500px;
-  border: 1px dashed var(--color3);
-  border-radius: 8px;
-  background: #141421;
-  overflow: hidden;
   transition: max-height 0.2s;
 
   .icon {
@@ -196,20 +192,25 @@ section {
   }
 
   .message {
+    height: 100%;
     min-height: 32px;
     padding: 0 12px;
-    animation: fadeIn 0.2s;
     display: flex;
-    gap: 8px;
-    height: 100%;
     align-items: center;
-    font: normal 600 14px 'Jetbrains Mono', monospace;
+    gap: 8px;
+    border: 1px dashed var(--color3);
+    border-radius: 8px;
+    background: #141421;
+    overflow: hidden;
+    font: normal 600 12px 'Jetbrains Mono', monospace;
     text-shadow: none;
+    animation: fadeIn 0.2s;
   }
 
   .message.error {
     color: #ff5855;
     background: #2f111a;
+    border: 1px dashed;
   }
 
   .message.warn {
@@ -220,6 +221,7 @@ section {
     /* color: var(--success); */
     color: #34d399;
     background: #072920;
+    border: 1px dashed;
   }
 
   .pulse-container {
@@ -263,11 +265,11 @@ section {
 
 pre {
   background: #191930;
-  padding: 12px;
+  padding: 16px;
   margin: 8px 0;
   max-height: 400px;
   overflow-x: auto;
-  border-radius: 8px;
+  border-radius: 18px;
   font-size: 12px;
   font-family: "Jetbrains Mono", monospace;
   line-break: anywhere;
@@ -303,7 +305,7 @@ pre {
   opacity: unset;
   padding: 12px;
   /* border: 1px solid #383852; */
-  border-radius: 16px;
+  border-radius: 20px;
   overflow: hidden;
   background-color: var(--color5);
   transition: padding 0.15s, height 0.15s;
@@ -328,7 +330,7 @@ pre {
   flex-wrap: wrap;
   padding: 10px;
   gap: 8px;
-  border-radius: 8px;
+  border-radius: 12px;
   background-color: var(--color3);
   animation: fadeIn 0.2s, appearing 0.2s;
 }
@@ -558,21 +560,23 @@ pre {
       min-height: 30px;
       padding: 4px 8px;
       font-size: 11px;
+      border-radius: 6px;
     }
 
     .icon {
-      font-size: 13px !important;
+      font-size: 12px !important;
     }
   }
 
   .results-table {
     padding: 8px;
-    border-radius: 12px;
+    border-radius: 16px;
   }
 
   .result-row {
-    padding: 6px 8px;
+    padding: 8px;
     gap: 6px;
+    border-radius: 10px;
   }
 
   .file-name {
@@ -600,6 +604,8 @@ pre {
 
   pre {
     font-size: 10px;
+    border-radius: 16px;
+    padding: 10px;
   }
 
   #search-field {
