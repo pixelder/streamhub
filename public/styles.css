@@ -867,7 +867,7 @@ body:has(.expandable.expanded) {
 }
 
 .grid-item:is(:hover,:focus-visible) {
-  scale: 0.97;
+  scale: 0.95;
   box-shadow: 0 6px 15px rgb(8, 8, 22);
   border: 1px solid #383852e5;
   cursor: pointer;
@@ -2221,7 +2221,7 @@ body:has(.filter-menu) {
     outline: none;
 
     .item-container {
-      scale: 0.97;
+      scale: 0.95;
       border: 1px solid #383852e5;
     }
   }
