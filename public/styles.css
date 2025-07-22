@@ -1007,6 +1007,7 @@ body:has(.expandable.expanded) {
     display: flex;
     font-size: 0.85rem;
     aspect-ratio: 1 / 1;
+    border-radius: inherit;
     align-items: center;
     justify-content: center;
     cursor: pointer;
