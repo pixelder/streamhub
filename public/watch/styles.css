@@ -30,7 +30,7 @@
 
   .episode:hover, .episode:has(.episode-items .img-container:focus-visible) {
     .episode-items .img-container {
-      scale: 0.97;
+      scale: 0.95;
     }
   }
 
@@ -40,7 +40,7 @@
     }
 
     .episode-items::before {
-      filter: blur(30px) brightness(2);
+      filter: blur(25px) brightness(2.5);
     }
     
     .episode-items {
@@ -60,15 +60,15 @@
   }
 
   .episode-items::before {
+    --margin: 8px;
     content: "";
     position: absolute;
-    top: 2%;
+    top: 33px;
     left: 0;
-    width: 100%;
-    height: 90%;
-    border-radius: 20%;
+    width: calc(100% - (var(--margin) * 2));
+    height: 6rem;
+    margin: var(--margin);
     background: #30303d;
-    filter: blur(30px) brightness(0.75);
     z-index: -1;
     transform: scale(0.7);
   }

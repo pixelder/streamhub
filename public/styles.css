@@ -1,4 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Geist:wght@100..900&family=Onest:wght@100..900&display=swap');
+@import url('https://fonts.cdnfonts.com/css/reverie');
 
 *,
 *::after,
@@ -26,7 +27,7 @@ html {
   --color3: #222233;
   --color4: #121225;
   --color5: #181825;
-  --font-color1: #E6E6FA;
+  --font-color1: #c8c8d0;
   --font-color2: #a3a3a3;
   --font-color3: #81818c;
   --active-color: red;
@@ -57,8 +58,7 @@ body {
   font-weight: 500;
   font-size: 1rem;
   background-color: var(--bg-color);
-  /* 151527 */
-  color: lavender;
+  color: var(--font-color1);
   text-shadow: 0 0 10px #E6E6FA25;
   height: 100dvh;
   overflow-y: auto;
@@ -175,7 +175,7 @@ header {
       background-image: url('assets/icons/logo.png');
       background-size: contain;
       background-repeat: no-repeat;
-      height: 1.8rem;
+      height: 28px;
       aspect-ratio: 1 / 1;
     }
   }
@@ -389,11 +389,11 @@ select {
   background-image: url(../assets/icons/go-down-symbolic.svg);
   background-size: 1rem;
   background-repeat: no-repeat;
-  background-position: calc(100% - 0.36rem) 50%;
+  background-position: calc(100% - 8px) 50%;
   background-color: #30303d77;
   box-shadow: 0 0 4px rgba(0, 0, 0, 0.3);
   padding: 0 12px;
-  padding-right: 1.8rem;
+  padding-right: 30px;
   font-size: 14px;
   text-wrap: nowrap;
   border: 1px solid var(--color1);
@@ -475,13 +475,15 @@ section {
 }
 
 section h2 {
-  font-size: 24px;
+  font-family: 'Reverie', serif;
+  font-size: 26px;
   margin-right: auto;
   text-align: left;
   text-wrap: nowrap;
   overflow: hidden;
   mask-image: linear-gradient(to right, black 95%, rgba(0, 0, 0, 0.77) 97%, transparent);
   padding-right: 1rem;
+  translate: 0 1px;
 }
 
 .actions {
@@ -1039,8 +1041,7 @@ body:has(.expandable.expanded) {
 
 .grid-item:has(.selectable.active),
 .grid-item:has(.selectable.active):hover,
-.grid-item:has(.grid-actions:hover),
-.grid-item:has(.grid-options.open) {
+.grid-item:has(.grid-actions:hover) {
   scale: unset !important;
 
   .item-container {
@@ -1401,7 +1402,7 @@ body:has(.expandable.expanded) {
 
 .form-group select {
   padding: 0px 10px;
-  padding-right: 1.8rem;
+  /* padding-right: 1.8rem; */
   height: 36px;
 }
 
@@ -2771,13 +2772,17 @@ body:has(.modal:is([active])) {
 }
 
 .releasing-on {
+  display: flex;
+  align-items: center;
   width: fit-content;
-  border: 1px dashed green;
-  padding: 4px;
-  /* background: #0080003E; */
-  background: rgba(25, 166, 46, 0.12);
-  border-radius: var(--border-radius2);
+  height: 30px;
+  padding-inline: 6px;
   font-size: 14px;
+  color: #34d399;
+  background: #072920;
+  border: 1px dashed;
+  border-radius: var(--border-radius2);
+  text-shadow: none;
 }
 
 .watch-btn {
@@ -2995,6 +3000,7 @@ body:has(.modal:is([active])) {
 .ratings-genre i {
   font-size: 12px;
   line-height: normal;
+  padding-bottom: 1px;
 }
 
 .ratings-genre p {
@@ -3039,11 +3045,15 @@ body:has(.modal:is([active])) {
   text-decoration: none;
   color: var(--font-color2);
   font-size: 12px;
+  line-height: 12px;
   text-wrap: nowrap;
-  padding: 2px 6px;
+  padding-inline: 6px;
   background-color: var(--color3);
   border: 1px solid var(--color2);
   border-radius: var(--border-radius2);
+  height: 24px;
+  display: flex;
+  align-items: center;
 }
 
 .tv-actions {
@@ -3055,7 +3065,7 @@ body:has(.modal:is([active])) {
 
 .seasons-menu select {
   background-color: var(--color3);
-  background-size: 1.12rem;
+  background-size: 18px;
   font-weight: 600;
   font-size: 1rem;
   outline: 0px;

@@ -1,4 +1,3 @@
-@import url('https://fonts.cdnfonts.com/css/reverie');
 @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap');
 
 #explore-content {
@@ -13,7 +12,6 @@
   
   h2 {
     font: normal bold 26px 'Reverie', sans-serif;
-    filter: brightness(0.8);
     text-shadow: none;
   }
 }
@@ -47,7 +45,6 @@
     --width: 0.5px;
     --neg-width: calc(var(--width) * (-1));
     text-shadow: var(--neg-width) var(--neg-width) 0 var(--color), var(--width) var(--neg-width) 0 var(--color), var(--neg-width) var(--width) 0 var(--color), var(--width) var(--width) 0 var(--color);
-    filter: brightness(0.9);
   }
 
 }
@@ -55,7 +52,7 @@
 
 .explore-card:hover {
   border-color: var(--color2);
-  scale: 0.97;
+  scale: 0.95;
 }
 
 /* .explore-card:not(:has(img)) {

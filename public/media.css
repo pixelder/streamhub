@@ -1058,7 +1058,8 @@
 
   .releasing-on {
     font-size: 12px;
-    padding: 2px 4px;
+    padding-inline: 4px;
+    height: 24px;
   }
 
   .watch-btn,
@@ -1241,6 +1242,7 @@
     font-size: 0.68rem;
     line-height: 0.9rem;
     padding-right: 0.2rem;
+    padding-bottom: 0px;
   }
 
   .ratings-genre p {
@@ -1269,7 +1271,8 @@
     width: fit-content;
     text-wrap: nowrap;
     font-size: 11px;
-    padding: 2px 4px;
+    padding-inline: 4px;
+    height: 20px;
   }
 
   .tv-actions {

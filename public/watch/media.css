@@ -6,8 +6,7 @@
 
     .episode.current {
       .episode-items::before {
-        border-radius: 0%;
-        filter: blur(15px) brightness(1.8);
+        filter: blur(25px) brightness(2.5);
       }
     }
 
@@ -17,9 +16,9 @@
     }
 
     .episode-items::before {
-      top: 8%;
-      height: 80%;
-      filter: blur(10px) brightness(0.8);
+      --margin: 0px;
+      top: 20px;
+      height: 4rem;
     }
 
     .episode-items h3 {
