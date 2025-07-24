@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Geist:wght@100..900&family=Onest:wght@100..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Onest:wght@100..900&display=swap');
 @import url('https://fonts.cdnfonts.com/css/reverie');
 
 *,
@@ -28,19 +28,18 @@ html {
   --color4: #121225;
   --color5: #181825;
   --font-color1: #c8c8d0;
-  --font-color2: #a3a3a3;
+  --font-color2: #a3a3a0;
   --font-color3: #81818c;
   --active-color: red;
   --bg-color: #0d0d1b;
   --border-radius1: 10px;
   --border-radius2: 6px;
   --progress-color: #5A8FDB;
-  --error: #a6192e;
+  --warn: #a6192e;
   --caution: #ff9900;
   --success: #04b34f;
   --info: #0057b8;
-  --font-style1: "Geist", sans-serif;
-  --font-style2: "Onest", sans-serif;
+  --font-style1: "Onest", sans-serif;
   --padding1: 10px;
   font-size: 100%;
   -webkit-tap-highlight-color: transparent;
@@ -54,7 +53,7 @@ html {
 }
 
 body {
-  font-family: var(--font-style2);
+  font-family: var(--font-style1);
   font-weight: 500;
   font-size: 1rem;
   background-color: var(--bg-color);
@@ -71,7 +70,7 @@ h2,
 h3,
 h4,
 h5 h6 {
-  font-family: var(--font-style2);
+  font-family: var(--font-style1);
 }
 
 body:has(header.hidden, header.detach) {
@@ -242,7 +241,7 @@ header {
   opacity: 0;
   height: 2rem;
   width: 2rem;
-  font-family: var(--font-style2);
+  font-family: var(--font-style1);
   font-size: 14px;
   font-weight: 500;
   padding: 0;
@@ -257,7 +256,7 @@ header {
 }
 
 input::placeholder {
-  font-family: var(--font-style2);
+  font-family: var(--font-style1);
   color: var(--font-color2);
 }
 
@@ -329,7 +328,7 @@ input[type="search"]::-webkit-search-results-decoration {
 
 input {
   font-size: 14px;
-  font-family: var(--font-style2);
+  font-family: var(--font-style1);
   width: 6rem;
   max-height: 36px;
   padding: 0.6rem 0.6rem;
@@ -476,6 +475,8 @@ section {
 
 section h2 {
   font-family: 'Reverie', serif;
+  font-weight: 600;
+  letter-spacing: 0.6px;
   font-size: 26px;
   margin-right: auto;
   text-align: left;
@@ -483,7 +484,7 @@ section h2 {
   overflow: hidden;
   mask-image: linear-gradient(to right, black 95%, rgba(0, 0, 0, 0.77) 97%, transparent);
   padding-right: 1rem;
-  translate: 0 1px;
+  translate: 0 2px;
 }
 
 .actions {
@@ -527,7 +528,7 @@ section:has(.grid-item) .actions {
 }
 
 .close-window:is(:hover, :focus-visible) {
-  background: var(--error) !important;
+  background: var(--warn) !important;
 }
 
 .actions {
@@ -1564,7 +1565,7 @@ body:has(.expandable.expanded) {
 }
 
 .reset-button {
-  background: var(--error) !important;
+  background: var(--warn) !important;
 }
 
 .filter-menu {
@@ -2116,7 +2117,7 @@ body:has(.filter-menu) {
   }
 
   #accept {
-    background: var(--error);
+    background: var(--warn);
   }
 }
 
@@ -3425,7 +3426,7 @@ option {
   }
 
   .action-btn.remove {
-    background: var(--error);
+    background: var(--warn);
   }
 }
 
@@ -3516,20 +3517,4 @@ option {
     left: 50%;
     transform: translateX(-75%);
   }
-}
-
-.blur-layer {
-  position: absolute !important;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  backdrop-filter: blur(3px);
-  mask-image: linear-gradient(to top,
-      rgba(0, 0, 0, 1) 0%,
-      rgba(0, 0, 0, 0.7) 30%,
-      rgba(0, 0, 0, 0.3) 70%,
-      rgba(0, 0, 0, 0) 100%);
-  z-index: -1;
-  pointer-events: none;
 }

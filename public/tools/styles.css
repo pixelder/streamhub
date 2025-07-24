@@ -21,7 +21,7 @@ section {
 .form-container h1 {
   font-size: 24px;
   font-style: italic;
-  font-family: 'Beyonders', var(--font-style2);
+  font-family: 'Beyonders', var(--font-style1);
   text-shadow: 0 0 8px #e6e6fa3b;
 }
 
@@ -169,7 +169,7 @@ section {
 }
 
 #reset {
-  background: var(--error) !important;
+  background: var(--warn) !important;
 }
 
 #status-info:not(:has(.message)) {

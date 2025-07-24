@@ -1,4 +1,7 @@
+@import url('https://fonts.googleapis.com/css2?family=Funnel+Display:wght@700&display=swap');
+
 @media (max-width: 767px) {
+
   :root {
     --border-radius1: 6px;
     --border-radius2: 4px;
@@ -33,13 +36,12 @@
 
       a:after {
         font-size: 18px;
-        font-weight: 600;
-        font-family: var(--font-style1);
+        font-family: "Funnel display", var(--font-style1);
       }
 
-      a:before {
-        height: 28px;
-      }
+      /* a:before {
+        height: 26px;
+      } */
     }
   }
 
@@ -253,7 +255,7 @@
   }
 
   section h2 {
-    font-size: 20px;
+    font-size: 22px;
     transition: scale 0.2s, width 0.2s, opacity 0.2s;
   }
 
