@@ -95,8 +95,8 @@ function updateUI(results, term) {
   document.querySelector("title").innerText = query + ` - Pixelstream`
   window.history.replaceState('', '', `/search?q=${query}`)
 }
-function populateSearchResults(type, results) {
 
+function populateSearchResults(type, results) {
   const container = document.querySelector(".results-container")
   let section = document.getElementById(`${type}-results`);
 
