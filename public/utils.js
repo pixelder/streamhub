@@ -2311,7 +2311,7 @@ function setUpExpandableSection() {
           if (currentPage === 1) currentPage++;
           if (section.id === 'discover-streaming') {
             const tab = section.querySelector(".tab-menu .active")
-            const mediaType = section.querySelector(".media-switch .active").dataset.type;
+            const mediaType = section.querySelector(".media-switch #media-toggle").checked ? 'tv' : 'movie';
             selectedNetworks = [tab.dataset.network]
             selectedProviders = [tab.dataset.provider]
             loadDiscoverContent(mediaType, 'discover-streaming');

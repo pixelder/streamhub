@@ -168,45 +168,45 @@ async function resolvedParams(params) {
 
 async function setupMediaToggle(params, DEF_TYPE) {
 
-	let PARAMS = params
-	const setActiveMedia = (btn, section, mediaType) => {
-		document.querySelector(".media-tab.active").classList.remove('active')
-		btn.classList.add('active')
+	let PARAMS = params;
+	const setActiveMedia = ( section, mediaType) => {
 		section.setAttribute('data-type', mediaType)
 		section.setAttribute('id', `browse-${mediaType}s`)
 		isMovie = mediaType === 'movie' ? true : false;
 	}
 	const updateActiveMedia = (DEF_TYPE) => {
-		const active = document.querySelector('.media-tab.active')
-		if (active.dataset.type !== DEF_TYPE) {
-			document.querySelectorAll('.media-tab').forEach(btn => {
-				btn.classList.toggle('active')
-			})
+		const active = media_switch().checked ? 'movie' : 'tv';
+		if (active !== DEF_TYPE) {
+			media_switch().checked = !media_switch().checked
 		}
 	}
 	const buildMediaSwitch = function () {
 		return `
 			<div class="form-group">
 				<label>Media Type</label>
-				<div class='media-switch'>
-					<button class="media-tab active" data-type="movie" >Movie</button>
-					<button class="media-tab" data-type="tv">TV Shows</button>
-				</div>
+				<div class="media-switch">
+          <input type="checkbox" id="media-toggle" class="switch-input">
+          <label for="media-toggle" class="media-label">
+            <div class="media-tab movie">Movies</div>
+            <div class="media-tab tv">TV Shows</div>
+            <div class="media-indicator"></div>
+          </label>
+        </div>
 			</div>
 		`
 	}
-	
+
+	const media_switch = () => document.querySelector('.media-switch #media-toggle');	
+
 	whenExists('.button-container').then(() => {
 		document.querySelector('.button-container')
 			.insertAdjacentHTML('beforebegin', buildMediaSwitch(params))
 	}).then(() => {
 		updateActiveMedia(DEF_TYPE)
-		document.querySelector('.media-switch').addEventListener('click', e => {
-			const btn = e.target.closest('button')
-			if (!btn) return
-			const section = btn.closest('section')
-			const mediaType = btn.dataset.type
-			setActiveMedia(btn, section, mediaType)
+		document.querySelector('#media-toggle').addEventListener('change', () => {
+			const section = media_switch().closest('section');
+			const mediaType = media_switch().checked ? 'movie' : 'tv';
+			setActiveMedia( section, mediaType);
 			PARAMS.type = mediaType
 			// setFilterVariables(PARAMS)
 			renderGenreChips(mediaType, PARAMS.genre);

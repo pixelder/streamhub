@@ -110,20 +110,20 @@ function discoverStreaming() {
   setupScrollEdgeMask(container);
 
   const getActiveTab = () => document.querySelector(".tab-menu .tab.active");
-  const getActiveMedia = () => document.querySelector(".media-tab.active");
+  const getActiveMedia = () => document.querySelector(".media-switch #media-toggle").checked ? 'movie': 'tv';
 
   const updateContent = () => {
     const expanded = container.closest('section').classList.contains('expanded');
     if (expanded) container.scrollTo({ top: 0 })
     else container.scrollTo({ left: 0 });
     currentPage = 1;
-    pageEnd = false
-    minVoteCount = 60
+    pageEnd = false;
+    minVoteCount = 60;
 
-    const mediaType = getActiveMedia()?.dataset?.type;
+    const mediaType = getActiveMedia();
     const { network, provider } = getActiveTab()?.dataset || {};
-    selectedNetworks = [network]
-    selectedProviders = [provider]
+    selectedNetworks = [network];
+    selectedProviders = [provider];
 
     loadDiscoverContent( mediaType, sectionId);
   };
@@ -137,13 +137,8 @@ function discoverStreaming() {
     });
   });
 
-  document.querySelectorAll(".media-tab").forEach(button => {
-    button.addEventListener("click", () => {
-      const activeMedia = getActiveMedia();
-      activeMedia.classList.remove("active");
-      button.classList.add("active");
-      updateContent();
-    });
+  document.querySelector(".media-switch").addEventListener("click", () => {
+    updateContent();
   });
 }
 

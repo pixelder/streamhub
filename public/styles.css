@@ -1248,11 +1248,10 @@ body:has(.expandable.expanded) {
 
 .media-switch {
   --radius : 10px;
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 2px;
+  position: relative;
+  display: flex;
   padding: 2px;
-  width: 11rem;
+  width: 180px;
   height: 36px;
   margin-right: auto;
   text-wrap: nowrap;
@@ -1264,13 +1263,15 @@ body:has(.expandable.expanded) {
 }
 
 .media-tab {
+  display: grid;
+  place-content: center;
+  flex: 1;
+  z-index: 2;
   font-size: 0.8125rem;
-  text-align: center;
   background-color: transparent;
   color: var(--font-color3);
   cursor: pointer;
   border: none;
-  border-radius: calc(var(--radius) - 2px);
   transition: background-color 0.3s, color 0.3s;
 }
 
@@ -1281,11 +1282,42 @@ body:has(.expandable.expanded) {
   border: none;
 }
 
-.media-tab:active {
-  background-color: var(--color3);
+.switch-input {
+  display: none;
 }
 
-/* Browse Page */
+.media-label {
+  display: flex;
+  position: relative;
+  overflow: hidden;
+  width: 100% !important;
+  height: 100%;
+  cursor: pointer;
+  user-select: none;
+}
+
+.media-indicator {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 50%;
+  height: 100%;
+  background-color: #333344;
+  border-radius: calc(var(--radius) - 2px);
+  z-index: 1;
+  transition: transform 0.3s ease, background-color 0.3s ease;
+}
+
+#media-toggle:checked + .media-label .media-indicator {
+  transform: translateX(100%);
+}
+
+#media-toggle:checked + .media-label .media-tab.tv,
+#media-toggle:not(:checked) + .media-label .media-tab.movie {
+  color: var(--font-color1);
+}
+
+/* Browse Page */ 
 
 #browse-movies,
 #browse-tvs {
