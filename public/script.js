@@ -130,6 +130,7 @@ function discoverStreaming() {
 
   document.querySelectorAll(".tab-menu .tab").forEach(tab => {
     tab.addEventListener("click", () => {
+      if (tab.classList.contains('active')) return
       const activeTab = getActiveTab();
       activeTab.classList.remove("active");
       tab.classList.add("active");
