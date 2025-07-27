@@ -1205,14 +1205,11 @@ body:has(.expandable.expanded) {
 
 .tab {
   max-height: 36px;
-  /* background-color: transparent; */
   background-color: var(--color5);
   color: var(--font-color3);
   padding: 10px 16px;
   /* border: 1px solid var(--color3); */
-  /* border-bottom: none; */
   border-radius: 8px;
-  /* var(--border-radius1) 0 0; */
   cursor: pointer;
   font-size: 0.8125rem;
   transition: background-color 0.3s, color 0.3s;
@@ -1222,15 +1219,13 @@ body:has(.expandable.expanded) {
   color: var(--font-color1);
   /* border: 1px solid #383852a6; */
   background-color: #334;
-  /* border-bottom: none; */
   box-shadow: 0 0px 10px rgba(0, 0, 0, 0.2);
 }
 
-.tab:hover {
+.tab:not(.active):hover {
   color: var(--font-color1);
   background-color: var(--color3);
   /* border: 1px solid #383852c4; */
-  /* border-bottom: none; */
 }
 
 .tab-items {
