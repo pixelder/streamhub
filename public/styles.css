@@ -1423,9 +1423,10 @@ body:has(.expandable.expanded) {
     margin-bottom: 0.4rem;
   }
 
-  .media-switch {
-    --radius: 6px;
+  input, select, button {
+    border-radius: 10px;
   }
+
 }
 
 .form-group select {
@@ -1508,7 +1509,7 @@ body:has(.expandable.expanded) {
     text-wrap: nowrap;
     background-color: var(--color5);
     border: 1px solid var(--color3);
-    border-radius: var(--border-radius2);
+    border-radius: 10px;
     cursor: pointer;
     scroll-snap-align: start;
     user-select: none;

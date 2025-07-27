@@ -107,6 +107,7 @@ window.addEventListener('DOMContentLoaded', () => {
 			for (let [key, value] of urlParams.entries()) {
 				params[key] = escapeHTML(value)
 			}
+			window.history.replaceState('','',`/explore?${new URLSearchParams(params).toString()}`)
 			params = await resolvedParams(params)
 			loadExplorePage(params)
 		}
