@@ -175,7 +175,7 @@ async function setupMediaToggle(params, DEF_TYPE) {
 		isMovie = mediaType === 'movie' ? true : false;
 	}
 	const updateActiveMedia = (DEF_TYPE) => {
-		const active = media_switch().checked ? 'movie' : 'tv';
+		const active = media_switch().checked ? 'tv' : 'movie';
 		if (active !== DEF_TYPE) {
 			media_switch().checked = !media_switch().checked
 		}
