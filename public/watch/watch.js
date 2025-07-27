@@ -186,34 +186,49 @@ async function loadWatchPage(mediaType, NAME = null, id, tvData = null) {
   setUpPlayer(source, mediaType, id, season, episode);
 
   // Add event listeners to dropdown items
+  let showing = false;
   let leaveTimeout = null
   let persistant = false;
+  let forceClosed = false;
   const providerMenu = document.querySelector('.providers');
 
   ['mouseover', 'mouseout', 'click'].forEach(type => {
     document.querySelector('.provider-menu').addEventListener(type, (e) => {
-
+      const changebtn = e.target.closest('.provider-change')
       if (e.type === 'mouseover' && !persistant) {
-        clearTimeout(leaveTimeout)
-        providerMenu.classList.add('show')
+        if ( forceClosed ) return
+        clearTimeout(leaveTimeout);
+        providerMenu.classList.add('show');
+        showing = true;
+        setTimeout(() => showing = false, 800);
       }
       if (e.type === 'mouseout' && !persistant) {
         leaveTimeout = setTimeout(() => {
-          providerMenu.classList.remove('show')
+          forceClosed = false;
+          providerMenu.classList.remove('show');
         }, 250)
       }
 
-      if (e.type === 'click' && e.target.closest('.provider-change')) {
-        clearTimeout(leaveTimeout)
-        persistant = true
-        providerMenu.classList.add('show')
+      if (e.type === 'click' && changebtn) {
+        if (providerMenu.classList.contains('show') && !showing) {
+          persistant = false;
+          forceClosed = true;
+          providerMenu.classList.remove('show');
+          changebtn.style.backgroundColor = 'unset';
+        } else {
+          clearTimeout(leaveTimeout)
+          persistant = true;
+          changebtn.style.backgroundColor = 'var(--color1)';    
+          providerMenu.classList.add('show');
+        }
       }
     })
   })
 
   document.querySelector('main').addEventListener('click', (e) => {
     if (e.target.closest('.provider-change') || e.target.closest('.providers')) return
-    providerMenu.classList.remove('show')
+    providerMenu.classList.remove('show');
+    document.querySelector('.provider-change').style.backgroundColor = 'unset';
     persistant = false
   })
 
