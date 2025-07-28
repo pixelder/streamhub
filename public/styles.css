@@ -1242,7 +1242,7 @@ body:has(.expandable.expanded) {
 }
 
 .media-switch {
-  --radius : 10px;
+  --radius : 8px;
   position: relative;
   display: flex;
   padding: 2px;
@@ -1419,19 +1419,17 @@ body:has(.expandable.expanded) {
     font-size: 14px;
     font-style: italic;
     color: var(--font-color3);
-    width: fit-content;
-    margin-bottom: 0.4rem;
+    margin-bottom: 6px;
   }
 
   input, select, button {
-    border-radius: 10px;
+    border-radius: 8px;
   }
 
 }
 
 .form-group select {
   padding: 0px 10px;
-  /* padding-right: 1.8rem; */
   height: 36px;
 }
 
@@ -1509,7 +1507,7 @@ body:has(.expandable.expanded) {
     text-wrap: nowrap;
     background-color: var(--color5);
     border: 1px solid var(--color3);
-    border-radius: 10px;
+    border-radius: 8px;
     cursor: pointer;
     scroll-snap-align: start;
     user-select: none;
@@ -1543,16 +1541,20 @@ body:has(.expandable.expanded) {
 .button-container {
   flex: 1;
 
+  button {
+    border-radius: 25% !important;
+  }
   .go-up {
     position: absolute;
     z-index: -1;
     opacity: 0;
     height: 0px;
     background: var(--color3);
-    border-radius: 8px;
     aspect-ratio: 1 / 1;
     overflow: hidden;
     transition: height 0.3s, opacity 0.3s;
+    pointer-events: none;
+    visibility: hidden;
   }
 }
 
@@ -1575,6 +1577,8 @@ body:has(.expandable.expanded) {
     opacity: 1;
     position: relative;
     height: 48px;
+    pointer-events: all;
+    visibility: visible;
   }
 }
 
@@ -1585,7 +1589,6 @@ body:has(.expandable.expanded) {
   gap: 6px;
   padding: 8px 10px;
   margin: auto 0 0 auto;
-  border-radius: 8px;
   box-sizing: border-box;
   aspect-ratio: 1 / 1;
   height: 48px;
@@ -1597,7 +1600,7 @@ body:has(.expandable.expanded) {
 }
 
 .filter-menu {
-  --spacing: 1.6;
+  --spacing: 1.2;
   --padding: 18px;
   box-sizing: border-box;
   display: none;
@@ -1614,16 +1617,36 @@ body:has(.expandable.expanded) {
   padding: var(--padding);
   background: linear-gradient(60deg, var(--bg-color) 50%, #151824 100%);
   border: 1px solid var(--color3);
-  border-radius: 12px;
+  border-radius: 24px;
   box-shadow: 0 5px 50px 25px rgba(0, 0, 0, 0.5);
   z-index: 2;
   transition: top 0.2s ease-in-out;
 
   h3 {
+    display: flex;
+    align-items: center;
     width: 100%;
-    margin: unset;
-    margin-bottom: -6px;
-    font-size: 20px;
+    height: 36px;
+    font: italic calc(7 * 100) 26px 'Playfair Display', var(--font-style1);
+  }
+
+  .close-btn {
+    position: relative;
+    top: unset;
+    right: unset;
+    padding: unset;
+    overflow: unset;
+    background: var(--font-color1);
+    border-radius: 50% !important;
+    background-image: url('/assets/icons/x-icon.svg');
+    background-size: 24px;
+    background-repeat: no-repeat;
+    background-position: 50%;
+    background-color: transparent;
+  }
+  
+  .close-btn:active {
+    background-color: var(--color1);
   }
 
   .form-group {
@@ -1647,7 +1670,9 @@ body:has(.expandable.expanded) {
 
   .flow-row {
     width: 100%;
+    gap: 12px;
   }
+
   label {
     display: flex;
     margin-bottom: 6px;
@@ -1656,20 +1681,18 @@ body:has(.expandable.expanded) {
   .search-box {
     background: var(--color5);
     border: 1px solid var(--color3);
-    border-radius: 6px;
+    border-radius: 8px;
     transition: background 0.3s;
   }
 
   input {
     border: 1px solid var(--color3) !important;
-    border-radius: 6px !important;
     background: var(--color5) !important;
   }
 
   select {
     width: 100%;
     border: 1px solid var(--color3);
-    border-radius: 6px;
     background-color: var(--color5);
     box-shadow: none;
   }
@@ -1685,15 +1708,9 @@ body:has(.expandable.expanded) {
       justify-content: center;
       height: 36px;
       width: 100%;
-      gap: 6px;
-      padding: 8px 10px;
-      margin: auto 0 0 auto;
-      border: none;
-      border-radius: 6px;
       background: var(--color3);
       font-size: 15px;
       font-weight: 600;
-      box-sizing: border-box;
     }
   }
 

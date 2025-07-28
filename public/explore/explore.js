@@ -456,12 +456,11 @@ function buildFilterHtml(params) {
 		${filterActions()}
 		<div class="filter-overlay"></div>
 		<div class="filter-menu">
-			<h3>Filters</h3>
-			<button class="close-btn">
-				<svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="32" height="32" viewBox="0,0,256,256">
-				<g fill="#e6e6fa" fill-rule="nonzero" stroke="none" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="10" stroke-dasharray="" stroke-dashoffset="0" font-family="none" font-weight="none" font-size="none" text-anchor="none" style="mix-blend-mode: normal"><g transform="scale(8,8)"><path d="M7.21875,5.78125l-1.4375,1.4375l8.78125,8.78125l-8.78125,8.78125l1.4375,1.4375l8.78125,-8.78125l8.78125,8.78125l1.4375,-1.4375l-8.78125,-8.78125l8.78125,-8.78125l-1.4375,-1.4375l-8.78125,8.78125z"></path></g></g>
-				</svg>
-			</button>
+			<div class="flow-row">
+				<h3>Filters</h3>
+				<button class="close-btn">
+				</button>
+			</div>
 			${genre ? genreFilter() : ''}
 			${sort ? sortFilter() : ''}
 			${year ? yearFilter() : ''}
