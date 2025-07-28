@@ -109,13 +109,13 @@ function discoverStreaming() {
   enableHorizontalWheelScroll(container, 5);
   setupScrollEdgeMask(container);
 
+  const media_toggle = document.querySelector("#media-toggle");
+  const getActiveMedia = () => media_toggle.checked ? 'tv': 'movie';
   const getActiveTab = () => document.querySelector(".tab-menu .tab.active");
-  const getActiveMedia = () => document.querySelector(".media-switch #media-toggle").checked ? 'movie': 'tv';
 
   const updateContent = () => {
-    const expanded = container.closest('section').classList.contains('expanded');
-    if (expanded) container.scrollTo({ top: 0 })
-    else container.scrollTo({ left: 0 });
+    container.scrollTo({ top: 0 });
+    container.scrollTo({ left: 0 });
     currentPage = 1;
     pageEnd = false;
     minVoteCount = 60;
@@ -128,6 +128,10 @@ function discoverStreaming() {
     loadDiscoverContent( mediaType, sectionId);
   };
 
+  media_toggle.addEventListener("change", () => {
+    updateContent();
+  });
+
   document.querySelectorAll(".tab-menu .tab").forEach(tab => {
     tab.addEventListener("click", () => {
       if (tab.classList.contains('active')) return
@@ -136,10 +140,6 @@ function discoverStreaming() {
       tab.classList.add("active");
       updateContent();
     });
-  });
-
-  document.querySelector(".media-switch").addEventListener("click", () => {
-    updateContent();
   });
 }
 
