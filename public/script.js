@@ -104,11 +104,6 @@ function discoverStreaming() {
   selectedNetworks = [213]
   selectedProviders = [8]
 
-  loadDiscoverContent('movie', sectionId);
-
-  enableHorizontalWheelScroll(container, 5);
-  setupScrollEdgeMask(container);
-
   const media_toggle = document.querySelector("#media-toggle");
   const getActiveMedia = () => media_toggle.checked ? 'tv': 'movie';
   const getActiveTab = () => document.querySelector(".tab-menu .tab.active");
@@ -141,6 +136,11 @@ function discoverStreaming() {
       updateContent();
     });
   });
+
+  media_toggle.checked = false;
+  loadDiscoverContent('movie', sectionId);
+  enableHorizontalWheelScroll(container, 5);
+  setupScrollEdgeMask(container);
 }
 
 
