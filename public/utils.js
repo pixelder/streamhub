@@ -562,12 +562,12 @@ async function buildMediaDetailsHTML(data, mediaType, container) {
         </div>
         ${castHTML ? `<p class="cast">Cast : ${castHTML} </p>` : `<p><em>No cast information available</em></p>`}
         ${companyHTML ? `<p class="company">${companyHTML}</p>` : ''}
-        <p class="tags">
-          ${extractYear(formattedDate) ?? 'N/A'} • 
-          ${rated !== '' ? `${rated} • ` : ''} 
-          ${data.original_language.toUpperCase()} 
-          ${mediaType === 'movie' ? `• ${runtime(data.runtime)}` : `• ${pluralResolver(data.number_of_seasons, 'season', 's')}`}
-        </p>
+        <p class="tags">${[
+          extractYear(formattedDate) ?? 'N/A',
+          rated !== '' ? `${rated}` : '',
+          data.original_language.toUpperCase(),
+          mediaType === 'movie' ? `${runtime(data.runtime)}` : `${pluralResolver(data.number_of_seasons, 'season', 's')}`
+        ].join(' • ')}</p>
       </div>
     </span>
     ${released ? '' : releaseInfo(data, mediaType)}
