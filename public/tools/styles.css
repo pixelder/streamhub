@@ -38,7 +38,6 @@ section {
   display: flex;
   flex-wrap: wrap;
   gap: 6px;
-  margin-bottom: 2px;
   width: 100%;
 }
 
@@ -89,7 +88,6 @@ section {
 .form-actions {
   display: flex;
   gap: inherit;
-  margin-top: 8px;
   width: 100%;
 
   button {
@@ -503,7 +501,7 @@ pre {
   .form-container {
     padding: 12px;
     border-radius: 16px;
-    gap: 8px;
+    gap: 12px;
   }
 
   .form-container h1 {
@@ -543,9 +541,6 @@ pre {
   }
 
   .form-actions {
-    margin-top: 4px;
-    gap: 8px;
-
     button {
       font-size: 13px !important;
     }
