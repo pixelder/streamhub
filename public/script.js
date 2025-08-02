@@ -109,6 +109,17 @@ function discoverStreaming() {
   const getActiveTab = () => document.querySelector(".tab-menu .tab.active");
 
   const updateContent = () => {
+    container.classList.add('loading')
+    container.innerHTML = `
+      <div class="filler">
+        <div class="message">
+          <div style="height: 100%; aspect-ratio: 1 / 1; 
+            mask: url(/assets/icons/bars-rotate-fade.svg) no-repeat center; background: var(--font-color3);">
+          </div>
+          <h4>Loading...</h4>
+        </div>
+      </div>
+    `
     container.scrollTo({ top: 0 });
     container.scrollTo({ left: 0 });
     currentPage = 1;
@@ -160,12 +171,22 @@ async function fetchContent(sectionId, url) {
     data.results.forEach(res => res.media_type = media_type )
     currentPage = data.page;
 
+    await checkEndofResults(url);
     populateSection(sectionId, data.results);
 
   } catch (error) {
     console.error(`Error fetching data for ${sectionId}:`, error);
   } finally {
     isFetching[sectionId] = false;
+  }
+}
+
+async function checkEndofResults (url) {
+  const URL = url.replace(/(page=)(\d+)/, (_, prefix, num) => `${prefix}${parseInt(num) + 1}`)
+  const response = await fetch(URL);
+  const data = await response.json();
+  if (!data.results.length) {
+    pageEnd = true
   }
 }
 

@@ -79,18 +79,15 @@ async function handleSearch(event) {
 // Populate a section with content
 function populateSection(sectionId, results) {
   const items = results.filter(item => !blacklist[item.media_type].includes(item.id))
-  const deleted = results.length - items.length
+  // const deleted = results.length - items.length
   const container = document.querySelector(`#${sectionId} .grid-container`);
   const type = container.classList.contains('vertical-card') ? 'vertical' : null;
   const msg = document.querySelector('.result-message');
 
   if (msg) msg.classList.remove('empty');
 
-  if (!isBrowsing && !sectionFetching) {
-    container.classList.remove('loading');
-    container.innerHTML = '';
-  }
-  if (currentPage === 1) {
+  container.classList.remove('loading');
+  if ((!isBrowsing && !sectionFetching) || currentPage === 1) {
     container.innerHTML = '';
   }
 
@@ -123,8 +120,8 @@ function populateSection(sectionId, results) {
     io.observe(firstItem); // start observing the first rendered item
   }
 
-  if (items.length < 20 - deleted) {
-    pageEnd = true;
+
+  if (pageEnd) {
     if (msg) {
       msg.classList.add('empty');
       msg.querySelector('.text').innerText = `No ${currentPage === 1 ? '' : 'more'} results`;
