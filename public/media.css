@@ -325,8 +325,7 @@
       margin: 6px;
       gap: 6px;
       grid-template-columns: repeat(auto-fill, minmax(6.5rem, 1fr));
-      flex: unset;
-
+      
       .grid-item {
         max-width: unset;
         min-width: unset;
@@ -905,9 +904,6 @@
       gap: 8px;
     }
 
-    .media-switch {
-      flex-shrink: 0;
-    }
   }
 
   .tab-menu {

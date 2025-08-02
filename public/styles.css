@@ -697,7 +697,6 @@ body:has(.expandable.expanded) {
     margin: 12px;
     height: fit-content;
     mask-image: unset !important;
-    flex: 1;
 
     .grid-item:not(.placeholder) {
       height: fit-content !important;
@@ -1267,6 +1266,7 @@ body:has(.expandable.expanded) {
   border-radius: var(--radius);
   overflow: hidden;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+  flex-shrink: 0;
 }
 
 .media-tab {
