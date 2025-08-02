@@ -325,6 +325,7 @@
       margin: 6px;
       gap: 6px;
       grid-template-columns: repeat(auto-fill, minmax(6.5rem, 1fr));
+      flex: unset;
 
       .grid-item {
         max-width: unset;
@@ -902,10 +903,10 @@
       padding: 6px;
       border-top: 1px solid var(--color3);
       gap: 8px;
+    }
 
-      .grid-container {
-        height: calc(100% - 32px);
-      }
+    .media-switch {
+      flex-shrink: 0;
     }
   }
 
