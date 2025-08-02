@@ -631,12 +631,12 @@
       }
 
       .close-btn {
-        width: 30px;
+        height: 30px;
         background-size: 20px;
       }
 
       .menu-buttons button {
-        height: 32px;
+        height: 30px;
         font-size: 12px;
       }
 

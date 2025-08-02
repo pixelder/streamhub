@@ -520,7 +520,7 @@ pre {
     & input,
     & select,
     & button {
-      height: 32px;
+      height: 30px;
       font-size: 12px !important;
       font-weight: 500;
       padding: 0 8px;
@@ -537,6 +537,7 @@ pre {
     min-width: 60%;
 
     .x-icon {
+      margin: 5px;
       height: 20px;
     }
   }
