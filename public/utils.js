@@ -679,7 +679,7 @@ function creditResolver(data) {
         populateCreditSection(data, dep)
       })
     }
-  })  
+  })
 }
 
 function populateCreditSection(data, type) {
@@ -1263,7 +1263,11 @@ function modalEventsHandler(event, data) {
       const manageBookmark = (mediaType, id) => {
         document.querySelectorAll('.grid-item').forEach(item => {
           if (item.dataset.id === id && item.dataset.mediaType === mediaType) {
-            item.querySelector('.grid-options').classList.toggle('open')
+            try {
+              item.querySelector('.grid-options').classList.toggle('open')
+            } catch (e) {
+              console.error(e.message)
+            }
           }
         })
       }

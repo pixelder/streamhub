@@ -13,8 +13,8 @@ function fixLog() {
         console.log('fixing log')
         item.index = Date.now() + Math.floor(Math.random() * 1000);
       }
-      if (item.data.sno === 'NaN' || item.data.sno === 'null') item.data.sno = ''
-      if (item.data.eno === 'NaN' || item.data.eno === 'null') item.data.eno = ''
+      if (item.data.sno === 'NaN' || item.data.sno === 'null' || item.data.sno === null) item.data.sno = ''
+      if (item.data.eno === 'NaN' || item.data.eno === 'null' || item.data.eno === null) item.data.eno = ''
       return item;
     });
     localStorage.setItem(logType, JSON.stringify(updatedLog));
@@ -68,7 +68,7 @@ async function logToLocalStorage(logType, id, mediaType, sno = null, eno = null,
 
 
 async function removeFromLocalStorage(logType, id, mediaType, sno = null, eno = null, index = null) {
-  //console.log('removing', logType, id, mediaType, sno, eno, index)
+  // console.log('removing', logType, id, mediaType, sno, eno, index)
   const logs = getLogData(logType);
   const updatedLogs = logs.filter(log => {
     const isSameLog = Number(log.id) === Number(id) &&
@@ -101,7 +101,7 @@ async function toggleBookmark(logType, id, mediaType, sno = null, eno = null, in
   let temp = contWatching;
   contWatching = false;
   if (logExists(logType, id, mediaType)) {
-    removeFromLocalStorage(logType, Number(id), mediaType, sno, eno, index);
+    removeFromLocalStorage(logType, Number(id), mediaType, sno ?? '', eno ?? '', index);
   } else {
     logToLocalStorage(logType, id, mediaType, sno, eno);
   }
