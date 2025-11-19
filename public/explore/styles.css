@@ -49,6 +49,11 @@
 
 }
 
+.explore-card[data-type="anime"] {
+  img {
+    top: -15px;
+  }
+}
 
 .explore-card:hover {
   border-color: var(--color2);
