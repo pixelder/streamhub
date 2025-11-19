@@ -206,7 +206,7 @@ async function setupMediaToggle(params, DEF_TYPE) {
 		updateActiveMedia(DEF_TYPE)
 		document.querySelector('#media-toggle').addEventListener('change', () => {
 			const section = media_switch().closest('section');
-			const mediaType = media_switch().checked ? 'movie' : 'tv';
+			const mediaType = media_switch().checked ? 'tv' : 'movie';
 			setActiveMedia( section, mediaType);
 			PARAMS.type = mediaType
 			// setFilterVariables(PARAMS)
