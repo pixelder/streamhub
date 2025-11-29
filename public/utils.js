@@ -1046,6 +1046,7 @@ async function tvContent(data, sno, eno, ref) {
     ep.innerHTML = `
       <div class="episode-items">
         <div tabindex="0" class="img-container">
+          ${ upcoming ? `<p class="uc-text">Upcoming</p>` : ''}
           <img src="${IMAGE}" loading="lazy" alt="Episode ${episode.episode_number}">
           ${watchProgress(progress)}
         </div>

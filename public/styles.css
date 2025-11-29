@@ -3198,7 +3198,8 @@ option {
 
 .episode-items .img-container {
   display: flex;
-  justify-content: center;
+  /* /* justify-content: center; */
+  align-items: center;
   position: relative;
   height: 108px;
   aspect-ratio: 16 / 9;
@@ -3207,6 +3208,16 @@ option {
   box-shadow: 0 0 4px rgba(0, 0, 0, 0.3);
   cursor: pointer;
   background: var(--bg-color);
+
+  .uc-text {
+    display: block !important;
+    position: absolute;
+    z-index: 1;
+    font-weight: bold;
+    width: 100%;
+    text-align: center;
+    text-shadow: 0 0 4px #000, 0 0 12px #000, 0 0 20px #000;
+  }
 
   .progress-bar {
     --margin: 8px;
