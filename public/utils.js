@@ -2132,7 +2132,7 @@ async function setupCheckboxListeners(sectionID, items) {
         return isSameLog;
       }
       selectedItems.forEach((item) => {
-        const { id, mediaType, index, sno, eno } = item;
+        // const { id, mediaType, index, sno, eno } = item;
         // removeFromLocalStorage(logType, Number(id), mediaType, sno, eno, index)
         section.querySelectorAll('.grid-item').forEach(obj => {
           const {ID = obj.dataset.id, MEDIATYPE = obj.dataset.mediaType, INDEX= obj.dataset.index, SNO = obj.dataset.sno, ENO = obj.dataset.eno } = obj
@@ -2148,7 +2148,8 @@ async function setupCheckboxListeners(sectionID, items) {
           }
         })
       });
-      console.log(logItems)
+      console.log(logItems);
+      localStorage.setItem(logType, JSON.stringify(logItems));
       if (!logItems.length || !section.querySelector('.grid-item')) {
         section.querySelector('.actions').style.display = 'flex'
         container.classList.add('empty')
