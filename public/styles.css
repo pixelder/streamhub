@@ -3198,7 +3198,6 @@ option {
 
 .episode-items .img-container {
   display: flex;
-  /* /* justify-content: center; */
   align-items: center;
   position: relative;
   height: 108px;
