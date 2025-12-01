@@ -4,7 +4,7 @@ const IMAGE_300 = 'https://image.tmdb.org/t/p/w300';
 
 const output = document.getElementById("output");
 const resultsDiv = document.getElementById("results");
-const status = document.getElementById("status-info");
+const STATUS = document.getElementById("status-info");
 
 function changeValue(id, delta) {
   const input = document.getElementById(id);
@@ -70,7 +70,7 @@ async function sortByPopularity(data, type) {
 
 let statusTimeout
 function updateStatus({ type = 'log', icon = null, string, time = 5000, expire = false, remove = false }) {
-  const container = status;
+  const container = STATUS;
   container.innerHTML = '';
   if (remove) return;
   const msg = document.createElement("div");
@@ -365,7 +365,7 @@ async function scrape() {
   const cancel_btn = document.getElementById("reset");
   cancel_btn.classList.add('cancel');
 
-  status.innerHTML = "";
+  STATUS.innerHTML = "";
   resultsDiv.innerHTML = "";
   btn.disabled = true;
   btn.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Loading...';
