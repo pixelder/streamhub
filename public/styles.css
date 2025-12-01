@@ -2650,6 +2650,8 @@ body:has(.modal:is([active])) {
 .nav-btn-container {
   position: absolute;
   display: flex;
+  max-height: 16px;
+  align-items: center;
   font-size: 14px;
   gap: 12px;
 
