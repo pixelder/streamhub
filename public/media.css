@@ -1077,7 +1077,7 @@
     width: 30%;
     min-width: 20%;
     height: 30px;
-    font-size: 12px;
+    font-size: 13px;
     padding: 0 8px;
     gap: 6px;
   }
@@ -1301,8 +1301,8 @@
   }
 
   .seasons-menu select {
-    font-size: 12px;
-    background-size: 12px;
+    font-size: 13px;
+    background-size: 13px;
   }
 
   .modal #season-dropdown {
