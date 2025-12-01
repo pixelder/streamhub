@@ -1237,8 +1237,8 @@
   .modal-info p {
     position: relative;
     padding: unset;
-    font-size: 11px;
-    line-height: 12px;
+    font-size: 12px;
+    line-height: 13px;
     text-shadow: unset;
   }
 
@@ -1280,7 +1280,7 @@
   .modal-genre a {
     width: fit-content;
     text-wrap: nowrap;
-    font-size: 11px;
+    font-size: 12px;
     padding-inline: 4px;
     height: 20px;
   }
@@ -1345,14 +1345,14 @@
   }
 
   .episode-info h3 {
-    font-size: 0.75rem;
+    font-size: 12px;
     margin: 0.24rem 0;
-    line-height: 0.825rem;
+    line-height: 13px;
   }
 
   .episode-items p {
     font-size: 12px;
-    line-height: 0.82rem;
+    line-height: 13px;
   }
 
   .biography {
