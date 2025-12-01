@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Onest:wght@100..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Figtree:ital,wght@0,300..900;1,300..900&display=swap');
 @import url('https://fonts.cdnfonts.com/css/reverie');
 
 *,
@@ -39,7 +39,7 @@ html {
   --caution: #ff9900;
   --success: #04b34f;
   --info: #0057b8;
-  --font-style1: "Onest", sans-serif;
+  --font-style1: "Figtree", sans-serif;
   --padding1: 10px;
   font-size: 100%;
   -webkit-tap-highlight-color: transparent;
@@ -2650,9 +2650,8 @@ body:has(.modal:is([active])) {
 .nav-btn-container {
   position: absolute;
   display: flex;
-  height: 32px;
   font-size: 14px;
-  gap: 4px;
+  gap: 12px;
 
   button {
     border-radius: 8px;
@@ -2661,8 +2660,11 @@ body:has(.modal:is([active])) {
 
 #prev-btn, #fwd-btn {
   height: 100%;
-  aspect-ratio: 1/1;
-  background: #2a2a3e;
+  opacity: 0.4;
+  display: inherit;
+  gap: 8px;
+  align-items: center;
+  background: unset !important;
 }
 
 .modal-media:has(#person-details) .nav-btn-container {

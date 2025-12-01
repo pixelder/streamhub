@@ -463,23 +463,29 @@ async function displayModal(mediaType, data) {
     const navContainer = document.createElement('div')
     navContainer.className = 'nav-btn-container'
     navContainer.style.cssText = 'width: 100%; flex: 1 0 auto;'
-    
+
+    const prevBtn = document.createElement('button')
+    prevBtn.id = 'prev-btn'
+    prevBtn.innerHTML = `<i class="fa-solid fa-angle-left"></i><p>Back</p>`
+    navContainer.appendChild(prevBtn)
+
+    const fwdBtn = document.createElement('button')
+    fwdBtn.id = 'fwd-btn'
+    fwdBtn.innerHTML = `<p>Previous</p><i class="fa-solid fa-angle-right"></i>`
+    navContainer.appendChild(fwdBtn)
+
     if (prevData.length) {
-      const prevBtn = document.createElement('button')
-      prevBtn.id = 'prev-btn'
+      prevBtn.style.opacity = 'unset'
       const {id, mediaType} = prevData.at(-1)
       Object.assign(prevBtn.dataset, {id, mediaType})
-      prevBtn.innerHTML = `<i class="fa-solid fa-angle-left"></i>`
-      navContainer.appendChild(prevBtn)
     }
+
     if (fwdData.length) {
-      const fwdBtn = document.createElement('button')
-      fwdBtn.id = 'fwd-btn'
+      fwdBtn.style.opacity = 'unset'
       const {id, mediaType} = fwdData.at(-1)
       Object.assign(fwdBtn.dataset, {id, mediaType})
-      fwdBtn.innerHTML = `<i class="fa-solid fa-angle-right"></i>`
-      navContainer.appendChild(fwdBtn)
     }
+
     modalMedia.prepend(navContainer)
   }
 

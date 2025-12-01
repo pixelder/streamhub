@@ -986,12 +986,21 @@
   }
 
   .nav-btn-container {
-    height: 26px;
-    font-size: 12px;
+    font-size: 13px;
     z-index: 1;
+    gap: 8px;
 
     button {
       border-radius: 5px;
+    }
+  }
+
+  #prev-btn, #fwd-btn {
+    height: unset;
+    gap: 8px;
+
+    i {
+      width: unset;
     }
   }
 
@@ -1342,7 +1351,7 @@
   }
 
   .episode-items p {
-    font-size: 0.7rem;
+    font-size: 12px;
     line-height: 0.82rem;
   }
 
