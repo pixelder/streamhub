@@ -988,7 +988,7 @@
   .nav-btn-container {
     font-size: 13px;
     z-index: 1;
-    gap: 8px;
+    justify-content: space-between;
 
     button {
       border-radius: 5px;
