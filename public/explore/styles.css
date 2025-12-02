@@ -189,16 +189,17 @@
   .explore-card h3 {
     font-size: 18px;
   }
+  
 
   .list-item {
     padding: 6px;
-    margin: 4px;
-    font-size: 11px;
-  }
-
-  .clear-btn {
+    margin: 2px;
     font-size: 12px;
   }
+
+  /* .clear-btn {
+    font-size: 12px;
+  } */
 }
 
 @media (max-width: 400px) {
