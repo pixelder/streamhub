@@ -1071,6 +1071,7 @@ function filterEventHandler(event) {
 	const filterMenu = document.querySelector('.filter-menu');
 	const filterOverlay = document.querySelector('.filter-overlay');
 	if (event.type === 'click') {
+
 		if (event.target.closest('.filter-button')) {
 			const isMenuVisible = filterMenu.style.display === 'flex';
 			filterMenu.style.display = isMenuVisible ? 'none' : 'flex';
@@ -1084,6 +1085,7 @@ function filterEventHandler(event) {
 		if (event.target.closest('.filter-overlay, .close-btn, .apply')) {
 			filterMenu.style.display = 'none';
 			filterMenu.toggleAttribute('active')
+			filterMenu.querySelector('.select-list.open')?.classList.remove('open')
 			filterOverlay.style.display = 'none';
 			event.stopPropagation();
 		};
