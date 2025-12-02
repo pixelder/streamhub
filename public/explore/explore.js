@@ -415,22 +415,12 @@ function buildFilterHtml(params) {
 
 	const countrySelectFilter = function () {
 		return `
-			<div class="form-group">
-				<label for="countryFilter">Country</label>
-				<select id="countryFilter">
-						<option value="">Any</option>
-				</select>
-			</div>
+			<div class="form-group" id="countrySelect"></div>
 		`
 	}
 	const languageSelectFilter = function () {
 		return `
-			<div class="form-group">
-				<label for="languageFilter">Language</label>
-				<select id="languageFilter">
-						<option value="">Any</option>
-				</select>
-			</div>
+			<div class="form-group" id="langSelect"></div>
 		`
 	}
 
@@ -542,8 +532,8 @@ function setupFilterParams({ reset = false } = {}) {
 	const sortOrderButton = document.getElementById("sort-order");
 	const checkbox = sortOrderButton?.querySelector('input[type="checkbox"]')
 	const yearPicker = document.getElementById("year-picker")
-	const countryFilter = document.getElementById("countryFilter")
-	const languageFilter = document.getElementById("languageFilter")
+	const countryFilter = document.querySelector('#countrySelect input')
+	const languageFilter = document.querySelector('#languageSelect input')
 	const genreContainer = document.getElementById("genreChips");
 	const searchBox = document.querySelectorAll(".search-box input")
 
@@ -598,13 +588,12 @@ function setupFilterParams({ reset = false } = {}) {
 		minRateSlider.value = this.value
 		minRate = this.value
 	}
-	if (countryFilter) countryFilter.oninput = function () {
-		selectedCountry = this.value
-	}
-	if (languageFilter) languageFilter.oninput = function () {
-		selectedLanguage = this.value
-	}
-
+	// if (countryFilter) countryFilter.oninput = function () {
+	// 	selectedCountry = this.value
+	// }
+	// if (languageFilter) languageFilter.oninput = function () {
+	// 	selectedLanguage = this.value
+	// }
 }
 
 function setFilterVariables(params = null) {
@@ -618,7 +607,7 @@ function setFilterVariables(params = null) {
 	selectedCompany = company ? [Number(company)] : []
 	minVoteCount = voteCount ? voteCount : 200;
 	minRate = minRating ? minRating : 5;
-	currentYear = null
+	currentYear = null;
 	selectedCountry = reg ? reg.toUpperCase() : '';
 	selectedLanguage = lang || '';
 
@@ -773,48 +762,291 @@ function updateSelectedGenres(container) {
 	if (status) status.innerText = `${selectedGenres.length || '0'} selected • ${excludedGenres.length || '0'} excluded`
 }
 
+class SelectMenu {
+	constructor({ el, type, preselect = null }) {
+		this.el = el;
+		this.type = type; // "language" or "country"
+		this.preselect = preselect;
+		this.data = [];
+		this.selected = null;
+		this.hoverIndex = -1;
+
+		this.createUI();
+		this.fetchData();
+		this.addOutsideListener();
+	}
+
+	// -----------------------
+	// UI
+	// -----------------------
+	createUI() {
+		this.el.classList.add("selectMenu-container");
+
+		this.el.innerHTML = `
+			<label for="${this.type}-input">${capFirstLetter(this.type)}</label>
+			<div class="input-wrapper">
+				<input id="${this.type}-input" class="select-input" placeholder="Select ${this.type}..." />
+				<button class="clear-btn">✕</button>
+			</div>
+			<div class="selectMenu">
+				<div class="select-list"></div>
+			</div>
+		`;
+
+		this.input = this.el.querySelector(".select-input");
+		this.clearBtn = this.el.querySelector(".clear-btn");
+		this.list = this.el.querySelector(".select-list");
+
+		this.input.addEventListener("focus", () => this.openList());
+
+		this.input.addEventListener("input", () => {
+			this.hoverIndex = -1;
+			this.renderList();
+			this.openList();
+		});
+
+		this.input.addEventListener("keydown", (e) => this.handleKeys(e));
+
+		this.clearBtn.addEventListener("click", () => {
+			this.input.value = "";
+			this.selected = null;
+			this.hoverIndex = -1;
+
+			// reset external state
+			if (this.type === "country") selectedCountry = "";
+			else selectedLanguage = "";
+
+			this.renderList();
+			this.closeList();
+		});
+	}
+
+	// -----------------------
+	// DATA
+	// -----------------------
+	async fetchData() {
+		const url =
+			this.type === "language"
+				? `${BASE_URL}/configuration/languages?api_key=${API_KEY}`
+				: `${BASE_URL}/configuration/countries?language=en-US&api_key=${API_KEY}`;
+
+		const res = await fetch(url);
+		this.data = await res.json();
+
+		// handle preselect
+		if (this.preselect) {
+			const match = this.data.find(
+				x => x.iso_639_1 === this.preselect || x.iso_3166_1 === this.preselect
+			);
+			if (match) {
+				this.selected = match;
+
+				// update external state correctly
+				if (this.type === "country") selectedCountry = match.iso_3166_1;
+				else selectedLanguage = match.iso_639_1;
+
+				this.input.value = match.english_name || match.name || match.native_name;
+			}
+		}
+
+		this.renderList();
+	}
+
+	// -----------------------
+	// KEYBOARD EVENTS
+	// -----------------------
+	handleKeys(e) {
+		const items = this.getListItems();
+		if (!items.length) return;
+
+		switch (e.key) {
+			case "Tab": 
+				this.closeList();
+				break;
+
+			case "ArrowDown":
+				e.preventDefault();
+				if (this.hoverIndex + 1 < items.length) {
+					this.hoverIndex += 1;
+					this.updateHover(items);
+				}
+				break;
+
+			case "ArrowUp":
+				e.preventDefault();
+				if (this.hoverIndex > 0) {
+					this.hoverIndex -= 1;
+					this.updateHover(items);
+				}
+				break;
+
+			case "Enter":
+				e.preventDefault();
+				if (this.hoverIndex >= 0) {
+					const item = this.filtered[this.hoverIndex];
+					this.selectItem(item);
+				}
+				break;
+
+			case "Escape":
+				this.closeList();
+				break;
+		}
+	}
+
+	updateHover(items) {
+		items.forEach(el => el.classList.remove("hover"));
+		if (this.hoverIndex >= 0) {
+			items[this.hoverIndex].classList.add("hover");
+			items[this.hoverIndex].scrollIntoView({ block: "nearest" });
+		}
+	}
+
+	// -----------------------
+	// RENDER
+	// -----------------------
+	renderList() {
+		const q = this.input.value.toLowerCase();
+
+		// preserve filtered array for keyboard enter
+		this.filtered = this.data.filter(item => {
+			const name = item.english_name || item.name || item.native_name || "";
+			return name.toLowerCase().includes(q);
+		});
+
+		this.list.innerHTML = "";
+		this.hoverIndex = -1;
+
+		this.filtered.forEach((item, i) => {
+			const name = item.english_name || item.name || item.native_name || "";
+			const code = item.iso_639_1 || item.iso_3166_1;
+
+			const div = document.createElement("div");
+			div.className = "list-item";
+			div.dataset.code = code;
+			div.innerHTML = `
+				<p>${name}</p>
+				<p class="abbr">${code}</p>
+			`;
+
+			if (this.selected && code === this.getSelectedCode()) {
+				div.classList.add("active");
+			}
+
+			div.addEventListener("mouseenter", () => {
+				this.hoverIndex = i;
+				this.updateHover(this.getListItems());
+			});
+
+			div.addEventListener("click", () => this.selectItem(item));
+
+			this.list.appendChild(div);
+		});
+	}
+
+	selectItem(item) {
+		this.selected = item;
+
+		const code = item.iso_639_1 || item.iso_3166_1;
+
+		// update external variable reliably
+		if (this.type === "country") selectedCountry = code;
+		else selectedLanguage = code;
+
+		this.input.value =
+			item.english_name || item.name || item.native_name;
+
+		this.closeList();
+	}
+
+	getListItems() {
+		return Array.from(this.list.querySelectorAll(".list-item"));
+	}
+
+	// -----------------------
+	// UTILS
+	// -----------------------
+	getSelectedCode() {
+		return this.selected?.iso_639_1 || this.selected?.iso_3166_1;
+	}
+
+	openList() {
+		if (this.getListItems().length > 0) {
+			this.list.classList.add("open");
+		}
+	}
+
+	closeList() {
+		this.list.classList.remove("open");
+	}
+
+	addOutsideListener() {
+		document.addEventListener("click", e => {
+			if (!this.el.contains(e.target)) this.closeList();
+		});
+	}
+}
+	
 async function renderNationAndLangSelector(params = null) {
 	// Fetch countries
 	const { reg, lang } = params
-	const counteryURL = `${BASE_URL}/configuration/countries?language=en-US&api_key=${API_KEY}`
-	const counteryList = ['AS', 'US', 'AU', 'GB', 'IE', 'JP', 'KO', 'IN', 'RU', 'MX', 'FR', 'DE',];
-	fetchFromURL(counteryURL).then((data) => {
-		const countries = data
-		const countrySelect = document.getElementById('countryFilter');
-		countries.forEach(country => {
-			if (counteryList.includes(country.iso_3166_1)) {
-				const option = document.createElement('option');
-				option.value = country.iso_3166_1;
-				option.textContent = abbvText(country.english_name, 13);
-				if (option.value.toLowerCase() === reg?.toLowerCase()) option.setAttribute('selected', '')
-				countrySelect.appendChild(option);
-			}
-		});
-	}).catch((e) => {
-		console.log(e)
-		notifyAlert(e)
-	})
 
-	// Fetch languages
-	const languageURL = `${BASE_URL}/configuration/languages?api_key=${API_KEY}`
-	const languagelist = ['en', 'ja', 'ko', 'hi', 'as', 'ru', 'es', 'fr', 'de']
-	fetchFromURL(languageURL).then((data) => {
-		const languages = data;
-		const languageSelect = document.getElementById('languageFilter');
-		languages.forEach(language => {
-			if (languagelist.includes(language.iso_639_1)) {
-				const option = document.createElement('option');
-				option.value = language.iso_639_1;
-				option.textContent = language.english_name;
-				if (option.value.toLowerCase() === lang?.toLowerCase()) option.setAttribute('selected', '')
-				languageSelect.appendChild(option);
-			}
-		});
-	}).catch((e) => {
-		console.log(e)
-		notifyAlert(e)
-	})
+	new SelectMenu({
+		el: document.getElementById("countrySelect"),
+		type: "country",
+		preselect: reg
+	});
+
+	new SelectMenu({
+		el: document.getElementById("langSelect"),
+		type: "language",
+		preselect: lang
+	});
 }
+
+// async function renderNationAndLangSelector(params = null) {
+// 	// Fetch countries
+// 	const { reg, lang } = params
+// 	const counteryURL = `${BASE_URL}/configuration/countries?language=en-US&api_key=${API_KEY}`
+// 	const counteryList = ['AS', 'US', 'AU', 'GB', 'IE', 'JP', 'KO', 'IN', 'RU', 'MX', 'FR', 'DE'];
+// 	fetchFromURL(counteryURL).then((data) => {
+// 		const countries = data
+// 		const countrySelect = document.getElementById('countryFilter');
+// 		countries.forEach(country => {
+// 			if (counteryList.includes(country.iso_3166_1)) {
+// 				const option = document.createElement('option');
+// 				option.value = country.iso_3166_1;
+// 				option.textContent = abbvText(country.english_name, 13);
+// 				if (option.value.toLowerCase() === reg?.toLowerCase()) option.setAttribute('selected', '')
+// 				countrySelect.appendChild(option);
+// 			}
+// 		});
+// 	}).catch((e) => {
+// 		console.log(e)
+// 		notifyAlert(e)
+// 	})
+
+// 	// Fetch languages
+// 	const languageURL = `${BASE_URL}/configuration/languages?api_key=${API_KEY}`
+// 	const languagelist = ['en', 'ja', 'ko', 'hi', 'as', 'ru', 'es', 'fr', 'de']
+// 	fetchFromURL(languageURL).then((data) => {
+// 		const languages = data;
+// 		console.log(data)
+// 		const languageSelect = document.getElementById('languageFilter');
+// 		languages.forEach(language => {
+// 			if (languagelist.includes(language.iso_639_1)) {
+// 				const option = document.createElement('option');
+// 				option.value = language.iso_639_1;
+// 				option.textContent = language.english_name;
+// 				if (option.value.toLowerCase() === lang?.toLowerCase()) option.setAttribute('selected', '')
+// 				languageSelect.appendChild(option);
+// 			}
+// 		});
+// 	}).catch((e) => {
+// 		console.log(e)
+// 		notifyAlert(e)
+// 	})
+// }
 
 function resetSection() {
 	try {
