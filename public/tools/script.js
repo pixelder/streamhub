@@ -168,8 +168,8 @@ function resetFormEntries(btn) {
   initWebSocket()
 }
 
-// const SERVER = 'https://alpha-scraper.onrender.com'
-const SERVER = "http://localhost:3000";
+const SERVER = 'https://alpha-scraper.onrender.com'
+// const SERVER = "http://localhost:3000";
 
 let payload = {};
 let raw = { raw: [], file: [] };
