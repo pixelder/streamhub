@@ -121,12 +121,14 @@
   border-radius: 8px;
   background: var(--color5);
   margin-top: 4px;
-  animation: fadeIn 0.15s ease-out;
+  padding: 6px;
+  gap: 3px;
   box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+  animation: fadeIn 0.15s ease-out;
 }
 
 .select-list.open {
-  display: block;
+  display: flex;
 }
 
 @keyframes fadeIn {
@@ -138,10 +140,9 @@
   display: flex;
   justify-content: space-between;
   font-size: 14px;
-  padding: 8px;
+  padding: 6px 8px;
   cursor: pointer;
   border-radius: 6px;
-  margin: 6px;
   gap: 4px;
   transition: filter 0.2s, background 0.2s ease;
 
