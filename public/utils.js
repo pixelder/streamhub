@@ -44,6 +44,11 @@ function convertDate(dateString) {
   return formatter.format(new Date(dateString));
 }
 
+function convertDateFormat(dateStr) {
+  const [year, month, day] = dateStr.split('-');
+  return `${day}-${month}-${year}`;
+}
+
 function runtime(min, type = 'short') {
   const hour = Math.floor(min / 60.0);
   const minute = min - hour * 60.0;
@@ -565,15 +570,15 @@ async function buildMediaDetailsHTML(data, mediaType, container) {
         </div>
         ${castHTML ? `<p class="cast">Cast : ${castHTML} </p>` : `<p><em>No cast information available</em></p>`}
         ${companyHTML ? `<p class="company">${companyHTML}</p>` : ''}
-        <p class="tags">${[
-          extractYear(formattedDate) || null,
-          rated ? rated : null,
-          data.original_language?.toUpperCase() || null,
-          mediaType === 'movie'
+        <div class="tags">${[
+          `<p class="year" data-date="${convertDateFormat(releaseDate)}">${extractYear(formattedDate) || null}</p>`,
+          `<p>${rated ? rated : null}</p>`,
+          `<p>${data.original_language?.toUpperCase() || null}</p>`,
+          `<p>${mediaType === 'movie'
             ? runtime(data.runtime) || null
-            : pluralResolver(data.number_of_seasons, 'season', 's') || null
+            : pluralResolver(data.number_of_seasons, 'season', 's') || null}`
           ].filter(Boolean).join(' • ')
-        }</p>
+        }</div>
       </div>
     </span>
     ${released ? '' : releaseInfo(data, mediaType)}
@@ -1327,6 +1332,14 @@ function modalEventsHandler(event, data) {
       fwdData = []
       const {id, mediaType} = cast.dataset
       openModal({id, mediaType}, true)
+      event.stopPropagation()
+    }
+
+    const year = event.target.closest('.year');
+    if (year) {
+      const date = year.innerText
+      year.innerText = year.dataset.date
+      year.dataset.date = date
       event.stopPropagation()
     }
   }
