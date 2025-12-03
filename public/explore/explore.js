@@ -533,7 +533,7 @@ function setupFilterParams({ reset = false } = {}) {
 	const checkbox = sortOrderButton?.querySelector('input[type="checkbox"]')
 	const yearPicker = document.getElementById("year-picker")
 	const countryFilter = document.querySelector('#countrySelect input')
-	const languageFilter = document.querySelector('#languageSelect input')
+	const languageFilter = document.querySelector('#langSelect input')
 	const genreContainer = document.getElementById("genreChips");
 	const searchBox = document.querySelectorAll(".search-box input")
 
@@ -832,7 +832,12 @@ class SelectMenu {
 
 		const res = await fetch(url);
 		this.data = await res.json();
-
+		if (this.type === "language") {
+			this.data = [...this.data].sort((a, b) =>
+				a.english_name.localeCompare(b.english_name, 'en', { sensitivity: 'base' })
+			);
+		}
+		
 		// handle preselect
 		if (this.preselect) {
 			const match = this.data.find(
