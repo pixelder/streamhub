@@ -3045,10 +3045,17 @@ body:has(.modal:is([active])) {
 } */
 
 .tags {
+  display: flex;
+  align-items: center;
+  gap: 3px;
   padding: 0rem 0 0rem 0;
   color: var(--font-color3);
   font-size: 0.875rem;
   font-weight: 600;
+
+  .year {
+    cursor: pointer; 
+  }
 }
 
 .ratings-genre {
