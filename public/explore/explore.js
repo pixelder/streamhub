@@ -832,11 +832,9 @@ class SelectMenu {
 
 		const res = await fetch(url);
 		this.data = await res.json();
-		if (this.type === "language") {
-			this.data = [...this.data].sort((a, b) =>
-				a.english_name.localeCompare(b.english_name, 'en', { sensitivity: 'base' })
-			);
-		}
+		this.data = [...this.data].sort((a, b) =>
+			a.english_name.localeCompare(b.english_name, 'en', { sensitivity: 'base' })
+		);
 		
 		// handle preselect
 		if (this.preselect) {
