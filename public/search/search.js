@@ -56,8 +56,8 @@ async function getSearchResults(query) {
       data.sort((a, b) => popularity(b, type) - popularity(a, type))
       data.filter(item => popularity(item, type) > 0.01);
       data.forEach(item => item.media_type = type)
-      finalResults[type] = data.slice(0, isMobile() ? 20 : 14);
-      if (type === 'person') finalResults[type] = data.slice(0, isMobile() ? 20 : 12)
+      finalResults[type] = data;//.slice(0, isMobile() ? 20 : 14);
+      if (type === 'person') finalResults[type] = data.slice(0, 30)
     })
     await Promise.all(fetchAndRender)
     mediaTypes.forEach(async (type) => populateSearchResults(type, finalResults))
