@@ -102,9 +102,15 @@
     min-height: 16px !important;
   }
 
-  .search-icon,
-  .x-icon {
+  .search-icon {
     font-size: 16px;
+    height: 24px;
+    border-radius: 8px;
+  }
+
+  .x-icon {
+    font-size: 13px;
+    translate: -32px -11px !important;
   }
 
   input[type="number"],
