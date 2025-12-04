@@ -571,12 +571,16 @@ async function buildMediaDetailsHTML(data, mediaType, container) {
         ${castHTML ? `<p class="cast">Cast : ${castHTML} </p>` : `<p><em>No cast information available</em></p>`}
         ${companyHTML ? `<p class="company">${companyHTML}</p>` : ''}
         <div class="tags">${[
-          `<p class="year" data-date="${convertDateFormat(releaseDate)}">${extractYear(formattedDate) || null}</p>`,
-          `<p>${rated ? rated : null}</p>`,
-          `<p>${data.original_language?.toUpperCase() || null}</p>`,
-          `<p>${mediaType === 'movie'
-            ? runtime(data.runtime) || null
-            : pluralResolver(data.number_of_seasons, 'season', 's') || null}`
+          formattedDate ? `<p class="year" data-date="${convertDateFormat(releaseDate)}">${extractYear(formattedDate)}</p>` : null,
+          rated ? `<p>${rated}</p>` : null,
+          data.original_language ? `<p>${data.original_language?.toUpperCase()}</p>` : null,
+          mediaType === 'movie'
+            ? data.runtime 
+              ? `<p>${runtime(data.runtime)}</p>`
+              : null
+            : data.number_of_seasons 
+              ? `<p>${pluralResolver(data.number_of_seasons, 'season', 's')}</p>`
+              : null
           ].filter(Boolean).join(' • ')
         }</div>
       </div>

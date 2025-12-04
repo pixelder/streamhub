@@ -128,7 +128,7 @@
 }
 
 .select-list.open {
-  display: flex;
+  display: grid;
 }
 
 @keyframes fadeIn {
@@ -191,10 +191,13 @@
     font-size: 18px;
   }
   
+  .select-list {
+    padding: 4px;
+    gap: 1px;
+  }
 
   .list-item {
     padding: 6px;
-    margin: 2px;
     font-size: 12px;
   }
 
