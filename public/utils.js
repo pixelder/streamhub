@@ -1741,10 +1741,12 @@ async function topNavBar() {
         <li><a href="/tools">Tools</a></li>
         <li><a href="/library">Library</a></li>
         <form class="search-bar" onsubmit="return handleSearch(event)">
-          <input type="search" id="search-input" placeholder="Search" />
-          <i class="search-icon fa-solid fa-magnifying-glass"></i>
+          <input type="search" id="search-input" placeholder="Search for movies, tv shows or a person" />
           <button type="reset" class="x-icon" >
             <i class="fa-solid fa-xmark"></i>
+          </button>
+          <button class="search-icon">
+            <i class="fa-solid fa-magnifying-glass"></i>
           </button>
         </form>
       </ul>
