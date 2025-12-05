@@ -557,6 +557,11 @@ function setupFilterParams({ reset = false } = {}) {
 			section.querySelector('.results').innerHTML = ''
 		})
 
+		const items = Array.from(genreContainer.children);
+		items.sort((a, b) => {
+			return parseInt(a.dataset.order) - parseInt(b.dataset.order);
+		});
+		items.forEach(item => genreContainer.appendChild(item));
 		updateSelectedGenres(genreContainer)
 		return
 	}
@@ -588,12 +593,6 @@ function setupFilterParams({ reset = false } = {}) {
 		minRateSlider.value = this.value
 		minRate = this.value
 	}
-	// if (countryFilter) countryFilter.oninput = function () {
-	// 	selectedCountry = this.value
-	// }
-	// if (languageFilter) languageFilter.oninput = function () {
-	// 	selectedLanguage = this.value
-	// }
 }
 
 function setFilterVariables(params = null) {
@@ -621,15 +620,18 @@ async function renderGenreChips(mediaType, selected = null) {
 	genreContainer.innerHTML = ''
 
 	const chipList = []
+	let order = 1
 	const createChip = (genre, genreContainer) => {
 		const chip = document.createElement('button');
 		chip.classList.add('chip');
 		chip.textContent = genre.name;
 		chip.dataset.id = genre.id;
+		chip.dataset.order = order
 		chipList.push(genre.id)
 		if ( selected?.toString() === chip.dataset.id.toString()) {
 			chip.classList.add('selected')
 		}
+		order++
 		genreContainer?.appendChild(chip);
 	}
 
@@ -676,79 +678,65 @@ async function renderGenreChips(mediaType, selected = null) {
 	enableHorizontalWheelScroll(genreContainer, 2)
 }
 
-async function handleChipClick(genreId, type, chipList) {
+async function handleChipClick(genreId, type) {
+	genreId = Number(genreId);
+	const chip = document.querySelector(`.chip[data-id="${genreId}"]`);
+	const container = chip.parentElement;
 
-	genreId = parseInt(genreId);
-	const chip = document.querySelector(`.chip[data-id="${genreId}"]`)
-	const parent = chip.parentElement;
-	// const unTouched = () => document.querySelectorAll('.chip:not(.excluded, .selected)')
-	const order = ({exclude, remove} = {}) => {
-		const i = chipList.findIndex(el => el === Number(chip.dataset.id))
-		let index = 0
-		Array.from(document.querySelectorAll('.chip')).forEach(item => {
-			if (!remove && item.classList.contains('selected')) {
-				if (exclude) {
-					index++
-					return
-				}
-				const j = chipList.findIndex(el => el === Number(item.dataset.id))
-				if (i > j) index++
-			}
-			if (!remove && exclude && item.classList.contains('excluded')) {
-				const j = chipList.findIndex(el => el === Number(item.dataset.id))
-				if (i > j) index++
-			}
-			if (remove) {
-			   if (item.classList.contains('selected') || item.classList.contains('excluded')) {
-			      index++
-			   } else {
-    				const j = chipList.findIndex(el => el === Number(item.dataset.id))
-				    if (i > j) index++
-			   }
-			}
-		})
-		return Array.from(document.querySelectorAll('.chip'))[index]
-	}
-
-	const ADD = ({exclude} = {}) => {
-		const position = exclude
-			? order({exclude: true})
-			: order()
-		parent.insertBefore(chip, position)
-	}
-
-	const REMOVE = () => {
-	  const position = order({remove: true})
-		parent.insertBefore(chip, position)
-	}
-
+	// --- STATE UPDATE ---
 	if (type === 'single') {
-		// Check if it's in the excludedGenres list
 		if (excludedGenres.includes(genreId)) {
-			// Single click on excluded genre -> remove from excludedGenres only
 			excludedGenres = excludedGenres.filter(id => id !== genreId);
-			REMOVE()
 		} else if (selectedGenres.includes(genreId)) {
-			// Single click on selected genre -> remove from selectedGenres
 			selectedGenres = selectedGenres.filter(id => id !== genreId);
-			REMOVE()
 		} else {
-			// Single click on unselected genre -> add to selectedGenres
 			selectedGenres.push(genreId);
-			ADD()
 		}
-	} else if (type === 'double') {
-		// Double click to exclude
+	}
+
+	if (type === 'double') {
 		if (!excludedGenres.includes(genreId)) {
 			excludedGenres.push(genreId);
-			selectedGenres = selectedGenres.filter(id => id !== genreId); // Ensure it's not in selectedGenres
-			ADD({exclude: true})
+			selectedGenres = selectedGenres.filter(id => id !== genreId);
 		} else {
 			excludedGenres = excludedGenres.filter(id => id !== genreId);
-			REMOVE()
 		}
 	}
 
+	// --- REORDERING LOGIC USING data-order ---
+	const chips = Array.from(container.querySelectorAll('.chip'));
+
+	const selectedChips = [];
+	const excludedChips = [];
+	const neutralChips = [];
+
+	for (const c of chips) {
+		const id = Number(c.dataset.id);
+
+		if (selectedGenres.includes(id)) {
+			selectedChips.push(c);
+		} else if (excludedGenres.includes(id)) {
+			excludedChips.push(c);
+		} else {
+			neutralChips.push(c);
+		}
+	}
+
+	// Alphabetical sorting for selected & excluded
+	const alphaSort = arr =>
+		arr.sort((a, b) => a.textContent.localeCompare(b.textContent));
+
+	alphaSort(selectedChips);
+	alphaSort(excludedChips);
+
+	// Neutral chips: restore original TMDB order (mathematically stable)
+	neutralChips.sort(
+		(a, b) => Number(a.dataset.order) - Number(b.dataset.order)
+	);
+
+	// --- REBUILD ORDER ---
+	container.innerHTML = '';
+	[...selectedChips, ...excludedChips, ...neutralChips].forEach(c => container.appendChild(c));
 }
 
 function updateSelectedGenres(container) {
