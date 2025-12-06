@@ -102,16 +102,19 @@
     min-height: 16px !important;
   }
 
-  .search-icon {
-    font-size: 16px;
-    height: 24px;
-    border-radius: 8px;
+  .search-bar {
+    .search-icon {
+      font-size: 16px;
+      height: 24px;
+      border-radius: 8px;
+    }
+  
+    .x-icon {
+      font-size: 13px;
+      translate: -32px -11px !important;
+    }
   }
-
-  .x-icon {
-    font-size: 13px;
-    translate: -32px -11px !important;
-  }
+  
 
   input[type="number"],
   input {
@@ -669,6 +672,10 @@
       input {
         font-size: 12px;
       }
+
+      .x-icon {
+        padding: 3px;
+      }
     }
 
     .select-container {
@@ -695,6 +702,16 @@
       input[type="range"] {
         width: 100%;
       }
+    }
+
+    .select-list {
+      padding: 4px;
+      gap: 1px;
+    }
+
+    .list-item {
+      padding: 6px;
+      font-size: 12px;
     }
   }
 

@@ -362,7 +362,7 @@ function buildFilterHtml(params) {
 	const castSearchBox = function () {
 		return `
 			<div class="form-group">
-				<div class="flow-row">
+				<div class="flow-row" style="min-height:unset;">
 					<label for="search-with-cast">Cast</label>
 					<div class="caution">
 						<i class="fa-solid fa-triangle-exclamation"></i>
@@ -772,9 +772,13 @@ class SelectMenu {
 
 		this.el.innerHTML = `
 			<label for="${this.type}-input">${capFirstLetter(this.type)}</label>
-			<div class="input-wrapper">
-				<input id="${this.type}-input" class="select-input" placeholder="Select ${this.type}..." />
-				<button class="clear-btn">✕</button>
+			<div class="search-box input-wrapper">
+				<form class="flow-row" action="javascript:void(0)">
+					<input id="${this.type}-input" class="select-input" placeholder="Select ${this.type}..." />
+					<button class="clear-btn x-icon" type="reset">
+						<i class="fa-solid fa-xmark" aria-hidden="true"></i>
+					</button>
+				</form>
 			</div>
 			<div class="selectMenu">
 				<div class="select-list"></div>
