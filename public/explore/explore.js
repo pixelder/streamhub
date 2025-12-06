@@ -293,7 +293,7 @@ function buildFilterHtml(params) {
 	const genreFilter = function () {
 		return `
 			<div class="form-group">
-				<div class="flow-row">
+				<div class="flow-row" style="min-height:unset">
 						<label>Genre</label>
 						<div class="genre-counter"><p></p></div>
 				</div>
