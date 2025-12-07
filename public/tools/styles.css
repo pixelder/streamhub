@@ -118,16 +118,13 @@ section {
   }
 
   .x-icon {
-    position: relative;
-    top: unset;
-    right: unset;
-    translate: unset;
-    rotate: unset;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    aspect-ratio: 1/1;
     width: unset !important;
     height: 24px;
-    min-height: unset;
     margin: 6px;
-    padding: 4px;
     border-radius: 6px !important;
     background: var(--color1) !important;
     font-size: 13px !important;
@@ -537,6 +534,7 @@ pre {
     .x-icon {
       margin: 5px;
       height: 20px;
+      font-size: 10px !important;
     }
   }
 
