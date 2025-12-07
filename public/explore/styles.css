@@ -51,7 +51,13 @@
 
 .explore-card[data-type="anime"] {
   img {
-    top: -15px;
+    object-position: 0 -15px;
+  }
+}
+
+.explore-card[data-type="anime-movies"] {
+  img {
+    object-position: 0 -85px;
   }
 }
 
