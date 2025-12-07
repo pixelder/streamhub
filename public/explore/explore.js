@@ -76,6 +76,14 @@ const CONFIG_PARAMS = [
 				'company': 529, 'voteCount': 3, 'minRating': 3
 			},
 			'filters': { 'genre': 'hidden', 'minRate': 'hidden', 'year': 'hidden' }
+		},
+		{
+			'type': 'paramount-pictures',
+			'data': {
+				'title': 'Paramount Pictures', 'type': 'movie',
+				'company': 4, 'voteCount': 3, 'minRating': 3
+			},
+			'filters': { 'genre': 'hidden', 'minRate': 'hidden', 'year': 'hidden' }
 		}]
 	}
 ]

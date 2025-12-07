@@ -55,12 +55,6 @@
   }
 }
 
-.explore-card[data-type="anime-movies"] {
-  img {
-    object-position: 0 -85px;
-  }
-}
-
 .explore-card:hover {
   border-color: var(--color2);
   scale: 0.95;
@@ -126,6 +120,12 @@
 
     h3 {
       font-weight: 700;
+    }
+  }
+
+  .explore-card[data-type="anime-movies"] {
+    img {
+      object-position: 0 -85px;
     }
   }
 
