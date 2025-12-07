@@ -117,7 +117,7 @@ function populateSearchResults(type, results) {
     populateResults(type);
     results[type].forEach(item => {
       document.querySelector(`#${type}-results .grid-container`)
-        ?.appendChild(type === 'person' ? renderProfile(item) : renderGridItems(item))
+        ?.appendChild(type === 'person' ? renderProfile(item) : renderGridItems(item, 'vertical'))
     })
   }
 }
