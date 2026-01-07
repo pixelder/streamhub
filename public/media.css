@@ -1127,6 +1127,18 @@
       font-size: 16px;
   } */
 
+  .item-menu {
+    right: 0;
+    bottom: 36px;
+
+    .item {
+      font-size: 12px;
+      padding-inline: 6px;
+      gap: 6px;
+      height: 26px;
+    }
+  }
+
   .modal-cover {
     display: none;
     /*         margin: 0 auto;

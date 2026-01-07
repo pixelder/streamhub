@@ -366,7 +366,7 @@ function openModal(data, nav = null) {
   fetchMetaData({mediaType, id, credits})
     .then(({ mediaType, data }) => {
       if (signal.aborted) return;
-      displayModal(mediaType, data);
+      designModal(mediaType, data);
     })
     .catch((error) => {
       if (error.name === 'AbortError') return;
@@ -409,7 +409,7 @@ let isViewingDetails = false
 let fwdData = []
 let prevData = []
 
-async function displayModal(mediaType, data) {
+async function designModal(mediaType, data) {
   const modal = document.getElementById('info-modal');
   const modalContent = document.querySelector('.modal-content');
   const details = document.getElementById('modal-details');
@@ -879,9 +879,11 @@ function insertMovieActions(data, mediaType) {
 
 function setUpModalActions(data, mediaType, season = null) {
   const bookmark = logExists('bookmarks', data.id, mediaType)
+  const imdb = data.imdb_id || data.external_ids?.imdb_id
+
   const links = [
     { id: data.id, url: `https://tmdb.org/${mediaType}/${data.id}`, icon: "tmdb_short.svg", page: "tmdb" },
-    { id: (data.imdb_id || data.external_ids?.imdb_id), url: `https://www.imdb.com/title/${data.imdb_id || data.external_ids.imdb_id}`, icon: "imdb_short.png", page: "imdb" },
+    { id: imdb, url: `https://www.imdb.com/title/${imdb}`, icon: "imdb_short.png", page: "imdb" },
   ]
   return `
     <button class="play-trailer" title="play trailer"
@@ -904,9 +906,31 @@ function setUpModalActions(data, mediaType, season = null) {
           <i class="options-x-icon fa-solid fa-bookmark passive"></i>
         </span>
       </label>
-      <button tabindex="0" class="share" title="share">
-        <i class="fa-solid fa-paper-plane"></i>
+      <button tabindex="0" class="item-options" title="options">
+        <i class="fa-solid fa-ellipsis-vertical"></i>
       </button>
+      <div class="item-menu" tabindex="0">
+        <!-- <div class="item" tabindex="0">
+          <i class="fa-solid fa-plus"></i>
+          Add to playlist
+        </div> -->
+        <div class="item share" tabindex="0" title="share">
+          <i class="fa-solid fa-paper-plane"></i>
+          Share
+        </div>
+        <div class="item copy-id" tabindex="0" data-id="${data.id}">
+          <i class="fa-solid fa-copy"></i>
+          Copy id
+        </div>
+        <a class="item" href="https://www.imdb.com/title/${imdb}/parentalguide/" target="_blank" rel="noopener nofollow noreferrer">
+          <i class="fa-solid fa-book"></i>
+          Parental Guide
+        </a>
+        <!-- <div class="item" tabindex="0">
+          <i class="fa-solid fa-eye-slash"></i>
+          Blacklist item
+        </div> -->
+      </div>
     </div>
   `;
 }
@@ -1163,11 +1187,11 @@ async function tvContent(data, sno, eno, ref) {
   return season
 }
 
-function modalEventsHandler(event, data) {
+async function modalEventsHandler(event, data) {
   console.log('modal event');
   if (event.type === 'click' || event.type === 'keydown' && event.key === 'Enter') {
+    
     if (event.target.classList.contains("watch-btn")) {
-
       const sanitizedData = Object.fromEntries(
         Object.entries(event.target.dataset).map(([key, data]) => [
           key, escapeHTML(data)
@@ -1344,6 +1368,31 @@ function modalEventsHandler(event, data) {
       const date = year.innerText
       year.innerText = year.dataset.date
       year.dataset.date = date
+      event.stopPropagation()
+    }
+
+    const menu_btn = event.target.closest('.item-options')
+    if (menu_btn) {
+      menu_btn.classList.toggle('active');
+      document.querySelector('.item-menu').classList.toggle('active')
+      event.stopPropagation();
+    } else {
+      document.querySelector('.item-options').classList.remove('active');
+      document.querySelector('.item-menu').classList.remove('active');
+      event.stopPropagation();
+    }
+
+    const menu = event.target.closest('.item-menu')
+    if (menu) {
+      const copy = event.target.closest('.copy-id')
+      if (copy) {
+        try {
+          await navigator.clipboard.writeText(copy.dataset.id)
+          toastMessage({el: document.querySelector('.copy-id'), string: 'Copied TMDB id to clipboad!', time: 300000})
+        } catch (e) {
+          console.error(e)
+        }
+      }
       event.stopPropagation()
     }
   }
@@ -1541,16 +1590,15 @@ function shareItem(mediaType, id, name) {
     } catch (err) {
       const msg = 'Copied link to clipboard!';
       console.log(msg);
-      toastMessage({ el: btn, string: msg, time: 3000 })
+      toastMessage({ el: btn, string: msg, time: 3000})
       await navigator.clipboard.writeText(shareData.url);
     }
   }
-
 }
 
 let toastTimeout
 
-function toastMessage({ el, string, time }) {
+function toastMessage({ el, string, time = null }) {
   let message = document.querySelector('.temp-message')
   message?.remove()
   if (!message) {
@@ -1565,9 +1613,11 @@ function toastMessage({ el, string, time }) {
   message.setAttribute('style', `top: ${y + rect.height + 2}px; left: ${(2*x + rect.width - message.clientWidth) / 2}px;`);
 
   clearTimeout(toastTimeout)
-  toastTimeout = setTimeout(() => {
-    document.body.removeChild(message)
-  }, time);
+  if (time) {
+    toastTimeout = setTimeout(() => {
+      document.body.removeChild(message)
+    }, time);
+  }
 
   message.onclick = () => {
     clearTimeout(toastTimeout)
