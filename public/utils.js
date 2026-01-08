@@ -506,7 +506,7 @@ function getContentLogoHTML(data) {
   return `
     <span>
       <div class="modal-info-logo">
-        ${logoPath ? `<img src="${IMAGE_342}${logoPath}" alt="Logo">` : ''}
+        ${logoPath ? `<img src="${IMAGE_500}${logoPath}" alt="Logo">` : ''}
       </div>
       <div class="modal-info">
         ${!logoPath ? `<h1>${name.toUpperCase()}</h1>` : ''}
@@ -1387,7 +1387,8 @@ async function modalEventsHandler(event, data) {
       if (copy) {
         try {
           await navigator.clipboard.writeText(copy.dataset.id)
-          toastMessage({el: document.querySelector('.copy-id'), string: 'Copied TMDB id to clipboad!', time: 300000})
+          toastMessage({el: copy, string: 'Copied TMDB ID to clipboard!', time: 3000})
+          return
         } catch (e) {
           console.error(e)
         }
@@ -1583,45 +1584,73 @@ function shareItem(mediaType, id, name) {
   const btn = document.querySelector(".share");
 
   btn.onclick = async () => {
-    console.log('share btn')
     try {
       await navigator.share(shareData);
+      return
     } catch (err) {
+      await navigator.clipboard.writeText(shareData.url);
       const msg = 'Copied link to clipboard!';
       console.log(msg);
       toastMessage({ el: btn, string: msg, time: 3000})
-      await navigator.clipboard.writeText(shareData.url);
     }
   }
 }
 
-let toastTimeout
+let toastTimeout;
 
 function toastMessage({ el, string, time = null }) {
-  let message = document.querySelector('.temp-message')
-  message?.remove()
-  if (!message) {
-    message = document.createElement('div');
-    message.className = 'temp-message';
-  }
-  message.innerHTML = `<p>${string}</p>`
-  const rect = el.getBoundingClientRect();
-  const x = parseFloat((rect.left).toFixed(0));
-  const y = parseFloat((rect.top).toFixed(0));
-  document.body.appendChild(message)
-  message.setAttribute('style', `top: ${y + rect.height + 2}px; left: ${(2*x + rect.width - message.clientWidth) / 2}px;`);
+  let message = document.querySelector('.temp-message');
+  message?.remove();
 
-  clearTimeout(toastTimeout)
+  message = document.createElement('div');
+  message.className = 'temp-message';
+
+  message.innerHTML = `
+    <p>${string}</p>
+    ${time ? `<div class="timer-bar"></div>` : ``}
+  `;
+
+  document.body.appendChild(message);
+
+  // ---- positioning (with screen-edge clamp) ----
+  const rect = el.getBoundingClientRect();
+  const x = Math.round(rect.left);
+  const y = Math.round(rect.top);
+
+  const margin = 8;
+  const toastWidth = message.clientWidth;
+  const viewportWidth = window.innerWidth;
+
+  let left = x + (rect.width - toastWidth) / 2;
+  left = Math.max(margin, Math.min(left, viewportWidth - toastWidth - margin));
+
+  const top = y + rect.height + 2;
+
+  message.style.top = `${top}px`;
+  message.style.left = `${left}px`;
+
+  // ---- timer bar animation ----
+  clearTimeout(toastTimeout);
+
   if (time) {
+    const bar = message.querySelector('.timer-bar');
+
+    // force layout so transition works
+    bar.getBoundingClientRect();
+
+    bar.style.transition = `width ${time}ms linear`;
+    bar.style.width = '0%';
+
     toastTimeout = setTimeout(() => {
-      document.body.removeChild(message)
+      message.remove();
     }, time);
   }
 
+  // ---- click to dismiss ----
   message.onclick = () => {
-    clearTimeout(toastTimeout)
-    message.remove()
-  }
+    clearTimeout(toastTimeout);
+    message.remove();
+  };
 }
 
 async function getNextEpisode(id, sno, eno) {
