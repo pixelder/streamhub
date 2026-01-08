@@ -249,6 +249,8 @@ async function loadWatchPage(mediaType, NAME = null, id, tvData = null) {
 
     if (close) {
       close.closest('.providers').classList.remove('show')
+      document.querySelector('.provider-change').style.backgroundColor = 'unset';
+      forceClosed = true
       persistant = false
     }
 
