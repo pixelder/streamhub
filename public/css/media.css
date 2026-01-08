@@ -15,14 +15,14 @@
     }
   }
 
-  header {
+  #top-bar {
     height: 56px;
 
-    nav ul {
+    ul {
       padding: 0.4rem 0.6rem;
     }
 
-    nav ul li {
+    ul li {
       display: none;
 
       a {
@@ -30,7 +30,7 @@
       }
     }
 
-    nav ul li.home {
+    ul li.home {
       display: flex;
       transition: scale 0.2s;
 
@@ -45,9 +45,9 @@
     }
   }
 
-  header.detach {
+  #top-bar.detach {
 
-    nav ul {
+    ul {
       padding: 0.4rem 0.6rem;
     }
 
@@ -57,7 +57,7 @@
 
   }
 
-  header:has(#search-input:focus,
+  #top-bar:has(#search-input:focus,
   #search-input:not(:placeholder-shown)) {
     ul {
       gap: 0;
@@ -141,13 +141,13 @@
   body:has(.result-message.loading) main {
     padding-bottom: unset !important;
   }
-  body:has(.bottom-bar.hidden, .bottom-bar.detach) {
+  body:has(#bottom-bar.hidden, #bottom-bar.detach) {
   main {
     padding-bottom: 64px;
   }
 }
 
-  .bottom-bar.hidden {
+  #bottom-bar.hidden {
     bottom: -4rem !important;
     opacity: 0;
     backdrop-filter: unset !important;
@@ -156,7 +156,7 @@
     border-block-start: solid 1px transparent !important;
   }
 
-  .bottom-bar.detach {
+  #bottom-bar.detach {
     position: fixed;
     bottom: 0rem;
     background: linear-gradient(0deg,#090a15,#090a15cc);
@@ -166,7 +166,7 @@
     z-index: 1;
   }
 
-  .bottom-bar {
+  #bottom-bar {
     display: flex;
     /* position: fixed; */
     /* bottom: 0rem; */
@@ -245,7 +245,7 @@
     }
   }
 
-  body:has(header.hidden, header.detach) {
+  body:has(#top-bar.hidden, #top-bar.detach) {
     main {
       padding-top: 56px;
     }
@@ -397,9 +397,7 @@
     /* box-shadow: 0 10px 24px rgba(0, 0, 0, 0.7); */
   }
 
-  .grid-item:hover,
-  .grid-item:focus-within {
-    scale: unset;
+  .grid-item:is(:active) {
     box-shadow: 0 2px 5px rgb(8, 8, 22);
   }
 
@@ -493,11 +491,11 @@
 
   /* Browse Page */
 
-  body:has(.bottom-bar.hidden) .button-container {
+  body:has(#bottom-bar.hidden) .button-container {
     bottom: 20px !important;
   }
 
-  body:has(.bottom-bar.detach:not(.hidden)) .button-container {
+  body:has(#bottom-bar.detach:not(.hidden)) .button-container {
     bottom: 80px !important;
   }
 
@@ -995,7 +993,7 @@
     /* display: none; */
     height: unset;
     width: 100%;
-    mask-image: url(assets/images/mask_mobile.png);
+    mask-image: url(../assets/images/mask_mobile.png);
     mask-position: 52% 45%;
     mask-size: 122% 122%;
     background-position: unset;

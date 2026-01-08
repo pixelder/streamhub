@@ -1,0 +1,58 @@
+*,
+*::after,
+*::before {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  scroll-behavior: smooth !important;
+  scrollbar-color: var(--color1) var(--color3);
+  scrollbar-gutter: stable;
+
+  @supports (-webkit-appearance:none) and (contain:paint) and (not (-moz-appearance:button)) {
+    scrollbar-width: none;
+  }
+}
+
+:root {
+  color-scheme: dark;
+  --color1: #383852;
+  --color2: #4a4a69;
+  --color3: #222233;
+  --color4: #121225;
+  --color5: #181825;
+  --font-color1: #c8c8d0;
+  --font-color2: #a3a3a0;
+  --font-color3: #81818c;
+  --active-color: red;
+  --bg-color: #0d0d1b;
+  --border-radius1: 10px;
+  --border-radius2: 8px;
+  --progress-color: #5A8FDB;
+  --warn: #a6192e;
+  --caution: #ff9900;
+  --success: #04b34f;
+  --info: #0057b8;
+  --font-style1: "Figtree", sans-serif;
+  --padding1: 10px;
+  font-size: 100%;
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  font-family: var(--font-style1);
+  font-weight: 500;
+  font-size: 1rem;
+  background-color: var(--bg-color);
+  color: var(--font-color1);
+  text-shadow: 0 0 10px #E6E6FA25;
+  height: 100dvh;
+  overflow-y: auto;
+  scroll-behavior: smooth;
+  scroll-snap-type: y mandatory;
+}
+
+::selection {
+  color: var(--bg-color);
+  background: var(--font-color1);
+  text-shadow: none;
+}

@@ -10,12 +10,14 @@ function extractYear(dateString) {
   return date.getFullYear();
 }
 
-function capString(str, maxLength) {
-  if (str.length > maxLength) {
-    return str.substring(0, maxLength - 3) + '...';
+function capString(str, maxChars) {
+  const chars = [...str];
+  if (chars.length > maxChars) {
+    return chars.slice(0, maxChars - 3).join('') + '...';
   }
   return str;
 }
+
 
 function capFirstLetter(str) {
   return str.charAt(0).toUpperCase() + str.slice(1);
@@ -154,7 +156,7 @@ function getProgressInfo(id, mediaType = 'movie', logData = null) {
 function renderGridItems(item, type = null) {
   let logs = getLogData('history');
   const gridItem = document.createElement('div')
-  gridItem.className = 'grid-item'
+  gridItem.className = 'grid-item flex-col'
   gridItem.id = 'grid-item';
   Object.assign(gridItem.dataset, { id : item.id,  mediaType : item.media_type});
   gridItem.tabIndex = 0
@@ -351,7 +353,7 @@ function openModal(data, nav = null) {
     return;
   }
 
-  ['#header', '.bottom-bar'].forEach(selector => {
+  ['#top-bar', '#bottom-bar'].forEach(selector => {
     const bar = document.querySelector(selector)
     if (bar.classList.contains('detach')) {
       bar.classList.add('hidden')
@@ -504,12 +506,11 @@ function getContentLogoHTML(data) {
   const name = data.name || data.title || data.original_title;
   const logoPath = data.images?.logos?.[0]?.file_path
   return `
-    <span>
-      <div class="modal-info-logo">
-        ${logoPath ? `<img src="${IMAGE_342}${logoPath}" alt="Logo">` : ''}
-      </div>
-      <div class="modal-info">
-        ${!logoPath ? `<h1>${name.toUpperCase()}</h1>` : ''}
+    <div class="modal-info-logo flex-row">
+      ${logoPath ? `<img src="${IMAGE_342}${logoPath}" alt="Logo">` : ''}
+    </div>
+    <div class="modal-info flex-col">
+      ${!logoPath ? `<h1>${name.toUpperCase()}</h1>` : ''}
   `;
 }
 
@@ -550,7 +551,8 @@ async function buildMediaDetailsHTML(data, mediaType, container) {
       <!-- <div class="modal-cover">
         <img src="${IMAGE_300 + data.poster_path}" alt="${name}">
       </div> -->
-      ${contentLogoHTML}
+      <span class="flex-col">
+        ${contentLogoHTML}
         <span class="ratings-genre">
           <p data-title="${data.vote_count} votes">
           ${rating
@@ -1093,7 +1095,7 @@ async function tvContent(data, sno, eno, ref) {
           ${watchProgress(progress)}
         </div>
         <div class="episode-info">
-          <h3>${episode.episode_number}. ${episode.name}</h3>
+          <h3>${episode.episode_number}. ${capString(episode.name, 65)}</h3>
           <p>${rating && !upcoming
       ? `Rated: ${rating}`
       : `Not yet rated`}
@@ -1801,39 +1803,37 @@ function whenInView(selector, callback) {
 }
 
 async function topNavBar() {
-  const navbar = document.getElementById('header') 
+  const navbar = document.getElementById('top-bar') 
   if (!navbar) return
   navbar.innerHTML = `
-    <nav>
-      <ul>
-        <li class="home"><a href="/"></a></li>
-        <li class="nav-path">
-          <a href="/explore">Explore <i class="fa-solid fa-angle-down"></i></a>
-          <div class="nav-sub-path">
-            <div><a href="/explore?type=movie">Movies</a></div>
-            <div><a href="/explore?type=tv">TV Shows</a></div>
-            <div><a href="/explore?type=anime">Anime</a></div>
-          </div>
-        </li>
-        <li><a href="/#discover-streaming">What's Streaming</a></li>
-        <li><a href="/tools">Tools</a></li>
-        <li><a href="/library">Library</a></li>
-        <form class="search-bar" onsubmit="return handleSearch(event)">
-          <input type="search" id="search-input" placeholder="Search for movies, tv shows or a person" />
-          <button type="reset" class="x-icon" >
-            <i class="fa-solid fa-xmark"></i>
-          </button>
-          <button class="search-icon">
-            <i class="fa-solid fa-magnifying-glass"></i>
-          </button>
-        </form>
-      </ul>
-    </nav>
+    <ul class="flex-row">
+      <li class="home"><a href="/"></a></li>
+      <li class="nav-path">
+        <a href="/explore">Explore <i class="fa-solid fa-angle-down"></i></a>
+        <div class="nav-sub-path">
+          <div><a href="/explore?type=movie">Movies</a></div>
+          <div><a href="/explore?type=tv">TV Shows</a></div>
+          <div><a href="/explore?type=anime">Anime</a></div>
+        </div>
+      </li>
+      <li><a href="/#discover-streaming">What's Streaming</a></li>
+      <li><a href="/tools">Tools</a></li>
+      <li><a href="/library">Library</a></li>
+      <form class="search-bar" onsubmit="return handleSearch(event)">
+        <input type="search" id="search-input" placeholder="Search for movies, tv shows or a person" />
+        <button type="reset" class="x-icon" >
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+        <button class="search-icon">
+          <i class="fa-solid fa-magnifying-glass"></i>
+        </button>
+      </form>
+    </ul>
   `
 }
 
 async function bottomNavBar() {
-  const navbar = document.querySelector('.bottom-bar')
+  const navbar = document.querySelector('#bottom-bar')
   const showLabel = true
   navbar.classList.add('detach')
   navbar ? navbar.innerHTML = `
@@ -1884,7 +1884,7 @@ async function bottomNavBar() {
 
 function setActiveIcon(button) {
   if (button === '') return;
-  const bottomBar = document.querySelector('.bottom-bar')
+  const bottomBar = document.querySelector('#bottom-bar')
   bottomBar.querySelectorAll('a').forEach(btn => btn.classList.remove('active'))
   const active = document.getElementById(button);
   active?.classList.add('active')
@@ -1936,8 +1936,8 @@ function setUpScrollEvents() {
     
     if (document.querySelector('.expandable.expanded')) return
  
-    const header = document.querySelector('header');
-    const bottomBar = document.querySelector('.bottom-bar');
+    const header = document.querySelector('#top-bar');
+    const bottomBar = document.querySelector('#bottom-bar');
     const scrolled = document.body.scrollTop;
 
     const threshold = 56; //px
@@ -2441,7 +2441,7 @@ function setUpExpandableSection() {
         scrollHandlers.set(container, loadPageOnScroll);
       }
 
-      ['#header', '.bottom-bar'].forEach(selector => {
+      ['#top-bar', '#bottom-bar'].forEach(selector => {
         document.querySelector(selector).classList.add('hidden')
       })
 
@@ -2465,7 +2465,7 @@ function setUpExpandableSection() {
         });
       }
       setupScrollEdgeMask(container, 'reset')
-      document.getElementById('header').classList.remove('hidden');
+      document.getElementById('top-bar').classList.remove('hidden');
       return
     }
 

@@ -111,7 +111,7 @@ function discoverStreaming() {
   const updateContent = () => {
     container.classList.add('loading')
     container.innerHTML = `
-      <div class="filler">
+      <div class="filler flex-col">
         <div class="message">
           <div style="height: 100%; aspect-ratio: 1 / 1; 
             mask: url(/assets/icons/bars-rotate-fade.svg) no-repeat center; background: var(--font-color3);">
