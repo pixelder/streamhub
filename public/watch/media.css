@@ -162,6 +162,10 @@
     align-content: center;
   }
 
+  .player-toolbar button {
+    border-radius: var(--border-radius1);
+  }
+
   .player-episodes {
     height: auto;
     max-width: 100%;
