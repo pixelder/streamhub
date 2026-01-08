@@ -1379,7 +1379,6 @@ async function modalEventsHandler(event, data) {
     } else {
       document.querySelector('.item-options').classList.remove('active');
       document.querySelector('.item-menu').classList.remove('active');
-      event.stopPropagation();
     }
 
     const menu = event.target.closest('.item-menu')
