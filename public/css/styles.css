@@ -683,8 +683,8 @@ body:has(.expandable.expanded) {
 
 .grid-item {
   visibility: visible;
-  /* display: flex;
-  flex-direction: column; */
+  display: flex;
+  flex-direction: column;
   max-width: 100%;
   height: fit-content;
   text-align: center;

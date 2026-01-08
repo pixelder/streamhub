@@ -156,7 +156,7 @@ function getProgressInfo(id, mediaType = 'movie', logData = null) {
 function renderGridItems(item, type = null) {
   let logs = getLogData('history');
   const gridItem = document.createElement('div')
-  gridItem.className = 'grid-item flex-col'
+  gridItem.className = 'grid-item'
   gridItem.id = 'grid-item';
   Object.assign(gridItem.dataset, { id : item.id,  mediaType : item.media_type});
   gridItem.tabIndex = 0

@@ -253,7 +253,6 @@ async function loadWatchPage(mediaType, NAME = null, id, tvData = null) {
       forceClosed = true
       persistant = false
     }
-
   })
 }
 
