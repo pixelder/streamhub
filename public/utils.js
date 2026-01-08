@@ -506,7 +506,7 @@ function getContentLogoHTML(data) {
   return `
     <span>
       <div class="modal-info-logo">
-        ${logoPath ? `<img src="${IMAGE_500}${logoPath}" alt="Logo">` : ''}
+        ${logoPath ? `<img src="${IMAGE_342}${logoPath}" alt="Logo">` : ''}
       </div>
       <div class="modal-info">
         ${!logoPath ? `<h1>${name.toUpperCase()}</h1>` : ''}
