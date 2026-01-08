@@ -33,7 +33,7 @@ html {
   --active-color: red;
   --bg-color: #0d0d1b;
   --border-radius1: 10px;
-  --border-radius2: 6px;
+  --border-radius2: 8px;
   --progress-color: #5A8FDB;
   --warn: #a6192e;
   --caution: #ff9900;
@@ -410,7 +410,7 @@ select {
   font-size: 14px;
   text-wrap: nowrap;
   border: 1px solid var(--color1);
-  border-radius: var(--border-radius2);
+  border-radius: var(--border-radius1);
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -2910,7 +2910,7 @@ body:has(.modal:is([active])) {
 .modal-actions {
   display: flex;
   flex-direction: row;
-  gap: 12px;
+  gap: 8px;
   width: 100%;
   align-items: center;
   margin: 0 0;
@@ -2968,19 +2968,19 @@ body:has(.modal:is([active])) {
 .watch-btn,
 .play-trailer {
   position: relative;
-  width: 128px;
+  width: 112px;
   height: 42px;
   font-size: 16px;
   font-weight: 600;
   cursor: pointer;
   box-sizing: border-box;
-  border-radius: var(--border-radius2);
+  border-radius: var(--border-radius1);
   display: flex;
   justify-content: center;
   align-items: center;
   text-wrap: nowrap;
   overflow: hidden;
-  gap: 8px;
+  gap: 4px;
 }
 
 .play-trailer {
@@ -3056,8 +3056,8 @@ body:has(.modal:is([active])) {
   width: 150px;
   padding: 4px;
   z-index: 2;
-  background: var(--color5);
-  border: 1px solid var(--color3);
+  background: var(--color3);
+  border: 1px solid var(--color1);
   border-radius: 10px;
   box-shadow: 0 0 20px var(--bg-color);
   opacity: 0;
@@ -3081,7 +3081,7 @@ body:has(.modal:is([active])) {
   }
 
   .item:hover {
-    background: var(--color3);
+    background: var(--color1) !important;
   }
 
   a {
@@ -3098,11 +3098,22 @@ body:has(.modal:is([active])) {
   padding: 8px;
   z-index: 3;
   border-radius: var(--border-radius2);
-  color: var(--font-color3);
+  color: var(--font-color2);
   text-shadow: none;
+  overflow: hidden;
   left: 40px;
-  box-shadow: 0 0 20px var(--bg-color);
+  box-shadow: 0 0 20px 8px var(--bg-color);
   cursor: pointer;
+
+  .timer-bar {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    height: 3px;
+    width: 100%;
+    border-radius: 2px;
+    background: var(--success);
+  }
 }
 
 .modal-cover {
@@ -3130,7 +3141,7 @@ body:has(.modal:is([active])) {
   flex-direction: column;
   justify-content: flex-end;
   gap: 1.4rem;
-  width: 42%;
+  width: 400px;
   height: 100%;
   transition: max-width 1s ease-in-out;
   margin-top: auto;
@@ -3363,7 +3374,7 @@ option {
   flex: 1;
   padding: 12px;
   background-color: var(--color3);/* ee; */
-  border-radius: var(--border-radius2);
+  border-radius: var(--border-radius1);
   border: 1px solid var(--color1);
   box-shadow: 0 0 4px rgba(0, 0, 0, 0.3);
 }
