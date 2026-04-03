@@ -1,5 +1,6 @@
 const API_KEY = "213d830aae3a2f7b67e37f157405a42e";
 const BASE_URL = 'https://api.tmdb.org/3';
+const IMAGE_ORG = 'https://image.tmdb.org/t/p/original';
 const IMAGE_300 = 'https://image.tmdb.org/t/p/w300';
 const IMAGE_342 = 'https://image.tmdb.org/t/p/w342';
 
@@ -156,7 +157,11 @@ async function loadWatchPage(mediaType, NAME = null, id, tvData = null) {
   document.querySelector("#main-content").innerHTML = pageHTML(mediaType)
 
   const { data } = await fetchMetaData({mediaType, id, options: 0})
-  const name = data.title ?? data.name
+  const name = data.title ?? data.name;
+
+  if (data.backdrop_path) {
+    document.querySelector('meta[property=og\\:image]').setAttribute('content', IMAGE_ORG + data.backdrop_path);
+  }
 
   const title = `${mediaType === "movie"
     ? `${name}`
@@ -164,7 +169,7 @@ async function loadWatchPage(mediaType, NAME = null, id, tvData = null) {
   const info = `<h2>${name}</h2> ${mediaType === "tv"
     ? `<h4>S${season}:E${episode} ${tvData?.epname}</h4>`
     : ""}`;
-
+  
   document.querySelector("title").innerText = title;
   document.querySelector(".now-playing").innerHTML = info;
   localStorage.setItem('current-media-title', name);
