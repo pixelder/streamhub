@@ -830,8 +830,8 @@ class SelectMenu {
 				? `${BASE_URL}/configuration/languages?api_key=${API_KEY}`
 				: `${BASE_URL}/configuration/countries?language=en-US&api_key=${API_KEY}`;
 
-		const res = await fetch(url);
-		this.data = await res.json();
+
+		this.data = await fetchFromURL(url)
 		this.data = [...this.data].sort((a, b) =>
 			a.english_name.localeCompare(b.english_name, 'en', { sensitivity: 'base' })
 		);
