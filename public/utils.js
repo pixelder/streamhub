@@ -1379,8 +1379,8 @@ async function modalEventsHandler(event, data) {
       document.querySelector('.item-menu').classList.toggle('active')
       event.stopPropagation();
     } else {
-      document.querySelector('.item-options').classList.remove('active');
-      document.querySelector('.item-menu').classList.remove('active');
+      document.querySelector('.item-options')?.classList.remove('active');
+      document.querySelector('.item-menu')?.classList.remove('active');
     }
 
     const menu = event.target.closest('.item-menu')
@@ -2153,9 +2153,8 @@ async function setupCheckboxListeners(sectionID, items) {
     const editBtn = section.querySelector(".edit-button");
     editBtn.querySelectorAll("i").forEach((i) => i.classList.toggle("active"));
     section.querySelector(".delete-button")?.classList.toggle("active");
-    section.querySelectorAll(".selectable").forEach((item) =>
-      item.classList.toggle("active")
-    );
+    section.querySelectorAll(".grid-options.open")?.forEach(item => item?.classList.remove("open"));
+    section.querySelectorAll(".selectable")?.forEach(item => item?.classList.toggle("active"));
     isActiveSelect[sectionID] = !isActiveSelect[sectionID]
 
     section.querySelector('.select-all').setAttribute('tabindex', isActiveSelect[sectionID] ? '0' : '-1')
