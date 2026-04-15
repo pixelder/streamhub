@@ -2060,6 +2060,10 @@ body:has(.filter-menu) {
     animation: appearing 0.3s;
   }
 
+  .item-container .checkbox-button {
+    width: fit-content;
+  }
+  
   .grid-item img {
     position: relative;
     z-index: inherit;
