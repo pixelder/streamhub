@@ -1052,6 +1052,15 @@
     }
   }
 
+  .fs-button {
+    scale: unset !important;
+    opacity: unset !important;
+    bottom: 0 !important;
+    transform: translate(50%, -20%);
+    height: 30px;
+    z-index: 1000;
+  }
+
   .close-btn {
     right: 6px;
     top: 6px;

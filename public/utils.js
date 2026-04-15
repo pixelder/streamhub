@@ -1230,6 +1230,15 @@ async function modalEventsHandler(event, data) {
         const results = [...data.videos.results, ...seasonVideos]
         const key = getTrailerVideoKey(results, sno)
         const trailerIframe = `
+          <div class="fs-button">
+            <label tabindex="0" for="fs-box" class="selectable active">
+              <input type="checkbox" id="fs-box">
+              <span class="checkbox-button">
+                <i class="options-icon fa-solid fa-expand active"></i>
+                <i class="options-x-icon fa-solid fa-compress fa-bookmark passive"></i>
+              </span>
+            </label>
+          </div>
           <iframe id="ytplayer" class="${mediaType}-trailer" type="text/html"
             src="https://www.youtube.com/embed/${key + `?` + params}"
             frameborder="0" 
@@ -1237,6 +1246,7 @@ async function modalEventsHandler(event, data) {
           ></iframe>
         `;
         //console.log(key)
+
         if (!key) {
           console.log('no trailer')
           toastMessage({el : trailerBtn, string : 'no trailer available', time: 2000})
@@ -1245,6 +1255,17 @@ async function modalEventsHandler(event, data) {
         container.innerHTML = trailerIframe
         container.closest('#modal-details').scrollTo({top: 0})
         trailerBtn.innerHTML = `<i class="fa-solid fa-xmark"></i>Close`
+        
+        const fs_btn = document.getElementById('fs-box')
+        fs_btn.onchange = () => {
+          if (fs_btn.checked & !document.fullscreenElement) {
+            container.requestFullscreen().catch(err => {
+              alert(`Error: ${err.message}`);
+            });
+          } else {
+            document.exitFullscreen();
+          }
+        }
       }
 
       const trailerEl = document.getElementById('ytplayer')
