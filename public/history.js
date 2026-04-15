@@ -1,33 +1,123 @@
+const allowedKeys = new Set(['history','watching','bookmarks','DEF_SRC']);
+
 function getLogData(logType) {
   const jsonData = localStorage.getItem(logType);
   return jsonData ? JSON.parse(jsonData) : [];
 }
 
-
 function fixLog() {
 
   ['history', 'watching', 'bookmarks'].forEach(logType => {
-    const logData = getLogData(logType);
+    const raw = localStorage.getItem(logType);
+    if (!raw) return;
+
+    let logData;
+    try {
+      logData = JSON.parse(raw);
+    } catch {
+      logData = [];
+    }
+
     const updatedLog = logData.map(item => {
-      if (!item.hasOwnProperty('index')) {
-        console.log('fixing log')
-        item.index = Date.now() + Math.floor(Math.random() * 1000);
+      const fixed = { ...item };
+
+      if (!fixed.hasOwnProperty('index')) {
+        fixed.index = Date.now() + Math.floor(Math.random() * 1000);
       }
-      if (item.data.sno === 'NaN' || item.data.sno === 'null' || item.data.sno === null) item.data.sno = ''
-      if (item.data.eno === 'NaN' || item.data.eno === 'null' || item.data.eno === null) item.data.eno = ''
-      return item;
+
+      fixed.data ??= {};
+      if (fixed.data.sno === 'NaN' || fixed.data.sno === 'null' || fixed.data.sno ==  null) {
+        fixed.data.sno = '';
+      }
+
+      if (fixed.data.eno === 'NaN' || fixed.data.eno === 'null' || fixed.data.eno == null) {
+        fixed.data.eno = '';
+      }
+
+      return fixed;
     });
+
     localStorage.setItem(logType, JSON.stringify(updatedLog));
-  })
+  });
 
-  if (localStorage.getItem('watching') !== null) return;
+  // Convert old history -> watching if watching missing
+  if (!localStorage.getItem('watching')) {
+    const historyData = localStorage.getItem('history');
+    if (historyData) {
+      localStorage.setItem('watching', historyData);
+    }
+  }
 
-  const historyData = getLogData('history');
-  localStorage.removeItem('history');
-  localStorage.setItem('watching', JSON.stringify(historyData));
+  let SRC_LIST = [];
+
+  try {
+    const stored = JSON.parse(localStorage.getItem('DEF_SRC') || '[]');
+    SRC_LIST = Array.isArray(stored) ? stored : [];
+  } catch {
+    SRC_LIST = [];
+  }
+
+  const existingIds = new Set(SRC_LIST.map(item => item.id));
+  const numericKeys = [];
+
+  // Collect numeric keys into DEF_SRC
+  for (let i = 0; i < localStorage.length; i++) {
+    const key = localStorage.key(i);
+    if (!key || !/^\d+$/.test(key)) continue;
+
+    const value = localStorage.getItem(key);
+    const id = Number(key);
+    const source = Number(value);
+
+    if (!Number.isNaN(source) && !existingIds.has(id)) {
+      SRC_LIST.push({ id, value: source });
+      existingIds.add(id);
+    }
+
+    numericKeys.push(key);
+  }
+
+  localStorage.setItem('DEF_SRC', JSON.stringify(SRC_LIST));
+
+  // Final cleanup: remove everything except allowed keys
+  const keysToDelete = [];
+
+  for (let i = 0; i < localStorage.length; i++) {
+    const key = localStorage.key(i);
+    if (!key) continue;
+
+    if (/^\d+$/.test(key) || !allowedKeys.has(key)) {
+      keysToDelete.push(key);
+    }
+  }
+
+  for (const key of keysToDelete) {
+    localStorage.removeItem(key);
+  }
 }
 
-// Modified logToLocalStorage to assign a unique index to each log entry
+function getLoggedValue(ID, key) {
+  const data = getLogData(ID)
+  return data.find(e => e.id === key)?.value;
+}
+
+function removeLoggedValue(ID, key) {
+  const data = getLogData(ID)
+  const updatedLog = data.filter(log => String(log.id) === String(key))
+  localStorage.setItem(ID, JSON.stringify(updatedLog))
+}
+
+function logArrayToLocalStorage(ID, key, value) {
+  const data = getLogData(ID)
+  const item = data.find(e => e.id === key);
+  if (item) {
+    item.value = value;
+  } else {
+    data.push({ id: key, value });
+  }
+  localStorage.setItem(ID, JSON.stringify(data));
+}
+
 async function logToLocalStorage(logType, id, mediaType, sno = null, eno = null, progress = null, index = null) {
   //console.log('logging', logType, id, mediaType, sno, eno, progress)
   const newLog = {
@@ -65,7 +155,6 @@ async function logToLocalStorage(logType, id, mediaType, sno = null, eno = null,
   existingLogs.push(newLog);
   localStorage.setItem(logType, JSON.stringify(existingLogs));
 }
-
 
 async function removeFromLocalStorage(logType, id, mediaType, sno = null, eno = null, index = null) {
   // console.log('removing', logType, id, mediaType, sno, eno, index)

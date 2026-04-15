@@ -154,6 +154,38 @@
         </div>
       </div>
     </div>
+    <div class="library-control button-container">
+      <button id="control-menu-button">
+        <i class="fa-solid fa-plus"></i>
+      </button>
+      <div class="control-modal modal">
+        <div>
+          <h2>Import & Export</h2>
+          <!-- <p>Export a .json file containing all data stored so far.</p> -->
+        </div>
+        <div class="import-export">
+          <div class="import">
+            <div>
+              <h4>Import</h4>
+              <p>Import data from a backup file.</p>
+            </div>
+            <button id="import">
+              <i class="fa-solid fa-download"></i>
+            </button>
+            <input type="file" id="import-file" accept=".json" hidden>
+          </div>
+          <div class="export">
+            <div>
+              <h4>Export</h4>
+              <p>Export a backup as a .json file.</p>
+            </div>
+            <button id="export">
+              <i class="fa-solid fa-upload"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
   </main>
   <nav id="bottom-bar">
     <!-- Dynamic bootom bar -->

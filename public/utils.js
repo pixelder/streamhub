@@ -2439,8 +2439,8 @@ function setUpExpandableSection() {
       currentPage = 1;
       section.classList.add('expanded');
       section.classList.remove('collapsed')
-      localStorage.removeItem(`LAST_Y_POSSITION-${section.id}`)
-      localStorage.setItem(`LAST_Y_POSSITION-${section.id}`, document.body.scrollTop);
+      removeLoggedValue("POS_DATA", section.id)
+      logArrayToLocalStorage("POS_DATA", section.id, document.body.scrollTop)
 
       const y = section.getBoundingClientRect().top + document.body.scrollTop - 8;
       document.body.scrollTo({ top: y, behavior: 'smooth' });
@@ -2493,7 +2493,7 @@ function setUpExpandableSection() {
       currentPage = 1;
       section.classList.remove('expanded');
       section.classList.remove('collapsed');
-      const scroll = localStorage.getItem(`LAST_Y_POSSITION-${section.id}`) || 0;
+      const scroll = getLoggedValue("POS_DATA", section.id) || 0;
       document.body.scrollTo({ top: scroll, behavior: 'instant' });
 
       if (!section.classList.contains('user-content')) {
@@ -2508,12 +2508,12 @@ function setUpExpandableSection() {
 
     if (e.target.closest('.section-header')) {
       return
-      // let scroll = localStorage.getItem(`LAST_Y_POSSITION-${section.id}`);
+      // let scroll = getLoggedValue("POS_DATA", section.id);
       // if (!scroll) {
-      //   localStorage.setItem(`LAST_Y_POSSITION-${section.id}`, document.body.scrollTop);
+      //   ("POS_DATA", section.id, document.body.scrollTop);
       //   // scroll = document.body.scrollTop
       // } else {
-      //   localStorage.removeItem(`LAST_Y_POSSITION-${section.id}`)
+      //   removeLoggedValue("POS_DATA", section.id)
       //   document.body.scrollTo({ top: scroll, behavior: 'instant' });
       // }
       // section.classList.remove('expanded')

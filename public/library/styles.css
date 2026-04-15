@@ -1,3 +1,89 @@
+.library-control {
+  position: fixed;
+  bottom: 0;
+  right: 0;
+  margin: 0 1.4rem 2rem 0;
+  z-index: 1;
+}
+
+#control-menu-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  aspect-ratio: 1 / 1;
+  height: 48px;
+  background: #1A589E;
+  border-radius: var(--border-radius1);
+}
+
+.control-modal.show {
+  display: flex;
+  opacity: 1;
+  scale: 1;
+  visibility: visible;
+  transition: scale 0.2s, opacity 0.2s ease-in-out;
+}
+
+.control-modal {
+  --spacing: 1.2;
+  --padding: 18px;
+  visibility: hidden;
+  display: flex !important;
+  flex-wrap: wrap;
+  flex-direction: column;
+  gap: calc(var(--padding1) * var(--spacing));
+  top: 50% !important;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  transform-origin: left;
+  width: 90%;
+  height: unset !important;
+  max-width: 32rem;
+  padding: var(--padding);
+  opacity: 0;
+  scale: 0;
+  background: linear-gradient(60deg, var(--bg-color) 50%, #151824 100%) !important;
+  border: 1px solid var(--color3);
+  border-radius: 24px;
+  box-shadow: 0 5px 50px 25px rgba(0, 0, 0, 0.5);
+  transition: scale 0.2s, opacity 0.2s ease-in-out;
+
+  .import-export {
+    display: flex;
+    flex-direction: column;
+    gap: inherit;
+  }
+
+  .import, .export {
+    display: flex;
+    border: 1px solid var(--color3);
+    border-radius: var(--border-radius1);
+    padding: 8px;
+    align-items: center;
+    background-color: var(--color5);
+
+    div {
+      width: 100%;
+    }
+
+    p {
+      font-size: 14px;
+    }
+  }
+
+  .import-export button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 36px;
+    aspect-ratio: 1/1;
+    background: var(--color3);
+    font-size: 15px;
+    font-weight: 600;
+    border-radius: 8px;
+  }
+}
+
 #bookmarks, #history {
   .grid-container {
     display: grid;
@@ -92,5 +178,18 @@
     .grid-item:not(.placeholder) {
       height: auto !important;
     }
+  }
+
+  .library-control {
+    right: 1rem;
+    margin: unset;
+  }
+
+  .control-modal {
+    margin: 0 auto;
+    max-width: 90%;
+    border-radius: 18px;
+    --padding: 16px;
+    --spacing: 1;
   }
 }

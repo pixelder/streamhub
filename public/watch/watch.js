@@ -187,7 +187,7 @@ async function loadWatchPage(mediaType, NAME = null, id, tvData = null) {
       });
   }
 
-  let source = getLoggedSource(id) || 1;
+  let source = getLoggedValue("DEF_SRC", id) || 1;
   setUpPlayer(source, mediaType, id, season, episode);
 
   // Add event listeners to dropdown items
@@ -455,11 +455,6 @@ async function getSourceIframe(source, mediaType, id, season = null, episode = n
   return iframeHTML
 }
 
-function getLoggedSource(id) {
-  //console.log('getting logged source id')
-  return Number(localStorage.getItem(id))
-}
-
 function showIframe(iframe) {
   //console.log('source iframe is loaded')
   iframe.style.display = "initial";
@@ -487,7 +482,7 @@ function setupLogging(id, mediaType) {
           }
           logToLocalStorage(logType, Number(id), mediaType, currentSeason, currentEpisode, null, historyIndex);
         });
-        localStorage.setItem(id, newSource);
+        logArrayToLocalStorage("DEF_SRC", id, newSource)
       })
       .catch((err) => {
         if (!err.message.includes("Wait canceled")) {
@@ -551,7 +546,7 @@ function setupLogging(id, mediaType) {
         }
         logToLocalStorage(logType, Number(id), mediaType, currentSeason, currentEpisode, progress, historyIndex);
       });
-      localStorage.setItem(id, newSource);
+      logArrayToLocalStorage("DEF_SRC", id, newSource)
       updatePageStatus(progress);
     }
 
