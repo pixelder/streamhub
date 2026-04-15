@@ -882,6 +882,7 @@ function insertMovieActions(data, mediaType) {
 function setUpModalActions(data, mediaType, season = null) {
   const bookmark = logExists('bookmarks', data.id, mediaType)
   const imdb = data.imdb_id || data.external_ids?.imdb_id
+  const name = data.name || data.title || data.original_title;
 
   const links = [
     { id: data.id, url: `https://tmdb.org/${mediaType}/${data.id}`, icon: "tmdb_short.svg", page: "tmdb" },
@@ -920,8 +921,12 @@ function setUpModalActions(data, mediaType, season = null) {
           <i class="fa-solid fa-paper-plane"></i>
           Share
         </div>
+        <div class="item copy-name" tabindex="0" data-name="${name}">
+          <i class="fa-solid fa-text-width"></i>
+          Copy Name
+        </div>
         <div class="item copy-id" tabindex="0" data-id="${data.id}">
-          <i class="fa-solid fa-copy"></i>
+          <i class="fa-solid fa-hashtag"></i>
           Copy id
         </div>
         <a class="item" href="https://www.imdb.com/title/${imdb}/parentalguide/" target="_blank" rel="noopener nofollow noreferrer">
@@ -1406,11 +1411,17 @@ async function modalEventsHandler(event, data) {
 
     const menu = event.target.closest('.item-menu')
     if (menu) {
-      const copy = event.target.closest('.copy-id')
-      if (copy) {
+      const copy_id = event.target.closest('.copy-id')
+      const copy_name = event.target.closest('.copy-name')
+      const copy_data = copy_id?.dataset.id || copy_name?.dataset.name
+      if (copy_name || copy_id) {
         try {
-          await navigator.clipboard.writeText(copy.dataset.id)
-          toastMessage({el: copy, string: 'Copied TMDB ID to clipboard!', time: 3000})
+          await navigator.clipboard.writeText(copy_data)
+          toastMessage({
+            el: copy_name || copy_id,
+            string: `Copied ${copy_id ? 'TMDB ID' : 'name'} to clipboard!`,
+            time: 3000
+          })
           return
         } catch (e) {
           console.error(e)
@@ -2046,8 +2057,14 @@ function getConfirm({ title, message, success, decline, state = 1, exitInterval 
         </span>
       </div>
       <div class="dialog-buttons">
-        <button id="decline">Cancel</button>
-        <button id="accept"><i class="fa-solid fa-trash-can"></i>&nbsp;Delete</button>
+        <button id="decline" style="${dcln_btn?.style || ''}">
+          ${dcln_btn?.icon || '' }
+          ${dcln_btn?.text || "Cancel"}
+        </button>
+        <button id="accept" style="${acpt_btn?.style || ''}">
+          ${acpt_btn?.icon || '<i class="fa-solid fa-trash-can"></i>&nbsp;'}
+          ${acpt_btn?.text || "Delete"}
+        </button>
       </div>
     </div>
   `;
