@@ -2033,7 +2033,7 @@ function setUpScrollEvents() {
   });
 }
 
-function getConfirm({ title, message, success, decline, state = 1, exitInterval = 700 } = {}) {
+function getConfirm({ title, message, success, decline, state = 1, acpt_btn, dcln_btn, exitInterval = 700 } = {}) {
   let successIcon
   let declineIcon
   switch (state) {
