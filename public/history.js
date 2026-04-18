@@ -1,4 +1,5 @@
 const allowedKeys = new Set(['history','watching','bookmarks','DEF_SRC']);
+const dedupeKeys = new Set(['watching','bookmarks','DEF_SRC']);
 
 function getLogData(logType) {
   const jsonData = localStorage.getItem(logType);
@@ -477,7 +478,7 @@ async function loadUserContent(sectionId, logType) {
     fetchHistoryItems(section, sectionId, logData);
   }
   enableHorizontalWheelScroll(container, 5)
-  if ( sectionId === 'bookmarks' ) return 
+  
   setupScrollEdgeMask(container)
 }
 
