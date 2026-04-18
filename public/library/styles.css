@@ -196,15 +196,19 @@
     margin: 0 auto;
     max-width: 90%;
     border-radius: 18px;
-    --padding: 14px;
-    --spacing: 1;
+    --padding: 12px;
+    --spacing: 1.2;
 
     h2 {
-      font-size: 20px;
+      font-size: 18px;
+    }
+
+    p {
+      font-size: 13px;
     }
 
     button {
-      height: 30px;
+      height: 32px;
       font-size: 13px;
       border-radius: var(--border-radius1) !important;
     }
