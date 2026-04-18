@@ -123,9 +123,9 @@
     }
   }
 
-  .explore-card[data-type="anime-movies"] {
+  .explore-card[data-type="anime-movies"], .explore-card[data-title="studio-ghibli"] {
     img {
-      object-position: 0 -85px;
+      object-position: 0 -75px;
     }
   }
 
