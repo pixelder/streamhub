@@ -389,7 +389,7 @@
   .grid-item {
     height: var(--item-height) !important;
     /* max-width: calc((100dvw - 1.2rem - 0.72rem) / 3); */
-    /* min-width: 120px; */
+    min-width: 120px;
     max-width: unset;
     padding: 5px;
     border-radius: 8px;
@@ -612,15 +612,6 @@
       box-sizing: border-box;
     }
 
-    .button-container {
-      position: fixed;
-      bottom: 80px;
-      right: 1rem;
-      z-index: 2;
-      margin: unset;
-      transition: bottom 0.3s;
-    }
-
     .filter-button {
       box-shadow: 0 0 12px 4px #0d0d1bb7;
     }
@@ -711,6 +702,15 @@
       padding: 6px;
       font-size: 12px;
     }
+  }
+
+  .button-container {
+    position: fixed;
+    bottom: 80px;
+    right: 1rem;
+    z-index: 2;
+    margin: unset;
+    transition: bottom 0.3s;
   }
 
   .caution {

@@ -129,7 +129,7 @@
         <div class="actions">
         </div>
       </div>
-      <div class="grid-container loading vertical-card" tabindex="-1">
+      <div class="grid-container loading" tabindex="-1">
         <div class="filler">
             <div class="message">
               <div style="height: 100%; aspect-ratio: 1 / 1; mask: url(/assets/icons/bars-rotate-fade.svg) no-repeat center; background: var(--font-color3);"></div>
@@ -141,7 +141,7 @@
             <i class="fa-solid fa-book-bookmark"></i>
           </div>
           <div class="message">
-            <h4>No bookmarks yet</h4>
+            <h4>No Saves Yet</h4>
           </div>
         </div>
       </div>
@@ -154,23 +154,26 @@
         </div>
       </div>
     </div>
-    <div class="library-control button-container">
+    <div class="library-control button-container detach">
       <button id="control-menu-button">
-        <i class="fa-solid fa-plus"></i>
+        <i class="fa-solid fa-gear"></i>
       </button>
       <div class="control-modal modal">
         <div>
           <h2>Import & Export</h2>
-          <!-- <p>Export a .json file containing all data stored so far.</p> -->
         </div>
         <div class="import-export">
           <div class="import">
             <div>
               <h4>Import</h4>
               <p>Import data from a backup file.</p>
+              <label for="merge-option">
+                <input type="checkbox" id="merge-option" style="max-width: 16px;" checked>
+                <p>Merge existing data with import data.</p>
+              </label>
             </div>
             <button id="import">
-              <i class="fa-solid fa-download"></i>
+              <i class="fa-solid fa-file-import"></i>
             </button>
             <input type="file" id="import-file" accept=".json" hidden>
           </div>
@@ -180,9 +183,19 @@
               <p>Export a backup as a .json file.</p>
             </div>
             <button id="export">
-              <i class="fa-solid fa-upload"></i>
+              <i class="fa-solid fa-file-export"></i>
             </button>
           </div>
+        </div>
+        <div>
+          <h2>Erase data</h2>
+          <p>Warning: This action is irreversible.</p>
+        </div>
+        <div class="clear-all">
+          <button id="clear-all">
+            <i class="fa-solid fa-trash-can"></i>
+            Clear
+          </button>
         </div>
       </div>
     </div>

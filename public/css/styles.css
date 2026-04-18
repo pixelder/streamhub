@@ -1199,6 +1199,17 @@ body:has(.expandable.expanded) {
       font-size: 0.875rem;
     }
   }
+
+  .form-group.button-container.detach {
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    margin: 0 1.4rem 2rem 0;
+    z-index: 1;
+    display: grid;
+    gap: 8px;
+    justify-items: center;
+  }
 }
 
 .result-message.empty {
@@ -1393,15 +1404,6 @@ body:has(.expandable.expanded) {
 }
 
 .button-container.detach {
-  width: fit-content;
-  position: fixed;
-  bottom: 0;
-  right: 0;
-  margin: 0 1.4rem 2rem 0;
-  z-index: 1;
-  display: grid;
-  gap: 8px;
-  justify-items: center;
 
   button {
     box-shadow: 0 0 12px 4px #0d0d1bb7;
@@ -2063,7 +2065,7 @@ body:has(.filter-menu) {
   .item-container .checkbox-button {
     width: fit-content;
   }
-  
+
   .grid-item img {
     position: relative;
     z-index: inherit;

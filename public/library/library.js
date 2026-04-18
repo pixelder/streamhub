@@ -70,49 +70,132 @@ function exportBackup() {
   URL.revokeObjectURL(url);
 }
 
+function mergeByKey(existing = [], incoming = [], getKey) {
+  const map = new Map();
+
+  [...existing, ...incoming].forEach(item => {
+    map.set(getKey(item), item);
+  });
+
+  return [...map.values()];
+}
+
 function importBackup() {
   const fileInput = document.getElementById('import-file');
-  
+  const mergeEnabled =
+    document.getElementById('merge-option').checked;
+
   fileInput.click();
 
+  fileInput.onchange = null;
   fileInput.onchange = async (event) => {
     const file = event.target.files?.[0];
     if (!file) return;
 
     try {
       const text = await file.text();
-      console.log(file)
       const data = JSON.parse(text);
 
       if (typeof data !== 'object' || data === null) {
         throw new Error('Invalid backup file');
       }
 
-      await getConfirm({
+      const confirmed = await getConfirm({
         title: "Import this backup!",
-        message: "This will remove your existing data and replace it with the backup file.",
-        success: { title: "Backup Restored!", message: `Successfully restored backup from .` },
-        decline: { title: "Cancelled!", message: "Backup not applied." },
-        acpt_btn: {text: "Import", icon: `<i class="fa-solid fa-download"></i>&nbsp;`},
-        exitInterval: 2000 
-      }).then(confirmed => {
-        if (confirmed) {
-          localStorage.clear()
+        message: mergeEnabled
+          ? "This will merge backup data with your existing data."
+          : "This will remove your existing data and replace it with the backup file.",
+        success: {
+          title: "Backup Restored!",
+          message: `Successfully ${mergeEnabled ? 'merged' : 'restored'} backup from ${file.name}.`
+        },
+        decline: {
+          title: "Cancelled!",
+          message: "Backup not applied."
+        },
+        acpt_btn: {
+          text: "Import",
+          icon: `<i class="fa-solid fa-download"></i>&nbsp;`
+        },
+        exitInterval: 2000
+      });
 
-          Object.entries(data).forEach(([key, value]) => {
-            if (!allowedKeys.has(key)) return;
-    
-            localStorage.setItem(
-              key,
-              typeof value === 'string'
-                ? value
-                : JSON.stringify(value)
-            );
-          });
-          console.log('Backup imported successfully!');
-          location.reload()
-        } else throw new Error
-      })
+      if (!confirmed) return;
+
+      if (!mergeEnabled) {
+        localStorage.clear();
+      }
+
+      Object.entries(data).forEach(([key, value]) => {
+        if (!allowedKeys.has(key)) return;
+
+        let finalValue = value;
+
+        if (mergeEnabled) {
+          const existing = localStorage.getItem(key);
+
+          if (existing) {
+            try {
+              const parsedExisting = JSON.parse(existing);
+
+              if (Array.isArray(parsedExisting) && Array.isArray(value)) {
+                switch (key) {
+                  case 'watching':
+                    finalValue = mergeByKey(
+                      parsedExisting,
+                      value,
+                      item =>
+                        `${item?.id ?? ''}-${item?.mediaType ?? ''}-${item?.data?.sno ?? ''}-${item?.data?.eno ?? ''}`
+                    );
+                    break;
+
+                  case 'bookmarks':
+                    finalValue = mergeByKey(
+                      parsedExisting,
+                      value,
+                      item => `${item.id}-${item.mediaType}`
+                    );
+                    break;
+
+                  case 'DEF_SRC':
+                    finalValue = mergeByKey(
+                      parsedExisting,
+                      value,
+                      item => item.id
+                    );
+                    break;
+
+                  case 'history':
+                    finalValue = mergeByKey(
+                      parsedExisting,
+                      value,
+                      item => item?.index ?? Math.random()
+                    );
+                    break;
+
+                  default:
+                    finalValue = [...parsedExisting, ...value];
+                }
+              }
+            } catch (e) {
+              console.error(e);
+            }
+          }
+        }
+
+        localStorage.setItem(
+          key,
+          typeof finalValue === 'string'
+            ? finalValue
+            : JSON.stringify(finalValue)
+        );
+      });
+
+      console.log('Backup imported successfully!');
+      setTimeout(() => {
+        location.reload();
+      }, 1000);
+
     } catch (error) {
       console.error('Failed to import backup file.', error);
     }
@@ -126,6 +209,7 @@ function setUpLibraryControl() {
   const panel_btn = document.getElementById('control-menu-button');
   const exp = document.getElementById('export');
   const imp = document.getElementById('import');
+  const clear_btn = document.getElementById('clear-all')
   
   panel_btn.onclick = () => {
     panel.classList.toggle('show')
@@ -136,6 +220,22 @@ function setUpLibraryControl() {
   exp.onclick = exportBackup
 
   imp.onclick = importBackup
+
+  clear_btn.onclick = async () => {
+    const confirmed = await getConfirm({
+      message: "This will erase all your data.",
+      success: {title : 'Removed!', message : 'All data erased successfully.'},
+      decline: {title : 'Canceled!', message : 'Data not erased. '},
+      exitInterval: 2000
+    })
+
+    if (!confirmed) return
+
+    localStorage.clear()
+    setTimeout(() => {
+      location.reload();
+    }, 1000);
+  }
 
   document.body.onclick = (e) => {
     
