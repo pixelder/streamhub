@@ -1307,7 +1307,7 @@ async function modalEventsHandler(event, data) {
               <h4>S${season}:E${episode} ${epname}</h4>`;
         currentSeason = season;
         currentEpisode = episode;
-        const source = getLoggedSource(Number(id)) || 1;
+        const source = getLoggedValue("DEF_SRC", (Number(id))) || 1;
 
         setUpPlayer(source, mediaType, Number(id), Number(season), Number(episode));
 
