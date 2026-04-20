@@ -26,8 +26,23 @@ function globalAddEventListener (event) {
         event.stopPropagation();
       } else {
         console.log('toggling bookmark')
+        // const bookmark = event.target.closest('.bookmarks')
         event.target.closest('.grid-options')?.classList.toggle('open');
+        const manageBookmark = (mediaType, id) => {
+          document.querySelectorAll('.carousel .bookmark').forEach(item => {
+            if (item.dataset.id === id && item.dataset.mediaType === mediaType) {
+              try {
+                const checkbox = item.querySelector("input[type='checkbox']")
+                checkbox.checked = !checkbox.checked
+              } catch (e) {
+                console.error(e.message)
+              }
+            }
+          })
+        }
         toggleBookmark('bookmarks', id, mediaType, sno, eno, index);
+        manageBookmark(mediaType, id)
+        event.stopPropagation()
         if (section.id !== 'bookmarks') return 
         gridItem.remove()
       }

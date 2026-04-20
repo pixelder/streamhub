@@ -255,6 +255,62 @@
     min-height: calc(100% - 120px);
   }
 
+  #hero-carousel {
+    height: 70vh;
+    margin-bottom: -90px;
+  }
+
+  .slide-backdrop {
+    right: unset;
+    height: 60vh;
+    width: 100%;
+  }
+
+  .overlay {
+    position: fixed;
+    top: 0;
+    inset: 0;
+    background:
+      linear-gradient( to top,
+        var(--bg-color) 8%, 
+        rgba(0,0,0,0.4) 26%, 
+        rgba(0,0,0,0.1) 38%
+      );
+    height: 65vh;
+    pointer-events: none;
+  }
+
+  .content {
+    left: unset;
+    bottom: 132px;
+    right: 50%;
+    translate: 50% 0%;
+    justify-items: center;
+    max-width: unset;
+  }
+
+  .content p {
+    font-size: 14px;
+    width: 80vw;
+  }
+
+  .buttons button {
+    font-size: 14px;
+    height: 36px;
+    width: 100px;
+  }
+
+  .controls {
+    bottom: 100px;
+    right: 50%;
+    translate: 50% 50%;
+    width: 96%; 
+  }
+
+  .controls button {
+    translate: 0 -30vh;
+  }
+
   section {
     max-width: 100%;
     padding: 4px 10px;

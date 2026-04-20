@@ -1963,18 +1963,24 @@ function setUpScrollEvents() {
   let lastScrollY = document.body.scrollTop;
   let isScrollingDown = false;
   let hideTimeout, showTimeout;
+  const header = document.querySelector('#top-bar') || '';
+  const bottomBar = document.querySelector('#bottom-bar') || '';
+
+  const overlayAnim = (value) => {
+    document.querySelectorAll('.slide-backdrop').forEach(img => {
+      img.style.opacity = 1 - Math.min(value / 300, 1);
+    }) 
+  }
   
   document.body.addEventListener('scroll', () => {
-    
-    if (document.querySelector('.expandable.expanded')) return
- 
-    const header = document.querySelector('#top-bar');
-    const bottomBar = document.querySelector('#bottom-bar');
+
     const scrolled = document.body.scrollTop;
 
+    if (document.querySelector('.expandable.expanded')) return
+    
     const threshold = 56; //px
-    let end = document.body.clientHeight + scrolled + 16 >= document.body.scrollHeight;
     let top = scrolled <= threshold;
+    let bottom = document.body.clientHeight + scrolled + 16 >= document.body.scrollHeight;
     let infScrolling = false;
 
     if (top) {
@@ -1999,7 +2005,7 @@ function setUpScrollEvents() {
       }
     }
 
-    if (end) {
+    if (bottom) {
       infScroll()
       if (infScrolling) return
       clearTimeout(hideTimeout);
@@ -2011,6 +2017,7 @@ function setUpScrollEvents() {
 
 
     if (scrolled > lastScrollY) {
+      overlayAnim(scrolled)
       if (!isScrollingDown && !hidden) {
         infScroll()
         isScrollingDown = true;
@@ -2021,6 +2028,7 @@ function setUpScrollEvents() {
       }
     }
     if (scrolled <= lastScrollY) {
+      overlayAnim(scrolled)
       isScrollingDown = false;
       clearTimeout(hideTimeout); // Cancel any pending hide
       if (hidden) {

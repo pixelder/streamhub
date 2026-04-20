@@ -19,13 +19,14 @@ body:has(#top-bar.hidden, #top-bar.detach) {
 /* Navbar */
 #top-bar {
   /* top: 0%; */
+  position: relative;
   width: 100%;
   height: 4rem;
   padding: 0;
   margin: 0;
   z-index: 3;
   background-color: #0d0d1b;/* cc */
-  border-block-end: solid 1px #ffffff1a;
+  border-block-end: 1px solid #ffffff1a;
   transition: height 0.1s, padding 0.15s, border-block-end 0.15s, backdrop-filter 0.15s ease-in-out;
 }
 
@@ -40,11 +41,11 @@ body:has(#top-bar.hidden, #top-bar.detach) {
   position: fixed;
   /* top: -100%; */
   /* height: 56px; */
-  backdrop-filter: blur(3px);
+  backdrop-filter: blur(1px);
   background: linear-gradient(180deg,#090a15,#090a1580);
-  /* background: linear-gradient(180deg,#090a15f1,#090a15bd 70%,#090a158f); */
   box-shadow: 0 0 15px 5px var(--bg-color);
   height: 56px;
+  border-block-end-color: #ffffff1a;
 
   ul {
     padding: 0.4rem 1.4rem;
@@ -152,6 +153,12 @@ body:has(#top-bar.hidden, #top-bar.detach) {
   }
 }
 
+body:has(.carousel) #top-bar:not(.detach) {
+  background: linear-gradient(180deg,#090a15,#090a1500 );
+  backdrop-filter: blur(1px);
+  border-block-end: unset;
+  border-block-end-color: transparent;
+}
 
 /* Search Bar Styling */
 .search-bar {
@@ -265,6 +272,184 @@ main {
   display: flex;
   flex-direction: column;
   align-items: center;
+}
+
+section:not(#hero-carousel) {
+  z-index: 1;
+}
+
+#hero-carousel {
+  position: relative;
+  padding: unset;
+  height: 80vh;
+  margin-bottom: -60px;
+  /* z-index: -1; */
+}
+
+.carousel {
+  height: 100%;
+  width: 100%;
+  position: relative;
+}
+
+.slide {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  transition: opacity 0.35s ease;
+}
+
+.slide.active {
+  opacity: 1;
+  z-index: 1;
+}
+
+.slide-backdrop {
+  height: 100vh;
+  object-fit: cover;
+  position: fixed;
+  top: 0;
+  right: 0;
+  pointer-events: none;
+}
+
+.slide .logo {
+  position: relative;
+  width: 65%;
+  object-fit: contain;
+  height: unset;
+}
+
+/* 🔥 Gradient overlay */
+.overlay {
+  position: fixed;
+  top: 0;
+  inset: 0;
+  background:
+    linear-gradient( to top,
+      #0d0d1b 8%,
+      #0d0d1b66 26%,
+      #0d0d1b00 38%
+    ),
+    linear-gradient( to right,
+      #0d0d1b 8%,
+      #0d0d1bcc 17%,
+      #0d0d1b66 35%,
+      #0d0d1b00 49%
+  );
+  height: 100vh;
+  pointer-events: none;
+}
+
+/* Content */
+.content {
+  position: absolute;
+  bottom: 70px;
+  left: 3.2rem;
+  max-width: 400px;
+  display: grid;
+  gap: 12px;
+}
+
+.content h1 {
+  font-size: 2.4rem;
+}
+
+.content p {
+  font-size: 1rem;
+}
+
+.content .overview {
+  mask-image: unset !important;
+}
+
+/* Buttons */
+.buttons {
+  display: flex;
+  gap: 12px;
+}
+
+.buttons button {
+  font-weight: 600;
+  height: 42px;
+  width: 132px;
+  border-radius: var(--border-radius1);
+  box-sizing: border-box;
+}
+
+.play {
+  background: var(--font-color1);
+  color: var(--bg-color);
+}
+
+.detail {
+  background: var(--color3);
+  border: 1px solid var(--color1);}
+
+/* Controls */
+.controls {
+  position: absolute;
+  bottom: 70px;
+  right: 1.4rem;
+  width: min-content;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  z-index: 2;
+}
+
+/* Arrows */
+.controls button {
+  height: 36px;
+  aspect-ratio: 1/1;
+  background: var(--color3);
+  border-radius: 50%;
+  box-shadow: 0 0 6px 0px var(--color5);
+  transition: background 0.2s;
+}
+
+.controls button:hover {
+  background: var(--color1);
+}
+
+/* Dots container */
+.dots {
+  display: flex;
+  gap: 6px;
+}
+
+/* Individual dot */
+.dot {
+  width: 6px;
+  height: 6px;
+  background: rgba(255,255,255,0.4);
+  border-radius: 3px;
+  cursor: pointer;
+  overflow: hidden;
+  transition: width 0.35s cubic-bezier(0.68,-0.55,0.27,1.55);
+
+  .dot-fill {
+    border-radius: inherit;
+    width: 0;
+    height: 100%;
+  }
+}
+
+/* Active dot */
+.dot.active {
+  width: 30px;
+
+  .dot-fill {
+    background: var(--font-color1);
+    animation: fillDot 5s cubic-bezier(0.2,0.25,1,0.4) forwards;
+  }
+}
+
+@keyframes fillDot {
+  from { width: 0%; }
+  to { width: 100%; }
 }
 
 section {
