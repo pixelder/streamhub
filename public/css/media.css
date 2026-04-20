@@ -702,6 +702,15 @@
       padding: 6px;
       font-size: 12px;
     }
+
+    .form-group.button-container {
+      position: fixed;
+    }
+
+    .form-group.button-container.detach {
+      margin: unset;
+      right: 1rem;
+    }
   }
 
   .button-container {
