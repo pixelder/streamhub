@@ -271,11 +271,11 @@
     top: 0;
     inset: 0;
     background:
-      linear-gradient( to top,
-        #0d0d1b 2%, 
-        #0d0d1b66 20%, 
-        #0d0d1b1a 38%
-      );
+      linear-gradient( to top, 
+      #0d0d1b 3%, 
+      #0d0d1b66 45%, 
+      #0d0d1b00 60%
+    );
     height: 65vh;
     pointer-events: none;
   }
@@ -284,9 +284,13 @@
     left: unset;
     bottom: 132px;
     right: 50%;
-    translate: 50% 0%;
+    translate: 50% 12%;
     justify-items: center;
     max-width: unset;
+  }
+
+  .slide.active .content {
+    translate: 50% 0%;
   }
 
   .content p {
