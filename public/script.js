@@ -240,14 +240,23 @@ document.addEventListener('DOMContentLoaded', () => {
 
 async function getCarouselData(seed = Date.now()) {
   const URL = BASE_URL + '/trending/all/week?api_key=' + API_KEY
-  const data = await fetchFromURL(URL);
+  const data = await Promise.all(
+    nthNaturalArray(1).map(async (page) => {
+    const data = await fetchFromURL(URL + '&page=' + page)
+    return data.results
+  }))
 
-  let items = data.results
+  let items = data.flat()
     .filter(item => item.backdrop_path) // critical
+    .filter(item => {
+      const releaseDate = new ReleaseDate(item.release_date || item.first_air_date)
+      if (!releaseDate?.isUpcoming()) return item
+    })
+    .slice(0, 10)
     .sort((a, b) => b.popularity - a.popularity)
-    .slice(0, 10);
-
-  shuffleWithSeed(items, mulberry32(seed));
+  ;
+  items = shuffleWithSeed(items, mulberry32(seed));
+  console.log(items)
   return items;
 }
 
@@ -265,6 +274,7 @@ function shuffleWithSeed(arr, rand) {
     const j = Math.floor(rand() * (i + 1));
     [arr[i], arr[j]] = [arr[j], arr[i]];
   }
+  return arr
 }
 
 async function getLogo(type, id) {
