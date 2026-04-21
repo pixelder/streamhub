@@ -262,7 +262,7 @@
 
   .slide-backdrop {
     right: unset;
-    height: 60vh;
+    height: 65vh;
     width: 100%;
   }
 
@@ -272,9 +272,9 @@
     inset: 0;
     background:
       linear-gradient( to top,
-        var(--bg-color) 8%, 
-        rgba(0,0,0,0.4) 26%, 
-        rgba(0,0,0,0.1) 38%
+        #0d0d1b 2%, 
+        #0d0d1b66 20%, 
+        #0d0d1b1a 38%
       );
     height: 65vh;
     pointer-events: none;

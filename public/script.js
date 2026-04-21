@@ -294,62 +294,72 @@ async function enrichWithLogos(items) {
   return Promise.all(promises);
 }
 
+function buildSlides(container, item, i) {
+  const slide = document.createElement('div')
+  slide.className = `slide ${i === 0 ? "active" : ""}`;
+  slide.dataset.index = i;
+  const title = item.title || item.name;
+  const mediaType = item.media_type;
+  const bookmark = logExists('bookmarks', item.id, mediaType);
+
+  slide.innerHTML = 
+     `<img class="slide-backdrop" src="${IMAGE_ORG}${item.backdrop_path}" />            
+      <div class="overlay"></div>
+      <div class="content">
+        ${item.logo
+            ? `<img class="logo" src="${item.logo}" />`
+            : `<h1>${title}</h1>`
+        }
+        <div class="synopsis">
+          <p class="overview">${item.overview || "No description available"}</p>
+        </div>
+        <div class="buttons" data-type="${mediaType}" data-id="${item.id}" data-name="${title}">
+          <button class="play">
+            <i class="fa-solid fa-play"></i> Play
+          </button>
+          <button class="detail">
+            <i class="fa-solid fa-square-arrow-up-right"></i> Details
+          </button>
+          <label tabindex="0" for="bookmarkbox" class="selectable active bookmark" title="bookmark" data-id="${item.id}" data-media-type="${mediaType}">
+            <input type="checkbox" id="bookmarkbox" ${bookmark ? 'checked' : ''}>
+            <span class="checkbox-button">
+              <i class="options-icon fa-regular fa-bookmark active"></i>
+              <i class="options-x-icon fa-solid fa-bookmark passive"></i>
+            </span>
+          </label>
+        </div>
+      </div>
+    `;
+  container.append(slide)
+}
+
+
 function renderCarousel(items) {
   const container = document.getElementById("hero-carousel");
   
   container.innerHTML = `
     <div class="carousel">
-      ${items.map((item, i) => {
-        const title = item.title || item.name;
-        const mediaType = item.media_type;
-        const bookmark = logExists('bookmarks', item.id, mediaType);
-
-        return `
-          <div class="slide ${i === 0 ? "active" : ""}" data-index="${i}">
-            <img class="slide-backdrop" src="${IMAGE_ORG}${item.backdrop_path}" />            
-            <div class="overlay"></div>
-            <div class="content">
-              ${item.logo
-                  ? `<img class="logo" src="${item.logo}" />`
-                  : `<h1>${title}</h1>`
-              }
-              <div class="synopsis">
-                <p class="overview">${item.overview || "No description available"}</p>
-              </div>
-              <div class="buttons" data-type="${mediaType}" data-id="${item.id}" data-name="${title}">
-                <button class="play">
-                  <i class="fa-solid fa-play"></i> Play
-                </button>
-                <button class="detail">
-                  <i class="fa-solid fa-square-arrow-up-right"></i> Details
-                </button>
-                <label tabindex="0" for="bookmarkbox" class="selectable active bookmark" title="bookmark" data-id="${item.id}" data-media-type="${mediaType}">
-                  <input type="checkbox" id="bookmarkbox" ${bookmark ? 'checked' : ''}>
-                  <span class="checkbox-button">
-                    <i class="options-icon fa-regular fa-bookmark active"></i>
-                    <i class="options-x-icon fa-solid fa-bookmark passive"></i>
-                  </span>
-                </label>
-              </div>
-            </div>
-          </div>
-        `;
-      }).join("")}
-
+      <div class="slides"></div>
       <div class="controls">
         <button id="prev"><i class="fa-solid fa-angle-left"></i></button>
         <div class="dots">
-          ${items.map((_, i) => `
-            <span class="dot ${i === 0 ? "active" : ""}" data-index="${i}">
-              <div class="dot-fill"></div>
-            </span>
-          `).join("")}
         </div>
         <button id="next"><i class="fa-solid fa-angle-right"></i></button>
       </div>
     </div>
   `;
 
+  const slide_container = document.querySelector('.slides')
+  items.map(async (item, i) => { 
+    buildSlides(slide_container, item, i)
+  })
+  const dots = document.querySelector('.dots')
+  dots.innerHTML = ` ${items.map((_, i) => `
+    <span class="dot ${i === 0 ? "active" : ""}" data-index="${i}">
+      <div class="dot-fill"></div>
+    </span>
+  `).join("")} `
+  
   initCarousel();
 }
 

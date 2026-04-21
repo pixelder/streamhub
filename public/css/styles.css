@@ -41,7 +41,7 @@ body:has(#top-bar.hidden, #top-bar.detach) {
   position: fixed;
   /* top: -100%; */
   /* height: 56px; */
-  backdrop-filter: blur(1px);
+  backdrop-filter: blur(3px);
   background: linear-gradient(180deg,#090a15,#090a1580);
   box-shadow: 0 0 15px 5px var(--bg-color);
   height: 56px;
