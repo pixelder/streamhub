@@ -191,6 +191,7 @@ async function checkEndofResults (url) {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+  document.body.scrollTo(0,0)
 
   async function loadHomePage() {
     loadUserContent('continue-watching','watching');

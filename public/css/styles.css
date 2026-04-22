@@ -440,7 +440,6 @@ section:not(#hero-carousel) {
 
   .dot-fill {
     border-radius: inherit;
-    width: 0;
     height: 100%;
   }
 }
@@ -451,12 +450,12 @@ section:not(#hero-carousel) {
 
   .dot-fill {
     background: var(--font-color1);
-    animation: fillDot 5s cubic-bezier(0.2,0.25,1,0.4) forwards;
+    animation: fillDot 5s cubic-bezier(0.2,0.35,0.8,0.5) forwards;
   }
 }
 
 @keyframes fillDot {
-  from { width: 0%; }
+  from { width: 6px; }
   to { width: 100%; }
 }
 
