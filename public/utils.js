@@ -1058,14 +1058,25 @@ async function markItemAs(type, item, section = null) {
   }
 }
 
+async function seasonResolver(data, sno) {
+  if (sno) return Number(sno)
+  const max_season = data.number_of_seasons
+  const ep_exists = (count) => data.seasons[count].episode_count
+  if (ep_exists(max_season)) return max_season
+  for (let i = max_season; i > 0; i--) {
+    if (!ep_exists(i)) { 
+      continue
+    } else return i
+  }
+}
+
 async function tvContent(data, sno, eno, ref) {
   const id = data.id;
   const backdrop = data.backdrop_path
   const seasons = [...data.seasons].sort((a, b) => a.season_number - b.season_number).reverse();
   const containerClass = ref === "modal" ? "episode-wrap" : "episode-player";
-  const season = sno || data.number_of_seasons || data.seasons?.at(0)?.season_number
-  sno = sno ?? -1
-  const { data: seasonData } = await fetchMetaData({mediaType : 'tv', id, season});
+  const SEASON = await seasonResolver(data, sno) || data.seasons?.at(0)?.season_number
+  const { data: seasonData } = await fetchMetaData({mediaType : 'tv', id, season : SEASON});
   localStorage.setItem('seasonData', JSON.stringify(seasonData));
 
   const buildEpisodeHTML = (episode, season, count) => {
@@ -1120,8 +1131,8 @@ async function tvContent(data, sno, eno, ref) {
       <div class="seasons-menu">
         <select tabindex="0" id="season-dropdown">
           ${seasons.map(season => `
-            <option value="${season.season_number}" ${season.season_number === Number(sno) ? "selected" : ""}>
-              Season ${season.season_number}
+            <option value="${season.season_number}" ${season.season_number === SEASON ? "selected" : ""}>
+              ${!season.season_number ? 'Specials' : `Season ${season.season_number}` }
             </option>`).join("")}
         </select>
       </div>
@@ -1133,7 +1144,7 @@ async function tvContent(data, sno, eno, ref) {
 
   const populateEpisodes = async function (container, data, season) {
     container.innerHTML = "";
-    if (!data.episodes.length) {
+    if (!data.episodes?.length) {
       const errDiv = document.createElement("div");
       errDiv.className = "ep-error";
       errDiv.innerHTML = `
@@ -1154,7 +1165,7 @@ async function tvContent(data, sno, eno, ref) {
   if (ref === "modal") {
     document.querySelector("#modal-details").innerHTML += tvInfo;
     const episodeContainer = document.getElementById('episode-container')
-    populateEpisodes(episodeContainer, seasonData, season)
+    populateEpisodes(episodeContainer, seasonData, SEASON)
   } else {
     const epName = seasonData.episodes.find(episode => episode.episode_number === Number(eno))?.name
     const title = `S${sno}:E${eno} ${epName || ""}`
@@ -1164,7 +1175,7 @@ async function tvContent(data, sno, eno, ref) {
     const episodeContainer = document.getElementById('episode-container')
     episodeContainer.classList.add('player-styling');
 
-    populateEpisodes(episodeContainer, seasonData, season)
+    populateEpisodes(episodeContainer, seasonData, SEASON)
 
     whenInView('.player-styling', () => scrollEpisodeIntoView(eno));
     enableHorizontalWheelScroll(episodeContainer, 3);
@@ -1191,7 +1202,7 @@ async function tvContent(data, sno, eno, ref) {
     }
   })
 
-  return season
+  return SEASON
 }
 
 async function modalEventsHandler(event, data) {
@@ -1968,7 +1979,7 @@ function setUpScrollEvents() {
 
   const overlayAnim = (value) => {
     document.querySelectorAll('.slide-backdrop').forEach(img => {
-      img.style.opacity = 1 - Math.min(value / 300, 1);
+      img.style.opacity = 1 - Math.min(value / 350, 1);
     }) 
   }
   
