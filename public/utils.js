@@ -1076,13 +1076,11 @@ async function seasonResolver(data, sno) {
 }
 
 async function tvContent(data, sno, eno, ref) {
-  console.log(data)
   const id = data.id;
   const backdrop = data.backdrop_path
   const seasons = [...data.seasons].sort((a, b) => a.season_number - b.season_number).reverse();
   const containerClass = ref === "modal" ? "episode-wrap" : "episode-player";
   const SEASON = await seasonResolver(data, sno) || data.seasons?.at(0)?.season_number
-  console.log(SEASON)
   const { data: seasonData } = await fetchMetaData({mediaType : 'tv', id, season : SEASON});
   localStorage.setItem('seasonData', JSON.stringify(seasonData));
 
