@@ -1061,7 +1061,12 @@ async function markItemAs(type, item, section = null) {
 async function seasonResolver(data, sno) {
   if (sno) return Number(sno)
   const max_season = data.number_of_seasons
-  const ep_exists = (count) => data.seasons[count].episode_count
+  const ep_exists = (count) => {
+    const ep_count = data.seasons
+      .find(s => s.season_number === count)
+      .episode_count
+    return ep_count
+  }
   if (ep_exists(max_season)) return max_season
   for (let i = max_season; i > 0; i--) {
     if (!ep_exists(i)) { 
@@ -1071,11 +1076,13 @@ async function seasonResolver(data, sno) {
 }
 
 async function tvContent(data, sno, eno, ref) {
+  console.log(data)
   const id = data.id;
   const backdrop = data.backdrop_path
   const seasons = [...data.seasons].sort((a, b) => a.season_number - b.season_number).reverse();
   const containerClass = ref === "modal" ? "episode-wrap" : "episode-player";
   const SEASON = await seasonResolver(data, sno) || data.seasons?.at(0)?.season_number
+  console.log(SEASON)
   const { data: seasonData } = await fetchMetaData({mediaType : 'tv', id, season : SEASON});
   localStorage.setItem('seasonData', JSON.stringify(seasonData));
 
