@@ -257,7 +257,6 @@ async function getCarouselData(seed = Date.now()) {
     .sort((a, b) => b.popularity - a.popularity)
   ;
   items = shuffleWithSeed(items, mulberry32(seed));
-  console.log(items)
   return items;
 }
 
