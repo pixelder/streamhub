@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Figtree:ital,wght@0,300..900;1,300..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Figtree:ital,wght@0,300..900;1,300..900&family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300;1,400;1,500&display=swap');
 @import url('https://fonts.cdnfonts.com/css/reverie');
 
 
@@ -24,7 +24,7 @@ body:has(#top-bar.hidden, #top-bar.detach) {
   height: 4rem;
   padding: 0;
   margin: 0;
-  z-index: 3;
+  z-index: 2;
   background-color: #0d0d1b;/* cc */
   border-block-end: 1px solid #ffffff1a;
   transition: height 0.1s, padding 0.15s, border-block-end 0.15s, backdrop-filter 0.15s ease-in-out;
@@ -405,7 +405,7 @@ section:not(#hero-carousel) {
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  z-index: 2;
+  z-index: 1;
 }
 
 /* Arrows */
@@ -426,32 +426,33 @@ section:not(#hero-carousel) {
 .dots {
   display: flex;
   gap: 6px;
-}
 
-/* Individual dot */
-.dot {
-  width: 6px;
-  height: 6px;
-  background: rgba(255,255,255,0.4);
-  border-radius: 3px;
-  cursor: pointer;
-  overflow: hidden;
-  transition: width 0.35s cubic-bezier(0.68,-0.55,0.27,1.55);
-
-  .dot-fill {
-    border-radius: inherit;
-    height: 100%;
+  /* Individual dot */
+  .dot {
+    width: 6px;
+    height: 6px;
+    background: rgb(200, 200, 208,0.3);
+    border-radius: 3px;
+    cursor: pointer;
+    overflow: hidden;
+    transition: width 0.35s cubic-bezier(0.68,-0.55,0.27,1.55);
+  
+    .dot-fill {
+      border-radius: inherit;
+      height: 100%;
+    }
   }
-}
 
-/* Active dot */
-.dot.active {
-  width: 30px;
-
-  .dot-fill {
-    background: var(--font-color1);
-    animation: fillDot 5s cubic-bezier(0.2,0.35,0.8,0.5) forwards;
+  /* Active dot */
+  .dot.active {
+    width: 30px;
+  
+    .dot-fill {
+      background: var(--font-color1);
+      animation: fillDot 5s cubic-bezier(0.2,0.35,0.8,0.5) forwards;
+    }
   }
+
 }
 
 @keyframes fillDot {

@@ -315,6 +315,19 @@
     translate: 0 -30vh;
   }
 
+  .dots {
+    gap: 5px;
+
+    .dot {
+      width: 5px;
+      height: 5px;
+    }
+
+    .dot.active {
+      width: 36px;
+    }
+  }
+
   section {
     max-width: 100%;
     padding: 4px 10px;
