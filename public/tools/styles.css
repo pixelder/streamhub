@@ -197,7 +197,7 @@ section {
     border-radius: 8px;
     background: #141421;
     overflow: hidden;
-    font: normal 600 12px 'Jetbrains Mono', monospace;
+    font: normal 600 12px 'DM Mono', monospace;
     text-shadow: none;
     animation: fadeIn 0.2s;
   }
@@ -266,7 +266,7 @@ pre {
   overflow-x: auto;
   border-radius: 18px;
   font-size: 12px;
-  font-family: "Jetbrains Mono", monospace;
+  font-family: "DM Mono", monospace;
   line-break: anywhere;
   white-space: break-spaces;
 }
@@ -363,7 +363,7 @@ pre {
   display: flex;
   /* font-size: 12px; */
   color: var(--font-color2);
-  font: normal 600 12px 'Jetbrains Mono';
+  font: normal 600 12px 'DM Mono';
   gap: 3px;
 }
 
@@ -579,7 +579,7 @@ pre {
 
   .file-flags {
     gap: 3px;
-    font: normal 600 10px 'Jetbrains Mono';
+    font: normal 600 10px 'DM Mono';
   }
 
   .file-cell {
