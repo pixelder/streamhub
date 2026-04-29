@@ -23,7 +23,7 @@
     min-height: unset;
     margin: 0;
     padding: var(--padding1);
-    border: 1px solid var(--color3);
+    border: 1px solid var(--border-color);
     border-radius: var(--border-radius1);
     flex-wrap: wrap;
     flex: 1;
@@ -88,7 +88,7 @@
   max-width: 100%;
   padding: var(--padding1);
   overflow: hidden;
-  border: 1px solid var(--color3);
+  border: 1px solid var(--border-color);
   border-radius: var(--border-radius1);
   background-color: var(--color5);
   transition: scale 0.3s, box-shadow 0.3s, border 0.3s;
@@ -98,7 +98,7 @@
 .profile-item:hover {
   scale: 0.95;
   box-shadow: 0 6px 15px rgb(8, 8, 22);
-  border: 1px solid #383852e5;
+  border: 1px solid var(--border-color);
   cursor: pointer;
 }
 

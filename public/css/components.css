@@ -34,13 +34,13 @@ input[type="range"] {
 }
 
 input[type="range"]:focus-visible {
-  border-color: var(--color1) !important;
+  border-color: var(--border-color) !important;
 }
 
 input[type="range"]::-moz-range-thumb {
   width: 12px;
   height: 24px;
-  border: 1px solid var(--color1);
+  border: 1px solid var(--border-color);
   border-radius: var(--border-radius2);
   background: var(--color5);
   transition: filter 0.2s;
@@ -55,7 +55,7 @@ input[type="range"]::-webkit-slider-thumb {
   appearance: none;
   width: 12px;
   height: 24px;
-  border: 1px solid var(--color1);
+  border: 1px solid var(--border-color);
   border-radius: var(--border-radius2);
   background: var(--color5);
   transition: filter 0.2s;
@@ -78,7 +78,7 @@ select {
   padding-right: 30px;
   font-size: 14px;
   text-wrap: nowrap;
-  border: 1px solid var(--color1);
+  border: 1px solid var(--border-color);
   border-radius: var(--border-radius1);
   cursor: pointer;
   display: flex;
@@ -172,7 +172,7 @@ body:has(.dialog) {
   gap: calc(var(--padding1) * var(--spacing));
   justify-items: center;
   padding: calc(var(--padding1) * var(--spacing));
-  border: 1px solid var(--color2);
+  border: 1px solid var(--border-color);
   border-radius: 24px;
   background: var(--bg-color);
   text-shadow: none;
