@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Page Not Found</title>
+  <%- include('partials/head') %>
+</head>
+<script defer>
+
+  document.addEventListener("DOMContentLoaded", () => {
+      topNavBar()
+      bottomNavBar()
+  });
+    
+</script>
+<style>
+  /* Reset basic layout */
+
+  /* Main container */
+  .page {
+    display: grid;
+    place-items: center;
+    background-image: url('https://image.tmdb.org/t/p/original/3nv2TEz2u178xPXzdKlZdUh5uOI.jpg');
+    background-size: cover;
+    background-position: center;
+  }
+
+  /* Inner content */
+  .container {
+    width: 100%;
+    height: 100%;
+    text-align: center;
+    display: grid;
+    place-content: center;
+    backdrop-filter: brightness(0.4);
+  }
+
+  /* 404 label */
+  .code {
+    font-size: 16px;
+    font-weight: 600;
+    color: #818cf8;
+  }
+
+  /* Title */
+  .title {
+    margin-top: 16px;
+    font-size: 48px;
+    font-weight: 600;
+    color: #ffffff;
+    letter-spacing: -0.02em;
+  }
+
+  /* Larger screens */
+  @media (min-width: 640px) {
+    .title {
+      font-size: 72px;
+    }
+  }
+
+  /* Description */
+  .description {
+    margin-top: 24px;
+    font-size: 18px;
+    font-weight: 500;
+    color: #9ca3af; /* gray-400 */
+  }
+
+  /* Buttons container */
+  .actions-404 {
+    margin-top: 40px;
+    display: flex;
+    justify-content: center;
+    gap: 24px;
+    align-items: center;
+  }
+
+  /* Primary button */
+  .btn-primary {
+    background-color: var(--color5);
+    color: var(--font-color1);
+    padding: 10px 14px;
+    font-size: 14px;
+    font-weight: 600;
+    border-radius: 6px;
+    text-decoration: none;
+    transition: background 0.2s ease;
+  }
+
+  .btn-primary:hover {
+    background-color: var(--color3); /* indigo-400 */
+  }
+
+  .btn-primary span {
+    margin-right: 4px;
+  }
+</style>
+<body>
+  <nav id="top-bar"></nav>
+	<main class="page">
+    <div class="container">
+      <p class="code">404</p>
+
+      <h1 class="title">
+        Page not found
+      </h1>
+
+      <p class="description">
+        Sorry, we couldn’t find the page you’re looking for.
+      </p>
+
+      <div class="actions-404">
+        <a href="/" class="btn-primary"><span>&larr;</span> Go back home</a>
+      </div>
+    </div>
+  </main>
+	<nav id="bottom-bar"></nav>
+
+</body>
+
+</html>
