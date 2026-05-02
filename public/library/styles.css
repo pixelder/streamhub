@@ -146,9 +146,9 @@
   .grid-container:not(:has(.grid-item)) {
     height: 280px;
   }
-  .grid-item.placeholder {
+  /* .grid-item.placeholder {
     aspect-ratio: 1 / 1.64;
-  }
+  } */
 }
 
 #history .grid-container:not(:has(.grid-item)) {

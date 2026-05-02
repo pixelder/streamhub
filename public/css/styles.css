@@ -1964,7 +1964,7 @@ body:has(.expandable.expanded) {
         max-width: 36%;
         height: 100%;
         border: 1px solid var(--border-color);
-        border-radius: 6px;
+        border-radius: var(--border-radius2);
         overflow: hidden;
         display: flex;
       }
