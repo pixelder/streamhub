@@ -347,7 +347,6 @@ function openModal(data, nav = null) {
   const id = data?.id;
   const mediaType = data?.mediaType /*  ?? data?.closest('section')?.dataset?.type; */
   const credits = mediaType === 'person' ? 'combined_credits' : null;
-  console.log(mediaType, id)
   if (data && !mediaType || !id) {
     console.error("Media type or ID not found");
     return;
@@ -1222,11 +1221,10 @@ async function modalEventsHandler(event, data) {
       );
 
       const { id, name } = sanitizedData
-      console.log(id, name)
       const mediaType = "movie";
 
       //loadWatchPage(mediaType, name, id);
-      window.location.href = `/watch/${mediaType}/${Number(id)}/${name}`;
+      window.location.href = `/watch/${mediaType}/${id}}`;
       event.stopPropagation();
     }
 
@@ -1312,11 +1310,13 @@ async function modalEventsHandler(event, data) {
       const mediaType = "tv";
 
       const { name, id, season, episode, epname } = sanitizedData;
+
       //console.log( id, season, episode)
       //sourceValidator(mediaType, id, season, episode)
 
-      const title = `${mediaType === "movie" ? name : `S${season}:E${episode} ${name}`}`;
+      const title = `S${season}:E${episode} ${name}`;
       const tvData = { season, episode, epname };
+      const url = `/watch/${mediaType}/${id}/${season}/${episode}`
 
       if (document.getElementById('episode-container').classList.contains('player-styling')) {
         const info = `<h2>${name}</h2>
@@ -1327,14 +1327,14 @@ async function modalEventsHandler(event, data) {
 
         setUpPlayer(source, mediaType, Number(id), Number(season), Number(episode));
 
-        window.history.pushState({}, '', `/watch/${mediaType}/${Number(id)}/${name}${season && episode ? `/${Number(season)}/${Number(episode)}` : ''}`);
+        window.history.pushState({}, '', url);
         document.querySelector("title").innerText = title;
         if (info) { document.querySelector(".now-playing").innerHTML = info };
 
         scrollEpisodeIntoView(episode);
       }
       else {
-        window.location.href = `/watch/${mediaType}/${id}/${name}${season && episode ? `/${season}/${episode}` : ''}`;
+        window.location.href = url;
         //loadWatchPage(mediaType, name, id, tvData);
       }
       event.stopPropagation();

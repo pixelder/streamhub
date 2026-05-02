@@ -147,7 +147,7 @@ function pageHTML(mediaType) {
   `;
 }
 
-async function loadWatchPage(mediaType, NAME = null, id, tvData = null) {
+async function loadWatchPage(mediaType, id, tvData = null) {
   //console.log('loading watchpage')
   const season = tvData?.season;
   const episode = tvData?.episode;
@@ -173,7 +173,7 @@ async function loadWatchPage(mediaType, NAME = null, id, tvData = null) {
   document.querySelector("title").innerText = title;
   document.querySelector(".now-playing").innerHTML = info;
   localStorage.setItem('current-media-title', name);
-  history.replaceState('', '', `/watch/${mediaType}/${id}/${name}${mediaType === 'tv' ? `/${season}/${episode}` : ''}`)
+  history.replaceState('', '', `/watch/${mediaType}/${id}${mediaType === 'tv' ? `/${season}/${episode}` : ''}`)
 
   if (mediaType == 'tv') {
     tvContent(data, season, episode, ref = "player")

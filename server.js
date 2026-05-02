@@ -22,18 +22,23 @@ app.get('/search', async (req, res) => {
 });
 
 // Dynamic route for the watch page
-app.get('/watch/movie/:id/:name', (req, res) => {
-  const { mediaType = "movie", id, name} = req.params;
+app.get('/watch/movie/:id', (req, res) => {
+  const { mediaType = "movie", id} = req.params;
   // You can pass the dynamic parameters to the template or render a dynamic response
-  res.render('watch', { mediaType, id, name, season : null , episode : null }); // If using EJS or another templating engine
+  res.render('watch', { mediaType, id, season : null , episode : null }); // If using EJS or another templating engine
 });
 
-app.get('/watch/tv/:id/:name/:season/:episode', (req, res) => {
-  const { mediaType = "tv", id, name, season, episode} = req.params;
+app.get('/watch/tv/:id/:season/:episode', (req, res) => {
+  const { mediaType = "tv", id, season, episode} = req.params;
   // You can pass the dynamic parameters to the template or render a dynamic response
-  res.render('watch', { mediaType, id, name, season, episode}); // If using EJS or another templating engine
+  res.render('watch', { mediaType, id, season, episode}); // If using EJS or another templating engine
 });
 
+app.use((req, res) => {
+  res.status(404).render('404', {
+    url: req.originalUrl
+  });
+});
 /* app.get("/hi", (req,res) => {
   res.sendStatus(500);
 }) */
