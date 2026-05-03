@@ -470,9 +470,9 @@ function carouselEvents(carousel) {
         ])
       );
 
-      const { id, name, type } = sanitizedData;
+      const { id, type } = sanitizedData;
 
-      if (play) window.location.href = `/watch/${type}/${id}/${name}${type === 'tv' ? `/1/1` : ''}`;
+      if (play) window.location.href = `/watch/${type}/${id}/${type === 'tv' ? `/1/1` : ''}`;
       if (detail) openModal({ id, mediaType: type });
 
       e.stopPropagation();
