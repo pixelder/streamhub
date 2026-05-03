@@ -52,7 +52,7 @@ function globalAddEventListener (event) {
     if ((watchingOrHistory) && (event.type === 'click' || event.type === 'keydown' && event.key === 'Enter')) {
       if ( !event.target.closest('.grid-actions') && !editing && !wasEditing) {
         console.log(id, mediaType,sno, eno, null)
-        window.location.href = `/watch/${mediaType}/${id}/${sno && eno ? `/${sno}/${eno}` : ""}`;
+        window.location.href = `/watch/${mediaType}/${id}${sno && eno ? `/${sno}/${eno}` : ""}`;
         event.stopPropagation();
         return;
       }
