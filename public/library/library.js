@@ -16,12 +16,12 @@ async function loadLibrary() {
 }
 
 window.onload = function() {
+  fixLog()
   loadLibrary()
   topNavBar()
   bottomNavBar()
   setActiveIcon('library')
   setUpScrollEvents()
-  fixLog()
   setUpLibraryControl()
 }
 
