@@ -8,6 +8,9 @@
       .episode-items::before {
         filter: blur(25px) brightness(2.5);
       }
+      .img-container::before {
+        --width: 16px;
+      }
     }
 
     .episode-items {

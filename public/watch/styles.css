@@ -39,6 +39,20 @@
       border: 1px solid var(--border-color);
     }
 
+    .img-container::before {
+      --width: 20px;
+      content: '';
+      width: var(--width);
+      aspect-ratio: 1/1;
+      position: absolute;
+      z-index: 1;
+      top: calc(var(--width) / 2);
+      left: calc(var(--width) / 2);
+      mask-image: url('https://img.icons8.com/sf-black-filled/64/play.png');
+      mask-size: contain;
+      background-color: var(--font-color1);
+    }
+
     .episode-items::before {
       filter: blur(25px) brightness(2.5);
     }
