@@ -20,7 +20,10 @@ function fixLog() {
     }
 
     const updatedLog = logData
-      .filter(item => Number.isFinite(Number(item?.id)))
+      .filter(item => {
+        const num = Number(item?.id);
+        return Number.isInteger(num) && num > 0;
+      })
       .map(item => {
         const fixed = { ...item };
 
@@ -60,6 +63,11 @@ function fixLog() {
   } catch {
     SRC_LIST = [];
   }
+
+  SRC_LIST = SRC_LIST.filter(item => {
+    const num = Number(item?.id);
+    return Number.isInteger(num) && num > 0;
+  });
 
   const existingIds = new Set(SRC_LIST.map(item => item.id));
   const numericKeys = [];
