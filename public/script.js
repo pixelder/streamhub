@@ -221,7 +221,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (path === '/' || path === '') {
       loadHomePage()
     }
-    if (path === '/movie' || path === '/tv') {
+    if (path === '/movie' || path === '/tv' || path === '/person') {
       params.mediaType = path.replace('/', '')
       openModal(params)
       loadHomePage()
