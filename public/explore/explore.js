@@ -1066,7 +1066,7 @@ function resetSection() {
 		loadDiscoverContent(mediaType, `browse-${mediaType}s`);
 	} catch (e) {
 		console.log(e)
-		notifyAlert(e)
+		notifyAlert({msg : e.error})
 	}
 }
 
