@@ -82,8 +82,7 @@ function mergeByKey(existing = [], incoming = [], getKey) {
 
 function importBackup() {
   const fileInput = document.getElementById('import-file');
-  const mergeEnabled =
-    document.getElementById('merge-option').checked;
+  const mergeEnabled = document.getElementById('merge-option').checked;
 
   fileInput.click();
 
