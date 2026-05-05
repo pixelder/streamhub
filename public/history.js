@@ -20,7 +20,7 @@ function fixLog() {
     }
 
     const updatedLog = logData
-      .filter(item => Number.isFinite(Number(item?.id))) // ✅ remove invalid ids
+      .filter(item => Number.isFinite(Number(item?.id)))
       .map(item => {
         const fixed = { ...item };
 
