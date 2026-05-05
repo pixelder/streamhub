@@ -207,35 +207,61 @@ function renderGridItems(item, type = null) {
   return gridItem
 }
 
-function notifyAlert(msg, type = null, data = null, actions = null) {
+function notifyAlert({ msg, type, data, actions, time = 3000 } = {}) {
   if (type === "error") console.error(msg)
   if (!type) console.log(msg)
+
   let container = document.querySelector('.notifications')
   if (!container) {
     container = document.createElement('div')
     container.classList.add('notifications')
     document.querySelector('main').appendChild(container)
   }
+
   const el = document.createElement('div');
   el.classList.add('msg');
-  el.innerText = msg;
+  const p = document.createElement('p');
+  el.appendChild(p);
+  p.innerText = msg;
+
+  // --- Safe removal function ---
+  let removed = false;
+  let timeoutId;
+
+  function removeEl() {
+    if (removed) return; // prevent double execution
+    removed = true;
+    clearTimeout(timeoutId); // cancel scheduled removal
+    if (el.parentNode === container) {
+      container.removeChild(el);
+    }
+  }
 
   if (actions) {
     const msgAction = document.createElement('div')
     msgAction.classList.add('msg-actions')
+
     actions?.push({ name: "Ignore" })
+
     actions?.forEach(act => {
       const action = document.createElement('button')
       action.classList.add("action-btn")
-      act.task === 'remove' ? action.classList.add("remove") : "";
-      action.textContent = `${act.name}`
-      if (act.task === 'remove') {
-        const { logType, id, mediaType, sno, eno, index } = data
-        action.onclick = () => {
-          removeFromLocalStorage(logType, id, mediaType, sno, eno, index).then(() => {
-            notifyAlert("Item removed successfully")
-          })
+      if (act.task === 'remove') action.classList.add("remove")
+      action.textContent = act.name
+      const { logType, id, mediaType, sno, eno, index } = data || {}
+      action.onclick = async (e) => {
+        e.stopPropagation(); // prevent triggering el.onclick
+        if (act.task === 'remove') {
+          removeFromLocalStorage(logType, id, mediaType, sno, eno, index)
+            .then(() => {
+              notifyAlert({ msg: "Item removed successfully", type: "notification" })
+            })
+          if (act.reload) {
+            console.log(act.reload.id, act.reload.logType)
+            loadUserContent(act.reload.id, act.reload.logType)
+          }
         }
+        removeEl(); // also remove notification on action
       }
       msgAction.appendChild(action)
     })
@@ -243,8 +269,9 @@ function notifyAlert(msg, type = null, data = null, actions = null) {
   }
 
   container.appendChild(el)
-  el.onclick = () => { container.removeChild(el) }
-  setTimeout(() => { container.removeChild(el) }, 5000)
+
+  el.onclick = removeEl;
+  timeoutId = setTimeout(removeEl, time);
 }
 
 function nthNaturalArray(n) {
@@ -309,7 +336,7 @@ async function fetchFromURL(url) {
     return data
   } catch (e) {
     const msg = `Error fetching from url ${url}: ${e}`
-    notifyAlert(msg)
+    notifyAlert({msg})
     return null;
   }
 }
@@ -317,6 +344,8 @@ async function fetchFromURL(url) {
 //fetch Metadata
 async function fetchMetaData({mediaType = null, id = null, season = null, credits = null, options = 1}) {
 
+  if (!id || !Number.isFinite(Number(id)) || (!['movie', 'tv'].includes(mediaType))) return;
+     
   try {
     let url;
     const append = `external_ids,videos,credits,images&include_image_language=en`
@@ -327,7 +356,7 @@ async function fetchMetaData({mediaType = null, id = null, season = null, credit
     } else if (mediaType === "person") {
       url = `${BASE_URL}/person/${id}?api_key=${API_KEY}&language=en-US${options ? `&append_to_response=${credits},external_ids` : ''}`;
     }
-    //console.log(url)
+    // console.log('fetching metadata', id, mediaType)
     const response = await fetch(url);
     const data = await response.json();
     return { data, mediaType };
@@ -373,7 +402,7 @@ function openModal(data, nav = null) {
       if (error.name === 'AbortError') return;
       const msg = `Error fetching data for ${mediaType} id:${id}: ${error}`
       console.log(error)
-      notifyAlert(msg)
+      notifyAlert({msg})
     })
 }
 
