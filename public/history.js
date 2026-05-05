@@ -1,4 +1,4 @@
-const allowedKeys = new Set(['history','watching','bookmarks','DEF_SRC']);
+const allowedKeys = new Set(['history','watching','bookmarks','DEF_SRC', 'app_settings']);
 const dedupeKeys = new Set(['watching','bookmarks','DEF_SRC']);
 
 function getLogData(logType) {
@@ -19,24 +19,27 @@ function fixLog() {
       logData = [];
     }
 
-    const updatedLog = logData.map(item => {
-      const fixed = { ...item };
+    const updatedLog = logData
+      .filter(item => Number.isFinite(Number(item?.id))) // ✅ remove invalid ids
+      .map(item => {
+        const fixed = { ...item };
 
-      if (!fixed.hasOwnProperty('index')) {
-        fixed.index = Date.now() + Math.floor(Math.random() * 1000);
-      }
+        if (!fixed.hasOwnProperty('index')) {
+          fixed.index = Date.now() + Math.floor(Math.random() * 1000);
+        }
 
-      fixed.data ??= {};
-      if (fixed.data.sno === 'NaN' || fixed.data.sno === 'null' || fixed.data.sno ==  null) {
-        fixed.data.sno = '';
-      }
+        fixed.data ??= {};
 
-      if (fixed.data.eno === 'NaN' || fixed.data.eno === 'null' || fixed.data.eno == null) {
-        fixed.data.eno = '';
-      }
+        if (fixed.data.sno === 'NaN' || fixed.data.sno === 'null' || fixed.data.sno == null) {
+          fixed.data.sno = '';
+        }
 
-      return fixed;
-    });
+        if (fixed.data.eno === 'NaN' || fixed.data.eno === 'null' || fixed.data.eno == null) {
+          fixed.data.eno = '';
+        }
+
+        return fixed;
+      });
 
     localStorage.setItem(logType, JSON.stringify(updatedLog));
   });
@@ -120,7 +123,8 @@ function logArrayToLocalStorage(ID, key, value) {
 }
 
 async function logToLocalStorage(logType, id, mediaType, sno = null, eno = null, progress = null, index = null) {
-  //console.log('logging', logType, id, mediaType, sno, eno, progress)
+  if (typeof logType !== 'string' || typeof id !== 'number' || (!['movie', 'tv'].includes(mediaType))) return
+  // console.log('logging', logType, id, mediaType, sno, eno, progress);
   const newLog = {
     mediaType, id: Number(id),
     index: index || Date.now(), progress: progress,
@@ -173,7 +177,7 @@ async function removeFromLocalStorage(logType, id, mediaType, sno = null, eno = 
 }
 
 
-function logExists(logType, id, mediaType, season = null, episode = null, progress = null) {
+function logExists(logType, id, mediaType, season = null, episode = null, progress = null, index = null) {
   const logs = getLogData(logType);
   return logs.some(log => {
     const idMatch = Number(log.id) === Number(id);
@@ -181,8 +185,9 @@ function logExists(logType, id, mediaType, season = null, episode = null, progre
     //optional params
     const seasonMatch = season === null || String(log.data.sno) === String(season);
     const episodeMatch = episode === null || String(log.data.eno) === String(episode);
-    const progressMatch = progress === null || Number(log.progress) === Number(progress)
-    return idMatch && typeMatch && seasonMatch && episodeMatch && progressMatch;
+    const progressMatch = progress === null || Number(log.progress) === Number(progress);
+    const timeMatch = index === null || Number(log.index === Number(index))
+    return idMatch && typeMatch && seasonMatch && episodeMatch && progressMatch && timeMatch;
   });
 }
 
@@ -203,11 +208,10 @@ Array.prototype.sortDateDesc = function (desc = null) {
   return this.sort((a, b) => (new Date(b.index) - new Date(a.index)) * n);
 }
 
-async function fetchHistoryItems(section, sectionId, items) {
+async function processHistoryItems(section, sectionId, items) {
   const container = section.querySelector('.grid-container');
   const type = container.classList.contains('vertical-card') ? 'vertical' : null;
   const logType = section.dataset.type;
-
   if (!items.length) {
     console.log('no data found for', sectionId);
     container.querySelector('.filler')?.remove();
@@ -274,8 +278,12 @@ async function fetchHistoryItems(section, sectionId, items) {
           container.replaceChild(content, placeholder);
         }
       } catch (error) {
-        console.error(error);
-        notifyAlert(error.message, "error", {});
+        // console.error(error);
+        notifyAlert({ 
+          msg : error.message,
+          type : "error",
+          time : 7000
+        });
       }
     })();
   }
@@ -362,7 +370,7 @@ async function fetchHistoryItems(section, sectionId, items) {
 }
 
 function renderLogItems(sectionId, data, item, tvData, type = null) {
-
+  
   const {id, mediaType, index} = item
   const [sno, eno] = tvData ? [item.data.sno, item.data.eno] : ['', ''];
   const epData = tvData ? tvData?.episodes?.find(ep => ep.episode_number === Number(eno)) : '';
@@ -437,7 +445,7 @@ function renderLogItems(sectionId, data, item, tvData, type = null) {
       <img src="${image}">
       <div class="grid-item-info">
         <span class="history-item-info">
-          <h3>${capString(name, 40)}</h3>
+          <h3>${name ? capString(name, 40) : 'Not Available'}</h3>
           ${tvData ? `<p>${info}</p>` : ""}
           <span class="grid-rating">
             <p class="rating">
@@ -468,14 +476,14 @@ async function loadUserContent(sectionId, logType) {
       contWatching = true;
       section.style.display = "flex";
     }
-    fetchHistoryItems(section, sectionId, logData);
+    processHistoryItems(section, sectionId, logData);
   } else {
     if (sectionId === 'continue-watching') {
       section.style.display = "none"; // Hide section if history is empty
       contWatching = false;
     }
     container.classList.add('empty')
-    fetchHistoryItems(section, sectionId, logData);
+    processHistoryItems(section, sectionId, logData);
   }
   enableHorizontalWheelScroll(container, 5)
   
