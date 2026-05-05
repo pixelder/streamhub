@@ -52,6 +52,8 @@ function globalAddEventListener (event) {
     if ((watchingOrHistory) && (event.type === 'click' || event.type === 'keydown' && event.key === 'Enter')) {
       if ( !event.target.closest('.grid-actions') && !editing && !wasEditing) {
         console.log(id, mediaType,sno, eno, null)
+        if (!Number.isFinite(Number(id)) || (!['movie', 'tv'].includes(mediaType))) return;
+        if (mediaType === 'tv' && (!sno || !eno)) return;   
         window.location.href = `/watch/${mediaType}/${id}${sno && eno ? `/${sno}/${eno}` : ""}`;
         event.stopPropagation();
         return;
