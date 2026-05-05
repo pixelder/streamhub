@@ -1224,7 +1224,7 @@ async function modalEventsHandler(event, data) {
       const mediaType = "movie";
 
       //loadWatchPage(mediaType, name, id);
-      window.location.href = `/watch/${mediaType}/${id}}`;
+      window.location.href = `/watch/${mediaType}/${id}`;
       event.stopPropagation();
     }
 
@@ -2143,7 +2143,7 @@ function getConfirm({ title, message, success, decline, state = 1, acpt_btn, dcl
     // Helper function to handle the cancel action
     const handleCancel = (dialogButtons, messageBox) => {
       dialogButtons.style.display = 'none';
-      overlay.querySelector('h2').innerText = decline.title;
+      overlay.querySelector('h2').innerText = decline?.title;
       messageBox.classList.add('green');
       messageBox.querySelector('.icon').innerHTML = declineIcon || successIcon;
       messageBox.querySelector('p').innerText = decline.message;
