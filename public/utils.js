@@ -344,7 +344,7 @@ async function fetchFromURL(url) {
 //fetch Metadata
 async function fetchMetaData({mediaType = null, id = null, season = null, credits = null, options = 1}) {
 
-  if (!id || !Number.isFinite(Number(id)) || (!['movie', 'tv'].includes(mediaType))) return;
+  if (!id || !Number.isFinite(Number(id)) || (!['movie', 'tv', 'person'].includes(mediaType))) return;
      
   try {
     let url;
