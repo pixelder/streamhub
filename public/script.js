@@ -91,7 +91,7 @@ async function loadDiscoverContent( mediaType, sectionId) {
   }
   
   if (section) {
-    const url = `${BASE_URL}/discover/${mediaType}?api_key=${API_KEY}&watch_region=${watchRegion}&${params}&${OPTIONS}`;
+    const url = `${BASE_URL}/discover/${mediaType}?api_key=${API_KEY}&${params}&${OPTIONS}`;
     fetchContent(sectionId, url);
   }
 }
@@ -157,11 +157,11 @@ function discoverStreaming() {
 
 async function fetchContent(sectionId, url) {
   if (!isFetching[sectionId]) isFetching[sectionId] = false; // Initialize fetching state
-
+  
   if (isFetching[sectionId]) return;  // Prevent multiple fetch requests while one is ongoing
   // if (url === lastUrl) return
   // lastUrl = url
-
+  
   try {
     isFetching[sectionId] = true; // fetching for the sectionID
     console.log(`fetching page `, currentPage, sectionId)
