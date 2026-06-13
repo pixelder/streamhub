@@ -206,7 +206,7 @@ async function toggleBookmark(logType, id, mediaType, sno = null, eno = null, in
   if (logExists(logType, id, mediaType)) {
     removeFromLocalStorage(logType, Number(id), mediaType, sno ?? '', eno ?? '', index);
   } else {
-    logToLocalStorage(logType, id, mediaType, sno, eno);
+    logToLocalStorage(logType, Number(id), mediaType, sno, eno);
   }
   contWatching = temp;
 }
