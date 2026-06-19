@@ -1072,7 +1072,6 @@
     height: fit-content;
     overflow: scroll;
     max-height: 70% !important;
-    border-radius: 10px;
     padding: 10px;
   }
 
@@ -1371,6 +1370,11 @@
     text-shadow: unset;
   }
 
+  .tags {
+    font-size: 12px;
+    gap: 4px;
+  }
+
   .ratings-genre {
     position: relative;
     gap: 0rem;
@@ -1392,7 +1396,7 @@
   }
 
   .modal-genre {
-    gap: 0.24rem;
+    gap: 10px;
     mask-image: linear-gradient(to left,
         rgba(0, 0, 0, 0) 0%,
         rgba(0, 0, 0, 0.4) 3%,
@@ -1410,7 +1414,6 @@
     width: fit-content;
     text-wrap: nowrap;
     font-size: 12px;
-    /* padding-inline: 4px; */
     height: 20px;
   }
 
