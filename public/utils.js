@@ -51,11 +51,15 @@ function convertDateFormat(dateStr) {
   return `${day}-${month}-${year}`;
 }
 
-function runtime(min, type = 'short') {
+function runtime(min) {
   const hour = Math.floor(min / 60.0);
-  const minute = min - hour * 60.0;
-  if (type === 'long') return (hour !== 0 ? `${hour} hour ` : '') + `${minute} minutes`
-  return (hour !== 0 ? `${hour}h` : '') + `${minute}m`;
+  // Using Math.floor to ensure minutes are whole numbers before padding
+  const minute = Math.floor(min - hour * 60.0);
+  
+  // Format to HH and MM strings with leading zeros
+  const mm = String(minute).padStart(2, '0');
+  
+  return (hour !== 0 ? `${hour}h` : '') + `${mm}m`;
 }
 
 function inBeta() {
@@ -551,7 +555,7 @@ async function buildMediaDetailsHTML(data, mediaType, container) {
     .slice(0, 5)
     .map(genre => `
       <a href="/explore?type=${mediaType}&genre=${genre.id}" title="Explore ${genre.name} ${mediaType === 'movie' ? 'movies' : 'tv shows'}">
-      ${genre.name}
+      ${genre.name.toUpperCase()}
       </a>
     `)
     .join(' ');
@@ -2013,7 +2017,7 @@ function setUpScrollEvents() {
 
   const overlayAnim = (value) => {
     document.querySelectorAll('.slide-backdrop').forEach(img => {
-      img.style.opacity = 1 - Math.min(value / 350, 1);
+      img.style.opacity = 1 - Math.min(value / 350, 1).toFixed(1);
     }) 
   }
   
