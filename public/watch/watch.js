@@ -48,9 +48,10 @@ const providers = [
   { ds: "8", name: "VidFast" },
   { ds: "6", name: "111Movies" },
   { ds: "10", name: "VidSu" },
+  { ds: "11", name: "VidCore"},
   { ds: "3", name: "VidSrc" },
   { ds: "4", name: "Whvx", hidden: 'true' },
-  { ds: "5", name: "VidEasy", hiddenOn: 'tv' },
+  { ds: "5", name: "VidEasy"},
   { ds: "7", name: "PrimeWire" },
   { ds: "9", name: "AutoEmbed+" }
 ];
@@ -396,6 +397,9 @@ async function getSourceIframe(source, mediaType, id, season = null, episode = n
     case 101:
       src = `https://vidsrc.icu/embed/anime/${ID}/${ep}/${format || '1'}`
       break;
+    case 11:
+      src = `https://vidcore.net/${urlPath}?poster=false&sub=en`
+      break;
     case 1:
       src = `https://vidlink.pro/${urlPath}?poster=false`;
       break;
@@ -427,7 +431,7 @@ async function getSourceIframe(source, mediaType, id, season = null, episode = n
       src = `https://hin.autoembed.cc/${urlPath}`;
       break;
     case 10:
-      src = `https://vidsrc.su/embed/${urlPath}`;
+      src = `https://vidsrc.su/${urlPath}`;
       break;
     default:
       console.error("Invalid source selected");
