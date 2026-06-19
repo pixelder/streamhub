@@ -12,7 +12,7 @@ input {
   padding: 0.6rem 0.6rem;
   outline: 0;
   border: 1px solid var(--color3);
-  border-radius: var(--border-radius2);
+  border-radius: var(--brad8);
   color: var(--font-color1);
   background-color: var(--color5);
   box-shadow: 0 0 4px rgba(0, 0, 0, 0.3);
@@ -29,7 +29,7 @@ input[type="range"] {
   appearance: none;
   height: 10px;
   border: 1px solid var(--color3);
-  border-radius: var(--border-radius2);
+  border-radius: var(--brad8);
   cursor: pointer;
 }
 
@@ -41,7 +41,7 @@ input[type="range"]::-moz-range-thumb {
   width: 12px;
   height: 24px;
   border: 1px solid var(--border-color);
-  border-radius: var(--border-radius2);
+  border-radius: var(--brad8);
   background: var(--color5);
   transition: filter 0.2s;
 }
@@ -56,7 +56,7 @@ input[type="range"]::-webkit-slider-thumb {
   width: 12px;
   height: 24px;
   border: 1px solid var(--border-color);
-  border-radius: var(--border-radius2);
+  border-radius: var(--brad8);
   background: var(--color5);
   transition: filter 0.2s;
 }
@@ -79,7 +79,7 @@ select {
   font-size: 14px;
   text-wrap: nowrap;
   border: 1px solid var(--border-color);
-  border-radius: var(--border-radius1);
+  border-radius: var(--brad12);
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -123,7 +123,7 @@ button:focus-visible {
   padding: 8px;
   color: var(--font-color2);
   background: var(--color5);
-  border-radius: var(--border-radius2);
+  border-radius: var(--brad8);
   box-shadow: 0 0 20px 8px var(--bg-color);
   cursor: pointer;
   text-shadow: none;

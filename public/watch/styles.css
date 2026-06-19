@@ -90,7 +90,7 @@
   .episode-items .img-container {
     width: 100%;
     height: unset;
-    border-radius: var(--border-radius1);
+    border-radius: var(--brad12);
     border: 1px solid var(--border-color);
     transition: border 0.2s ;
     scale: unset;
@@ -165,7 +165,7 @@
   aspect-ratio: 16 / 8;
   width: 84%;
   margin: auto;
-  border-radius: var(--border-radius1);
+  border-radius: var(--brad12);
   background-color: #000;
   overflow: hidden;
 }
@@ -227,7 +227,7 @@ iframe.zoom {
   font-size: 0.875rem;
   color: var(--font-color1);
   cursor: pointer;
-  border-radius: var(--border-radius2);
+  border-radius: var(--brad8);
 }
 
 .iframe-exit {
@@ -238,7 +238,7 @@ iframe.zoom {
   z-index: 1000;
   width: 2rem;
   aspect-ratio: 1 / 1;
-  border-radius: var(--border-radius2) ;
+  border-radius: var(--brad8) ;
   transition: opacity 0.25s, top 0.25s ease-in-out;
 }
 
@@ -375,7 +375,7 @@ iframe.zoom {
     justify-content: space-between;
     background: var(--color3);
     border: 1px solid var(--border-color);
-    border-radius: var(--border-radius1);
+    border-radius: var(--brad12);
     width: 20px;
   }
   .switch {

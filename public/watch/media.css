@@ -166,7 +166,7 @@
   }
 
   .player-toolbar button {
-    border-radius: var(--border-radius1);
+    border-radius: var(--brad12);
   }
 
   .player-episodes {

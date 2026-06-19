@@ -452,7 +452,7 @@ pre {
     .result { 
       background: #1e1e2b !important;
       border: 1px solid var(--border-color) !important;
-      border-radius: var(--border-radius1);
+      border-radius: var(--brad12);
       text-wrap: nowrap;
       text-align: unset;
       cursor: pointer;

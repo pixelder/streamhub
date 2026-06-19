@@ -3,8 +3,9 @@
 @media (max-width: 767px) {
 
   :root {
-    --border-radius1: 6px;
-    --border-radius2: 4px;
+    --brad24: 16px;
+    --brad12: 8px;
+    --brad8: 6px;
     --padding1: 8px;
     --item-height: 208px;
   }
@@ -280,6 +281,10 @@
     pointer-events: none;
   }
 
+  .slide .logo {
+    margin-inline: auto;
+  }
+
   .content {
     left: unset;
     bottom: 132px;
@@ -349,7 +354,7 @@
     position: absolute;
     font-size: 12px;
     height: 30px;
-    border-radius: var(--border-radius1);
+    border-radius: var(--brad12);
   }
 
   section:has(.delete-button.active) {
@@ -370,7 +375,7 @@
       height: 30px;
       font-size: 14px;
       /* word-spacing: -1px; */
-      border-radius: var(--border-radius1);
+      border-radius: var(--brad12);
     }
   }
 
@@ -461,12 +466,12 @@
   }
 
   .grid-item {
+    --padding: 5px;
+    --radius: 10px;
     height: var(--item-height) !important;
     /* max-width: calc((100dvw - 1.2rem - 0.72rem) / 3); */
     min-width: 120px;
     max-width: unset;
-    padding: 5px;
-    border-radius: 8px;
     scroll-snap-align: start;
     /* box-shadow: 0 10px 24px rgba(0, 0, 0, 0.7); */
   }
@@ -837,7 +842,6 @@
 
     .grid-item {
       max-width: unset;
-      border-radius: 6px;
     }
 
     &:not(.expanded) .grid-item {
@@ -917,7 +921,7 @@
       .options-menu button {
         height: 24px;
         font-size: 12px;
-        border-radius: var(--border-radius2);
+        border-radius: var(--brad8);
       }
     }
   }
@@ -1052,10 +1056,10 @@
   }
 
   .media-switch {
-    width: 144px !important;
-    padding: 2px !important;
-    height: 30px;
     --radius: 8px;
+    --pad: 3px;
+    width: 144px !important;
+    height: 30px;
   }
 
   .media-tab {
@@ -1111,7 +1115,7 @@
   .trailer-container {
     position: absolute;
     visibility: hidden;
-    border-radius: var(--border-radius1);
+    border-radius: var(--brad12);
     overflow: hidden;
     transition: height 0.2s;
     z-index: 1;
@@ -1351,7 +1355,7 @@
     display: flex;
     opacity: 0;
     aspect-ratio: 16 /9;
-    border-radius: var(--border-radius1);
+    border-radius: var(--brad12);
     background-size: contain;
     mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 1) 60%, rgba(0, 0, 0, 0) 90%, rgba(0, 0, 0, 0) 100%);
     mask-repeat: no-repeat;
@@ -1406,7 +1410,7 @@
     width: fit-content;
     text-wrap: nowrap;
     font-size: 12px;
-    padding-inline: 4px;
+    /* padding-inline: 4px; */
     height: 20px;
   }
 

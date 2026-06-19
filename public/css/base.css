@@ -26,8 +26,10 @@
   --active-color: red;
   --bg-color: #0d0d1b;
   --border-color: #ffffff15;
-  --border-radius1: 12px;
-  --border-radius2: 8px;
+  --brad24: 24px;
+  --brad16: 16px;
+  --brad12: 12px;
+  --brad8: 8px;
   --progress-color: #5A8FDB;
   --warn: #a6192e;
   --caution: #ff9900;

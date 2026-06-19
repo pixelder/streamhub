@@ -317,7 +317,9 @@ function buildSlides(container, item, i) {
       <div class="overlay"></div>
       <div class="content">
         ${item.logo
-            ? `<img class="logo" src="${item.logo}" />`
+            ? ` <div class="logo-container">
+                  <img class="logo" src="${item.logo}" />
+                </div>`
             : `<h1>${title}</h1>`
         }
         <div class="synopsis">
