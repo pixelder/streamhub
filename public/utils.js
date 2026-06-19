@@ -51,7 +51,7 @@ function convertDateFormat(dateStr) {
   return `${day}-${month}-${year}`;
 }
 
-function runtime(min) {
+function runtime(min, type = 'short') {
   const hour = Math.floor(min / 60.0);
   // Using Math.floor to ensure minutes are whole numbers before padding
   const minute = Math.floor(min - hour * 60.0);
@@ -59,6 +59,8 @@ function runtime(min) {
   // Format to HH and MM strings with leading zeros
   const mm = String(minute).padStart(2, '0');
   
+   if (type === 'long') return (hour !== 0 ? `${hour} hour ` : '') + `${minute} minutes`
+
   return (hour !== 0 ? `${hour}h` : '') + `${mm}m`;
 }
 
