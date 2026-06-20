@@ -432,6 +432,11 @@ function initCarousel() {
   // Click delegation
   carouselEvents(carousel)
 
+  const value = document.body.scrollTop
+  document.querySelectorAll('.slide-backdrop').forEach(img => {
+    img.style.opacity = 1 - Math.min(value / 350, 1).toFixed(1);
+  })
+
   // 🚀 Init
   showSlide(0); // handles timer start automatically
 }
