@@ -1396,7 +1396,7 @@
   }
 
   .modal-genre {
-    gap: 10px;
+    gap: 12px;
     mask-image: linear-gradient(to left,
         rgba(0, 0, 0, 0) 0%,
         rgba(0, 0, 0, 0.4) 3%,

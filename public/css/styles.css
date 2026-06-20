@@ -117,7 +117,7 @@ body:has(#top-bar.hidden, #top-bar.detach) {
     padding: 4px;
     gap: 4px;
     z-index: 1;
-    border-radius: 6px;
+    border-radius: var(--brad8);
     min-width: 6rem;
     max-height: 0px;
     overflow: hidden;
