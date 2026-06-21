@@ -7,7 +7,7 @@
     --brad12: 8px;
     --brad8: 6px;
     --padding1: 8px;
-    --item-height: 208px;
+    --item-height: 220px;
   }
 
   body.keyboard {
@@ -466,8 +466,8 @@
   }
 
   .grid-item {
-    --padding: 5px;
-    --radius: 10px;
+    --padding: 6px;
+    --radius: 12px;
     height: var(--item-height) !important;
     /* max-width: calc((100dvw - 1.2rem - 0.72rem) / 3); */
     min-width: 120px;
@@ -490,10 +490,6 @@
   }
 
   .grid-item img {
-    border-radius: inherit;
-    aspect-ratio: 1 / 1.38;
-    object-fit: cover;
-    width: 100%;
     font-size: 12px;
   }
 

@@ -2912,11 +2912,11 @@ body:has(.modal:is([active])) {
 
 .play-trailer {
   border: 1px solid var(--border-color);
-  background: var(--color3);
+  background: var(--color5);
 }
 
 .play-trailer:hover {
-  background: var(--color5) !important;
+  background: var(--color3) !important;
   transition: background 0.15s;
 }
 
@@ -2980,10 +2980,10 @@ body:has(.modal:is([active])) {
   position: absolute;
   right: -152px;
   bottom: 4px;
-  width: 150px;
+  min-width: max-content;
   padding: 4px;
   z-index: 2;
-  background: var(--color3);
+  background: var(--color5);
   border: 1px solid var(--border-color);
   border-radius: 10px;
   box-shadow: 0 0 20px var(--bg-color);
@@ -3008,7 +3008,7 @@ body:has(.modal:is([active])) {
   }
 
   .item:hover {
-    background: var(--color1) !important;
+    background: var(--color3) !important;
   }
 
   a {
@@ -3192,7 +3192,7 @@ body:has(.modal:is([active])) {
 
 .modal-genre a {
   text-decoration: none;
-  color: var(--font-color2);
+  color: var(--font-color3);
   font-size: 12px;
   line-height: 12px;
   text-wrap: nowrap;
@@ -3203,6 +3203,7 @@ body:has(.modal:is([active])) {
   display: flex;
   align-items: center;
   font-family: "Google Sans Flex";
+  text-shadow: 0 0 2px #000;
 }
 
 .modal-genre a:hover {

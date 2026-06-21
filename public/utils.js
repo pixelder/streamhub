@@ -917,6 +917,7 @@ function setUpModalActions(data, mediaType, season = null) {
   const bookmark = logExists('bookmarks', data.id, mediaType)
   const imdb = data.imdb_id || data.external_ids?.imdb_id
   const name = data.name || data.title || data.original_title;
+  const year = extractYear(data.release_date || data.first_air_date)
 
   const links = [
     { id: data.id, url: `https://tmdb.org/${mediaType}/${data.id}`, icon: "tmdb_short.svg", page: "tmdb" },
@@ -967,6 +968,11 @@ function setUpModalActions(data, mediaType, season = null) {
           <i class="fa-solid fa-book"></i>
           Parental Guide
         </a>
+        <a class="item" href="https://search.brave.com/ask?q=${name + ` (${year}) digital release date`}" target="_blank" rel="noopener nofollow noreferrer">
+          <i class="fa-solid fa-square-up-right"></i>
+          Check Digital Release
+        </a>   
+
         <!-- <div class="item" tabindex="0">
           <i class="fa-solid fa-eye-slash"></i>
           Blacklist item
