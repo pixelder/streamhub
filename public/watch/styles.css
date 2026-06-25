@@ -164,6 +164,7 @@
   flex-direction: column;
   aspect-ratio: 16 / 8;
   width: 84%;
+  min-height: 420px;
   margin: auto;
   border-radius: var(--brad12);
   background-color: #000;
@@ -396,7 +397,7 @@ iframe.zoom {
 .providers.show {
 
     opacity: 1 !important;
-    max-height: 320px;
+    max-height: 300px;
     outline: 1px solid var(--border-color);
     padding: 12px;
 

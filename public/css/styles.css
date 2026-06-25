@@ -280,7 +280,7 @@ section:not(#hero-carousel) {
 #hero-carousel {
   position: relative;
   padding: unset;
-  height: 80vh;
+  height: 40vw;
   margin-bottom: -60px;
   /* z-index: -1; */
 }
@@ -305,7 +305,7 @@ section:not(#hero-carousel) {
 }
 
 .slide-backdrop {
-  height: 100vh;
+  height: 52vw;
   object-fit: cover;
   position: fixed;
   top: 0;
@@ -323,7 +323,7 @@ section:not(#hero-carousel) {
 
 .slide .logo {
   object-fit: contain;
-  max-width: 65%;
+  max-width: 70%;
   max-height: 75%;
 }
 
@@ -345,7 +345,7 @@ section:not(#hero-carousel) {
       #0d0d1b7f 45%, 
       #0d0d1b00 60%
   );
-  height: 100vh;
+  height: 52vw;
   pointer-events: none;
   
 }
@@ -3218,7 +3218,7 @@ body:has(.modal:is([active])) {
 }
 
 .seasons-menu select {
-  background-color: var(--color3);
+  background-color: var(--color5);
   background-size: 18px;
   font-weight: 600;
   font-size: 1rem;
@@ -3278,7 +3278,7 @@ option {
 .episode {
   flex: 1;
   padding: 12px;
-  background-color: var(--color3);/* ee; */
+  background-color: var(--color5);/* ee; */
   border-radius: var(--brad12);
   border: 1px solid var(--border-color);
   box-shadow: 0 0 4px rgba(0, 0, 0, 0.3);
