@@ -245,7 +245,7 @@ body:has(.carousel) #top-bar:not(.detach) {
 }
 
 .search-bar:has(#search-input:not(:placeholder-shown)) .search-icon {
-  background: var(--color1);
+  background: var(--color3);
 }
 
 .search-bar:has(#search-input:not(:placeholder-shown)) .x-icon {
@@ -523,7 +523,7 @@ section h2 {
   transition: color 0.3s;
 }
 
-section:has(.grid-item) .actions {
+section:has(.grid-item, .profile-item ) .actions {
   /* display: flex; */
   pointer-events: all;
   color: unset;
@@ -672,10 +672,6 @@ body:has(.expandable.expanded) {
     }
   }
 
-  .expand-arrow {
-    transform: rotate(-90deg);
-  }
-
   .close-window {
     display: none;
   }
@@ -730,10 +726,6 @@ body:has(.expandable.expanded) {
   .grid-container.loading {
     display: flex !important;
     height: 100% !important;
-  }
-
-  .expand-arrow {
-    transform: rotate(90deg);
   }
 
   .maximize {
@@ -2596,9 +2588,8 @@ body:has(.modal:is([active])) {
   margin: auto;
   border-radius: var(--brad24);
   border: 1px solid var(--border-color);
-  /* 3838526b */
-  backdrop-filter: brightness(0.2);
-  background-color: #111122;/*  #141427db; */
+  backdrop-filter: blur(10px);
+  background-color: #0d0d1b60;
   transition: width 0.2s;
 }
 
@@ -2879,6 +2870,8 @@ body:has(.modal:is([active])) {
   height: 30px;
   padding-inline: 6px;
   font-size: 14px;
+  /* font-weight: 600; */
+  font-family: google sans flex;
   color: #34d399;
   background: #072920;
   border: 1px dashed;
@@ -3079,9 +3072,8 @@ body:has(.modal:is([active])) {
   bottom: 0rem;
   height: 100%;
   width: 82%;
-  background: #111122;
+  background: #0d0d1b60;
   filter: blur(30px);
-  opacity: 0.5;
 }
 
 .modal:has(.modal-info > h1) .modal-info {
@@ -3164,7 +3156,7 @@ body:has(.modal:is([active])) {
 
 .ratings-genre p[data-title]:hover:after {
   content: attr(data-title);
-  min-width: 4rem;
+  /* min-width: 4rem; */
   position: absolute;
   top: -2rem;
   left: 1rem;
@@ -3442,17 +3434,9 @@ option {
 }
 
 .expand-arrow {
-  height: 100%;
-  aspect-ratio: 1 / 1;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  font-size: 16px !important;
   transition: transform 0.2s ease;
   background: unset !important;
-}
-
-.expanded .expand-arrow {
-  transform: rotate(-90deg);
 }
 
 .person-credits {
@@ -3495,6 +3479,10 @@ option {
       height: auto;
       overflow: visible;
       transition: opacity 0.2s, height 0.2s ease-in-out;
+    }
+
+    .expand-arrow {
+      transform: rotate(-90deg);
     }
   }
 

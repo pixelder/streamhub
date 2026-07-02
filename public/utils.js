@@ -311,24 +311,26 @@ function activeSearchResults(callback, { selector, minLength, debounce } = {}) {
   };
 }
 
-async function fetchSearchResults(term, type, pages) {
+async function fetchSearchResults(term, type, page, count = false) {
   console.log("fetching results")
+  let TOTAL_COUNT = 0
   try {
     const searchURL = `${BASE_URL}/search/${type}?`
-    const responses = await Promise.all(
-      nthNaturalArray(pages).map(async (page) => {
+
         const params = new URLSearchParams({
-          api_key: API_KEY,
           query: encodeURIComponent(term),
+          api_key: API_KEY,
           page: page,
         })
-        const url = `${searchURL}${params}`
+        const url = `${searchURL}${params}`//&include_adult=false&language=en-US`
         const response = await fetch(url)
         const output = await response.json()
-        return output.results
-      }),
-    )
-    const data = responses.flat()
+        TOTAL_COUNT = Number(output.total_results)
+        const data = output.results
+    //   }),
+    // )
+    // const data = responses.flat()
+    if (count) return {results: data, count: TOTAL_COUNT} 
     return data
   } catch (e) {
     console.log(e)
@@ -752,6 +754,7 @@ function populateCreditSection(data, type) {
       const gridItem = document.createElement('div');
       gridItem.className = 'grid-item';
       Object.assign(gridItem.dataset, {id: item.id, mediaType: item.media_type})
+      gridItem.tabIndex = 0;
 
       const title = item.title || item.original_title || item.name || item.original_name || 'Title not specified';
       const year = extractYear(item.release_date || item.first_air_date);
@@ -2497,13 +2500,14 @@ function setUpExpandableSection() {
     const expanded = section.classList.contains('expanded');
     const windowBtns = e.target.closest('.close-window, .maximize')
     // const collapsed = section.classList.contains('collapsed')
-
+    const searching = section.parentNode.className === 'results-container'
+  
     if (windowBtns && !expanded) {
       // if (window.innerWidth < 400 && section.classList.contains('user-content')) return
       sectionFetching = true;
       currentPage = 1;
       section.classList.add('expanded');
-      section.classList.remove('collapsed')
+      section.classList.add('in-view')
       removeLoggedValue("POS_DATA", section.id)
       logArrayToLocalStorage("POS_DATA", section.id, document.body.scrollTop)
 
@@ -2528,9 +2532,18 @@ function setUpExpandableSection() {
             loadDiscoverContent(mediaType, 'discover-streaming');
             return
           }
-          const url = sectionURLs[section.id];
-          if (url) {
-            fetchContent(section.id, `${url}&page=${currentPage}`);
+          
+          if(!searching) {
+            const url = sectionURLs[section.id] || '';
+            if (url) {
+              fetchContent(section.id, `${url}&page=${currentPage}`);
+            }
+          }
+
+          if (searching) {
+            const type = currentSection()
+            currentPages[type]++
+            getSearchResults(QUERY, type)
           }
         }, 200);
       };
@@ -2556,13 +2569,16 @@ function setUpExpandableSection() {
 
       sectionFetching = false;
       currentPage = 1;
+
+      if (searching) currentPages = { movie: 1, tv: 1, person: 1}
+
       section.classList.remove('expanded');
       section.classList.remove('collapsed');
       const scroll = getLoggedValue("POS_DATA", section.id) || 0;
       document.body.scrollTo({ top: scroll, behavior: 'instant' });
 
       if (!section.classList.contains('user-content')) {
-        container.querySelectorAll('.grid-item').forEach((item, index) => {
+        container.querySelectorAll('.grid-item, .profile-item').forEach((item, index) => {
           if (index >= 20) item.remove();
         });
       }
@@ -2595,13 +2611,15 @@ function setUpExpandableSection() {
     }
   }
 
-  document.querySelectorAll('.expandable .section-header ')
-    .forEach(item => {
-      item.addEventListener('click', handleSectionExpansion)
-      item.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter') {
-          handleSectionExpansion(e)
-        }
-      })
-    })
+  document.addEventListener('click', (e) => {
+    const header = e.target.closest('.expandable .section-header');
+    if (header) handleSectionExpansion(e);
+  });
+
+  document.addEventListener('keydown', (e) => {
+  if (e.key !== 'Enter') return;
+    const header = e.target.closest('.expandable .section-header');
+    if (header) handleSectionExpansion(e);
+  });
+
 }
