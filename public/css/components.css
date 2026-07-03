@@ -142,7 +142,6 @@ button:focus-visible {
 body:has(.dialog) {
   .dialog-overlay {
     opacity: 1;
-    backdrop-filter: blur(3px) brightness(0.6);
   }
 }
 
