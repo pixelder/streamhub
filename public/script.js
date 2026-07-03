@@ -238,27 +238,37 @@ document.addEventListener('DOMContentLoaded', () => {
   window.addEventListener('popstate', handleRouting);
 });
 
-
 async function getCarouselData(seed = Date.now()) {
-  const URL = BASE_URL + '/trending/all/week?api_key=' + API_KEY
-  const data = await Promise.all(
-    nthNaturalArray(1).map(async (page) => {
-    const data = await fetchFromURL(URL + '&page=' + page)
-    return data.results
-  }))
+  const URL = `${BASE_URL}/trending/all/week?api_key=${API_KEY}`;
 
-  let items = data.flat()
-    .filter(item => item.backdrop_path) // critical
+  // Fetch trending data and genre lists in parallel.
+  const [pages, genreMaps] = await Promise.all([
+    Promise.all(
+      nthNaturalArray(1).map(async (page) => {
+        const data = await fetchFromURL(`${URL}&page=${page}`);
+        return data.results;
+      })
+    ),
+    getAllGenreMaps()
+  ]);
+
+  let items = pages
+    .flat()
+    .filter(item => item.backdrop_path)
     .filter(item => {
-      const releaseDate = new ReleaseDate(item.release_date || item.first_air_date)
-      if (!releaseDate?.isUpcoming()) return item
+      const releaseDate = new ReleaseDate(
+        item.release_date || item.first_air_date
+      );
+      return !releaseDate?.isUpcoming();
     })
     .slice(0, 10)
-    .sort((a, b) => b.popularity - a.popularity)
-  ;
+    .sort((a, b) => b.popularity - a.popularity);
+  
   items = shuffleWithSeed(items, mulberry32(seed));
-  return items;
+
+  return enrichWithGenres(items, genreMaps);
 }
+
 
 function mulberry32(seed) {
   return function () {
@@ -311,6 +321,10 @@ function buildSlides(container, item, i) {
   const title = item.title || item.name;
   const mediaType = item.media_type;
   const bookmark = logExists('bookmarks', item.id, mediaType);
+  const genresHTML = item.genres
+    .slice(0, 3)
+    .map(genre => `<p>${genre.name.toUpperCase()}</p>`)
+    .join('');
 
   slide.innerHTML = 
      `<img class="slide-backdrop" src="${IMAGE_ORG}${item.backdrop_path}" />            
@@ -322,6 +336,7 @@ function buildSlides(container, item, i) {
                 </div>`
             : `<h1>${title}</h1>`
         }
+        <div class="slide-genre">${genresHTML}</div>
         <div class="synopsis">
           <p class="overview">${item.overview || "No description available"}</p>
         </div>
@@ -380,7 +395,7 @@ function initCarousel() {
   const slides = document.querySelectorAll(".slide");
   const dots = document.querySelectorAll(".dot");
 
-  const time = 5000;
+  const time = 10000;
 
   let index = 0;
   let timer = null;
@@ -490,5 +505,55 @@ function carouselEvents(carousel) {
       showSlide(Number(dot.dataset.index));
       e.stopPropagation();
     }
+  });
+}
+
+const genreCache = {
+  movie: null,
+  tv: null
+};
+
+async function getGenres(type) {
+  if (genreCache[type]) {
+    return genreCache[type];
+  }
+
+  const url = `${BASE_URL}/genre/${type}/list?api_key=${API_KEY}`;
+  const data = await fetchFromURL(url);
+
+  // Store as { 28: "Action", 35: "Comedy", ... }
+  genreCache[type] = Object.fromEntries(
+    (data.genres || []).map(genre => [genre.id, genre.name])
+  );
+
+  return genreCache[type];
+}
+
+async function getAllGenreMaps() {
+  const [movieGenres, tvGenres] = await Promise.all([
+    getGenres("movie"),
+    getGenres("tv")
+  ]);
+
+  return {
+    movie: movieGenres,
+    tv: tvGenres
+  };
+}
+
+function enrichWithGenres(items, genreMaps) {
+  return items.map(item => {
+    const { genre_ids = [], ...resolvedItems } = item;
+    const type = item.media_type;
+    const genreMap = genreMaps[type] || {};
+
+    return {
+      ...resolvedItems,
+
+      genres: genre_ids.map(id => ({
+        id,
+        name: genreMap[id] || "Unknown"
+      })),
+    };
   });
 }

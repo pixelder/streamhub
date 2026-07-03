@@ -298,10 +298,21 @@
   .slide.active .content {
     translate: 50% 0%;
   }
+  
+  .content .synopsis {
+    width: 80vw;
+  }
 
   .content p {
     font-size: 14px;
-    width: 80vw;
+  }
+
+  .slide-genre {
+    gap: 12px;
+  }
+
+  .slide-genre p {
+    font-size: 10px !important;
   }
 
   .buttons button {

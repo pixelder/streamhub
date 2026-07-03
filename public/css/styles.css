@@ -324,7 +324,7 @@ section:not(#hero-carousel) {
 .slide .logo {
   object-fit: contain;
   max-width: 70%;
-  max-height: 75%;
+  max-height: 60%;
 }
 
 /* 🔥 Gradient overlay */
@@ -366,6 +366,17 @@ section:not(#hero-carousel) {
 .slide.active .content {
   opacity: 1;
   translate: 0;
+}
+
+.slide-genre {
+  display: flex;
+  flex-direction: row;
+  gap: 16px;
+}
+
+.slide-genre p {
+  font: normal 500 12px 'Google Sans Flex' !important;
+  color: var(--font-color3);
 }
 
 .content h1 {
@@ -457,7 +468,7 @@ section:not(#hero-carousel) {
   
     .dot-fill {
       background: var(--font-color1);
-      animation: fillDot 5s cubic-bezier(0.2,0.35,0.8,0.5) forwards;
+      animation: fillDot 10s cubic-bezier(0.2,0.35,0.8,0.5) forwards;
     }
   }
 
