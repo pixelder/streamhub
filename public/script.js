@@ -336,7 +336,7 @@ function buildSlides(container, item, i) {
                 </div>`
             : `<h1>${title}</h1>`
         }
-        <div class="slide-genre">${genresHTML}</div>
+        ${genresHTML ? `<div class="slide-genre">${genresHTML}</div>` : ''}
         <div class="synopsis">
           <p class="overview">${item.overview || "No description available"}</p>
         </div>
