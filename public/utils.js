@@ -1082,7 +1082,7 @@ async function markItemAs(type, item, section = null) {
     removeFromLocalStorage('watching', Number(id), mediaType, sno, eno, index)
     if (section.id === 'continue-watching' && mediaType === 'tv') {
       getNextEpisode(id, sno, eno).then((ep) => {
-        console.log(ep)
+        // console.log(ep)
         if (ep) {
           logToLocalStorage('watching', Number(id), 'tv', ep.season_number, ep.episode_number);
         }
@@ -1909,6 +1909,7 @@ async function topNavBar() {
         </div>
       </li>
       <li><a href="/#discover-streaming">What's Streaming</a></li>
+      <li><a href="/sports">Sports</a></li>
       <li><a href="/tools">Tools</a></li>
       <li><a href="/library">Library</a></li>
       <form class="search-bar" onsubmit="return handleSearch(event)">
@@ -1943,6 +1944,11 @@ async function bottomNavBar() {
       <li><a href="/explore" id="explore">
               <i class="fa-solid fa-compass"></i>
               ${showLabel ? '<p>Explore</p>' : ''}
+          </a>
+      </li>
+      <li><a href="/sports" id="sports">
+            <i class="fa-solid fa-basketball"></i>
+            ${showLabel ? '<p>Sports</p>' : ''}
           </a>
       </li>
       <li><a href="/tools" id="tools">
