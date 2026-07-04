@@ -41,7 +41,6 @@ body {
 
 /* --- 2. Header & Branding --- */
 .top-control {
-    padding-top: 12px;
     width: 100%;
     max-width: 1200px;
     display: flex;
@@ -69,7 +68,7 @@ h1 span {
     gap: 12px;
     overflow-x: auto;
     /* Expanded padding gives the deep box-shadows room to breathe so they aren't clipped */
-    padding: 15px 0 25px 0; 
+    padding-block: 24px;
     scrollbar-width: none; /* Hide scrollbar Firefox */
 }
 .categories-container::-webkit-scrollbar { display: none; } /* Hide scrollbar Chrome */
@@ -86,18 +85,19 @@ h1 span {
 .categories-container::-webkit-scrollbar { display: none; } /* Hide scrollbar Chrome */
 
 .category-btn {
+    --pad: 10px;
     background: rgba(255, 255, 255, 0.03);
     color: var(--text-muted);
     border: 1px solid var(--border-subtle);
-    padding: 8px 16px;
+    padding: var(--pad) calc(var(--pad) * 2);
     border-radius: var(--brad16);
     cursor: pointer;
     white-space: nowrap;
     font-size: 14px;
+    font-weight: 700;
+    text-transform: uppercase;
     letter-spacing: 0.5px;
-    text-transform: capitalize;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    backdrop-filter: blur(8px);
 }
 
 .category-btn:hover {
@@ -122,11 +122,19 @@ h1 span {
 .streams-section {
     width: 100%;
     padding-inline: 20px;
+    display: grid;
+    gap: 48px;
 }
 
-.streams-section h2 {
+.stream-group {
+  display: grid;
+  gap: 16px;
+}
+
+.streams-title {
+    font-size: 24px;
     font-weight: 800;
-    letter-spacing: -0.5px;
+    /* letter-spacing: -0.5px; */
     color: var(--text-main);
     text-transform: uppercase;
 }
@@ -135,7 +143,7 @@ h1 span {
 .streams-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-    gap: 25px;
+    gap: 18px;
 }
 
 /* @media (min-width: 600px) { .streams-grid { grid-template-columns: repeat(2, 1fr); } } */
@@ -145,7 +153,7 @@ h1 span {
     display: flex;
     flex-direction: column;
     background: var(--bg-surface);
-    border-radius: var(--brad24);
+    border-radius: var(--brad16);
     border: 1px solid var(--border-subtle);
     overflow: hidden;
     cursor: pointer;
@@ -166,7 +174,6 @@ h1 span {
     width: 100%;
     padding-top: 56.25%;
     background: #000;
-    border-radius: 16px 16px 0 0;
     overflow: hidden; /* Contains the image zoom */
 }
 
@@ -196,7 +203,7 @@ h1 span {
     font-weight: 800;
     border-radius: 8px;
     text-transform: uppercase;
-    letter-spacing: 1px;
+    /* letter-spacing: 1px; */
     box-shadow: 0 4px 15px rgba(255, 8, 68, 0.4);
     z-index: 1;
 }
@@ -217,7 +224,7 @@ h1 span {
 
 /* --- 7. Stream Typography Details --- */
 .stream-details {
-    padding: 12px;
+    padding: 10px 14px;
     gap: 4px;
     flex-grow: 1;
     display: flex;
@@ -309,7 +316,7 @@ h1 span {
     color: #4facfe;
     text-transform: uppercase;
     font-weight: 800;
-    letter-spacing: 1px;
+    /* letter-spacing: 1px; */
 }
 
 .control-buttons button {
@@ -343,8 +350,19 @@ h1 span {
 }
 
 .player-info {
-    padding: 20px;
+    display: grid;
+    gap: 4px;
+    padding: 18px;
     background: var(--bg-surface);
+}
+
+#player-title {
+    font-size: 20px;
+}
+
+#player-league {
+    color: var(--text-muted);
+    font-size: 14px;
 }
 
 /* --- Mini Player Drag & Resize Enhancements --- */
@@ -373,7 +391,7 @@ h1 span {
     background: var(--bg-base); /* Prevents the page behind it from bleeding through */
     box-shadow: 0 30px 60px rgba(0, 0, 0, 0.9), 0 0 30px var(--border-glow);
     border: 1px solid rgba(79, 172, 254, 0.5);
-    border-radius: 16px;
+    border-radius: var(--brad24);
     
     /* 3. Drag & resize properties */
     resize: horizontal; 
@@ -395,11 +413,64 @@ h1 span {
 .video-player-wrapper.mini #player-league { display: none; }
 
 @media (max-width: 600px) {
-    .video-player-wrapper.mini {
-        width: calc(100% - 40px);
+    .categories-container {
+        gap: 8px;
+        padding-block: 16px;
+    }
+
+    .category-btn {
+        --pad: 6px;
+        font-size: 12px;
+    }
+
+    .category-btn:first-child {
+        margin-left: 16px;
+    }
+
+    .category-btn.active {
+        box-shadow: 0 4px 10px var(--border-glow);
+    }
+
+    .streams-section {
+        padding-inline: 16px;
+        gap: 36px;
+    }
+
+    .stream-group {
+        gap: 12px;
+    }
+
+    .streams-title {
+        font-size: 20px;
+    }
+
+    .stream-details {
+        padding: 8px 10px;
+    }
+
+    .video-player-wrapper.active {
+        display: block;
+        width: calc(100% - 32px);
+        margin-bottom: 16px;
+        margin-inline: 16px; 
+    }
+
+    .player-info {
+        padding: 12px;
+    }
+
+    #player-title {
+        font-size: 16px;
+    }
+
+    #player-league {
+        font-size: 12px;
+    }
+
+    /* .video-player-wrapper.mini {
         right: 20px;
         bottom: 20px;
-    }
+    } */
 }
 
 @keyframes pulse {

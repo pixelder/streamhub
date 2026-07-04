@@ -54,21 +54,24 @@
                   <iframe id="live-player" src="" allow="fullscreen; picture-in-picture" allowfullscreen></iframe>
               </div>
               <div class="player-info">
-                  <h2 id="player-title" style="font-size: 1.2rem;">Select a stream below</h2>
-                  <p id="player-league" style="color: var(--text-muted); font-size: 0.9rem; margin-top: 5px;"></p>
+                  <h2 id="player-title">Select a stream below</h2>
+                  <p id="player-league"></p>
               </div>
           </div>
 
           <div class="streams-section">
-              <h2 style="margin-bottom: 15px; font-size: 1.3rem;">Live Now</h2>
-              <div class="streams-grid" id="live-streams-display">
-                  <div class="no-streams">Loading live events...</div>
-              </div>
-
-              <h2 style="margin-top: 40px; margin-bottom: 15px; font-size: 1.3rem;">Upcoming Events</h2>
-              <div class="streams-grid" id="upcoming-streams-display">
-                  <div class="no-streams">Loading upcoming events...</div>
-              </div>
+            <div class="stream-group">
+                <h2 class="streams-title">Live Now</h2>
+                <div class="streams-grid" id="live-streams-display">
+                    <div class="no-streams">Loading live events...</div>
+                </div>
+            </div>
+            <div class="stream-group">
+                <h2 class="streams-title">Upcoming Events</h2>
+                <div class="streams-grid" id="upcoming-streams-display">
+                    <div class="no-streams">Loading upcoming events...</div>
+                </div>
+            </div>
           </div>
   </main>
       
