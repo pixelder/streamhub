@@ -165,7 +165,7 @@
     border-block-start: solid 1px #ffffff1a;
     backdrop-filter: blur(4px);
     box-shadow: 0 0 30px 10px var(--bg-color);
-    z-index: 1;
+    z-index: 2;
   }
 
   #bottom-bar {
