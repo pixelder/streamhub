@@ -1,0 +1,409 @@
+/* --- 1. Global Setup & Expressive Variables --- */
+@import url('https://fonts.googleapis.com/css2?family=Hanken+Grotesk:ital,wght@0,100..900;1,100..900&display=swap');
+
+:root {
+    --bg-base: #060913; /* Deep, rich dark base */
+    --bg-surface: #10162a; /* Slightly elevated surface */
+    --accent-gradient: linear-gradient(135deg, #00f2fe 0%, #4facfe 100%); /* Expressive neon cyan */
+    --accent-danger: linear-gradient(135deg, #ff0844 0%, #290f0f 100%); /* Vibrant red/orange */
+    --text-main: #ffffff;
+    --text-muted: #8b9bb4;
+    --border-glow: rgba(79, 172, 254, 0.3);
+    --border-subtle: rgba(255, 255, 255, 0.05);
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    /* Apply the new font globally */
+    font-family: 'Hanken Grotesk', sans-serif;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    background-color: var(--bg-base);
+    color: var(--text-main);
+    background-image: 
+        radial-gradient(circle at 15% 50%, rgba(79, 172, 254, 0.04) 0%, transparent 50%),
+        radial-gradient(circle at 85% 30%, rgba(255, 8, 68, 0.03) 0%, transparent 50%);
+}
+
+.main-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    gap: 8px;
+    margin-bottom: 60px;
+}
+
+/* --- 2. Header & Branding --- */
+.top-control {
+    padding-top: 12px;
+    width: 100%;
+    max-width: 1200px;
+    display: flex;
+    align-items: center;
+}
+
+h1 {
+    font-size: 2.4rem;
+    font-weight: 800;
+    letter-spacing: -1px;
+    color: var(--text-main);
+}
+
+/* Gradient Text for the brand span */
+h1 span {
+    background: var(--accent-gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+
+/* --- 3. Expressive Category Tabs --- */
+.categories-container {
+    display: flex;
+    gap: 12px;
+    overflow-x: auto;
+    /* Expanded padding gives the deep box-shadows room to breathe so they aren't clipped */
+    padding: 15px 0 25px 0; 
+    scrollbar-width: none; /* Hide scrollbar Firefox */
+}
+.categories-container::-webkit-scrollbar { display: none; } /* Hide scrollbar Chrome */
+
+/* Push the first and last items inward slightly so their shadows never hit the scroll edge */
+.category-btn:first-child {
+    margin-left: 20px;
+}
+
+.category-btn:last-child {
+    margin-right: 20px;
+}
+
+.categories-container::-webkit-scrollbar { display: none; } /* Hide scrollbar Chrome */
+
+.category-btn {
+    background: rgba(255, 255, 255, 0.03);
+    color: var(--text-muted);
+    border: 1px solid var(--border-subtle);
+    padding: 8px 16px;
+    border-radius: var(--brad16);
+    cursor: pointer;
+    white-space: nowrap;
+    font-size: 14px;
+    letter-spacing: 0.5px;
+    text-transform: capitalize;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    backdrop-filter: blur(8px);
+}
+
+.category-btn:hover {
+    background: rgba(255, 255, 255, 0.08);
+    color: var(--text-main);
+    /* transform: translateY(-2px); */
+}
+
+.category-btn.active {
+    background: var(--accent-gradient);
+    color: #000; /* High contrast text on bright background */
+    border-color: transparent;
+    box-shadow: 0 8px 20px var(--border-glow);
+}
+
+
+@media (min-width: 900px) {
+    .main-container.player-active { grid-template-columns: 2fr 1fr; }
+    .main-container.player-active.mini-active { grid-template-columns: 1fr; }
+}
+
+.streams-section {
+    width: 100%;
+    padding-inline: 20px;
+}
+
+.streams-section h2 {
+    font-weight: 800;
+    letter-spacing: -0.5px;
+    color: var(--text-main);
+    text-transform: uppercase;
+}
+
+/* --- 5. Bouncy, Deep Stream Cards --- */
+.streams-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 25px;
+}
+
+/* @media (min-width: 600px) { .streams-grid { grid-template-columns: repeat(2, 1fr); } } */
+/* @media (min-width: 1024px) { .streams-grid { grid-template-columns: repeat(3, 1fr); } } */
+
+.stream-card {
+    display: flex;
+    flex-direction: column;
+    background: var(--bg-surface);
+    border-radius: var(--brad24);
+    border: 1px solid var(--border-subtle);
+    overflow: hidden;
+    cursor: pointer;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    /* Springy bouncy transition */
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+}
+
+.stream-card:hover {
+    transform: translateY(-2px) scale(1.02);
+    border-color: rgba(79, 172, 254, 0.5);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6), 0 0 20px var(--border-glow);
+}
+
+/* Image scaling on hover */
+.thumbnail-box {
+    position: relative;
+    width: 100%;
+    padding-top: 56.25%;
+    background: #000;
+    border-radius: 16px 16px 0 0;
+    overflow: hidden; /* Contains the image zoom */
+}
+
+.thumbnail-box img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.6s ease;
+}
+
+.stream-card:hover .thumbnail-box img {
+    transform: scale(1.04);
+}
+
+/* --- 6. Expressive Badges --- */
+.live-badge {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    background: var(--accent-danger);
+    color: white;
+    padding: 6px 12px;
+    font-size: 0.75rem;
+    font-weight: 800;
+    border-radius: 8px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    box-shadow: 0 4px 15px rgba(255, 8, 68, 0.4);
+    z-index: 2;
+}
+
+.live-badge.upcoming-badge {
+    background: rgba(16, 22, 42, 0.8);
+    border: 1px solid var(--border-subtle);
+    box-shadow: none;
+    color: var(--text-muted);
+    backdrop-filter: blur(4px);
+}
+
+.stream-card.featured-live {
+    border-color: #ff0844;
+    box-shadow: 0 0 20px rgba(255, 8, 68, 0.2);
+}
+.stream-card.featured-live .live-badge { animation: pulse 2s infinite; }
+
+/* --- 7. Stream Typography Details --- */
+.stream-details {
+    padding: 12px;
+    gap: 4px;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.stream-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.stream-league {
+    font-size: 12px;
+    font-weight: 800;
+    background: var(--accent-gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-transform: uppercase;
+}
+
+.stream-time {
+    color: var(--text-muted);
+    background: rgba(0, 0, 0, 0.4);
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    text-wrap: nowrap;
+    border: 1px solid var(--border-subtle);
+}
+
+.stream-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--text-main);
+    overflow: auto;
+    text-wrap: nowrap;
+}
+
+/* Dimmer styling for upcoming */
+.stream-card.upcoming-card { opacity: 0.7; }
+.stream-card.upcoming-card:hover { opacity: 1; }
+
+/* --- 8. Empty States --- */
+.no-streams {
+    grid-column: 1 / -1;
+    padding: 40px 20px;
+    background: rgba(255, 255, 255, 0.02);
+    border-radius: 16px;
+    border: 1px dashed var(--border-subtle);
+    text-align: center;
+    color: var(--text-muted);
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+/* --- 9. Player & Mini-Player Updates --- */
+.video-player-wrapper {
+    display: none;
+    background: #000;
+    border-radius: 16px;
+    overflow: hidden;
+    border: 1px solid var(--border-subtle);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    transform-origin: bottom right;
+}
+
+.video-player-wrapper.active { 
+    display: block;
+    width: calc(100% - 40px);
+    margin-bottom: 20px;
+    margin-inline: 20px;
+}
+
+.player-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #000;
+    padding: 12px 20px;
+    border-bottom: 1px solid #1a233a;
+}
+
+.now-playing-badge {
+    font-size: 0.75rem;
+    color: #4facfe;
+    text-transform: uppercase;
+    font-weight: 800;
+    letter-spacing: 1px;
+}
+
+.control-buttons button {
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    cursor: pointer;
+    margin-left: 15px;
+    transition: all 0.2s ease;
+    display: inline-flex;
+}
+
+.control-buttons button:hover {
+    color: var(--text-main);
+    transform: scale(1.1);
+}
+
+.iframe-container {
+    position: relative;
+    width: 100%;
+    padding-top: 56.25%; 
+}
+
+.iframe-container iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
+}
+
+.player-info {
+    padding: 20px;
+    background: var(--bg-surface);
+}
+
+/* --- Mini Player Drag & Resize Enhancements --- */
+
+/* Change cursor to indicate draggability */
+.video-player-wrapper.mini .player-controls {
+    cursor: grab;
+}
+
+.video-player-wrapper.mini .player-controls:active {
+    cursor: grabbing;
+}
+
+/* Enable native horizontal resizing */
+/* --- The Complete, Fixed Mini Player State --- */
+.video-player-wrapper.mini {
+    /* 1. The crucial floating properties that were lost */
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    width: 400px;
+    z-index: 9999;
+    overflow:hidden;
+    
+    /* 2. Visual styling & depth */
+    background: var(--bg-base); /* Prevents the page behind it from bleeding through */
+    box-shadow: 0 30px 60px rgba(0, 0, 0, 0.9), 0 0 30px var(--border-glow);
+    border: 1px solid rgba(79, 172, 254, 0.5);
+    border-radius: 16px;
+    
+    /* 3. Drag & resize properties */
+    resize: horizontal; 
+    min-width: 280px;
+    max-width: 800px;
+    background-image: radial-gradient(circle at 100% 100%, rgba(255,255,255,0.2) 2px, transparent 3px);
+    background-size: 15px 15px;
+    background-position: bottom 2px right 2px;
+    background-repeat: no-repeat;
+}
+
+/* Disable transitions during active drag to prevent rubber-banding */
+.video-player-wrapper.dragging {
+    transition: none !important; 
+    box-shadow: 0 40px 80px rgba(0, 0, 0, 0.9), 0 0 40px var(--border-glow) !important;
+}
+
+.video-player-wrapper.mini #player-title { font-size: 1rem !important; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.video-player-wrapper.mini #player-league { display: none; }
+
+@media (max-width: 600px) {
+    .video-player-wrapper.mini {
+        width: calc(100% - 40px);
+        right: 20px;
+        bottom: 20px;
+    }
+}
+
+@keyframes pulse {
+    0% { opacity: 0.8; box-shadow: 0 0 0 0 rgba(255, 8, 68, 0.7); }
+    70% { opacity: 1; box-shadow: 0 0 0 10px rgba(255, 8, 68, 0); }
+    100% { opacity: 0.8; box-shadow: 0 0 0 0 rgba(255, 8, 68, 0); }
+}
