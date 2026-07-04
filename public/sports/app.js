@@ -365,8 +365,9 @@ function setupDraggableMiniPlayer() {
 }
 document.addEventListener('DOMContentLoaded', () => {
     // Start app
+    setActiveIcon('sports');
     topNavBar()
-  bottomNavBar();
-  setUpScrollEvents()
+    bottomNavBar();
+    setUpScrollEvents()
     init();
 })
