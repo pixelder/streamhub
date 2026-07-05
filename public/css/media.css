@@ -168,6 +168,10 @@
     z-index: 2;
   }
 
+  #bottom-bar:not(.detach) {
+    background-color: #0d0d1bdd;
+  }
+
   #bottom-bar {
     display: flex;
     /* position: fixed; */

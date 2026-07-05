@@ -1,373 +1,615 @@
 const API_BASE = "https://streamfree.top/api/v1";
-let currentCategory = 'all';
-let streamCache = []; // Holds the active dataset
-let timeCheckerInterval;
-let isMinimized = false;
 
-// Cache Configuration (in minutes)
+let currentCategory = "all";
+let streamCache = [];
+let timeCheckerInterval = null;
+let streamRefreshInterval = null;
+let isMinimized = false;
+let miniPlayerListenersAttached = false;
+
+// Cache configuration, in minutes
 const CACHE_TTL_STREAMS = 5;
 const CACHE_TTL_CATEGORIES = 1440; // 24 hours
 
+const LIVE_THRESHOLD = 600; // Treat as live 10 minutes before match_timestamp
 
-// Initialize application
-// Initialize application
 async function init() {
-    setupDraggableMiniPlayer(); // Initialize drag listeners
-    
+    setupDraggableMiniPlayer();
+
     await fetchCategories();
     await fetchStreams();
-    
-    // THE OBSERVER (Optimized)
-    let lastRenderSignature = "";
 
+    let lastRenderSignature = getRenderSignature(streamCache);
+
+    if (timeCheckerInterval) {
+        clearInterval(timeCheckerInterval);
+    }
+
+    // Re-render only when an upcoming event crosses into the live window.
     timeCheckerInterval = setInterval(() => {
-        if (streamCache.length > 0) {
-            // 1. Calculate a signature of the current state
-            // We look at the IDs and their status (Live vs Upcoming)
-            const currentSignature = streamCache.map(s => {
-                const isLive = (Math.floor(Date.now() / 1000) >= (s.match_timestamp - 600));
-                return `${s.id}-${isLive}`;
-            }).join('|');
+        if (!streamCache.length) return;
 
-            // 2. Only re-render if something changed
-            if (currentSignature !== lastRenderSignature) {
-                processAndRenderStreams(streamCache);
-                lastRenderSignature = currentSignature;
-            }
+        const currentSignature = getRenderSignature(streamCache);
+
+        if (currentSignature !== lastRenderSignature) {
+            processAndRenderStreams(streamCache);
+            lastRenderSignature = currentSignature;
         }
     }, 30000);
+
+    if (streamRefreshInterval) {
+        clearInterval(streamRefreshInterval);
+    }
+
+    // Refresh from the server periodically.
+    // This removes streams that the API no longer reports as live.
+    streamRefreshInterval = setInterval(async () => {
+        const previousSignature = getRenderSignature(streamCache);
+
+        await fetchStreams(true);
+
+        const nextSignature = getRenderSignature(streamCache);
+
+        if (previousSignature !== nextSignature) {
+            processAndRenderStreams(streamCache);
+        }
+    }, CACHE_TTL_STREAMS * 60 * 1000);
 }
 
-// Generic Cache Helper
-async function fetchWithCache(cacheKey, url, ttlMinutes) {
+function getRenderSignature(streams) {
+    const now = Math.floor(Date.now() / 1000);
+
+    return streams
+        .map(stream => {
+            const isLive = now >= stream.match_timestamp - LIVE_THRESHOLD;
+            return `${stream.stream_key}-${isLive}`;
+        })
+        .join("|");
+}
+
+async function fetchWithCache(cacheKey, url, ttlMinutes, forceRefresh = false) {
+    let staleData = null;
+
     try {
         const cachedItem = localStorage.getItem(cacheKey);
-        
+
         if (cachedItem) {
             const parsed = JSON.parse(cachedItem);
-            const now = new Date().getTime();
-            
-            // If cache hasn't expired, return local data
-            if (now < parsed.expiry) {
+            staleData = parsed.data;
+
+            if (!forceRefresh && Date.now() < parsed.expiry) {
                 return parsed.data;
             }
         }
 
-        // If no cache or expired, fetch from server
         const response = await fetch(url);
-        if (!response.ok) throw new Error('Network response was not ok');
+
+        if (!response.ok) {
+            throw new Error(`Request failed with status ${response.status}`);
+        }
+
         const data = await response.json();
-        
-        // Save to cache with new expiry time
-        const expiryTime = new Date().getTime() + (ttlMinutes * 60 * 1000);
-        localStorage.setItem(cacheKey, JSON.stringify({ data, expiry: expiryTime }));
-        
+
+        localStorage.setItem(
+            cacheKey,
+            JSON.stringify({
+                data,
+                expiry: Date.now() + ttlMinutes * 60 * 1000
+            })
+        );
+
         return data;
-    } catch (err) {
-        console.error(`Error fetching ${url}:`, err);
-        // Fallback: If network fails but we have stale cache, use it anyway
-        const staleData = localStorage.getItem(cacheKey);
-        return staleData ? JSON.parse(staleData).data : null;
+    } catch (error) {
+        console.error(`Error fetching ${url}:`, error);
+        return staleData;
     }
 }
 
-// Fetch categories from API or Cache
 async function fetchCategories() {
-    const data = await fetchWithCache('sf_categories', `${API_BASE}/categories`, CACHE_TTL_CATEGORIES);
-    
-    if (data && data.categories) {
-        const container = document.getElementById('categories-bar');
-        
-        // Preserve the "All" button, remove the rest if re-rendering
-        container.innerHTML = `<button class="category-btn active" onclick="filterCategory('all', this)">All</button>`;
-        
-        const fragment = document.createDocumentFragment();
-        
-        data.categories.forEach(cat => {
-            const btn = document.createElement('button');
-            btn.className = 'category-btn';
-            btn.textContent = cat;
-            btn.onclick = () => filterCategory(cat, btn);
-            fragment.appendChild(btn);
-        });
-        
-        container.appendChild(fragment);
-    }
-}
+    const data = await fetchWithCache(
+        "sf_categories",
+        `${API_BASE}/categories`,
+        CACHE_TTL_CATEGORIES
+    );
 
-// Fetch ALL streams once, cache them, and rely on client-side filtering
-async function fetchStreams() {
-    // We do NOT append ?category= anymore. We fetch everything to cache it locally.
-    const data = await fetchWithCache('sf_streams', `${API_BASE}/streams`, CACHE_TTL_STREAMS);
-    
-    if (data && data.streams) {
-        streamCache = data.streams; 
-        processAndRenderStreams(streamCache);
-    } else {
-        document.getElementById('live-streams-display').innerHTML = `<div class="no-streams">Unable to load events.</div>`;
-    }
-}
-
-// Change categories dynamically (INSTANT - No API call)
-function filterCategory(category, element) {
-    currentCategory = category;
-    
-    document.querySelectorAll('.category-btn').forEach(btn => btn.classList.remove('active'));
-    if (element) {
-        element.classList.add('active');
-    } else {
-        document.querySelector('.category-btn').classList.add('active');
-    }
-
-    // Just re-process the existing local array!
-    processAndRenderStreams(streamCache);
-}
-
-// Process, split, sort, and render
-function processAndRenderStreams(streams) {
-    const liveGrid = document.getElementById('live-streams-display');
-    const upcomingGrid = document.getElementById('upcoming-streams-display');
-    
-    // Clear out current grids
-    liveGrid.innerHTML = '';
-    upcomingGrid.innerHTML = '';
-
-    const currentUnixTime = Math.floor(Date.now() / 1000);
-    const LIVE_THRESHOLD = 600; // 10 minutes
-
-    // 1. FILTER
-    let displayStreams = streams;
-    if (currentCategory !== 'all') {
-        displayStreams = streams.filter(s => s.category.toLowerCase() === currentCategory.toLowerCase());
-    }
-
-    // 2. DOM FRAGMENTS
-    const liveFragment = document.createDocumentFragment();
-    const upcomingFragment = document.createDocumentFragment();
-
-    if (!displayStreams || displayStreams.length === 0) {
-        liveGrid.innerHTML = `<div class="no-streams">No events found for this category.</div>`;
-        upcomingGrid.innerHTML = `<div class="no-streams">No upcoming events scheduled.</div>`;
+    if (!data?.categories || !Array.isArray(data.categories)) {
         return;
     }
 
-    // 3. SPLIT & SORT
+    const container = document.getElementById("categories-bar");
+
+    if (!container) {
+        return;
+    }
+
+    container.innerHTML = "";
+
+    const allButton = document.createElement("button");
+    allButton.className = "category-btn";
+    allButton.textContent = "All";
+    allButton.addEventListener("click", () => filterCategory("all", allButton));
+    container.appendChild(allButton);
+
+    const fragment = document.createDocumentFragment();
+
+    data.categories.forEach(category => {
+        const button = document.createElement("button");
+
+        button.className = "category-btn";
+        button.textContent = category;
+
+        button.addEventListener("click", () => {
+            filterCategory(category, button);
+        });
+
+        fragment.appendChild(button);
+    });
+
+    container.appendChild(fragment);
+
+    const activeButton = [...container.querySelectorAll(".category-btn")].find(
+        button => button.textContent.toLowerCase() === currentCategory.toLowerCase()
+    );
+
+    (activeButton || allButton).classList.add("active");
+}
+
+async function fetchStreams(forceRefresh = false) {
+    const data = await fetchWithCache(
+        "sf_streams",
+        `${API_BASE}/streams`,
+        CACHE_TTL_STREAMS,
+        forceRefresh
+    );
+
+    if (data?.streams && Array.isArray(data.streams)) {
+        streamCache = data.streams;
+        processAndRenderStreams(streamCache);
+        return;
+    }
+
+    streamCache = [];
+
+    const liveGrid = document.getElementById("live-streams-display");
+    const upcomingGrid = document.getElementById("upcoming-streams-display");
+
+    if (liveGrid) {
+        liveGrid.replaceChildren(createEmptyState("Unable to load events."));
+    }
+
+    if (upcomingGrid) {
+        upcomingGrid.replaceChildren(createEmptyState("No upcoming events scheduled."));
+    }
+}
+
+function filterCategory(category, element) {
+    currentCategory = category;
+
+    document.querySelectorAll(".category-btn").forEach(button => {
+        button.classList.remove("active");
+    });
+
+    if (element) {
+        element.classList.add("active");
+    }
+
+    processAndRenderStreams(streamCache);
+}
+
+function processAndRenderStreams(streams) {
+    const liveGrid = document.getElementById("live-streams-display");
+    const upcomingGrid = document.getElementById("upcoming-streams-display");
+
+    if (!liveGrid || !upcomingGrid) {
+        return;
+    }
+
+    liveGrid.replaceChildren();
+    upcomingGrid.replaceChildren();
+
+    const currentUnixTime = Math.floor(Date.now() / 1000);
+
+    const displayStreams = currentCategory === "all"
+        ? streams
+        : streams.filter(stream =>
+            String(stream.category || "").toLowerCase() === currentCategory.toLowerCase()
+        );
+
+    if (!displayStreams.length) {
+        liveGrid.appendChild(createEmptyState("No events found for this category."));
+        upcomingGrid.appendChild(createEmptyState("No upcoming events scheduled."));
+        return;
+    }
+
     const liveStreams = [];
     const upcomingStreams = [];
 
     displayStreams.forEach(stream => {
-        if (currentUnixTime >= (stream.match_timestamp - LIVE_THRESHOLD)) {
+        const matchTimestamp = Number(stream.match_timestamp);
+
+        if (!Number.isFinite(matchTimestamp)) {
+            return;
+        }
+
+        if (currentUnixTime >= matchTimestamp - LIVE_THRESHOLD) {
             liveStreams.push(stream);
         } else {
             upcomingStreams.push(stream);
         }
     });
 
-    liveStreams.sort((a, b) => Math.abs(currentUnixTime - a.match_timestamp) - Math.abs(currentUnixTime - b.match_timestamp));
-    upcomingStreams.sort((a, b) => a.match_timestamp - b.match_timestamp);
+    // Keep chronological proximity sort for general grid layout order
+// --- CYBER TELEMETRY AUDIT: SORT BY TOTAL VIEWERS (DESCENDING) ---
+    liveStreams.sort((a, b) => {
+        const viewersA = Number(a.viewers) || 0;
+        const viewersB = Number(b.viewers) || 0;
+        return viewersB - viewersA; // Highest traffic nodes bubble to the absolute top
+    });
 
-    // 4. RENDER TO FRAGMENTS FIRST
-    if (liveStreams.length === 0) {
-        const emptyDiv = document.createElement('div');
-        emptyDiv.className = 'no-streams';
-        emptyDiv.textContent = 'No events are live at this exact moment.';
-        liveFragment.appendChild(emptyDiv);
+    upcomingStreams.sort((a, b) => {
+        return a.match_timestamp - b.match_timestamp;
+    });
+
+    const liveFragment = document.createDocumentFragment();
+    const upcomingFragment = document.createDocumentFragment();
+
+    if (!liveStreams.length) {
+        liveFragment.appendChild(
+            createEmptyState("No events are live at this exact moment.")
+        );
     } else {
-        liveStreams.forEach((stream, index) => liveFragment.appendChild(createCard(stream, index === 0, true)));
+        // Since the array is now strictly sorted by viewers, 
+        // index === 0 is guaranteed to be your highest peak-traffic stream.
+        liveStreams.forEach((stream, index) => {
+            const isFeatured = index === 0;
+            liveFragment.appendChild(createCard(stream, isFeatured, true));
+        });
+    }
+    
+    if (!upcomingStreams.length) {
+        upcomingFragment.appendChild(
+            createEmptyState("No upcoming events scheduled.")
+        );
+    } else {
+        upcomingStreams.forEach(stream => {
+            upcomingFragment.appendChild(createCard(stream, false, false));
+        });
     }
 
-    if (upcomingStreams.length === 0) {
-        const emptyDiv = document.createElement('div');
-        emptyDiv.className = 'no-streams';
-        emptyDiv.textContent = 'No upcoming events scheduled.';
-        upcomingFragment.appendChild(emptyDiv);
-    } else {
-        upcomingStreams.forEach(stream => upcomingFragment.appendChild(createCard(stream, false, false)));
-    }
-
-    // 5. ATTACH TO DOM ONCE
     liveGrid.appendChild(liveFragment);
     upcomingGrid.appendChild(upcomingFragment);
 }
 
-// Helper function to build the card HTML
-function createCard(stream, isFeatured, isLive) {
-    const card = document.createElement('div');
-    card.className = `stream-card ${isFeatured ? 'featured-live' : ''} ${!isLive ? 'upcoming-card' : ''}`;
-    card.onclick = () => loadStream(stream.embed_url, stream.name, stream.league);
-
-    const matchDate = new Date(stream.match_timestamp * 1000);
-    const today = new Date();
-    let formattedTime = matchDate.toDateString() === today.toDateString() 
-        ? `Today, ${matchDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}` 
-        : matchDate.toLocaleDateString([], { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
-
-    let badgeText = isLive ? (isFeatured ? "🔥 Top Live" : "Live") : "Upcoming";
-
-    card.innerHTML = `
-        <div class="thumbnail-box">
-            <span class="live-badge ${!isLive ? 'upcoming-badge' : ''}">${badgeText}</span>
-            <img src="${stream.thumbnail_url}" onerror="this.src='https://images.unsplash.com/photo-1508098682722-e99c43a406b2?w=500&auto=format&fit=crop'" alt="${stream.name}">
-        </div>
-        <div class="stream-details">
-            <div class="stream-meta">
-                <span class="stream-league">${stream.league || stream.category}</span>
-                <span class="stream-time">${formattedTime}</span>
-            </div>
-            <div class="stream-title">${stream.name}</div>
-        </div>
-    `;
-    return card;
+function createEmptyState(message) {
+    const emptyDiv = document.createElement("div");
+    emptyDiv.className = "no-streams";
+    emptyDiv.textContent = message;
+    return emptyDiv;
 }
 
-// Toggle between main view and mini-player (UPDATED)
+function createCard(stream, isFeatured, isLive) {
+    const card = document.createElement("div");
+
+    card.className = [
+        "stream-card",
+        isFeatured ? "featured-live" : "",
+        !isLive ? "upcoming-card" : ""
+    ].filter(Boolean).join(" ");
+
+    card.addEventListener("click", () => {
+        loadStream(stream.embed_url, stream.name, stream.league);
+    });
+
+    // 1. Thumbnail Container & Badges
+    const thumbnailBox = document.createElement("div");
+    thumbnailBox.className = "thumbnail-box";
+
+    const badge = document.createElement("span");
+    badge.className = `live-badge ${!isLive ? "upcoming-badge" : ""}`;
+    badge.textContent = isLive
+        ? (isFeatured ? "🔥 Top Live" : "Live")
+        : "Upcoming";
+
+    const image = document.createElement("img");
+    image.src = stream.thumbnail_url || "";
+    image.alt = stream.name || "Stream thumbnail";
+    image.loading = "lazy";
+
+    image.onerror = () => {
+        image.onerror = null;
+        image.src = "https://images.unsplash.com/photo-1508098682722-e99c43a406b2?w=500&auto=format&fit=crop";
+    };
+
+    thumbnailBox.append(badge, image);
+
+    // 2. Stream Details (Wrapper with left-axis color anchor)
+    const details = document.createElement("div");
+    details.className = "stream-details";
+
+    // --- Meta Row (Telemetry Data Layout) ---
+    const meta = document.createElement("div");
+    meta.className = "stream-meta";
+    
+    const league = document.createElement("span");
+    league.className = "stream-league";
+    league.textContent = stream.league || "Unknown league";
+    
+    const category = document.createElement("span");
+    category.className = "stream-category";
+    category.textContent = stream.category || "Unknown sport";
+
+    const time = document.createElement("span");
+    time.className = "stream-time";
+    time.textContent = formatStreamTime(stream.match_timestamp);
+
+    meta.append(league, category, time);
+
+    // --- Title Row (Prefixed with DATA_NODE//) ---
+    const titleWrapper = document.createElement("div");
+    titleWrapper.className = "stream-title-wrapper";
+
+    const title = document.createElement("div");
+    title.className = "stream-title";
+    title.textContent = stream.name || "Untitled event";
+
+    titleWrapper.append(title);
+
+    // --- Footer Status Row (Automated Matrix Readout) ---
+    const statusRow = document.createElement("div");
+    statusRow.className = "stream-status-row";
+
+    // 3. Complete Component Compilation
+    details.append(meta, titleWrapper, statusRow);
+    card.append(thumbnailBox, details);
+
+    return card;
+}
+function formatStreamTime(timestamp) {
+    const matchDate = new Date(Number(timestamp) * 1000);
+
+    if (Number.isNaN(matchDate.getTime())) {
+        return "Time unavailable";
+    }
+
+    const now = new Date();
+
+    const isToday =
+        matchDate.getFullYear() === now.getFullYear() &&
+        matchDate.getMonth() === now.getMonth() &&
+        matchDate.getDate() === now.getDate();
+
+    if (isToday) {
+        return `Today, ${matchDate.toLocaleTimeString([], {
+            hour: "2-digit",
+            minute: "2-digit"
+        })}`;
+    }
+
+    return matchDate.toLocaleDateString([], {
+        month: "short",
+        day: "numeric",
+        hour: "2-digit",
+        minute: "2-digit"
+    });
+}
+
+function resetMiniPlayerPosition(wrapper) {
+    wrapper.style.left = "";
+    wrapper.style.top = "";
+    wrapper.style.right = "";
+    wrapper.style.bottom = "";
+    wrapper.style.width = "";
+    wrapper.style.height = "";
+}
+
 function toggleMiniPlayer() {
-    const wrapper = document.getElementById('player-wrapper');
-    const layout = document.getElementById('main-layout');
-    
+    const wrapper = document.getElementById("player-wrapper");
+    const layout = document.getElementById("main-layout");
+
+    if (!wrapper || !layout) {
+        return;
+    }
+
     isMinimized = !isMinimized;
-    
+
     if (isMinimized) {
-        // Reset styles so it snaps to default bottom-right before they drag it
-        wrapper.style.cssText = ''; 
-        wrapper.classList.add('mini');
-        layout.classList.add('mini-active');
+        resetMiniPlayerPosition(wrapper);
+        wrapper.classList.add("mini");
+        layout.classList.add("mini-active");
     } else {
-        wrapper.classList.remove('mini');
-        layout.classList.remove('mini-active');
-        // Clear out any drag coordinates or custom resizing
-        wrapper.style.cssText = ''; 
-        
+        wrapper.classList.remove("mini");
+        layout.classList.remove("mini-active");
+        resetMiniPlayerPosition(wrapper);
+
         if (window.innerWidth < 900) {
-            wrapper.scrollIntoView({ behavior: 'smooth' });
+            wrapper.scrollIntoView({ behavior: "smooth", block: "nearest" });
         }
     }
 }
 
-// Close the player completely and kill the audio (UPDATED)
 function closePlayer() {
-    const wrapper = document.getElementById('player-wrapper');
-    const layout = document.getElementById('main-layout');
-    const player = document.getElementById('live-player');
-    
-    wrapper.classList.remove('active', 'mini');
-    layout.classList.remove('player-active', 'mini-active');
-    wrapper.style.cssText = ''; // Clean up drag styles
-    
-    player.src = ""; 
+    const wrapper = document.getElementById("player-wrapper");
+    const layout = document.getElementById("main-layout");
+    const player = document.getElementById("live-player");
+
+    if (!wrapper || !layout || !player) {
+        return;
+    }
+
+    wrapper.classList.remove("active", "mini", "dragging");
+    layout.classList.remove("player-active", "mini-active");
+
+    resetMiniPlayerPosition(wrapper);
+
+    player.src = "";
+    currentEmbedUrl = "";
     isMinimized = false;
 }
 
-// Launch stream into player (Updated)
+function reloadPlayer() {
+    const player = document.getElementById("live-player");
+
+    if (!player || !currentEmbedUrl) {
+        return;
+    }
+
+    // Clearing first forces a fresh iframe navigation.
+    player.src = "";
+    
+    requestAnimationFrame(() => {
+        player.src = currentEmbedUrl;
+    });
+}
+
 function loadStream(embedUrl, name, league) {
-    const layout = document.getElementById('main-layout');
-    const wrapper = document.getElementById('player-wrapper');
-    const player = document.getElementById('live-player');
-    
-    document.getElementById('player-title').textContent = name;
-    document.getElementById('player-league').textContent = league || "";
-    
-    player.src = embedUrl;
-    
-    // Ensure player is visible
-    wrapper.classList.add('active');
-    layout.classList.add('player-active');
-    
-    // Automatically expand the player if it was minimized
+    const layout = document.getElementById("main-layout");
+    const wrapper = document.getElementById("player-wrapper");
+    const player = document.getElementById("live-player");
+    const title = document.getElementById("player-title");
+    const leagueElement = document.getElementById("player-league");
+
+    if (!layout || !wrapper || !player || !embedUrl) {
+        return;
+    }
+
+    currentEmbedUrl = embedUrl;
+
+    if (title) {
+        title.textContent = name || "Live stream";
+    }
+
+    if (leagueElement) {
+        leagueElement.textContent = league || "";
+    }
+
+    player.src = currentEmbedUrl;
+
+    wrapper.classList.add("active");
+    layout.classList.add("player-active");
+
     if (isMinimized) {
         isMinimized = false;
-        wrapper.classList.remove('mini');
-        layout.classList.remove('mini-active');
+        wrapper.classList.remove("mini");
+        layout.classList.remove("mini-active");
+        resetMiniPlayerPosition(wrapper);
     }
-    
+
     if (window.innerWidth < 900) {
-        wrapper.scrollIntoView({ behavior: 'smooth' });
+        wrapper.scrollIntoView({ behavior: "smooth", block: "start" });
     }
 }
 
-// --- Drag functionality for the Mini Player ---
 function setupDraggableMiniPlayer() {
-    const wrapper = document.getElementById('player-wrapper');
-    const header = wrapper.querySelector('.player-controls');
-    
-    let isDragging = false;
-    let startX, startY, startLeft, startTop;
-
-    // Mouse Events
-    header.addEventListener('mousedown', dragStart);
-    document.addEventListener('mousemove', drag);
-    document.addEventListener('mouseup', dragEnd);
-
-    // Touch Events (Mobile)
-    header.addEventListener('touchstart', dragStart, { passive: false });
-    document.addEventListener('touchmove', drag, { passive: false });
-    document.addEventListener('touchend', dragEnd);
-
-    function dragStart(e) {
-        // Only allow dragging if minimized
-        if (!wrapper.classList.contains('mini')) return;
-        // Do not drag if they are clicking the minimize/close buttons
-        if (e.target.closest('.control-buttons')) return;
-
-        isDragging = true;
-        wrapper.classList.add('dragging');
-
-        // Get coordinates (handles both mouse and touch)
-        const clientX = e.type === 'touchstart' ? e.touches[0].clientX : e.clientX;
-        const clientY = e.type === 'touchstart' ? e.touches[0].clientY : e.clientY;
-
-        startX = clientX;
-        startY = clientY;
-
-        // Lock in current dimensions/positions before drag so it doesn't snap to CSS defaults
-        const rect = wrapper.getBoundingClientRect();
-        
-        // Convert fixed CSS bottom/right to absolute top/left coordinates
-        wrapper.style.left = rect.left + 'px';
-        wrapper.style.top = rect.top + 'px';
-        wrapper.style.bottom = 'auto'; 
-        wrapper.style.right = 'auto';  
-        
-        startLeft = rect.left;
-        startTop = rect.top;
+    if (miniPlayerListenersAttached) {
+        return;
     }
 
-    function drag(e) {
-        if (!isDragging) return;
-        e.preventDefault(); // Prevents highlighting text while dragging
+    const wrapper = document.getElementById("player-wrapper");
 
-        const clientX = e.type === 'touchmove' ? e.touches[0].clientX : e.clientX;
-        const clientY = e.type === 'touchmove' ? e.touches[0].clientY : e.clientY;
+    if (!wrapper) {
+        return;
+    }
 
-        const dx = clientX - startX;
-        const dy = clientY - startY;
+    const header = wrapper.querySelector(".player-controls");
 
-        let newLeft = startLeft + dx;
-        let newTop = startTop + dy;
+    if (!header) {
+        return;
+    }
 
-        // Keep the player entirely inside the viewport
-        const maxX = window.innerWidth - wrapper.offsetWidth;
-        const maxY = window.innerHeight - wrapper.offsetHeight;
+    miniPlayerListenersAttached = true;
 
-        newLeft = Math.max(0, Math.min(newLeft, maxX));
-        newTop = Math.max(0, Math.min(newTop, maxY));
+    let isDragging = false;
+    let startX = 0;
+    let startY = 0;
+    let startLeft = 0;
+    let startTop = 0;
 
-        // Apply new position
-        wrapper.style.left = newLeft + 'px';
-        wrapper.style.top = newTop + 'px';
+    header.addEventListener("mousedown", dragStart);
+    document.addEventListener("mousemove", drag);
+    document.addEventListener("mouseup", dragEnd);
+
+    header.addEventListener("touchstart", dragStart, { passive: false });
+    document.addEventListener("touchmove", drag, { passive: false });
+    document.addEventListener("touchend", dragEnd);
+
+    function getPointerPosition(event) {
+        if (event.type.startsWith("touch")) {
+            const touch = event.touches[0] || event.changedTouches[0];
+
+            return {
+                x: touch.clientX,
+                y: touch.clientY
+            };
+        }
+
+        return {
+            x: event.clientX,
+            y: event.clientY
+        };
+    }
+
+    function dragStart(event) {
+        if (!wrapper.classList.contains("mini")) {
+            return;
+        }
+
+        if (event.target.closest(".control-buttons")) {
+            return;
+        }
+
+        const pointer = getPointerPosition(event);
+        const rect = wrapper.getBoundingClientRect();
+
+        isDragging = true;
+        wrapper.classList.add("dragging");
+
+        startX = pointer.x;
+        startY = pointer.y;
+        startLeft = rect.left;
+        startTop = rect.top;
+
+        wrapper.style.left = `${rect.left}px`;
+        wrapper.style.top = `${rect.top}px`;
+        wrapper.style.right = "auto";
+        wrapper.style.bottom = "auto";
+    }
+
+    function drag(event) {
+        if (!isDragging) {
+            return;
+        }
+
+        event.preventDefault();
+
+        const pointer = getPointerPosition(event);
+
+        const deltaX = pointer.x - startX;
+        const deltaY = pointer.y - startY;
+
+        const maxLeft = Math.max(0, window.innerWidth - wrapper.offsetWidth);
+        const maxTop = Math.max(0, window.innerHeight - wrapper.offsetHeight);
+
+        const nextLeft = Math.max(0, Math.min(startLeft + deltaX, maxLeft));
+        const nextTop = Math.max(0, Math.min(startTop + deltaY, maxTop));
+
+        wrapper.style.left = `${nextLeft}px`;
+        wrapper.style.top = `${nextTop}px`;
     }
 
     function dragEnd() {
-        if (!isDragging) return;
+        if (!isDragging) {
+            return;
+        }
+
         isDragging = false;
-        wrapper.classList.remove('dragging');
+        wrapper.classList.remove("dragging");
     }
 }
-document.addEventListener('DOMContentLoaded', () => {
-    // Start app
-    topNavBar()
+
+document.addEventListener("DOMContentLoaded", () => {
+    topNavBar();
     bottomNavBar();
-    setActiveIcon('sports');
-    setUpScrollEvents()
+    setActiveIcon("sports");
+    setUpScrollEvents();
     init();
-})
+});
