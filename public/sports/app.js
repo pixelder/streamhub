@@ -6,6 +6,7 @@ let timeCheckerInterval = null;
 let streamRefreshInterval = null;
 let isMinimized = false;
 let miniPlayerListenersAttached = false;
+let currentEmbedUrl = ""; // Add this state tracker
 
 // Cache configuration, in minutes
 const CACHE_TTL_STREAMS = 5;
@@ -265,7 +266,7 @@ function processAndRenderStreams(streams) {
             liveFragment.appendChild(createCard(stream, isFeatured, true));
         });
     }
-    
+
     if (!upcomingStreams.length) {
         upcomingFragment.appendChild(
             createEmptyState("No upcoming events scheduled.")
@@ -472,21 +473,29 @@ function loadStream(embedUrl, name, league) {
         return;
     }
 
-    currentEmbedUrl = embedUrl;
+    // Check if the requested stream is already in the player
+    const isAlreadyPlaying = (currentEmbedUrl === embedUrl);
 
-    if (title) {
-        title.textContent = name || "Live stream";
+    if (!isAlreadyPlaying) {
+        currentEmbedUrl = embedUrl;
+
+        if (title) {
+            title.textContent = name || "Live stream";
+        }
+
+        if (leagueElement) {
+            leagueElement.textContent = league || "";
+        }
+
+        // Only trigger network request / iframe reload if it's a new feed
+        player.src = currentEmbedUrl;
     }
 
-    if (leagueElement) {
-        leagueElement.textContent = league || "";
-    }
-
-    player.src = currentEmbedUrl;
-
+    // Force UI active states
     wrapper.classList.add("active");
     layout.classList.add("player-active");
 
+    // Intercept and reverse the minimized HUD state
     if (isMinimized) {
         isMinimized = false;
         wrapper.classList.remove("mini");
@@ -494,9 +503,8 @@ function loadStream(embedUrl, name, league) {
         resetMiniPlayerPosition(wrapper);
     }
 
-    if (window.innerWidth < 900) {
-        wrapper.scrollIntoView({ behavior: "smooth", block: "start" });
-    }
+    // Smooth scroll the player into the viewport for immediate focus
+    wrapper.scrollIntoView({ behavior: "smooth", block: "start" });
 }
 
 function setupDraggableMiniPlayer() {
