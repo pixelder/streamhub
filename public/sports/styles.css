@@ -169,8 +169,8 @@ body::before {
 
 .streams-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 18px;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 32px;
 }
 
 /* ========================================================
@@ -206,6 +206,10 @@ body::before {
     filter: grayscale(0%) contrast(1);
     opacity: 1;
     box-shadow: 6px 6px 0px var(--accent-rust);
+}
+
+.upcoming-card:hover .stream-meta {
+    border-bottom-color: var(--accent-rust) !important;
 }
 
 /* ========================================================
@@ -283,18 +287,20 @@ body::before {
     position: absolute;
     top: 0;
     left: 0;
-    background: #c84a3157;
-    color: var(--accent-rust);
-    padding: 4px 8px;
+    color: var(--text-main);
+    padding: 8px 12px;
     font-family: var(--font-data);
-    font-size: 10px;
+    font-size: 12px;
     font-weight: 800;
     letter-spacing: 2px;
     text-transform: uppercase;
     z-index: 1;
-    border-right: 1px solid;
-    border-bottom: 1px solid;
-    backdrop-filter: blur(10px);
+}
+
+#live-streams-display .live-badge {
+  color: var(--accent-rust);
+  animation: blink 1.2s step-end infinite;
+  filter: brightness(2) saturate(2);
 }
 
 .upcoming-badge {
@@ -528,7 +534,7 @@ body::before {
 }
 
 .now-playing-badge::before {
-    content: "REC";
+    content: "LIVE";
     color: var(--accent-rust);
     margin-right: 8px;
     animation: blink 1s step-end infinite;
@@ -562,6 +568,8 @@ body::before {
 /* Brutalist mechanical click feedback */
 .control-buttons button:active {
     transform: scale(0.9);
+    background-color: unset;
+    color: unset;
 }
 
 .iframe-container {
@@ -693,6 +701,11 @@ body::before {
         gap: 12px;
     }
 
+    .live-badge {
+        padding: 4px 8px;
+        font-size: 10px;
+    }
+
     .stream-details {
         padding: 10px;
         gap: 4px;
@@ -709,6 +722,10 @@ body::before {
 
     .stream-title {
         font-size: 12px;
+    }
+
+    .video-player-wrapper {
+        box-shadow: 5px 5px 0px rgba(0, 246, 255, 0.2);
     }
 
     .video-player-wrapper.mini {

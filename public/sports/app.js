@@ -308,7 +308,7 @@ function createCard(stream, isFeatured, isLive) {
     const badge = document.createElement("span");
     badge.className = `live-badge ${!isLive ? "upcoming-badge" : ""}`;
     badge.textContent = isLive
-        ? (isFeatured ? "🔥 Top Live" : "Live")
+        ? (isFeatured ? "Top Live" : "Live")
         : "Upcoming";
 
     const image = document.createElement("img");
@@ -504,7 +504,7 @@ function loadStream(embedUrl, name, league) {
     }
 
     // Smooth scroll the player into the viewport for immediate focus
-    wrapper.scrollIntoView({ behavior: "smooth", block: "start" });
+    document.body.scrollTo({top:0})
 }
 
 function setupDraggableMiniPlayer() {
