@@ -64,8 +64,10 @@ section:not(.in-view) .expand-arrow {
     }
   }
 
-  section:has(.expanded) {
-    padding: var(--padding1) !important;
+  section.expanded {
+    .expand-arrow {
+      display: none;
+    }
   }
 
   section:not(.expanded) {
