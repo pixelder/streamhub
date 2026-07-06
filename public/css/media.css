@@ -144,9 +144,9 @@
     padding-bottom: unset !important;
   }
   body:has(#bottom-bar.hidden, #bottom-bar.detach) {
-  main {
-    padding-bottom: 64px;
-  }
+    main {
+      padding-bottom: 72px;
+    }
 }
 
   #bottom-bar.hidden {
