@@ -1398,6 +1398,13 @@ async function modalEventsHandler(event, data) {
             }
           }
         })
+
+        document.querySelectorAll('.slide .bookmark').forEach(item => {
+          if (item.dataset.id === id && item.dataset.mediaType === mediaType) {
+            const checkbox = item.querySelector("input[type='checkbox']");
+            checkbox.checked = !checkbox.checked
+          }
+        })
       }
       const checkbox = bookmark.querySelector("input[type='checkbox']")
       checkbox.checked = !checkbox.checked
