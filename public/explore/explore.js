@@ -286,10 +286,7 @@ async function buildExploreHtml(params) {
 		</section>
 		<div class="modal-overlay"></div>
 		<div id="info-modal" class="modal">
-				<div class="modal-content">
-						<div id="modal-details">
-								<!-- Dynamic content will be injected here -->
-						</div>
+				<div id="modal-parent">
 				</div>
 		</div> 
 	` ;

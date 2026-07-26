@@ -108,10 +108,8 @@ function globalAddEventListener (event) {
       if (loc().includes('/movie?id=') || loc().includes('/tv?id=')) {
         window.history.pushState('', '', '/')
       }
-      const details = document.getElementById('modal-details')
-      details.innerHTML = '';
-      Object.assign(details.dataset, {id: '', mediaType: '' })
-      document.querySelector('.modal-content').removeAttribute('style')
+      const parent = document.getElementById('modal-parent')
+      parent.innerHTML = '';
       modal.removeAttribute('active','');
       ['#top-bar' , '#bottom-bar'].forEach(selector => {
         const bar = document.querySelector(selector)

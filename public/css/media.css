@@ -164,7 +164,7 @@
     background: linear-gradient(0deg,#090a15,#090a15cc);
     border-block-start: solid 1px #ffffff1a;
     backdrop-filter: blur(4px);
-    box-shadow: 0 0 30px 10px var(--bg-color);
+    box-shadow: 0 0 20px 4px var(--bg-color);
     z-index: 2;
   }
 
@@ -297,6 +297,7 @@
     translate: 50% 12%;
     justify-items: center;
     max-width: unset;
+    gap: 8px;
   }
 
   .slide.active .content {
@@ -311,17 +312,17 @@
     font-size: 14px;
   }
 
-  .slide-genre {
-    gap: 12px;
+  .slide-tags {
+    gap: 4px;
   }
 
-  .slide-genre p {
+  .slide-tags p {
     font-size: 10px !important;
   }
 
   .buttons button {
-    font-size: 14px;
-    height: 36px;
+    font-size: 13px;
+    height: 32px;
     width: 100px;
   }
 
@@ -1079,15 +1080,16 @@
     font-size: 12px;
   }
 
-  .modal-content {
+  #modal-parent {
     width: 95%;
-    height: fit-content;
+  }
+
+  .modal-content {
     overflow: scroll;
-    max-height: 70% !important;
     padding: 10px;
   }
 
-  .modal-content::before {
+  #modal-backdrop {
     /* display: none; */
     height: unset;
     width: 100%;
@@ -1139,14 +1141,16 @@
     transition: height 0.2s;
 
     iframe {
-      width: calc(100% * 1.25);
-      height: calc(100% * 1.25);
-      zoom: 0.8;
-      transform: scale(0.8);
-      transform-origin: 0 0;
-      -moz-transform: scale(0.8);
-      -o-transform: scale(0.8);
-      -webkit-transform: scale(0.8);
+      --scale: 0.4;
+      width: calc(100% / var(--scale));
+      height: calc(100% / var(--scale));
+
+      transform: scale(var(--scale));
+      transform-origin: top left;
+
+      -webkit-transform: scale(var(--scale));
+      -moz-transform: scale(var(--scale));
+      -o-transform: scale(var(--scale));
     }
   }
 
@@ -1204,9 +1208,9 @@
   .play-trailer {
     width: 30%;
     min-width: 20%;
-    height: 30px;
+    height: 32px;
     font-size: 13px;
-    padding: 0 8px;
+    padding: 0 6px;
     gap: 6px;
   }
 
@@ -1218,7 +1222,7 @@
   }
 
   .item-actions {
-    height: 30px;
+    height: 32px;
     padding: unset;
     margin-left: auto;
   }
@@ -1253,14 +1257,14 @@
 
   .modal-media>span {
     width: 100%;
-    height: unset;
+    height: unset !important;
     max-height: fit-content;
     min-height: fit-content;
     justify-content: normal;
   }
 
   .modal:has(#ytplayer) {
-    .modal-content::before {
+    #modal-backdrop {
       mask-position: 50% 45%;
       mask-size: 122% 122%;
       scale: unset;
@@ -1275,17 +1279,13 @@
   .modal-content:has(.ep-error) {
     height: fit-content !important;
   }
-  .modal-content:has(#ytplayer) {
+
+  #modal-parent:has(#ytplayer) {
     width: 95% !important;
-    height: auto !important;
-    max-height: 70% !important;
     aspect-ratio: unset !important;
 
     .modal-media {
       gap: inherit;
-      height: unset;
-      min-height: unset;
-      max-height: 80%;
     }
 
     .modal-media>span {
@@ -1300,7 +1300,7 @@
       scale: 0.2;
       opacity: 0;
       padding: unset;
-      transition: scale 0.2s, opacity 0.5s ease-in-out;
+      transition: scale 0.2s, opacity 0.2s, margin 0.2s ease;
       margin-bottom: 16px;
     }
 
@@ -1339,7 +1339,7 @@
     place-content: center;
     align-items: center;
     opacity: 1;
-    transition: scale 0.2s, opacity 0.5s ease-in-out;
+    transition: scale 0.2s, opacity 0.2s, margin 0.2s ease;
   }
 
   .modal-info-logo img {
@@ -1458,6 +1458,7 @@
   }
 
   .episode-container {
+    gap: 8px;
     grid-template-columns: repeat(auto-fill, minmax(14rem, 1fr));
   }
 

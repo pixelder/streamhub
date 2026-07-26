@@ -449,15 +449,31 @@ let prevData = []
 
 async function designModal(mediaType, data) {
   const modal = document.getElementById('info-modal');
-  const modalContent = document.querySelector('.modal-content');
-  const details = document.getElementById('modal-details');
-  Object.assign(details.dataset,{id: data.id, mediaType})
 
-  modalContent.style.setProperty(
-    '--modal-backdrop',
-    `url(${data.backdrop_path ? IMAGE_ORG + data.backdrop_path : ''})`
-  );
-  modalContent.style.setProperty('--modal-backdrop-opacity', 1);
+  const modalParent = document.createElement('div')
+  modalParent.id = 'modal-parent';
+  modal.innerHTML = `<div class="modal-content"></div>`
+  modal.append(modalParent);
+  
+  const backdrop = document.createElement('div');
+  backdrop.id = 'modal-backdrop';
+  backdrop.style.backgroundImage = `url(${data.backdrop_path ? IMAGE_ORG + data.backdrop_path : ''})`;
+  backdrop.style.opacity = 1;
+  modalParent.append(backdrop)
+
+  const modalContent = document.querySelector('.modal-content');
+  modalParent.append(modalContent)
+  const details = document.createElement('div');
+  details.id = 'modal-details'; 
+  details.tabIndex = 0;
+  details.dataset.id = data.id;
+  details.dataset.mediaType = mediaType;
+  modalContent.append(details);
+  // modalContent.style.setProperty(
+  //   '--modal-backdrop',
+  //   `url(${data.backdrop_path ? IMAGE_ORG + data.backdrop_path : ''})`
+  // );
+  // modalContent.style.setProperty('--modal-backdrop-opacity', 1);
 
   try {
     mediaType !== 'person'
@@ -469,14 +485,15 @@ async function designModal(mediaType, data) {
 
   if (mediaType === 'movie') {
     insertMovieActions(data, mediaType);
-    modalContent.style.height = 'fit-content';
+    modalParent.setAttribute('style', 'height: fit-content !important');
   }
 
   if (mediaType === 'tv') {
     const userData = getLogData('watching')?.find(item => item.id === data.id)?.data;
     const sno = isViewingDetails ? userData?.sno : null;
     const eno = isViewingDetails ? userData?.eno : null;
-    modalContent.style.height = !isMobile() ? '35rem' : '70%';
+    const height = !isMobile() ? '35rem' : '70% !important';
+    modalParent.setAttribute('style', `height: ${height}`)
 
     tvContent(data, sno, eno, 'modal')
       .then((season) => {
@@ -488,7 +505,7 @@ async function designModal(mediaType, data) {
   }
 
   if (mediaType === 'person') {
-    modalContent.style.height = !isMobile() ? '35rem' : '70%';
+    modalParent.style.height = !isMobile() ? '35rem' : '70%';
     const section = document.querySelectorAll('.credit-section')
 
     section[0].classList.add('expanded')
@@ -1003,7 +1020,7 @@ function initializeModalListeners(mediaType, data, modalContent, details) {
   });
 
   // Create a named function for the scroll event
-  const backdropHandler = () => backdropAnim(details, modalContent);
+  const backdropHandler = () => backdropAnim(details);
   details.removeEventListener('scroll', backdropHandler);
   details.addEventListener('scroll', backdropHandler);
 
@@ -2026,10 +2043,10 @@ function enableHorizontalWheelScroll(container, factor = 1) {
 //   return rect.top >= 0 && rect.bottom <= window.innerHeight;
 // }
 
-function backdropAnim(details, modalContent) {
+function backdropAnim(details) {
   const scrollTop = details.scrollTop;
   const opacity = 1 - Math.min(scrollTop / 300, 1);
-  modalContent.style.setProperty('--modal-backdrop-opacity', opacity);
+  document.getElementById('modal-backdrop').style.opacity = opacity;
 }
 
 function setUpScrollEvents() {

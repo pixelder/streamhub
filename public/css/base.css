@@ -16,7 +16,7 @@
 :root {
   color-scheme: dark;
   --color1: #383852;
-  --color2: #4a4a69;
+  --color2: #71717a;
   --color3: #222233;
   --color4: #121225;
   --color5: #181825;
@@ -47,7 +47,6 @@ body {
   font-size: 1rem;
   background-color: var(--bg-color);
   color: var(--font-color1);
-  text-shadow: 0 0 10px #E6E6FA25;
   height: 100dvh;
   overflow-y: auto;
   scroll-behavior: smooth;

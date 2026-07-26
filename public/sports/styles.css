@@ -5,172 +5,186 @@
 @import url('https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Syne:wght@400;700;800&display=swap');
 
 :root {
-    --void-bg: #03050a;          /* Deepest blue/black */
-    --void-surface: #0a0e17;     /* Elevated surface */
-    --text-main: #f4f4f5;        /* Off-white paper */
-    --text-dim: #71717a;         /* Muted technical gray */
-    
-    --accent-cyan: #00f6ff;      /* Laser cyan */
-    --accent-rust: #c84b31;      /* From the VOID poster */
-    
-    --grid-line: rgba(255, 255, 255, 0.05);
-    --border-hard: 1px solid #27272a;
-    
-    --font-data: 'Space Mono', monospace;
-    --font-display: 'Syne', sans-serif;
+  --void-bg: #03050a;
+  /* Deepest blue/black */
+  --void-surface: #0a0e17;
+  /* Elevated surface */
+  --text-main: #f4f4f5;
+  /* Off-white paper */
+  --text-dim: #71717a;
+  /* Muted technical gray */
+
+  --accent-cyan: #00f6ff;
+  /* Laser cyan */
+  --accent-rust: #c84b31;
+  /* From the VOID poster */
+
+  --grid-line: rgba(255, 255, 255, 0.05);
+  --border-hard: 1px solid #27272a;
+
+  --font-data: 'Space Mono', monospace;
+  --font-display: 'Syne', sans-serif;
 }
 
 /* =========================================
     2. GLOBAL RESET & ANALOG TEXTURE
     ========================================= */
-*, *::before, *::after {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
 
-html { scroll-behavior: smooth; }
+html {
+  scroll-behavior: smooth;
+}
 
 body {
-    background-color: var(--void-bg);
-    color: var(--text-main);
-    font-family: var(--font-data);
-    line-height: 1.5;
-    position: relative;
-    
-    /* The Cyber-Grid */
-    background-image: 
-        linear-gradient(var(--grid-line) 1px, transparent 1px),
-        linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
-    background-size: 40px 40px;
-    background-position: center;
+  background-color: var(--void-bg);
+  color: var(--text-main);
+  font-family: var(--font-data);
+  line-height: 1.5;
+  position: relative;
+
+  /* The Cyber-Grid */
+  background-image:
+    linear-gradient(var(--grid-line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
+  background-size: 40px 40px;
+  background-position: center;
 }
 
 /* CSS-Generated Grain overlay to match poster aesthetic */
 body::before {
-    content: "";
-    position: fixed;
-    top: 0; left: 0; width: 100vw; height: 100vh;
-    pointer-events: none;
-    z-index: -1;
-    opacity: 0.04;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  z-index: -1;
+  opacity: 0.04;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
 }
 
 /* =========================================
     3. LAYOUT & TOP CONTROL
     ========================================= */
 .main-container {
-    max-width: 1300px;
-    margin: 0 auto;
-    padding: 40px;
-    display: flex;
-    flex-direction: column;
-    gap: 30px;
+  max-width: 1300px;
+  margin: 0 auto;
+  padding: 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
 }
 
 .top-control {
-    border-bottom: 2px solid var(--text-main);
-    padding-bottom: 20px;
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-    width: 100%;
+  border-bottom: 2px solid var(--text-main);
+  padding-bottom: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: 100%;
 }
 
 /* Brutalist Logo override (optional) */
 .top-control::before {
-    content: "S_TREAM // SYSTEM.ONLINE";
-    font-family: var(--font-display);
-    font-weight: 800;
-    font-size: 28px;
-    letter-spacing: -2px;
-    text-transform: uppercase;
-    color: var(--text-main);
+  content: "S_TREAM // SYSTEM.ONLINE";
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 28px;
+  letter-spacing: -2px;
+  text-transform: uppercase;
+  color: var(--text-main);
 }
 
 /* =========================================
     4. TECHNICAL CATEGORIES (SWITCHES)
     ========================================= */
 .categories-container {
-    display: flex;
-    gap: 16px;
-    overflow-x: auto;
-    scrollbar-width: none;
-    padding-bottom: 10px;
+  display: flex;
+  gap: 16px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  padding-bottom: 10px;
 }
 
 .category-btn {
-    --pad: 8px;
-    background: var(--color5);
-    color: var(--text-dim);
-    border: 1px solid var(--text-dim);
-    padding: var(--pad) calc(var(--pad) * 2);
-    font-family: var(--font-data);
-    font-size: 12px;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    position: relative;
+  --pad: 8px;
+  background: var(--color5);
+  color: var(--text-dim);
+  border: 1px solid var(--text-dim);
+  padding: var(--pad) calc(var(--pad) * 2);
+  font-family: var(--font-data);
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
 }
 
 .category-btn:hover {
-    color: var(--text-main);
-    border-color: var(--text-main);
+  color: var(--text-main);
+  border-color: var(--text-main);
 }
 
 /* Active state uses brutalist hard-shadow */
 .category-btn.active {
-    background: var(--text-main);
-    color: var(--void-bg);
-    border-color: var(--text-main);
-    font-weight: 700;
-    box-shadow: 4px 4px 0px var(--accent-cyan);
-    transform: translate(-2px, -2px);
+  background: var(--text-main);
+  color: var(--void-bg);
+  border-color: var(--text-main);
+  font-weight: 700;
+  box-shadow: 4px 4px 0px var(--accent-cyan);
+  transform: translate(-2px, -2px);
 }
 
 /* =========================================
     5. STREAM CARDS (DATA BLOCKS)
     ========================================= */
 .streams-section {
-    display: flex;
-    flex-direction: column;
-    gap: 60px;
-    width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 60px;
+  width: 100%;
 }
 
 .stream-group {
-    display: flex;
-    flex-direction: column;
-    gap: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
 }
 
 .streams-title {
-    font-family: var(--font-display);
-    font-size: 20px;
-    font-weight: 800;
-    text-transform: uppercase;
-    letter-spacing: -1px;
-    display: flex;
-    align-items: center;
-    gap: 16px;
+  font-family: var(--font-display);
+  font-size: 20px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: -1px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
 }
 
 /* Decorative bracket before titles */
 .streams-title::before {
-    content: "[";
-    color: var(--accent-cyan);
+  content: "[";
+  color: var(--accent-cyan);
 }
+
 .streams-title::after {
-    content: "]";
-    color: var(--accent-cyan);
+  content: "]";
+  color: var(--accent-cyan);
 }
 
 .streams-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: 32px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 32px;
 }
 
 /* ========================================================
@@ -178,38 +192,38 @@ body::before {
    ======================================================== */
 
 .stream-card {
-    background: var(--void-surface);
-    border: var(--border-hard);
-    display: flex;
-    flex-direction: column;
-    cursor: pointer;
-    position: relative;
-    
-    /* Strict, snappy instant response instead of organic transitions */
-    transition: border-color 0.1s linear, box-shadow 0.1s ease-out, transform 0.1s ease-out;
+  background: var(--void-surface);
+  border: var(--border-hard);
+  display: flex;
+  flex-direction: column;
+  cursor: pointer;
+  position: relative;
+
+  /* Strict, snappy instant response instead of organic transitions */
+  transition: border-color 0.1s linear, box-shadow 0.1s ease-out, transform 0.1s ease-out;
 }
 
 /* Hard offset brutalist shadow block on hover */
 .stream-card:hover {
-    border-color: var(--text-main);
-    box-shadow: 6px 6px 0px var(--accent-cyan);
-    transform: translate(-3px, -3px);
+  border-color: var(--text-main);
+  box-shadow: 6px 6px 0px var(--accent-cyan);
+  transform: translate(-3px, -3px);
 }
 
 /* --- Operational State Modifiers (VOID Reference) --- */
 .upcoming-card {
-    filter: grayscale(100%) contrast(1.1);
-    opacity: 0.5;
+  filter: grayscale(100%) contrast(1.1);
+  opacity: 0.5;
 }
 
 .upcoming-card:hover {
-    filter: grayscale(0%) contrast(1);
-    opacity: 1;
-    box-shadow: 6px 6px 0px var(--accent-rust);
+  filter: grayscale(0%) contrast(1);
+  opacity: 1;
+  box-shadow: 6px 6px 0px var(--accent-rust);
 }
 
 .upcoming-card:hover .stream-meta {
-    border-bottom-color: var(--accent-rust) !important;
+  border-bottom-color: var(--accent-rust) !important;
 }
 
 /* ========================================================
@@ -217,66 +231,72 @@ body::before {
    ======================================================== */
 
 .thumbnail-box {
-    width: 100%;
-    padding-top: 56.25%;
-    position: relative;
-    background: #000;
-    border-bottom: var(--border-hard);
-    overflow: hidden;
+  width: 100%;
+  padding-top: 56.25%;
+  position: relative;
+  background: #000;
+  border-bottom: var(--border-hard);
+  overflow: hidden;
 }
 
 /* Technical HUD Framing Brackets inside Thumbnail */
 .thumbnail-box::before,
 .thumbnail-box::after {
-    content: "";
-    position: absolute;
-    inset: 12px;
-    pointer-events: none;
-    z-index: 2;
-    opacity: 0.3;
-    transition: inset 0.2s cubic-bezier(0.2, 1, 0.2, 1), opacity 0.2s linear;
+  content: "";
+  position: absolute;
+  inset: 12px;
+  pointer-events: none;
+  z-index: 2;
+  opacity: 0.3;
+  transition: inset 0.2s cubic-bezier(0.2, 1, 0.2, 1), opacity 0.2s linear;
 }
 
 /* Top-Left / Bottom-Right Bracket corners */
 .thumbnail-box::before {
-    border-top: 1px solid var(--text-main);
-    border-right: 1px solid var(--text-main);
-    width: 8px; height: 8px;
-    left: auto !important;
+  border-top: 1px solid var(--text-main);
+  border-right: 1px solid var(--text-main);
+  width: 8px;
+  height: 8px;
+  left: auto !important;
 }
 
 /* Top-Right / Bottom-Left Bracket corners */
 .thumbnail-box::after {
-    border-bottom: 1px solid var(--text-main);
-    border-left: 1px solid var(--text-main);
-    width: 8px; height: 8px;
-    top: auto !important;
+  border-bottom: 1px solid var(--text-main);
+  border-left: 1px solid var(--text-main);
+  width: 8px;
+  height: 8px;
+  top: auto !important;
 }
 
 .thumbnail-box img {
-    position: absolute;
-    top: 0; left: 0; width: 100%; height: 100%;
-    object-fit: cover;
-    opacity: 0.85;
-    transition: transform 0.4s ease-out, opacity 0.2s linear;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0.85;
+  transition: transform 0.4s ease-out, opacity 0.2s linear;
 }
 
 /* Viewfinder reactions on hover */
 .stream-card:hover .thumbnail-box img {
-    transform: scale(1.03);
-    opacity: 1;
+  transform: scale(1.03);
+  opacity: 1;
 }
 
 .stream-card:hover .thumbnail-box::before,
 .stream-card:hover .thumbnail-box::after {
-    inset: 8px; /*  Frame snaps tight around subject */
-    opacity: 0.8;
-    border-color: var(--accent-cyan);
+  inset: 8px;
+  /*  Frame snaps tight around subject */
+  opacity: 0.8;
+  border-color: var(--accent-cyan);
 }
 
 .upcoming-card:hover .thumbnail-box::before,
 .upcoming-card:hover .thumbnail-box::after {
-    border-color: var(--accent-rust);
+  border-color: var(--accent-rust);
 }
 
 /* ========================================================
@@ -284,17 +304,17 @@ body::before {
    ======================================================== */
 
 .live-badge {
-    position: absolute;
-    top: 0;
-    left: 0;
-    color: var(--text-main);
-    padding: 8px 12px;
-    font-family: var(--font-data);
-    font-size: 12px;
-    font-weight: 800;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    z-index: 1;
+  position: absolute;
+  top: 0;
+  left: 0;
+  color: var(--text-main);
+  padding: 8px 12px;
+  font-family: var(--font-data);
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  z-index: 1;
 }
 
 #live-streams-display .live-badge {
@@ -304,10 +324,10 @@ body::before {
 }
 
 .upcoming-badge {
-    background: #000;
-    color: var(--text-dim);
-    border-right: var(--border-hard);
-    border-bottom: var(--border-hard);
+  background: #000;
+  color: var(--text-dim);
+  border-right: var(--border-hard);
+  border-bottom: var(--border-hard);
 }
 
 /* ========================================================
@@ -315,453 +335,495 @@ body::before {
    ======================================================== */
 
 .stream-details {
-    padding: 16px;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    position: relative;
-    height: 100%;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  position: relative;
+  height: 100%;
 }
 
 /* Asymmetric tracking marker on the left edge of data field */
 .stream-details::before {
-    content: "";
-    position: absolute;
-    left: 0; top: 0; bottom: 0;
-    width: 2px;
-    background: transparent;
-    transition: background 0.1s linear;
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: transparent;
+  transition: background 0.1s linear;
 }
 
 .stream-card:hover .stream-details::before {
-    background: var(--accent-cyan);
+  background: var(--accent-cyan);
 }
 
 .upcoming-card:hover .stream-details::before {
-    background: var(--accent-rust);
+  background: var(--accent-rust);
 }
 
 /* --- ENHANCED TECH READOUT (STREAM META) --- */
 .stream-meta {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 12px;
-    border-bottom: 1px dashed rgba(255, 255, 255, 0.08);
-    padding-bottom: 10px;
-    min-width: 0;
-    font-family: var(--font-data);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  border-bottom: 1px dashed rgba(255, 255, 255, 0.08);
+  padding-bottom: 10px;
+  min-width: 0;
+  font-family: var(--font-data);
 }
 
 .stream-league {
-    font-size: 12px;
-    font-weight: 700;
-    color: var(--accent-cyan);
-    text-transform: uppercase;
-    letter-spacing: 1.5px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--accent-cyan);
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
 }
 
 .stream-league::before {
-    content: "■";
-    font-size: 8px;
-    color: var(--accent-cyan);
+  content: "■";
+  font-size: 8px;
+  color: var(--accent-cyan);
 }
 
 .stream-category {
-    font-size: 12px;
-    color: var(--text-dim);
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+  font-size: 12px;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .stream-time {
-    margin-left: auto;
-    flex-shrink: 0;
-    font-size: 10px;
-    color: var(--text-main);
-    background: rgba(255, 255, 255, 0.03);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    padding: 2px 6px;
-    text-transform: uppercase;
-    white-space: nowrap;
-    font-variant-numeric: tabular-nums; 
-    letter-spacing: 0.5px;
+  margin-left: auto;
+  flex-shrink: 0;
+  font-size: 10px;
+  color: var(--text-main);
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 2px 6px;
+  text-transform: uppercase;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.5px;
 }
 
 /* --- BRUTALIST MAIN TITLE & RUNTIME TELEMETRY --- */
 .stream-title-wrapper {
-    min-width: 0;
+  min-width: 0;
 }
 
 /* Simulated Matrix/System Counter Registry */
 .stream-title-wrapper::before {
-    content: "DATA_NODE //";
-    font-family: var(--font-data);
-    font-size: 10px;
-    color: var(--text-dim);
-    padding-top: 5px;
-    white-space: nowrap;
+  content: "DATA_NODE //";
+  font-family: var(--font-data);
+  font-size: 10px;
+  color: var(--text-dim);
+  padding-top: 5px;
+  white-space: nowrap;
 }
 
 .stream-title {
-    font-family: var(--font-display); /* Syne */
-    font-size: 14px;
-    font-weight: 800;
-    line-height: 1.1;
-    color: var(--text-main);
-    text-transform: uppercase;
-    letter-spacing: -0.5px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    flex-grow: 1;
+  font-family: var(--font-display);
+  /* Syne */
+  font-size: 14px;
+  font-weight: 800;
+  line-height: 1.1;
+  color: var(--text-main);
+  text-transform: uppercase;
+  letter-spacing: -0.5px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex-grow: 1;
 }
 
 /* --- FOOTER STATUS READOUT --- */
 .stream-status-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-family: var(--font-data);
-    font-size: 10px;
-    color: var(--text-dim);
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    margin-top: 2px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-family: var(--font-data);
+  font-size: 10px;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-top: 2px;
 }
 
 .stream-status-row::before {
-    content: "SYS.STATUS // OK";
+  content: "SYS.STATUS // OK";
 }
 
 .stream-card:hover .stream-status-row::before {
-    content: "SYS.STATUS // STREAMING_";
-    color: var(--accent-cyan);
+  content: "SYS.STATUS // STREAMING_";
+  color: var(--accent-cyan);
 }
 
 /* --- Contextual Adaptations --- */
 .stream-card:hover .stream-meta {
-    border-bottom-color: rgba(0, 246, 255, 0.2);
+  border-bottom-color: rgba(0, 246, 255, 0.2);
 }
 
 .upcoming-card .stream-league {
-    color: var(--text-dim);
+  color: var(--text-dim);
 }
 
 .upcoming-card .stream-league::before {
-    color: var(--text-dim);
+  color: var(--text-dim);
 }
 
 .upcoming-card .stream-time {
-    color: var(--accent-rust);
-    border-color: rgba(200, 75, 49, 0.2);
-    background: transparent;
+  color: var(--accent-rust);
+  border-color: rgba(200, 75, 49, 0.2);
+  background: transparent;
 }
 
 .upcoming-card:hover .stream-time {
-    border-color: var(--accent-rust);
-    background: rgba(200, 75, 49, 0.05);
+  border-color: var(--accent-rust);
+  background: rgba(200, 75, 49, 0.05);
 }
 
 .upcoming-card:hover .stream-status-row::before {
-    content: "SYS.STATUS // LOCKED_AWAIT";
-    color: var(--accent-rust);
+  content: "SYS.STATUS // LOCKED_AWAIT";
+  color: var(--accent-rust);
 }
 
 .no-streams {
-    grid-column: 1 / -1;
-    padding: 40px;
-    border: 1px dashed var(--text-dim);
-    text-align: center;
-    color: var(--text-dim);
-    text-transform: uppercase;
-    letter-spacing: 2px;
-    font-size: 12px;
+  grid-column: 1 / -1;
+  padding: 40px;
+  border: 1px dashed var(--text-dim);
+  text-align: center;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  font-size: 12px;
 }
 
 /* =========================================
     6. THE TERMINAL PLAYER
     ========================================= */
 .video-player-wrapper {
-    display: none;
-    background: var(--void-bg);
-    border: 2px solid var(--accent-cyan);
-    box-shadow: 10px 10px 0px rgba(0, 246, 255, 0.2);
-    margin-bottom: 40px;
-    max-width: 100%; /* Prevent horizontal overflow */
+  display: none;
+  background: var(--void-bg);
+  border: 2px solid var(--accent-cyan);
+  box-shadow: 10px 10px 0px rgba(0, 246, 255, 0.2);
+  margin-bottom: 40px;
+  max-width: 100%;
+  /* Prevent horizontal overflow */
 }
 
 .video-player-wrapper.active {
-    display: block;
-    width: 100%;
-    animation: bootUp 0.25s ease-out forwards;
+  display: block;
+  width: 100%;
+  animation: bootUp 0.25s ease-out forwards;
 }
 
 /* Harsh CRT boot-up sequence */
 @keyframes bootUp {
-    0% { opacity: 0; transform: translateY(10px) scale(0.99); filter: contrast(1.5); }
-    100% { opacity: 1; transform: translateY(0) scale(1); filter: contrast(1); }
+  0% {
+    opacity: 0;
+    transform: translateY(10px) scale(0.99);
+    filter: contrast(1.5);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    filter: contrast(1);
+  }
 }
 
 .player-controls {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    height: 48px;
-    padding: 16px;
-    background: var(--text-main);
-    color: var(--void-bg);
-    border-bottom: 2px solid var(--accent-cyan);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 48px;
+  padding: 16px;
+  background: var(--text-main);
+  color: var(--void-bg);
+  border-bottom: 2px solid var(--accent-cyan);
 }
 
 .now-playing-badge {
-    font-family: var(--font-display);
-    font-weight: 800;
-    font-size: 14px;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    display: block;
-    text-overflow: ellipsis;
-    overflow: hidden;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 14px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  display: block;
+  text-overflow: ellipsis;
+  overflow: hidden;
 }
 
 .now-playing-badge::before {
-    content: "LIVE";
-    color: var(--accent-rust);
-    margin-right: 8px;
-    animation: blink 1s step-end infinite;
+  content: "LIVE";
+  color: var(--accent-rust);
+  margin-right: 8px;
+  animation: blink 1.2s step-end infinite;
 }
 
 .control-buttons {
-    display: flex;
-    align-items: center;
-    gap: 16px; /* Locks button spacing mathematically */
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  /* Locks button spacing mathematically */
 }
 
 .control-buttons button {
-    background: none;
-    border: none;
-    color: var(--void-bg);
-    cursor: pointer;
-    display: flex; /* Centers the SVG vectors perfectly */
-    align-items: center;
-    justify-content: center;
-    height: 30px;
-    aspect-ratio: 1/1;
-    box-sizing: border-box;
-    transition: transform 0.1s linear, color 0.1s linear;
+  background: none;
+  border: none;
+  color: var(--void-bg);
+  cursor: pointer;
+  display: flex;
+  /* Centers the SVG vectors perfectly */
+  align-items: center;
+  justify-content: center;
+  height: 30px;
+  aspect-ratio: 1/1;
+  box-sizing: border-box;
+  transition: transform 0.1s linear, color 0.1s linear;
 }
 
 .control-buttons button:hover {
-    transform: scale(1.15);
-    color: var(--accent-rust);
+  transform: scale(1.15);
+  color: var(--accent-rust);
 }
 
 /* Brutalist mechanical click feedback */
 .control-buttons button:active {
-    transform: scale(0.9);
-    background-color: unset;
-    color: unset;
+  transform: scale(0.9);
+  background-color: unset;
+  color: unset;
 }
 
 .iframe-container {
-    position: relative;
-    width: 100%;
-    padding-top: 56.25%;
-    background: #000;
+  position: relative;
+  width: 100%;
+  padding-top: 56.25%;
+  background: #000;
 }
 
 .iframe-container iframe {
-    position: absolute;
-    top: 0; left: 0; width: 100%; height: 100%;
-    border: none;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border: none;
 }
 
 .player-info {
-    display: grid;
-    padding: 20px;
-    border-top: 1px solid var(--accent-cyan);
+  display: grid;
+  padding: 20px;
+  border-top: 1px solid var(--accent-cyan);
 }
 
 #player-title {
-    font-family: var(--font-display);
-    font-size: 18px;
-    font-weight: 800;
-    text-transform: uppercase;
-    letter-spacing: -1px;
-    line-height: 1.2;
+  font-family: var(--font-display);
+  font-size: 18px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: -1px;
+  line-height: 1.2;
 }
 
 #player-league {
-    color: var(--text-dim);
-    font-size: 12px;
-    letter-spacing: 1px;
+  color: var(--text-dim);
+  font-size: 12px;
+  letter-spacing: 1px;
 }
 
 /* =========================================
     7. MINI PLAYER (HUD WIDGET)
     ========================================= */
 .video-player-wrapper.mini {
-    position: fixed;
-    bottom: 40px;
-    right: 40px;
-    width: 450px;
-    z-index: 9999;
-    box-shadow: 12px 12px 0px rgba(0, 0, 0, 0.9), 4px 4px 0px var(--accent-cyan);
-    background: var(--void-bg);
-    margin-bottom: 0; /* Strip the margin from the main wrapper */
-    
-    /* FIX: resize property requires overflow to function */
-    resize: horizontal;
-    overflow: hidden; 
-    
-    min-width: 300px;
-    max-width: 800px;
+  position: fixed;
+  bottom: 40px;
+  right: 40px;
+  width: 450px;
+  z-index: 9999;
+  box-shadow: 12px 12px 0px rgba(0, 0, 0, 0.9), 4px 4px 0px var(--accent-cyan);
+  background: var(--void-bg);
+  margin-bottom: 0;
+  /* Strip the margin from the main wrapper */
+
+  /* FIX: resize property requires overflow to function */
+  resize: horizontal;
+  overflow: hidden;
+
+  min-width: 300px;
+  max-width: 800px;
 }
 
 .video-player-wrapper.mini .player-controls {
-    cursor: grab;
-    background: var(--void-surface);
-    color: var(--text-main);
-    border-bottom: 1px solid var(--accent-cyan);
+  cursor: grab;
+  background: var(--void-surface);
+  color: var(--text-main);
+  border-bottom: 1px solid var(--accent-cyan);
 }
 
 .video-player-wrapper.mini .player-controls:active {
-    cursor: grabbing;
+  cursor: grabbing;
 }
 
-.video-player-wrapper.mini .control-buttons button { 
-    color: var(--text-main); 
+.video-player-wrapper.mini .control-buttons button {
+  color: var(--text-main);
 }
 
-.video-player-wrapper.mini .control-buttons button:hover { 
-    color: var(--accent-rust); 
+.video-player-wrapper.mini .control-buttons button:hover {
+  color: var(--accent-rust);
 }
 
-.video-player-wrapper.mini #player-title { 
-    font-size: 14px; 
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+.video-player-wrapper.mini #player-title {
+  font-size: 14px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-.video-player-wrapper.mini #player-league { 
-    display: none; 
+.video-player-wrapper.mini #player-league {
+  display: none;
 }
 
 /* =========================================
     8. ANIMATIONS & MEDIA QUERIES
     ========================================= */
 @keyframes blink {
-    0%, 50% { opacity: 1; }
-    51%, 100% { opacity: 0; }
+
+  0%,
+  50% {
+    opacity: 1;
+  }
+
+  51%,
+  100% {
+    opacity: 0;
+  }
 }
 
 @media (max-width: 768px) {
 
-    .main-container {
-        gap: 24px;
-        padding: 20px;
-    }
+  .main-container {
+    gap: 24px;
+    padding: 20px;
+  }
 
-    .top-control::before { 
-        font-size: 14px;
-        letter-spacing: 0px;
-    }
+  .top-control::before {
+    font-size: 14px;
+    letter-spacing: 0px;
+  }
 
-    .categories-container {
-        gap: 12px;
-        padding-bottom: 4px;
-    }
+  .categories-container {
+    gap: 12px;
+    padding-bottom: 4px;
+  }
 
-    .category-btn {
-        --pad: 6px;
-        font-size: 10px;
-    }
+  .category-btn {
+    --pad: 6px;
+    font-size: 10px;
+  }
 
-    .streams-section {
-        gap: 36px;
-    }
+  .streams-section {
+    gap: 36px;
+  }
 
-    .stream-group {
-        gap: 12px;
-    }
+  .stream-group {
+    gap: 12px;
+  }
 
-    .streams-title { 
-        font-size: 14px;
-        gap: 8px; 
-    }
+  .streams-title {
+    font-size: 14px;
+    gap: 8px;
+  }
 
-    .streams-grid {
-        grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-        gap: 12px;
-    }
+  .streams-grid {
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 12px;
+  }
 
-    .live-badge {
-        padding: 6px 10px;
-        font-size: 10px;
-    }
+  .live-badge {
+    padding: 6px 10px;
+    font-size: 10px;
+  }
 
-    .stream-details {
-        padding: 10px;
-        gap: 4px;
-    }
+  .stream-details {
+    padding: 10px;
+    gap: 4px;
+  }
 
-    .stream-meta {
-        gap: 12px;
-        padding-bottom: 10px;
-    }
+  .stream-meta {
+    gap: 12px;
+    padding-bottom: 10px;
+  }
 
-    .stream-league, .stream-category {
-        font-size: 10px;
-    }
+  .stream-league,
+  .stream-category {
+    font-size: 10px;
+  }
 
-    .stream-title {
-        font-size: 12px;
-    }
+  .stream-title {
+    font-size: 12px;
+  }
 
-    .video-player-wrapper {
-        box-shadow: 5px 5px 0px rgba(0, 246, 255, 0.2);
-    }
+  .video-player-wrapper {
+    box-shadow: 5px 5px 0px rgba(0, 246, 255, 0.2);
+  }
 
-    .video-player-wrapper.mini {
-        bottom: 20px; right: 20px;
-        width: calc(100vw - 40px);
-        box-shadow: 8px 8px 0px rgba(0, 0, 0, 0.9);
-    }
+  .video-player-wrapper.mini {
+    bottom: 20px;
+    right: 20px;
+    width: calc(100vw - 40px);
+    box-shadow: 8px 8px 0px rgba(0, 0, 0, 0.9);
+  }
 
-    .player-controls {
-        padding: 8px;
-        height: 30px;
-    }
+  .iframe-container iframe {
+    --scale: 0.6;
+    width: calc(100% / var(--scale));
+    height: calc(100% / var(--scale));
 
-    .now-playing-badge {
-        letter-spacing: 0px;
-        font-size: 12px;
-    }
+    transform: scale(var(--scale));
+    transform-origin: top left;
 
-    .control-buttons {
-        gap: 8px;
-    }
+    -webkit-transform: scale(var(--scale));
+    -moz-transform: scale(var(--scale));
+    -o-transform: scale(var(--scale));
+  }
 
-    .control-buttons button{
-        height: 22px;
-        padding: 4px;
-    }
+  .player-controls {
+    padding: 8px;
+    height: 30px;
+  }
 
-    .player-info {
-        padding: 12px;
-    }
+  .now-playing-badge {
+    letter-spacing: 0px;
+    font-size: 12px;
+  }
 
-    #player-title {
-        font-size: 14px;
-    }
+  .control-buttons {
+    gap: 8px;
+  }
+
+  .control-buttons button {
+    height: 22px;
+    padding: 4px;
+  }
+
+  .player-info {
+    padding: 12px;
+  }
+
+  #player-title {
+    font-size: 14px;
+  }
 }

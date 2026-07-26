@@ -32,7 +32,7 @@ function buildSearchPage(term) {
   </div>
   <div class="modal-overlay"></div>
   <div id="info-modal" class="modal">
-    <div class="modal-content">
+    <div id="modal-parent">
       <div id="modal-details">
       </div>
     </div>
