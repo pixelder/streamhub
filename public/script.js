@@ -244,7 +244,7 @@ async function getCarouselData(seed = Date.now()) {
   // Fetch trending data and genre lists in parallel.
   const [pages, genreMaps] = await Promise.all([
     Promise.all(
-      nthNaturalArray(1).map(async (page) => {
+      nthNaturalArray(3).map(async (page) => {
         const data = await fetchFromURL(`${URL}&page=${page}`);
         return data.results;
       })
@@ -319,10 +319,12 @@ function buildSlides(container, item, i) {
   slide.className = `slide ${i === 0 ? "active" : ""}`;
   slide.dataset.index = i;
   const title = item.title || item.name;
+  const year = extractYear(item.release_date || item.first_air_date) || 'N/A';
   const mediaType = item.media_type;
   const bookmark = logExists('bookmarks', item.id, mediaType);
+  console.log(item);
   const genresHTML = item.genres
-    .slice(0, 3)
+    .slice(0, 1)
     .map(genre => `<p>${genre.name.toUpperCase()}</p>`)
     .join('');
 
@@ -336,13 +338,17 @@ function buildSlides(container, item, i) {
                 </div>`
             : `<h1>${title}</h1>`
         }
-        ${genresHTML ? `<div class="slide-genre">${genresHTML}</div>` : ''}
+        <div class="slide-tags">
+          <p class="media-type">${mediaType}</p> •
+          <p class="year">${year}</p> •
+          ${genresHTML ? `<div class="slide-genre">${genresHTML}</div>` : ''}
+        </div>
         <div class="synopsis">
           <p class="overview">${item.overview || "No description available"}</p>
         </div>
         <div class="buttons" data-type="${mediaType}" data-id="${item.id}" data-name="${title}">
           <button class="play">
-            <i class="fa-solid fa-play"></i> Play
+            <i class="fa-solid fa-play"></i> Watch
           </button>
           <button class="detail">
             <i class="fa-solid fa-square-arrow-up-right"></i> Details
@@ -359,7 +365,6 @@ function buildSlides(container, item, i) {
     `;
   container.append(slide)
 }
-
 
 function renderCarousel(items) {
   const container = document.getElementById("hero-carousel");
