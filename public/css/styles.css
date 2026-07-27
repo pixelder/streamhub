@@ -380,8 +380,9 @@ section:not(#hero-carousel) {
 .slide-tags {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
   color: var(--font-color3);
+  font-size: 14px;
 }
 
 .slide-tags .media-type {

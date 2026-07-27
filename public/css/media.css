@@ -72,7 +72,7 @@
   }
 
   #search-input {
-    font-size: 16px;
+    font-size: 14px;
     height: 36px;
     width: 2rem;
     border-radius: 6px;
@@ -314,6 +314,7 @@
 
   .slide-tags {
     gap: 4px;
+    font-size: 12px;
   }
 
   .slide-tags p {
