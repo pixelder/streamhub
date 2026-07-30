@@ -1,69 +1,64 @@
 <!DOCTYPE html>
 <html lang="en">
 
-  <head>
-    <title>Sports | Pixelstream</title>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<head>
+  <title>Sports | Pixelstream</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <meta property="og:title" content="Pixelstream" />
-    <meta property="og:image" content="https://pixelstream.vercel.app/assets/meta/meta_dark.png">
-    <meta property="og:description" content="Watch your favorite movies and tv shows" />
+  <meta property="og:title" content="Pixelstream" />
+  <meta property="og:image" content="https://pixelstream.vercel.app/assets/meta/meta_dark.png">
+  <meta property="og:description" content="Watch live sports transmissions" />
 
-    <script src="https://kit.fontawesome.com/60a2eca232.js" crossorigin="anonymous"></script>
+  <script src="https://kit.fontawesome.com/60a2eca232.js" crossorigin="anonymous"></script>
 
-    <!-- local items -->
-    <link rel="stylesheet" href="styles.css" type="text/css">
+  <!-- local items -->
+  <link rel="stylesheet" href="styles.css" type="text/css">
+  <link rel="stylesheet" href="../css/base.css" type="text/css">
+  <link rel="stylesheet" href="../css/utils.css" type="text/css">
+  <link rel="stylesheet" href="../css/components.css" type="text/css">
+  <link rel="stylesheet" href="../css/styles.css" type="text/css">
+  <link rel="stylesheet" href="../css/media.css" media="(max-width: 767px)" type="text/css">
+  <link rel="icon" href="https://pixelstream.vercel.app/assets/icons/favicon.png" type="image/png">
+  <script src="app.js" defer></script>
+  <script src="../utils.js" defer></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+</head>
 
-    <link rel="stylesheet" href="../css/base.css" type="text/css">
-    <link rel="stylesheet" href="../css/utils.css" type="text/css">
-    <link rel="stylesheet" href="../css/components.css" type="text/css">
-    <link rel="stylesheet" href="../css/styles.css" type="text/css">
-    <link rel="stylesheet" href="../css/media.css" media="(max-width: 767px)" type="text/css">
-    <link rel="icon" href="https://pixelstream.vercel.app/assets/icons/favicon.png" type="image/png">
-    <script src="app.js" defer></script>
-    <script src="../utils.js" defer></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  </head>
+<body>   
 
-  <body>   
-  
-  <script>0</script>
   <!-- Top Navbar -->
   <nav id="top-bar"></nav>
   
   <main class="main-container" id="main-layout">
     
     <div class="top-control">
+      <!-- Cyber Command Search Input -->
+      <div class="cyber-search-wrapper">
+        <span class="search-prefix">&gt; SEARCH_NODES:</span>
+        <input type="text" id="stream-search-input" placeholder="TYPE TEAM, LEAGUE OR SPORT..." autocomplete="off" spellcheck="false">
+      </div>
+
+      <!-- Categories Navigation -->
       <div class="categories-container" id="categories-bar">
-        <button class="category-btn active" onclick="filterCategory('all', this)">All_Events</button>
+        <button class="category-btn active" onclick="filterCategory('all', this)">Loading</button>
       </div>
     </div>
     
+    <!-- Terminal Player Display -->
     <div class="video-player-wrapper" id="player-wrapper">
         <div class="player-controls">
-            <span class="now-playing-badge">TRANSMISSION</span>
+            <span class="now-playing-badge" id="player-badge">TRANSMISSION</span>
             <div class="control-buttons">
-              <button id="btn-reload" onclick="reloadPlayer()" title="Reload Stream">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                      <polyline points="23 4 23 10 17 10"></polyline>
-                      <polyline points="1 20 1 14 7 14"></polyline>
-                      <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10"></path>
-                      <path d="M20.49 15a9 9 0 0 1-14.85 3.36L1 14"></path>
-                  </svg>
+              <button id="btn-reload" onclick="reloadPlayer()" title="Reload Signal">
+                  <i class="fa-solid fa-repeat"></i>
               </button>
-              <button id="btn-minimize" onclick="toggleMiniPlayer()" title="Minimize">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                      <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
-                      <line x1="8" y1="12" x2="16" y2="12"></line>
-                  </svg>
+              <button id="btn-minimize" class="minimize" onclick="toggleMiniPlayer()" title="Dock Mini HUD">
+                <i class="fa-solid fa-picture-in-picture"></i>
               </button>
-              <button id="btn-close" onclick="closePlayer()" title="Close">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                      <line x1="18" y1="6" x2="6" y2="18"></line>
-                      <line x1="6" y1="6" x2="18" y2="18"></line>
-                  </svg>
+              <button id="btn-close" onclick="closePlayer()" title="Terminate Stream">
+                <i class="fa-solid fa-xmark"></i>
               </button>
           </div>
         </div>
@@ -71,25 +66,52 @@
         <div class="iframe-container">
             <iframe id="live-player" src="" allow="fullscreen; picture-in-picture" allowfullscreen></iframe>   
         </div>
+
+        <!-- Dynamic Source Switcher Bar -->
+        <div class="source-selector-bar" id="player-sources">
+            <!-- Dynamically populated stream sources -->
+        </div>
+
         <div class="player-info">
             <h2 id="player-title">Awaiting Signal...</h2>
             <p id="player-league">Select a broadcast below</p>
         </div>
     </div>
 
+    <!-- Streams Display Section -->
+    <!-- Streams Display Section -->
     <div class="streams-section">
-        <div class="stream-group">
-            <h2 class="streams-title">Live_Now</h2>
+
+        <!-- Live Streams Group -->
+        <div class="stream-group collapsible-group" id="live-stream-group">
+            <div class="stream-group-header" id="live-group-header">
+                <h2 class="streams-title" id="live-title">
+                    LIVE_NOW <span class="stream-count" id="live-count">[0]</span>
+                </h2>
+                <button class="cyber-toggle-btn" id="live-toggle-btn" type="button" aria-label="Toggle Live Streams">
+                    <span class="btn-symbol">[ − ]</span>
+                </button>
+            </div>
             <div class="streams-grid" id="live-streams-display">
                 <div class="no-streams">Querying live systems...</div>
             </div>
         </div>
-        <div class="stream-group">
-            <h2 class="streams-title">Upcoming</h2>
-            <div class="streams-grid" id="upcoming-streams-display">
+
+        <!-- Upcoming Streams Group -->
+        <div class="stream-group collapsible-group" id="upcoming-stream-group">
+            <div class="stream-group-header" id="upcoming-group-header">
+                <h2 class="streams-title" id="upcoming-title">
+                    UPCOMING <span class="stream-count" id="upcoming-count">[0]</span>
+                </h2>
+                <button class="cyber-toggle-btn" id="upcoming-toggle-btn" type="button" aria-label="Toggle Upcoming Streams">
+                    <span class="btn-symbol">[ − ]</span>
+                </button>
+            </div>
+            <div class="upcoming-container" id="upcoming-streams-display">
                 <div class="no-streams">Querying scheduled events...</div>
             </div>
         </div>
+
     </div>
   </main>
       
