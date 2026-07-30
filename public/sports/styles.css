@@ -1312,4 +1312,8 @@ body::before {
   #player-title {
     font-size: 14px;
   }
+  
+  #player-league {
+    font-size: 10px;
+  }
 }
