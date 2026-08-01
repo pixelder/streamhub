@@ -96,7 +96,7 @@ body::before {
 .cyber-search-wrapper {
   display: flex;
   align-items: center;
-  background: var(--void-surface);
+  background: var(--color5);
   border: var(--border-hard);
   font-size: 12px;
   padding: 0 12px;
@@ -126,6 +126,7 @@ body::before {
   font-family: var(--font-data);
   width: 100%;
   text-transform: uppercase;
+  box-shadow: none;
 }
 
 #stream-search-input::placeholder {
@@ -151,7 +152,7 @@ body::before {
   align-items: center;
   justify-content: center;
   gap: 8px;
-  background: var(--void-surface);
+  background: var(--color5);
   color: var(--text-dim);
   border: var(--border-hard);
   padding: var(--pad) calc(var(--pad) * 1.5);
@@ -852,6 +853,7 @@ body::before {
   font-weight: 800;
   text-transform: uppercase;
   letter-spacing: -1px;
+  word-spacing: 4px;
   line-height: 1.2;
 }
 
@@ -883,7 +885,7 @@ body::before {
 
 .row-prefix {
   font-family: var(--font-data);
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 700;
   letter-spacing: 1px;
   text-transform: uppercase;
@@ -911,15 +913,17 @@ body::before {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  background: var(--void-bg);
+  background: var(--color5);
   border: 1px solid var(--border-hard);
   color: var(--text-dim);
   font-family: var(--font-data);
-  font-size: 11px;
+  font-size: 12px;
   padding: 5px 12px;
+  height: 30px;
   cursor: pointer;
   text-transform: uppercase;
   transition: all 0.1s linear;
+  box-sizing: border-box;
 }
 
 .source-btn:hover {
@@ -965,22 +969,24 @@ body::before {
   display: flex;
   align-items: center;
   gap: 8px;
-  background: var(--void-bg);
+  background: var(--color5);
   border: 1px solid var(--border-hard);
   color: var(--text-dim);
   padding: 8px 12px;
+  height: 32px;
   font-family: var(--font-data);
-  font-size: 11px;
+  font-size: 12px;
   cursor: pointer;
   text-transform: uppercase;
   transition: all 0.12s ease-out;
   text-align: left;
+  box-sizing: border-box;
 }
 
 .cyber-feed-btn:hover {
   border-color: var(--accent-yellow);
   color: var(--text-main);
-  background: var(--void-surface);
+  background: var(--color3);
   transform: translateY(-1px);
 }
 
@@ -989,7 +995,7 @@ body::before {
   color: var(--void-bg);
   border-color: var(--text-main);
   font-weight: 700;
-  box-shadow: 4px 4px 0 var(--accent-cyan);
+  box-shadow: 3px 3px 0 var(--accent-cyan);
   transform: translate(-1px, -1px);
 }
 
@@ -1035,7 +1041,7 @@ body::before {
 }
 
 .feed-viewers {
-  font-size: 10px;
+  font-size: 12px;
   display: inline-flex;
   align-items: center;
   gap: 4px;
@@ -1208,7 +1214,7 @@ body::before {
   }
   
   .streams-grid {
-    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
     gap: 12px;
   }
 
@@ -1270,7 +1276,7 @@ body::before {
 
   .now-playing-badge {
     letter-spacing: 0;
-    font-size: 10px;
+    font-size: 11px;
   }
 
   .control-buttons {
@@ -1286,6 +1292,10 @@ body::before {
     padding: 10px 12px;
   }
 
+  .row-prefix {
+    font-size: 10px;
+  }
+
   .links-row {
     padding-top: 6px;
   }
@@ -1294,8 +1304,9 @@ body::before {
     font-size: 10px;
   }
 
-   .cyber-feed-btn, .source-btn {
+  .cyber-feed-btn, .source-btn {
     font-size: 10px;
+    height: 24px;
     padding: 6px;
     gap: 6px;
   }
@@ -1305,15 +1316,28 @@ body::before {
     gap: 8px;
   }
 
+  .feed-badge-hd, .feed-badge-sd {
+    font-size: 8px;
+    padding: 2px 3px;
+  }
+
+  .feed-viewers {
+    font-size: 10px;
+  }
+
   .player-info {
     padding: 10px 12px;
   }
 
   #player-title {
-    font-size: 14px;
+    font-size: 11px !important;
   }
   
   #player-league {
+    font-size: 10px;
+  }
+
+  .stream-count {
     font-size: 10px;
   }
 }
