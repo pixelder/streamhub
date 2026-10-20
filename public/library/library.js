@@ -1,5 +1,4 @@
-const API_KEY = "213d830aae3a2f7b67e37f157405a42e";
-const BASE_URL = 'https://api.tmdb.org/3';
+const BASE_URL = '/api/tmdb';
 const IMAGE_300 = 'https://image.tmdb.org/t/p/w300';
 const IMAGE_342 = 'https://image.tmdb.org/t/p/w342';
 const IMAGE_500 = 'https://image.tmdb.org/t/p/w500';

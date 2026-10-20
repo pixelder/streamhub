@@ -3,6 +3,13 @@ const express = require('express');
 const app = express();
 const path = require('path');
 
+// API integration for the original public/EJS site.
+if (require.main === module) {
+  try { require('node:process').loadEnvFile(path.join(__dirname, '.env')); }
+  catch (error) { if (error.code !== 'ENOENT') throw error; }
+}
+require('./backend/tmdb-proxy.cjs')(app);
+
 //app.use(helmet());
 
 app.use(express.static(path.join(__dirname, 'public')));
@@ -43,7 +50,11 @@ app.use((req, res) => {
   res.sendStatus(500);
 }) */
 
-const PORT = process.env.PORT || 8443;
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
-});
+module.exports = app;
+
+if (require.main === module) {
+  const PORT = process.env.PORT || 8443;
+  app.listen(PORT, () => {
+    console.log(`Original public/EJS site running at http://localhost:${PORT}`);
+  });
+}

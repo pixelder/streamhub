@@ -1,5 +1,4 @@
-const API_KEY = "213d830aae3a2f7b67e37f157405a42e";
-const BASE_URL = 'https://api.tmdb.org/3';
+const BASE_URL = '/api/tmdb';
 const IMAGE_300 = 'https://image.tmdb.org/t/p/w300';
 const IMAGE_342 = 'https://image.tmdb.org/t/p/w342';
 const IMAGE_500 = 'https://image.tmdb.org/t/p/w500';
@@ -33,8 +32,8 @@ let selectedNetworks = []
 let selectedProviders = []
 
 const sectionURLs = {
-  'trending-movies': `${BASE_URL}/trending/movie/week?api_key=${API_KEY}`,
-  'trending-series': `${BASE_URL}/trending/tv/week?api_key=${API_KEY}`,
+  'trending-movies': `${BASE_URL}/trending/movie/week?language=en-US`,
+  'trending-series': `${BASE_URL}/trending/tv/week?language=en-US`,
 };
 
 function loadSections() {
@@ -91,7 +90,7 @@ async function loadDiscoverContent( mediaType, sectionId) {
   }
   
   if (section) {
-    const url = `${BASE_URL}/discover/${mediaType}?api_key=${API_KEY}&${params}&${OPTIONS}`;
+    const url = `${BASE_URL}/discover/${mediaType}?${params}&${OPTIONS}`;
     fetchContent(sectionId, url);
   }
 }
@@ -239,7 +238,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 async function getCarouselData(seed = Date.now()) {
-  const URL = `${BASE_URL}/trending/all/week?api_key=${API_KEY}`;
+  const URL = `${BASE_URL}/trending/all/week?language=en-US`;
 
   // Fetch trending data and genre lists in parallel.
   const [pages, genreMaps] = await Promise.all([
@@ -289,7 +288,7 @@ function shuffleWithSeed(arr, rand) {
 
 async function getLogo(type, id) {
   try {
-    const url = `${BASE_URL}/${type}/${id}/images?api_key=${API_KEY}`;
+    const url = `${BASE_URL}/${type}/${id}/images?language=en-US`;
     const data = await fetchFromURL(url);
 
     const logo = data.logos?.find(l => l.iso_639_1 === 'en') || data.logos?.[0];
@@ -523,7 +522,7 @@ async function getGenres(type) {
     return genreCache[type];
   }
 
-  const url = `${BASE_URL}/genre/${type}/list?api_key=${API_KEY}`;
+  const url = `${BASE_URL}/genre/${type}/list?language=en-US`;
   const data = await fetchFromURL(url);
 
   // Store as { 28: "Action", 35: "Comedy", ... }

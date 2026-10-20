@@ -1,4 +1,4 @@
-const GENRE_URL = `https://api.themoviedb.org/3/genre`
+const GENRE_URL = `/api/tmdb/genre`
 const IMAGE_92 = `https://image.tmdb.org/t/p/w92`
 
 let isMovie = null;
@@ -640,7 +640,7 @@ async function renderGenreChips(mediaType, selected = null) {
 		genreContainer?.appendChild(chip);
 	}
 
-	const url = `${GENRE_URL}/${mediaType}/list?api_key=${API_KEY}`
+	const url = `${GENRE_URL}/${mediaType}/list?language=en-US`
 	fetchFromURL(url)
 		.then((data) => {
 			data.genres.forEach(genre => {
@@ -824,8 +824,8 @@ class SelectMenu {
 	async fetchData() {
 		const url =
 			this.type === "language"
-				? `${BASE_URL}/configuration/languages?api_key=${API_KEY}`
-				: `${BASE_URL}/configuration/countries?language=en-US&api_key=${API_KEY}`;
+				? `${BASE_URL}/configuration/languages?language=en-US`
+				: `${BASE_URL}/configuration/countries?language=en-US`;
 
 
 		this.data = await fetchFromURL(url)
@@ -1007,7 +1007,7 @@ async function renderNationAndLangSelector(params = null) {
 // async function renderNationAndLangSelector(params = null) {
 // 	// Fetch countries
 // 	const { reg, lang } = params
-// 	const counteryURL = `${BASE_URL}/configuration/countries?language=en-US&api_key=${API_KEY}`
+// 	const counteryURL = `${BASE_URL}/configuration/countries?language=en-US`
 // 	const counteryList = ['AS', 'US', 'AU', 'GB', 'IE', 'JP', 'KO', 'IN', 'RU', 'MX', 'FR', 'DE'];
 // 	fetchFromURL(counteryURL).then((data) => {
 // 		const countries = data
@@ -1027,7 +1027,7 @@ async function renderNationAndLangSelector(params = null) {
 // 	})
 
 // 	// Fetch languages
-// 	const languageURL = `${BASE_URL}/configuration/languages?api_key=${API_KEY}`
+// 	const languageURL = `${BASE_URL}/configuration/languages?language=en-US`
 // 	const languagelist = ['en', 'ja', 'ko', 'hi', 'as', 'ru', 'es', 'fr', 'de']
 // 	fetchFromURL(languageURL).then((data) => {
 // 		const languages = data;

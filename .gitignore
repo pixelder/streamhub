@@ -2,4 +2,12 @@
 /favicon_io
 /node_modules
 .github
-/src
+dist/
+.build-tmp/
+test-results/
+.env
+.env.*
+!.env.example
+.vercel/
+.svelte-kit/
+*.log

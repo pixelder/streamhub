@@ -319,7 +319,6 @@ async function fetchSearchResults(term, type, page, count = false) {
 
         const params = new URLSearchParams({
           query: encodeURIComponent(term),
-          api_key: API_KEY,
           page: page,
         })
         const url = `${searchURL}${params}`//&include_adult=false&language=en-US`
@@ -358,11 +357,11 @@ async function fetchMetaData({mediaType = null, id = null, season = null, credit
     let url;
     const append = `external_ids,videos,credits,images&include_image_language=en`
     if (mediaType === "movie") {
-      url = `${BASE_URL}/movie/${id}?api_key=${API_KEY}&language=en-US${options ? `&append_to_response=release_dates,${append}` : ''}`;
+      url = `${BASE_URL}/movie/${id}?language=en-US${options ? `&append_to_response=release_dates,${append}` : ''}`;
     } else if (mediaType === "tv") {
-      url = `${BASE_URL}/tv/${id}${season ? `/season/${season}` : ''}?api_key=${API_KEY}&language=en-US${options ? `&append_to_response=content_ratings,${append}` : ''}`;
+      url = `${BASE_URL}/tv/${id}${season ? `/season/${season}` : ''}?language=en-US${options ? `&append_to_response=content_ratings,${append}` : ''}`;
     } else if (mediaType === "person") {
-      url = `${BASE_URL}/person/${id}?api_key=${API_KEY}&language=en-US${options ? `&append_to_response=${credits},external_ids` : ''}`;
+      url = `${BASE_URL}/person/${id}?language=en-US${options ? `&append_to_response=${credits},external_ids` : ''}`;
     }
     // console.log('fetching metadata', id, mediaType)
     const response = await fetch(url);
@@ -815,7 +814,7 @@ function populateCreditSection(data, type) {
 }
 
 
-// use  https://api.themoviedb.org/3/credit/{credit_id} to get appear date of a tv show
+// Credit lookups are not part of the legacy app's supported catalog routes.
 // has appearing episode count. very inconsistent
 
 function pluralResolver(count, str, suf) {
