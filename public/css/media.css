@@ -318,7 +318,7 @@
   }
 
   .slide-tags p {
-    font-size: 10px !important;
+    font-size: 11px !important;
   }
 
   .buttons button {
@@ -1426,7 +1426,7 @@
   .modal-genre a {
     width: fit-content;
     text-wrap: nowrap;
-    font-size: 10px;
+    font-size: 11px;
     height: 20px;
   }
 

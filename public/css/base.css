@@ -1,7 +1,6 @@
 @import url('https://fonts.cdnfonts.com/css/reverie');
-@import url('https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300;1,400;1,500&family=Hanken+Grotesk:ital,wght@0,100..900;1,100..900&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Google+Sans+Flex:wght@1..144,1..1000&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Figtree:ital,wght@0,300..900;1,300..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Figtree:ital,wght@0,300..900;1,300..900&family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300;1,400;1,500&family=Rethink+Sans:ital,wght@0,400..800;1,400..800&display=swap');
+/* &family=Hanken+Grotesk:ital,wght@0,100..900;1,100..900 */
 
 *,
 *::after,
@@ -41,6 +40,7 @@
   --success: #04b34f;
   --info: #0057b8;
   --font-style1: "Figtree", sans-serif;
+  --font-style2: "Rethink Sans", sans-serif;
   --padding1: 10px;
   font-size: 100%;
   -webkit-tap-highlight-color: transparent;

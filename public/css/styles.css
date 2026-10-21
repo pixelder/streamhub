@@ -387,7 +387,7 @@ section:not(#hero-carousel) {
 
 .slide-tags p {
   text-transform: uppercase;
-  font: normal 600 12px 'Google Sans Flex' !important;
+  font: normal 600 12px var(--font-style2) !important;
 }
 
 .content h1 {
@@ -2901,7 +2901,7 @@ body:has(.modal:is([active])) {
   padding-inline: 6px;
   font-size: 14px;
   /* font-weight: 600; */
-  font-family: google sans flex;
+  font-family: var(--font-style2);
   color: #34d399;
   background: #072920;
   border: 1px dashed;
@@ -3142,7 +3142,7 @@ body:has(.modal:is([active])) {
   gap: 6px;
   padding: 0rem 0 0rem 0;
   color: var(--font-color3);
-  font: normal 600 14px 'Google Sans Flex';
+  font: normal 600 14px var(--font-style2);
 
   .year {
     cursor: pointer; 
@@ -3213,7 +3213,7 @@ body:has(.modal:is([active])) {
   height: 24px;
   display: flex;
   align-items: center;
-  font-family: "Google Sans Flex";
+  font-family: var(--font-style2);
   text-shadow: 0 0 2px #000;
 }
 
