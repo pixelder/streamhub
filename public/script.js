@@ -321,7 +321,6 @@ function buildSlides(container, item, i) {
   const year = extractYear(item.release_date || item.first_air_date) || 'N/A';
   const mediaType = item.media_type;
   const bookmark = logExists('bookmarks', item.id, mediaType);
-  console.log(item);
   const genresHTML = item.genres
     .slice(0, 1)
     .map(genre => `<p>${genre.name.toUpperCase()}</p>`)
