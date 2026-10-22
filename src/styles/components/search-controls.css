@@ -1,0 +1,344 @@
+/* Search pickers and selected items */
+.search-container {
+  position: relative;
+  height: 36px;
+  width: 100%;
+  transition: height 0.2s ease-in-out;
+}
+
+.search-box:focus-within {
+  background: var(--color3);
+}
+
+.search-box {
+  --spacing: 8px;
+  display: flex;
+  flex-direction: column;
+  height: 36px;
+  width: 100% !important;
+  overflow: hidden;
+  padding: var(--spacing);
+  margin: unset !important;
+  gap: var(--spacing);
+  transition: height 0.2s, box-shadow 0.2s ease-in-out;
+
+  .x-icon {
+    transition: all 0.12s ease;
+  }
+
+  &:has(input:placeholder-shown) .x-icon {
+    rotate: -90deg;
+    pointer-events: none;
+    opacity: 0;
+    visibility: hidden;
+  }
+
+  input {
+    border: 1px solid transparent !important;
+    border-radius: unset !important;
+    outline: none;
+    background: transparent !important;
+    box-shadow: none;
+    font-weight: 500;
+    display: flex;
+    flex: 1 0;
+    max-width: 100%;
+    width: 100%;
+    min-height: 100%;
+    padding: 0 0px;
+  }
+}
+
+.search-container:not([expanded]) {
+  &:has(.search-box:not(:focus-within)),
+  &:has(.search-box:has(.select-container:not(:active))),
+  &:has(.search-box:has(.result:not(:active))) {
+    .search-box {
+      position: relative;
+    }
+
+    .result-container {
+      visibility: collapse;
+      height: 0;
+    }
+  }
+}
+
+.search-container:is([expanded]) {
+  .search-box {
+    background: var(--color3);
+  }
+
+  &:has(.result) {
+    .search-box {
+      height: fit-content !important;
+      position: absolute;
+      z-index: 2;
+      box-shadow: 0 0 20px 4px rgba(0, 0, 0, 0.5);
+
+      input {
+        min-height: 30px;
+      }
+
+      .result-container {
+        visibility: visible !important;
+        display: unset;
+      }
+    }
+  }
+}
+
+.search-container:has(.select-item) {
+  height: 72px;
+
+  .search-box {
+    height: fit-content !important;
+
+    input {
+      min-height: 24px !important;
+    }
+  }
+}
+
+.result-container {
+  visibility: hidden;
+  display: none;
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--brad8);
+
+  .results {
+    width: 100%;
+    max-height: 0px;
+    max-width: 100%;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: var(--spacing);
+    visibility: collapse;
+    overflow-y: auto;
+    scroll-snap-type: y mandatory;
+    transition: max-height 0.2s ease-in-out;
+
+    &:has(.result) {
+      display: grid;
+      max-height: 150px;
+      visibility: visible;
+    }
+
+    .result:focus-visible {
+      outline: none;
+      border: 1px solid var(--border-color);
+      background: var(--color3);
+    }
+
+    .result {
+      background: var(--color5);
+      border: 1px solid var(--border-color);
+      border-radius: var(--brad12);
+      text-wrap: nowrap;
+      cursor: pointer;
+      height: 72px;
+      padding: 4px;
+      scroll-snap-align: start;
+      display: flex;
+      gap: inherit;
+      animation: fadeIn 0.2s forwards;
+
+      .img-container {
+        min-width: 36%;
+        max-width: 36%;
+        height: 100%;
+        border: 1px solid var(--border-color);
+        border-radius: var(--brad8);
+        overflow: hidden;
+        display: flex;
+      }
+
+      img {
+        object-fit: cover;
+        width: 100%;
+        font-size: 8px;
+        white-space: wrap;
+        background: var(--font-color3);
+      }
+
+      p {
+        display: flex;
+        align-items: center;
+        font-size: 12px;
+        white-space: wrap;
+      }
+    }
+  }
+}
+
+#search-with-company {
+  .result img {
+    object-fit: contain;
+  }
+}
+
+.select-container:has(.select-item) {
+  display: flex;
+}
+
+.select-container {
+  --spacing: 8px;
+  display: none;
+  width: 100%;
+  flex-wrap: wrap;
+  gap: var(--spacing);
+  font-size: 12px;
+  font-weight: 500;
+
+  .select-item {
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    background: #334;
+    display: flex;
+    align-items: center;
+    min-height: 24px;
+    padding: 0 var(--spacing);
+    white-space: nowrap;
+    opacity: 0;
+    cursor: pointer;
+    animation: appearing 0.2s forwards;
+  }
+}
+
+/* Item animations */
+@keyframes appearing {
+  from {
+    opacity: 0.1;
+    scale: 0.94;
+  }
+
+  to {
+    opacity: unset;
+    scale: unset;
+  }
+}
+
+@keyframes disappearing {
+  from {
+    opacity: 1;
+  }
+
+  to {
+    opacity: 0;
+    scale: 0.97;
+  }
+}
+
+.removing {
+  animation: disappearing 0.2s forwards !important;
+}
+
+/* Select dropdowns */
+.select-input {
+  width: 100%;
+  font-weight: inherit;
+  padding: 8px 32px 8px 10px;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  outline: none;
+  transition: border-color 0.15s ease;
+}
+
+.select-input:focus {
+  border-color: #0066ff;
+}
+
+.clear-btn {
+  opacity: 0.6;
+}
+
+.clear-btn:hover {
+  opacity: 1;
+}
+
+.select-list {
+  display: none;
+  position: absolute;
+  z-index: 20;
+  width: 100%;
+  max-height: 160px;
+  overflow-y: auto;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  background: var(--color5);
+  margin-top: 4px;
+  padding: 4px;
+  gap: 3px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+  animation: fadeIn 0.15s ease-out;
+}
+
+.select-list.open {
+  display: grid;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-3px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.list-item {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+  padding: 6px 8px;
+  cursor: pointer;
+  border-radius: 6px;
+  gap: 4px;
+  transition: filter 0.2s, background 0.2s ease;
+
+  .abbr {
+    display: flex;
+    align-items: center;
+    filter: brightness(0.5);
+    text-shadow: none;
+  }
+}
+
+.list-item:hover, .list-item.hover {
+  filter: brightness(1.2);
+  background: #2238;
+}
+
+.list-item.active {
+  background: var(--color3);
+  color: var(--progress-color);
+  font-weight: 500;
+}
+
+/* Filter overlay */
+.filter-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  display: none;
+  z-index: 2;
+  transition: opacity 0.25s ease-in-out;
+}
+
+body:has(.filter-menu:is([active])) {
+  overflow: hidden;
+}
+
+body:has(.filter-menu) {
+  .filter-overlay {
+    opacity: 1;
+    backdrop-filter: blur(3px) brightness(0.6);
+  }
+}

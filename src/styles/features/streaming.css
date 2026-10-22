@@ -1,0 +1,179 @@
+/* Streaming services and media tabs */
+#discover-streaming {
+  display: flex;
+  flex-wrap: nowrap;
+  flex-direction: column;
+  gap: 0;
+
+  .tab-menu {
+    margin-top: 12px;
+  }
+}
+
+#discover-streaming.expandable.expanded {
+  padding-bottom: 0px;
+
+  .streaming-container {
+    border: unset;
+    padding: unset;
+    height: 100%;
+  }
+
+  .tab-menu {
+    position: absolute;
+    top: 0;
+    right: 100px;
+    z-index: 2;
+    padding-block: 12px;
+    margin: unset;
+    border: unset;
+    gap: 10px;
+    background: inherit;
+
+    .tab {
+      padding: 0px 16px;
+    }
+  }
+
+  .tab-items {
+    overflow: hidden;
+    margin: 8px;
+    padding: 4px;
+    border: unset;
+    border-radius: unset;
+  }
+
+  .tab-items .grid-container {
+    margin: unset;
+  }
+}
+
+.streaming-container {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--border-color);
+  border-radius: var(--brad12);
+  padding: 10px;
+}
+
+.tab-menu {
+  --rd: var(--brad24);
+  display: flex;
+  justify-content: flex-start;
+  flex-direction: row;
+  padding: 10px;
+  gap: 8px;
+  margin: 0rem;
+  overflow-x: auto;
+  border: 1px solid var(--border-color);
+  border-bottom: none;
+  border-radius: var(--rd) var(--rd) 0 0;
+}
+
+.tab {
+  height: 36px;
+  background-color: var(--color5);
+  color: var(--font-color3);
+  padding: 0px 16px;
+  border-radius: var(--brad12);
+  cursor: pointer;
+  font-size: 13px;
+  box-sizing: border-box;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.tab.active {
+  color: var(--font-color1);
+  background-color: #334;
+  box-shadow: 0 0px 10px rgba(0, 0, 0, 0.2);
+}
+
+.tab:not(.active):hover {
+  color: var(--font-color1);
+  background-color: var(--color3);
+}
+
+.tab-items {
+  --rd: var(--brad24);
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--border-color);
+  border-radius: 0 0 var(--rd) var(--rd);
+  padding: 0.6rem;
+  gap: 0.6rem;
+  height: 100%;
+}
+
+.tab-items .grid-container {
+  gap: inherit;
+}
+
+.media-switch {
+  --radius: var(--brad12);
+  --pad: 4px;
+  position: relative;
+  display: flex;
+  padding: var(--pad);
+  width: 180px;
+  height: 36px;
+  margin-right: auto;
+  text-wrap: nowrap;
+  background-color: var(--color5);
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+  flex-shrink: 0;
+}
+
+.media-tab {
+  display: grid;
+  place-content: center;
+  flex: 1;
+  z-index: 1;
+  font-size: 13px;
+  background-color: transparent;
+  color: var(--font-color3);
+  cursor: pointer;
+  border: none;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.media-tab.active {
+  background-color: #334;
+  color: var(--font-color1);
+  border: none;
+}
+
+.switch-input {
+  display: none;
+}
+
+.media-label {
+  display: flex;
+  position: relative;
+  overflow: hidden;
+  width: 100% !important;
+  height: 100%;
+  cursor: pointer;
+  user-select: none;
+}
+
+.media-indicator {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 50%;
+  height: 100%;
+  background-color: #333344;
+  border-radius: calc(var(--radius) - var(--pad));
+  transition: transform 0.3s ease, background-color 0.3s ease;
+}
+
+#media-toggle:checked + .media-label .media-indicator {
+  transform: translateX(100%);
+}
+
+#media-toggle:checked + .media-label .media-tab.tv,
+#media-toggle:not(:checked) + .media-label .media-tab.movie {
+  color: var(--font-color1);
+}

@@ -1,0 +1,22 @@
+/* Global cascade for the Preact app. Keep this import order.
+   Sports styles are inserted before the HTML data-base-style marker.
+   Other route styles load after this sheet; Settings keeps its own scoped CSS. */
+@import './foundation/base.css';
+@import './layout/existing-utilities.css';
+@import './components/primitives.css';
+@import './foundation/tokens.css';
+@import './layout/patterns.css';
+@import './foundation/document.css';
+@import './components/navigation.css';
+@import './features/home.css';
+@import './components/catalog.css';
+@import './features/streaming.css';
+@import './features/discovery.css';
+@import './components/search-controls.css';
+@import './features/history.css';
+@import './components/details.css';
+@import './components/episodes.css';
+@import './components/people.css';
+@import './components/feedback.css';
+@import './responsive.css' (max-width: 767px);
+@import './customization.css';

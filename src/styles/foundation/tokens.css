@@ -1,0 +1,5 @@
+/* Existing catalog alert colors. These do not replace the darker --warn button color. */
+:root {
+  --catalog-alert-text: #ff5855;
+  --catalog-alert-surface: #2f111a;
+}

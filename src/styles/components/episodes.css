@@ -1,0 +1,136 @@
+/* Seasons and episodes */
+.tv-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: nowrap;
+}
+
+.seasons-menu select {
+  background-color: var(--color5);
+  background-size: 18px;
+  font-weight: 600;
+  font-size: 1rem;
+  outline: 0px;
+  width: auto;
+}
+
+option {
+  background-color: #30303d;
+}
+
+.episode-container {
+  display: flex;
+  gap: 12px;
+  margin: 0 auto;
+}
+
+.ep-error {
+  width: fit-content;
+  display: flex;
+  align-items: center;
+  height: 32px;
+  border: 1px solid;
+  padding-inline: 8px;
+  gap: 6px;
+  font-size: 13px;
+  border-radius: var(--brad8);
+  color: var(--catalog-alert-text);
+  background: var(--catalog-alert-surface);
+  text-shadow: none;
+}
+
+.episode-wrap {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fill, minmax(20rem, 1fr));
+  justify-content: center;
+}
+
+.episode-player {
+  max-width: 100%;
+  height: fit-content;
+  overflow: scroll;
+  border-radius: var(--brad12);
+}
+
+.episode-width {
+  min-width: 40%;
+}
+
+.episode {
+  flex: 1;
+  padding: 12px;
+  background-color: var(--color5);
+  border-radius: var(--brad12);
+  border: 1px solid var(--border-color);
+  box-shadow: 0 0 4px rgba(0, 0, 0, 0.3);
+}
+
+.episode-items {
+  display: flex;
+  flex-wrap: wrap;
+  flex: 1;
+  justify-content: space-between;
+  gap: 8px 12px;
+}
+
+.episode-items .img-container {
+  display: flex;
+  align-items: center;
+  position: relative;
+  height: 108px;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  border-radius: var(--brad8);
+  box-shadow: 0 0 4px rgba(0, 0, 0, 0.3);
+  cursor: pointer;
+  background: var(--bg-color);
+
+  .uc-text {
+    display: block !important;
+    position: absolute;
+    z-index: 1;
+    font-weight: bold;
+    width: 100%;
+    text-align: center;
+    text-shadow: 0 0 4px #000, 0 0 12px #000, 0 0 20px #000;
+  }
+
+  .progress-bar {
+    --margin: 8px;
+    position: absolute;
+    bottom: 0;
+    margin: var(--margin);
+    width: calc(100% - (var(--margin) * 2));
+  }
+}
+
+.episode-items img {
+  height: 100%;
+  min-width: 100%;
+  object-fit: cover;
+  mask-image: linear-gradient(to top, rgba(0, 0, 0, 0.2) 0%, black 35%, black 75%, rgba(0, 0, 0, 0.4) 100%);
+}
+
+.episode-info {
+  flex: inherit;
+  align-content: center;
+  gap: 1rem;
+}
+
+.episode-item h3,
+.episode-item p {
+  text-align: left;
+}
+
+.episode-items h3 {
+  font-size: 0.96rem;
+  margin: 0.2rem 0;
+  line-height: 1.06rem;
+}
+
+.episode-items p {
+  font-size: 0.86rem;
+  line-height: 1rem;
+  margin: 0rem 0;
+}

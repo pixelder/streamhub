@@ -1,0 +1,65 @@
+@import url('https://fonts.cdnfonts.com/css/reverie');
+@import url('https://fonts.googleapis.com/css2?family=Figtree:ital,wght@0,300..900;1,300..900&family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300;1,400;1,500&family=Rethink+Sans:ital,wght@0,400..800;1,400..800&display=swap');
+/* &family=Hanken+Grotesk:ital,wght@0,100..900;1,100..900 */
+
+*,
+*::after,
+*::before {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  scroll-behavior: smooth !important;
+  scrollbar-color: var(--color1) var(--color3);
+  scrollbar-gutter: stable;
+
+  @supports (-webkit-appearance:none) and (contain:paint) and (not (-moz-appearance:button)) {
+    scrollbar-width: none;
+  }
+}
+
+:root {
+  color-scheme: dark;
+  --color1: #383852;
+  --color2: #71717a;
+  --color3: #222233;
+  --color4: #121225;
+  --color5: #181825;
+  --font-color1: #c8c8d0;
+  --font-color2: #a3a3a0;
+  --font-color3: #81818c;
+  --active-color: red;
+  --bg-color: #0d0d1b;
+  --border-color: #ffffff15;
+  --brad24: 24px;
+  --brad16: 16px;
+  --brad12: 12px;
+  --brad8: 8px;
+  --progress-color: #5A8FDB;
+  --warn: #a6192e;
+  --caution: #ff9900;
+  --success: #04b34f;
+  --info: #0057b8;
+  --font-style1: "Figtree", sans-serif;
+  --font-style2: "Rethink Sans", sans-serif;
+  --padding1: 10px;
+  font-size: 100%;
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  font-family: var(--font-style1);
+  font-weight: 500;
+  font-size: 1rem;
+  background-color: var(--bg-color);
+  color: var(--font-color1);
+  height: 100dvh;
+  overflow-y: auto;
+  scroll-behavior: smooth;
+  scroll-snap-type: y mandatory;
+}
+
+::selection {
+  color: var(--bg-color);
+  background: var(--font-color1);
+  text-shadow: none;
+}

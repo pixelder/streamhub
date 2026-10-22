@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<%- include('partials/head') %>
+  <script src="settings.js" defer></script>
+</head>
+<script defer>
+
+  document.addEventListener("DOMContentLoaded", () => {
+      topNavBar()
+      bottomNavBar()
+      generateSettingsUI('settings-panel');
+  });
+    
+</script>
+<style>
+.settings-layout {
+  display: grid;
+  grid-template-columns: 220px 1fr;
+  gap: 20px;
+  width: 100%;
+}
+
+#settings-menu {
+  border-right: 1px solid #222;
+  padding: var(--padding1);
+}
+
+.menu-item {
+  display: flex;
+  gap: 10px;
+  padding: 10px;
+  cursor: pointer;
+  border-radius: 8px;
+}
+
+.menu-item:hover {
+  background: rgba(255,255,255,0.05);
+}
+
+.menu-item.active {
+  background: rgba(255,255,255,0.1);
+}
+
+.settings-content {
+  min-width: 400px;
+}
+
+.settings-header {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.settings-header input {
+  flex: 1;
+  padding: 8px;
+  width: 100%;
+}
+
+#settings-panel {
+  width: 100%;
+}
+
+.settings-group {
+  margin-bottom: 25px;
+}
+
+.settings-group h2 {
+  margin-bottom: 10px;
+  font-size: 18px;
+}
+
+.setting-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 0;
+  border-bottom: 1px solid #222;
+}
+
+.setting-label {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.setting-label i {
+  width: 20px;
+}
+
+.setting-label .title {
+  font-weight: 600;
+}
+
+.setting-label .desc {
+  font-size: 12px;
+  opacity: 0.7;
+}
+
+button {
+  height: 36px;
+  background: var(--color1);
+  font-size: 14px;
+  font-weight: 600;
+  border-radius: var(--brad8) !important;
+  box-shadow: none !important;
+  padding-inline: 8px;
+}
+
+[id^="import"],
+[id^="export"],
+[id^="clear-all"] {
+  width: unset;
+  aspect-ratio: 1/1;
+}
+
+.action-btn, .danger-btn {
+  padding: 0;
+}
+
+label:has(#merge-option) {
+  display: flex;
+  gap: var(--padding1);
+  padding: var(--padding1);
+  padding-left: 0;
+  padding-bottom: 0;
+  font-size: 13px;
+}
+
+.profile-setting {
+  width: 100%;
+}
+
+.profile-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.profile-name {
+  flex: 1;
+  padding: 6px;
+}
+
+.avatar-upload {
+  width: 36px;
+  height: 36px;
+}
+</style>
+<body>
+  <nav id="top-bar"></nav>
+  <main id="main-content">  
+    <div class="settings-layout">
+    <aside id="settings-menu">
+    </aside>
+
+    <section class="settings-content">
+      <div class="settings-header section-header">
+        <input id="settings-search" placeholder="Search settings..." />
+        <button id="reset-settings">
+          <i class="fa-solid fa-rotate-left"></i> Restore Defaults
+        </button>
+      </div>
+
+      <div id="settings-panel"></div>
+    </section>
+  </div>
+  </main>
+  <nav id="bottom-bar"></nav>
+</body>
+</html>

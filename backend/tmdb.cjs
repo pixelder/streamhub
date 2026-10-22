@@ -17,21 +17,35 @@ function credentialFor(env = process.env) {
 function upstreamRequest(path, params, credential) {
   const query = new URLSearchParams(params);
   query.delete('api_key');
-  const headers = {accept: 'application/json'};
+  const headers = { accept: 'application/json' };
   if (credential.mode === 'v3 API key') query.set('api_key', credential.value);
   else headers.authorization = `Bearer ${credential.value}`;
-  return {url: `${HOST}/${path}?${query}`, headers};
+  return { url: `${HOST}/${path}?${query}`, headers };
 }
 
 // Error messages and URLs can contain credentials. Report only known codes.
 function failureCode(error) {
   if (error?.name === 'AbortError' || error?.name === 'TimeoutError') return 'TIMEOUT';
-  const allowed = new Set(['EBUSY', 'ENOTFOUND', 'EAI_AGAIN', 'ENETUNREACH',
-    'EHOSTUNREACH', 'ECONNREFUSED', 'ECONNRESET', 'ETIMEDOUT',
-    'UND_ERR_CONNECT_TIMEOUT', 'CERT_HAS_EXPIRED', 'UNABLE_TO_VERIFY_LEAF_SIGNATURE']);
+  const allowed = new Set([
+    'EBUSY',
+    'ENOTFOUND',
+    'EAI_AGAIN',
+    'ENETUNREACH',
+    'EHOSTUNREACH',
+    'ECONNREFUSED',
+    'ECONNRESET',
+    'ETIMEDOUT',
+    'UND_ERR_CONNECT_TIMEOUT',
+    'CERT_HAS_EXPIRED',
+    'UNABLE_TO_VERIFY_LEAF_SIGNATURE'
+  ]);
   const codes = [error?.code, error?.cause?.code,
-    ...(error?.cause?.errors || []).map(cause => cause.code)];
+  ...(error?.cause?.errors || []).map(cause => cause.code)];
   return codes.find(code => allowed.has(code)) || 'CONNECTION_FAILED';
 }
 
-module.exports = {credentialFor, upstreamRequest, failureCode};
+module.exports = {
+  credentialFor,
+  upstreamRequest,
+  failureCode
+};

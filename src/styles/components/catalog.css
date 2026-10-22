@@ -1,0 +1,650 @@
+/* Catalog sections and actions */
+section {
+  display: flex;
+  flex-wrap: wrap;
+  padding: 0.6rem 1.4rem 1.4rem 1.4rem;
+  gap: 0.6rem;
+  min-height: 12rem;
+  width: 100%;
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  gap: inherit;
+  width: 100%;
+  height: fit-content;
+  padding-top: var(--padding1);
+  align-items: center;
+  position: relative;
+}
+
+section h2 {
+  font-family: 'Reverie', serif;
+  font-weight: 600;
+  letter-spacing: 0.6px;
+  font-size: 26px;
+  margin-right: auto;
+  text-align: left;
+  text-wrap: nowrap;
+  overflow: hidden;
+  mask-image: linear-gradient(to right, black 95%, rgba(0, 0, 0, 0.77) 97%, transparent);
+  padding-right: 1rem;
+  translate: 0 2px;
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 8px;
+  pointer-events: none;
+  color: var(--font-color3);
+  transition: color 0.3s;
+}
+
+section:has(.grid-item, .profile-item ) .actions {
+  pointer-events: all;
+  color: unset;
+}
+
+.actions {
+  button,
+  div {
+    position: relative;
+    height: 32px;
+    aspect-ratio: 1/1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: var(--brad8);
+    background: var(--color5);
+    box-sizing: border-box;
+    cursor: pointer;
+  }
+}
+
+.close-window {
+  background: #a6192e4d !important;
+  border-radius: 50% !important;
+}
+
+.close-window:is(:hover, :focus-visible) {
+  background: var(--warn) !important;
+}
+
+.actions {
+  .edit-button {
+    i {
+      position: absolute;
+      opacity: 0;
+      scale: 0;
+      transition: scale 0.2s ease-in-out;
+    }
+
+    i.active {
+      opacity: 1;
+      scale: unset;
+    }
+  }
+
+  .edit-button:disabled {
+    color: var(--font-color3);
+    cursor: progress;
+  }
+}
+
+.actions .delete-button {
+  background: var(--catalog-alert-surface);
+  color: var(--catalog-alert-text);
+  opacity: 0;
+  scale: 0;
+  transition: scale 0.2s, opacity 0.2s ease-in-out;
+}
+
+.actions:has(.delete-button.active) .delete-button {
+  position: relative;
+  opacity: 1;
+  scale: unset;
+}
+
+section:has(.delete-button.active) .select-action {
+  scale: unset;
+  opacity: 1;
+}
+
+.select-action {
+  display: flex;
+  scale: 0;
+  opacity: 0;
+  height: 32px;
+  align-items: center;
+  text-wrap: nowrap;
+  font-size: 14px;
+  border-radius: var(--brad8);
+  background: var(--color5) !important;
+  transition: opacity 0.2s, scale 0.2s ease-in-out;
+}
+
+.select-all {
+  position: relative !important;
+  padding: unset !important;
+  width: fit-content !important;
+  border-radius: inherit;
+  aspect-ratio: 1 / 1;
+  display: grid;
+  place-content: center;
+}
+
+.v-separator {
+  border-left: 1px solid #383852;
+  height: 60%;
+}
+
+.selection-count {
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  margin: 0 var(--padding1);
+}
+
+/* Expanded and collapsed sections */
+body:has(.expandable.expanded) {
+  overflow: hidden;
+}
+
+.expandable {
+  border: 0px solid transparent;
+  transition: all 0.2s ease-in-out;
+
+  .section-header {
+    cursor: pointer;
+  }
+
+  .grid-container {
+    display: flex !important;
+    justify-content: flex-start !important;
+    overflow-x: auto;
+    transition: all 0.2s ease-in-out;
+
+    .grid-item {
+      height: 300px;
+      aspect-ratio: 1 / 1.8;
+      pointer-events: auto;
+    }
+  }
+
+  .close-window {
+    display: none;
+  }
+}
+
+.expandable:has(.section-header:active) {
+  &:not(:has(.section-header > *:active)) {
+    background: #141420;
+  }
+}
+
+.expandable.expanded {
+  --margin: 10px;
+  width: calc(100% - var(--margin) * 2);
+  height: calc(100vh - var(--margin) * 2);
+  background: var(--bg-color);
+  border: 1px solid var(--border-color);
+  border-radius: 16px;
+  margin: 10rem auto;
+  position: relative;
+  padding-right: unset;
+  padding-left: unset;
+  padding-top: 60px;
+  transition: unset;
+
+  .section-header {
+    height: fit-content;
+    position: absolute;
+    top: 0rem;
+    z-index: 1;
+    border-bottom: 1px solid var(--border-color);
+    padding: 14px;
+    width: 100%;
+  }
+
+  .grid-container {
+    display: grid !important;
+    grid-template-columns: repeat(auto-fill, minmax(10rem, 1fr));
+    justify-content: center;
+    overflow-y: auto;
+    margin: 12px;
+    height: fit-content;
+    mask-image: unset !important;
+
+    .grid-item:not(.placeholder) {
+      height: fit-content !important;
+      aspect-ratio: unset;
+    }
+  }
+
+  .grid-container.loading {
+    display: flex !important;
+    height: 100% !important;
+  }
+
+  .maximize {
+    display: none;
+  }
+
+  .close-window {
+    display: flex;
+  }
+}
+
+.expandable.collapsed>* {
+  opacity: 0;
+  visibility: hidden;
+  height: 0;
+  overflow: hidden;
+  padding: unset;
+}
+
+.expandable.collapsed {
+  min-height: fit-content;
+  border: 1px solid var(--border-color);
+  border-radius: var(--brad12);
+  gap: 0;
+  overflow: hidden;
+  padding: 0px 16px;
+  margin: 16px 1.4rem;
+  width: calc(100% - 2.8rem);
+
+  .section-header {
+    height: 48px;
+    padding: unset;
+    align-items: center;
+    opacity: 1;
+    visibility: visible;
+    overflow: initial;
+
+    .expand-arrow {
+      display: flex !important;
+      visibility: visible !important;
+      transform: rotate(0deg);
+    }
+
+    .actions,
+    .select-action {
+      button,
+      div {
+        visibility: hidden;
+        display: none;
+      }
+    }
+  }
+
+  .streaming-container,
+  .tab-menu,
+  .tab-items {
+    display: none;
+  }
+}
+
+/* Catalog grids and cards */
+.grid-container:not(:has(.grid-item)) {
+  mask-image: unset !important;
+}
+
+.upcoming {
+  position: absolute !important;
+  bottom: 0;
+  right: 0;
+  border: 1px solid;
+  border-radius: var(--brad12);
+  background-color: var(--catalog-alert-surface);
+  color: var(--catalog-alert-text);
+  padding: 4px 8px;
+  margin: 4px;
+  font-size: 14px;
+  font-weight: 700;
+  height: 32px;
+  width: 32px;
+  display: grid;
+  place-content: center;
+  overflow: hidden;
+  transition: all 0.3s;
+
+  .text::after {
+    content: "U";
+  }
+}
+
+.upcoming:hover {
+  width: 94%;
+  transition: all 0.3s;
+
+  .text::after {
+    content: "Upcoming";
+  }
+}
+
+.grid-container {
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  justify-content: center;
+  gap: 0.8125rem;
+  max-height: 100%;
+
+  .filler {
+    display: none;
+  }
+}
+
+.grid-container.loading {
+  height: 280px;
+
+  .filler {
+    place-content: center;
+    width: 100%;
+    background: var(--color5);
+    border-radius: var(--brad12);
+    color: var(--font-color3);
+    fill: var(--font-color3);
+    text-shadow: none;
+  }
+
+  .icon {
+    display: flex;
+    width: 2.5rem;
+    margin: 0 auto;
+  }
+
+  .message {
+    margin: 0 auto;
+    display: flex;
+    justify-content: center;
+    height: 30px;
+    width: 50%;
+    align-items: center;
+    gap: 6px;
+  }
+}
+
+.grid-item.placeholder {
+  aspect-ratio: 1 / 1.8 !important;
+}
+
+.grid-item {
+  --padding: 8px;
+  --radius: 16px;
+  visibility: visible;
+  display: flex;
+  flex-direction: column;
+  max-width: 100%;
+  height: fit-content;
+  text-align: center;
+  padding: var(--padding);
+  border-block: 1px solid var(--border-color);
+  border-radius: var(--radius);
+  background-color: var(--color5);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+  transition: scale 0.3s, border 0.3s, box-shadow 0.3s;
+  animation: appearing 0.3s ease-out;
+
+  .grid-actions {
+    transition: scale 0.2s;
+  }
+}
+
+.grid-item:is(:active,:focus-visible) {
+  scale: 0.95;
+  box-shadow: 0 6px 15px rgb(8, 8, 22);
+  border-block: 1px solid var(--border-color);
+  cursor: pointer;
+}
+
+.grid-item div {
+  position: relative;
+}
+
+.grid-item .img-container {
+  display: flex;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+  border-radius: calc( var(--radius) - var(--padding));
+  margin-bottom: 4px;
+
+  .progress-bar {
+    --margin: 8px;
+    position: absolute;
+    bottom: 0;
+    margin: var(--margin);
+    width: calc(100% - (var(--margin) * 2));
+  }
+}
+
+.grid-item img {
+  pointer-events: none;
+  border-radius: var(--brad8);
+  aspect-ratio: 1 / 1.5;
+  object-fit: cover;
+  width: 100%;
+  font-size: 14px;
+}
+
+.grid-item-info {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  text-align: left;
+  padding-top: 0rem;
+  height: 48px;
+  gap: 4px;
+}
+
+.grid-item-info p {
+  font-size: 13px;
+  line-height: 15px;
+}
+
+.grid-item-info>p:nth-child(1) {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 78%;
+  display: -webkit-box;
+  line-clamp: 2;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  word-break: break-word;
+  padding: 1px 0px;
+}
+
+.nostar {
+  all: unset !important;
+  height: 14px !important;
+  aspect-ratio: 1/1 !important;
+}
+
+.grid-rating {
+  display: flex;
+  text-align: center;
+  align-items: center;
+  gap: 0.1rem;
+  color: goldenrod;
+  font-weight: bold;
+  width: fit-content;
+  height: fit-content;
+  margin-top: 1px;
+
+  i {
+    font-size: 11px;
+    padding-bottom: 1px;
+  }
+
+  .rating {
+    display: flex;
+    align-items: center;
+    gap: 3px;
+  }
+
+  .nostar {
+    margin-top: 1px;
+  }
+}
+
+.grid-item-info>p:nth-last-child(1) {
+  align-self: flex-end;
+  font-size: 0.75rem;
+  width: 100%;
+  line-height: 10px;
+}
+
+.grid-item:is(:hover, :focus),
+.grid-item:has(.options-buttons:is(:hover, :focus)),
+.grid-item:has(.grid-options.open),
+.grid-item:has(.grid-options:focus-visible) {
+  .grid-options {
+    opacity: 1 !important;
+    color: var(--font-color1);
+  }
+}
+
+/* Card action menus */
+.grid-actions {
+  position: absolute !important;
+  top: 0;
+  right: 0;
+  display: flex;
+  padding: calc(var(--padding1) / 2);
+}
+
+.grid-options {
+  opacity: 0;
+  width: 32px;
+  height: 32px;
+  background-color: var(--color5);
+  border-block: 1px solid var(--border-color);
+  border-radius: var(--brad8);
+  transition: width 0.25s, opacity 0.25s, color 0.25s ease-in-out;
+
+  .options-buttons {
+    display: flex;
+    font-size: 1rem;
+    height: 100%;
+    aspect-ratio: 1 / 1;
+    border-radius: inherit;
+    align-items: center;
+    justify-content: center;
+    margin-inline: auto;
+    cursor: pointer;
+  }
+
+  .options-icon,
+  .options-x-icon {
+    color: #aaaae0;
+    pointer-events: none;
+    position: absolute;
+    transition: opacity 0.25s ease-in-out;
+  }
+
+  .options-x-icon {
+    opacity: 0;
+  }
+}
+
+.grid-options.open {
+  .options-icon {
+    opacity: 0;
+  }
+
+  .options-x-icon {
+    color: var(--font-color1);
+    opacity: 1;
+  }
+}
+
+.grid-item:has(.selectable.active),
+.grid-item:has(.selectable.active):hover,
+.grid-item:has(.grid-actions:hover) {
+  scale: unset !important;
+
+  .item-container {
+    scale: unset !important;
+  }
+}
+
+.grid-item:has(.selectable.active),
+.grid-item:has(.selectable.active):hover {
+  .grid-actions {
+    opacity: 0;
+    visibility: hidden;
+  }
+}
+
+/* Card selection */
+.selectable {
+  position: absolute;
+  z-index: 2;
+  opacity: 0;
+  visibility: hidden;
+  width: 100%;
+  height: 100%;
+  padding: var(--padding1);
+  transition: opacity 0.2s ease-in-out;
+
+  .checkbox-button {
+    scale: 0;
+    transition: scale 0.2s ease-in-out;
+  }
+}
+
+.selectable.active {
+  opacity: 1;
+  visibility: visible;
+  background: #18182555;
+  backdrop-filter: saturate(0.5);
+  transition: background 0.2s ease-in-out;
+  cursor: pointer;
+
+  .checkbox-button {
+    scale: unset;
+  }
+}
+
+.checkbox-button {
+  display: flex;
+  font-size: 16px;
+  justify-content: center;
+
+  .passive {
+    position: absolute;
+    opacity: 0;
+    scale: 0;
+    transition: opacity 0.2s, scale 0.2s ease-in-out;
+  }
+
+  .active {
+    transition: opacity 0.2s, scale 0.2s ease-in-out;
+  }
+}
+
+.selectable input[type="checkbox"]:checked+.checkbox-button {
+  .passive {
+    scale: initial;
+    opacity: 1;
+  }
+
+  .active {
+    scale: 0;
+    opacity: 0;
+  }
+}
+
+.selectable input[type="checkbox"] {
+  display: none;
+}
+
+.selectable:has(input[type="checkbox"]:checked) {
+  background: #18182511;
+  backdrop-filter: saturate(1);
+}

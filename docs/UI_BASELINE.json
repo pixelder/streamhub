@@ -1,0 +1,252 @@
+[
+  {
+    "path": "public/library/styles.css",
+    "bytes": 3921,
+    "sha256": "e8eb4f9ddf8b6d835a85c6f9f489ed6b92280a4ec4f51901a048ec95e7283b25"
+  },
+  {
+    "path": "public/tools/styles.css",
+    "bytes": 10050,
+    "sha256": "871e0ec7a044d2982aa124174e7a4e8130c8d2696d4c321133b079d2da3a17b5"
+  },
+  {
+    "path": "public/css/components.css",
+    "bytes": 5331,
+    "sha256": "1ab5b4ddc2c487382b6d7d100472d88ef1fa833de87dc644532a04c99d1e1a29"
+  },
+  {
+    "path": "public/css/media.css",
+    "bytes": 26759,
+    "sha256": "8513d099967adbd0c9c38f5cb676d604003937ecd6e60565dba6b496297b0672"
+  },
+  {
+    "path": "public/css/styles.css",
+    "bytes": 66927,
+    "sha256": "88c220de550b328f10514569fec3048ea969ce437049e923deac9a44d1e814f7"
+  },
+  {
+    "path": "public/css/base.css",
+    "bytes": 1261,
+    "sha256": "daf34a68cab113407b833099caae1e19ac44bc77eedfbd277da501900bfeedd0"
+  },
+  {
+    "path": "public/css/utils.css",
+    "bytes": 331,
+    "sha256": "2aa8e9c7b4b43dd430e2457fb159d2e17c00a1d7c5caa470cebb1fefccc31cd7"
+  },
+  {
+    "path": "public/sports/styles.css",
+    "bytes": 26361,
+    "sha256": "84d0b11ca12263db6a6f338560da81d54f96374567d47fc13d2e619fba069c2a"
+  },
+  {
+    "path": "public/explore/styles.css",
+    "bytes": 2530,
+    "sha256": "0653451014a4fb129287c3b1f28e8fa1d288790e645356cb5d2f0213605d58fc"
+  },
+  {
+    "path": "public/watch/media.css",
+    "bytes": 3282,
+    "sha256": "3c5731ce74a6f44fccc0b0698401bd83f9b02c3fc665a1843d260bdc74d830f9"
+  },
+  {
+    "path": "public/watch/styles.css",
+    "bytes": 7772,
+    "sha256": "9592cd8ebdda20d8df6fc9bdf5b5e6e3cfa6760bc79c6ede7aac2611735c8aa0"
+  },
+  {
+    "path": "public/search/styles.css",
+    "bytes": 4320,
+    "sha256": "db741ceff0aed8d35abe1a39347763d828282f260367beca0073e07f2cfe0773"
+  },
+  {
+    "path": "public/assets/meta/meta_dark.png",
+    "bytes": 543868,
+    "sha256": "89c509e4c3eb83014fea5c02ef4abc565d648471e17ed5157c4f6bd4a442cec1"
+  },
+  {
+    "path": "public/assets/meta/logo_full_dark.png",
+    "bytes": 13999,
+    "sha256": "6e1869222e1a633ee3d0a0a1f6b1d529e45c4989da1b4a5a771428e6e5fa9f72"
+  },
+  {
+    "path": "public/assets/images/prod_ig.jpg",
+    "bytes": 537070,
+    "sha256": "d12c49088239c187484212ef8579c9aeacdb3f21780b7481d313b7c8da86c4dc"
+  },
+  {
+    "path": "public/assets/images/marvel_studios.jpg",
+    "bytes": 279692,
+    "sha256": "5b48f38a3d42c87ad4a4b72429decb497773233184c79ed19f652a8bd7ac09ca"
+  },
+  {
+    "path": "public/assets/images/no-image.png",
+    "bytes": 28509,
+    "sha256": "4f3ff5bed790d391a0fa18b08ea10ce9b99cd8153a1125a92816fb0417a400ba"
+  },
+  {
+    "path": "public/assets/images/tr_tv.jpg",
+    "bytes": 224272,
+    "sha256": "7fd44e527cf692924bbf3d30f2136266326bf4e4f3db74f564d70744405871a2"
+  },
+  {
+    "path": "public/assets/images/paramount-p.jpg",
+    "bytes": 2774533,
+    "sha256": "4216eccf2307d592f55088342c2c7ec7dc8757db84320fb2d7881873dd5fd423"
+  },
+  {
+    "path": "public/assets/images/tvs.jpg",
+    "bytes": 141683,
+    "sha256": "cedef70912df81c3120c7c3156212e45a86ad8c0c7d4e4098f993a44d9269915"
+  },
+  {
+    "path": "public/assets/images/in_tv.jpg",
+    "bytes": 207180,
+    "sha256": "97f8ca5a6265e0b852fd999e9678cc137776f2c6294ab689b623660ed3618222"
+  },
+  {
+    "path": "public/assets/images/anime.jpg",
+    "bytes": 377255,
+    "sha256": "7ac96b6438004455c62bab89978b1c12b13992cad5b34fe709ce72a5ad9eae6d"
+  },
+  {
+    "path": "public/assets/images/mask.png",
+    "bytes": 324685,
+    "sha256": "7f1fdb50b390c431a911d165b2bf7eb8c4ef038b1ddaed96445fe41348f4674a"
+  },
+  {
+    "path": "public/assets/images/studio-ghibli.webp",
+    "bytes": 102234,
+    "sha256": "2f38946d2e84c0d000f21b9256527177232f177942761e66eaa4a4d7c38ff569"
+  },
+  {
+    "path": "public/assets/images/mask_mobile.png",
+    "bytes": 239575,
+    "sha256": "0ea52354450d8e9045eb327a82f615b7592afc0f9b9a5c9b260f8eb1df71cbd1"
+  },
+  {
+    "path": "public/assets/images/anime_movie.jpg",
+    "bytes": 65882,
+    "sha256": "98c235167dc052f98f1c21ebb361e0642eaf39fd10ed2ec7db462c0607fec26d"
+  },
+  {
+    "path": "public/assets/images/no-image-transparent.svg",
+    "bytes": 13302,
+    "sha256": "88fe5f98d269131a97eb066f0e553ad4985ac0b27a42eb822ed0ca0af9892458"
+  },
+  {
+    "path": "public/assets/images/no-image-transparent-dark.svg",
+    "bytes": 10248,
+    "sha256": "a728d9876c60d1cd4bef08683d600c1159902664e5f91cb6f3cbf09d2e54a429"
+  },
+  {
+    "path": "public/assets/images/bw_movie.jpg",
+    "bytes": 157798,
+    "sha256": "638769c91cf662612e9605e4f7e95b5bb5546100cf204eabc4f3fe9a4b634aff"
+  },
+  {
+    "path": "public/assets/images/movies.jpg",
+    "bytes": 810353,
+    "sha256": "3b599e2e536418db212cecea3765733be20c8eeda46ba45f3c4b58062b61bcb3"
+  },
+  {
+    "path": "public/assets/images/tr_movie.jpg",
+    "bytes": 143072,
+    "sha256": "56e94a7e16d37cb41620e146e545c5ae873db0e0b47f26593c960eff02017460"
+  },
+  {
+    "path": "public/assets/images/no-image-hr.svg",
+    "bytes": 20208,
+    "sha256": "1cd8f22cea6ab65da0fdab65ff6d87b2eae0b22b510fe818f1a819489eed9ef5"
+  },
+  {
+    "path": "public/assets/icons/twitter.svg",
+    "bytes": 430,
+    "sha256": "dd46f96b6f47fcd33683b79ddfaf3daca1d4f8aeba3c0f2bde1584c69cc699d4"
+  },
+  {
+    "path": "public/assets/icons/pixel-slash.svg",
+    "bytes": 4910,
+    "sha256": "ee05added36718a932d52b0f33b8184241321cd5d0d31a449faeeb71c929f921"
+  },
+  {
+    "path": "public/assets/icons/favicon_flat.png",
+    "bytes": 1790,
+    "sha256": "9dc12477a8e1c8a866fac51e87f80aa5afde04cc0f410ddc7618bdfa7b8bbb18"
+  },
+  {
+    "path": "public/assets/icons/favicon.png",
+    "bytes": 5868,
+    "sha256": "f58dbdf34131592b504dbf05c64d49740678ce3392374aef2b82d5f675cbd6ee"
+  },
+  {
+    "path": "public/assets/icons/logo_padded.png",
+    "bytes": 65969,
+    "sha256": "889800cf40ba46a7b3c859795be16a713b65ccfcd837335c7adb2fb32a774784"
+  },
+  {
+    "path": "public/assets/icons/x-icon.svg",
+    "bytes": 807,
+    "sha256": "46a809a0888baf91f542c22af6ce8755c1206e6964f0d79685b77ab9b3f53284"
+  },
+  {
+    "path": "public/assets/icons/nostar.svg",
+    "bytes": 967,
+    "sha256": "6515abaca489361316230d8a55eb86e9bc7d78deeb3f5d3a342462e3eadc574a"
+  },
+  {
+    "path": "public/assets/icons/Instagram_Glyph_Gradient.png",
+    "bytes": 1002308,
+    "sha256": "905311d2c589cf9d56fb0b246690a16ff688d0049efbfc1d72bd3da1549676cd"
+  },
+  {
+    "path": "public/assets/icons/yt_full.png",
+    "bytes": 57873,
+    "sha256": "bb080bf96b1e57b961a1e532a5bb4704f37c0c47cbe9483a6ed2938cc602d267"
+  },
+  {
+    "path": "public/assets/icons/tmdb_short.svg",
+    "bytes": 2232,
+    "sha256": "5bdc75aaebeb75dc7ae79426ddd9be3b2be1e342510f8202baf6bffa71d7f5c4"
+  },
+  {
+    "path": "public/assets/icons/go-down-symbolic.svg",
+    "bytes": 366,
+    "sha256": "766f0d0708f830f450441ee976656c0ac6589aeeaecf7a77f25764e758b7332f"
+  },
+  {
+    "path": "public/assets/icons/imdb_short.png",
+    "bytes": 2781,
+    "sha256": "ce470a666d25632e0c0c52fee33b879a49e9866d8da7b7be6020b5e531db6f90"
+  },
+  {
+    "path": "public/assets/icons/logo.png",
+    "bytes": 7573,
+    "sha256": "4c01d6dcac8c419e2571558815258c13fef4be1545e0c10691a174c4782caefb"
+  },
+  {
+    "path": "public/assets/icons/Wikidata-logo.svg",
+    "bytes": 617,
+    "sha256": "e5d068b244f1abdaa9091de6be117c7217f9dc03bd730e7bed476fc05bf0770b"
+  },
+  {
+    "path": "public/assets/icons/search.png",
+    "bytes": 1311,
+    "sha256": "68888f9ca86a06aebd027eb53086acc54d621ffeae79516512c716437b4b882d"
+  },
+  {
+    "path": "public/assets/icons/bars-rotate-fade.svg",
+    "bytes": 1150,
+    "sha256": "5260daf71ef3008a05fd76828c792228b691a08708329db867aed1d87a409620"
+  },
+  {
+    "path": "public/assets/icons/Instagram_Glyph_Gradient.svg",
+    "bytes": 10896171,
+    "sha256": "d193889efcbd28c593c010fc66f6ab639ae369064f4f0861daff7f589f1b38b1"
+  },
+  {
+    "path": "public/assets/icons/search.svg",
+    "bytes": 850,
+    "sha256": "a2c72b4acb7cf7ac66deb334bafed8a26e2005e9e6c2c1c1cb02f397cc01eb6f"
+  }
+]

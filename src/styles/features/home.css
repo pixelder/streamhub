@@ -1,0 +1,225 @@
+/* Main layout and hero carousel */
+main {
+  padding: 0;
+  min-height: calc(100% - 64px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+section:not(#hero-carousel) {
+  z-index: 1;
+}
+
+#hero-carousel {
+  position: relative;
+  padding: unset;
+  height: 40vw;
+  margin-bottom: -60px;
+}
+
+.carousel {
+  height: 100%;
+  width: 100%;
+  position: relative;
+}
+
+.slide {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  transition: opacity 0.35s ease;
+}
+
+.slide.active {
+  opacity: 1;
+  z-index: 1;
+}
+
+.slide-backdrop {
+  height: 52vw;
+  object-fit: cover;
+  position: fixed;
+  top: 0;
+  right: 0;
+  pointer-events: none;
+}
+
+.slide .logo-container {
+  height: 32vh;
+  width: 100%;
+  display: flex;
+  align-items: flex-end;
+  margin-top: auto;
+}
+
+.slide .logo {
+  object-fit: contain;
+  max-width: 70%;
+  max-height: 60%;
+}
+
+.overlay {
+  position: fixed;
+  top: 0;
+  inset: 0;
+  background: linear-gradient( to top,
+      #0d0d1b 8%,
+      #0d0d1b66 26%,
+      #0d0d1b00 38%
+    ),
+    linear-gradient( to right,
+      #0d0d1b 15%, 
+      #0d0d1be0 24%, 
+      #0d0d1bac 37%, 
+      #0d0d1b7f 45%, 
+      #0d0d1b00 60%
+  );
+  height: 52vw;
+  pointer-events: none;
+}
+
+.content {
+  position: absolute;
+  bottom: 70px;
+  left: 3.2rem;
+  max-width: 400px;
+  display: grid;
+  gap: 12px;
+  opacity: 0;
+  translate: 0 12%;
+  transition: opacity 1.2s, translate 0.5s ease;
+}
+
+.slide.active .content {
+  opacity: 1;
+  translate: 0;
+}
+
+.slide-genre {
+  display: flex;
+  flex-direction: row;
+  gap: inherit;
+}
+
+.slide-tags {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--font-color3);
+  font-size: 14px;
+}
+
+.slide-tags .media-type {
+  color: var(--progress-color);
+}
+
+.slide-tags p {
+  text-transform: uppercase;
+  font: normal 600 12px var(--font-style2) !important;
+}
+
+.content h1 {
+  font-size: 2.4rem;
+}
+
+.content p {
+  font-size: 1rem;
+}
+
+.content .overview {
+  font-size: 14px;
+  mask-image: unset !important;
+}
+
+.buttons {
+  display: flex;
+  gap: 12px;
+}
+
+.buttons button {
+  font-weight: 600;
+  height: 42px;
+  width: 132px;
+  border-radius: var(--brad12);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-wrap: nowrap;
+  gap: 6px;
+  box-sizing: border-box;
+}
+
+.play {
+  background: var(--font-color1);
+  color: var(--bg-color);
+}
+
+.detail {
+  background: var(--color5);
+  border: 1px solid var(--border-color);
+}
+
+/* Carousel controls */
+.controls {
+  position: absolute;
+  bottom: 70px;
+  right: 1.4rem;
+  width: min-content;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  z-index: 1;
+}
+
+.controls button {
+  height: 36px;
+  aspect-ratio: 1/1;
+  background: #ffffff10;
+  backdrop-filter: blur(3px);
+  border-radius: 50%;
+  transition: background 0.2s;
+}
+
+.dots {
+  display: flex;
+  gap: 6px;
+
+  .dot {
+    width: 6px;
+    height: 6px;
+    background: rgb(200, 200, 208,0.3);
+    border-radius: 3px;
+    cursor: pointer;
+    overflow: hidden;
+    transition: width 0.5s cubic-bezier(0.68,-0.55,0.27,1.55);
+
+    .dot-fill {
+      background: inherit;
+      border-radius: inherit;
+      height: 100%;
+      transition: background 0.5s ease;
+    }
+  }
+
+  .dot.active {
+    width: 30px;
+
+    .dot-fill {
+      background: var(--font-color1);
+      animation: fillDot 10s cubic-bezier(0.2,0.35,0.8,0.5) forwards;
+    }
+  }
+}
+
+@keyframes fillDot {
+  from {
+    width: 6px;
+  }
+
+  to {
+    width: 100%;
+  }
+}

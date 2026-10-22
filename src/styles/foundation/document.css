@@ -1,0 +1,14 @@
+/* Page shell and typography */
+html {
+  overflow: hidden;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-style1);
+}
+
+body:has(#top-bar.hidden, #top-bar.detach) {
+  main {
+    padding-top: 4rem;
+  }
+}

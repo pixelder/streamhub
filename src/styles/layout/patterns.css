@@ -1,0 +1,13 @@
+/* Opt-in layouts. Component and responsive rules remain later in the cascade. */
+.centered-control {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* The catalog and embedded player share the same spinner size and mask. */
+.loading-spinner {
+  height: 30px;
+  aspect-ratio: 1;
+  mask: url('/assets/icons/bars-rotate-fade.svg') no-repeat center;
+}

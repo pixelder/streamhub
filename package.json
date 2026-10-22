@@ -1,32 +1,46 @@
 {
-    "name": "pixelstream",
-    "version": "2.5.0",
-    "description": "Watch your favorite movies and tv shows",
-    "main": "server.js",
-    "scripts": {
-        "start": "nodemon server.js"
-    },
-    "keywords": [
-        "html",
-        "css"
-    ],
-    "author": "Ives van Hoorne",
-    "license": "MIT",
-    "devDependencies": {
-        "serve": "^14.2.6"
-    },
-    "dependencies": {
-        "ejs": "^6.0.1",
-        "express": "^4.21.2",
-        "nodemon": "^3.1.9"
-    },
-    "repository": {
-        "type": "git",
-        "url": "git+https://github.com/pixelder/streamhub.git"
-    },
-    "type": "commonjs",
-    "bugs": {
-        "url": "https://github.com/pixelder/streamhub/issues"
-    },
-    "homepage": "https://github.com/pixelder/streamhub#readme"
+  "name": "pixelstream",
+  "version": "2.5.0",
+  "description": "Watch your favorite movies and tv shows",
+  "main": "server.js",
+  "scripts": {
+    "dev": "node --env-file-if-exists=.env server-preact.js --dev",
+    "start": "node --env-file-if-exists=.env server.js",
+    "build": "node scripts/build.mjs",
+    "preview": "npm run start:preact",
+    "diagnose:tmdb": "node --env-file-if-exists=.env scripts/diagnose-tmdb.cjs",
+    "test": "node --test --experimental-test-isolation=none tests/*.test.mjs",
+    "check": "node scripts/check-source.mjs && node scripts/check-assets.mjs",
+    "bundle:report": "node scripts/bundle-report.mjs",
+    "dev:public": "node server.js",
+    "start:preact": "node --env-file-if-exists=.env server-preact.js"
+  },
+  "keywords": [
+    "preact",
+    "vite",
+    "streaming"
+  ],
+  "author": "Ives van Hoorne",
+  "license": "MIT",
+  "devDependencies": {
+    "vite": "^8.3.4"
+  },
+  "dependencies": {
+    "ejs": "^6.0.1",
+    "express": "^4.21.2",
+    "preact": "^10.29.8",
+    "preact-iso": "^2.12.2"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pixelder/streamhub.git"
+  },
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/pixelder/streamhub/issues"
+  },
+  "homepage": "https://github.com/pixelder/streamhub#readme",
+  "engines": {
+    "node": ">=22.12.0"
+  }
 }
