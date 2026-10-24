@@ -77,13 +77,14 @@ test(
   'restoring defaults keeps library records and unrelated preference keys',
   t => {
     const entries = storage(t, {      
-app_settings: { theme: 'light', customKey: 7 }, history: [
+app_settings: { theme: 'light', customKey: 7, profile: { name: 'Rishi', avatar: null } }, history: [
         { id: 42 }
       ]    
 });
     const history = entries.get('history');
     resetSettings();
     assert.equal(getSettings().theme, 'dark');
+    assert.deepEqual(getSettings().profile, { name: 'Rishi', avatar: null });
     assert.equal(entries.get('history'), history);
     assert.equal(JSON.parse(entries.get('app_settings')).customKey, 7);
   }

@@ -6,6 +6,7 @@ export const SETTINGS_SCHEMA = {
     label: 'General',
     icon: 'fa-solid fa-user',
     settings: {
+      // Retained storage schema; profile editing lives on /profile.
       profile: {
         label: 'Profile',
         description: 'Your name and avatar on this device.',

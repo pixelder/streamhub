@@ -1,3 +1,4 @@
+import { storageKey } from '../../stores/profileStorage.js';
 import { normalizeList, validSourceTemplate, imageKinds } from './catalogOptions.js';
 import { read, write } from '../../stores/storage.js';
 import { defaultSettings, settingEntries } from './schema.js';
@@ -54,7 +55,7 @@ let cachedRaw,
 export function getSettings() {
   let raw = null;
   try {
-    raw = localStorage.getItem('app_settings');
+    raw = localStorage.getItem(storageKey('app_settings'));
   } catch { /* Storage is optional. */ }
   if (!cachedSettings || raw !== cachedRaw) {
     let saved;
@@ -88,7 +89,9 @@ export function resetSettings() {
     'app_settings',
     {
       ...(previous && typeof previous === 'object' && !Array.isArray(previous) ? previous : {}),
-      ...defaultSettings()
+      ...defaultSettings(),
+      // Profile now has its own page and is independent of preference resets.
+      profile: getSettings().profile
     }
   );
 }

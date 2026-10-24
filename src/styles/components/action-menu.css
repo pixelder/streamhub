@@ -1,0 +1,42 @@
+/* Links and buttons share the same row geometry inside title options. */
+.item-actions .item-menu {
+  bottom: calc(100% + 8px);
+  min-width: 220px;
+  max-width: calc(100vw - 32px);
+  padding: 6px;
+  z-index: 5;
+  transform-origin: bottom left;
+}
+.item-actions .item-menu > .item {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 6px;
+  width: 100%;
+  height: auto;
+  min-height: 32px;
+  aspect-ratio: auto;
+  padding: 6px;
+  margin: 0;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--font-color1);
+  font: 500 14px var(--font-style1);
+  text-align: left;
+  text-decoration: none;
+  box-shadow: none;
+  box-sizing: border-box;
+}
+.item-actions .item-menu > .item > i { width: 18px; text-align: center; flex: 0 0 18px; }
+.item-actions .item-menu > .item:is(:hover, :focus-visible) { background: var(--color3) !important; }
+.title-tracking-pane { padding: 20px; background: var(--bg-color); border-radius: 12px; width: 100%; }
+.title-tracking-pane h2 { margin: 20px 0 6px; font: 650 1.4rem var(--font-style1); }
+.title-tracking-pane > p { color: var(--font-color2); }
+.title-tracking-pane .personal-title { border: 0; padding: 0; background: transparent; }
+.tracking-back { display: inline-flex; align-items: center; gap: 8px; padding: 10px 12px; border-radius: 8px; background: var(--color3); color: var(--font-color1); }
+.route-loading { width: 100%; min-height: 45vh; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px; }
+.player-pending-mini { position: fixed; right: 12px; bottom: calc(70px + env(safe-area-inset-bottom)); z-index: 2; width: min(300px, calc(100vw - 24px)); min-height: 140px; padding: 16px; background: var(--color5); border: 1px solid var(--border-color); border-radius: 12px; }
+.catalog-filter-note { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; padding: 12px; color: var(--font-color2); font-size: .875rem; }
+.catalog-filter-note a { text-decoration: underline; }
+.catalog-filter-note button { padding: 8px 12px; border-radius: 8px; background: var(--color3); }

@@ -27,6 +27,7 @@ import Bookmark from './Bookmark.jsx';
 import EpisodeList from './EpisodeList.jsx';
 import Synopsis from '../common/Synopsis.jsx';
 import Loading from '../common/Loading.jsx';
+import TitleJournal from '../../features/personal/TitleJournal.jsx';
 import Icon from '../common/Icon.jsx';
 
 function External({ href, icon, name }) {
@@ -213,9 +214,25 @@ function MediaDetails({ data, type, nav, initial }) {
   useStorage();
   const [trailer, setTrailer] = useState(''),
     [menu, setMenu] = useState(false),
+    [tracking, setTracking] = useState(false),
     [fullDate, setFullDate] = useState(false),
     [season, setSeason] = useState(null);
   const trailerRef = useRef();
+  const menuRef = useRef(), optionsButton = useRef(), trackingBack = useRef();
+  const wasTracking = useRef(false);
+  useEffect(() => {
+    if (tracking) trackingBack.current?.focus();
+    else if (wasTracking.current) optionsButton.current?.focus();
+    wasTracking.current = tracking;
+  }, [tracking]);
+  useEffect(() => {
+    if (!menu) return;
+    const outside = event => {
+      if (!menuRef.current?.contains(event.target) && !optionsButton.current?.contains(event.target)) setMenu(false);
+    };
+    document.addEventListener('pointerdown', outside);
+    return () => document.removeEventListener('pointerdown', outside);
+  }, [menu]);
   const name = titleOf(data),
     logo = data.images?.logos?.[0]?.file_path,
     date = data.release_date || data.first_air_date;
@@ -235,6 +252,7 @@ function MediaDetails({ data, type, nav, initial }) {
     try {
       await navigator.clipboard.writeText(String(text));
       notify('Copied to clipboard!');
+      setMenu(false);
     }
     catch (e) {
       notify(e.message);
@@ -245,11 +263,11 @@ function MediaDetails({ data, type, nav, initial }) {
     try {
       if (navigator.share) {
         await navigator.share({ text: name, url });
+        setMenu(false);
         return;
       }
     }
-    catch {
-    }
+    catch (error) { if (error.name === 'AbortError') return; }
     await copy(url);
   };
   const actions = <>
@@ -289,8 +307,12 @@ function MediaDetails({ data, type, nav, initial }) {
       <Bookmark id={data.id} type={type} />
 
       <button
+        ref={optionsButton}
         class={`item-options ${menu ? 'active' : ''}`}
         title="options"
+        aria-label="Title options"
+        aria-expanded={menu}
+        aria-controls="title-options"
         onClick={() => setMenu(!menu)}
       >
 
@@ -298,7 +320,11 @@ function MediaDetails({ data, type, nav, initial }) {
 
       </button>
 
-      <div class={`item-menu ${menu ? 'active' : ''}`} tabIndex="0">
+      <div ref={menuRef} id="title-options" class={`item-menu ${menu ? 'active' : ''}`} onKeyDown={event => {
+        if (event.key === 'Escape') { event.stopPropagation(); setMenu(false); optionsButton.current?.focus(); }
+      }}>
+
+        <button class="item" onClick={() => { setMenu(false); setTracking(true); }}><Icon name="star" />Rate &amp; track</button>
 
         <button class="item share" onClick={share}><Icon name="paper-plane" />Share</button>
 
@@ -306,12 +332,12 @@ function MediaDetails({ data, type, nav, initial }) {
 
         <button class="item copy-id" onClick={() => copy(data.id)}><Icon name="hashtag" />Copy id</button>
 
-        <a
+        {imdb && <a
           class="item"
           href={`https://www.imdb.com/title/${imdb}/parentalguide/`}
           target="_blank"
           rel="noopener noreferrer"
-        ><Icon name="book" />Parental Guide</a>
+        ><Icon name="book" />Parental Guide</a>}
 
         <a
           class="item"
@@ -324,6 +350,14 @@ function MediaDetails({ data, type, nav, initial }) {
 
     </div>
   </>;
+  if (tracking) return <div class="title-tracking-pane" onKeyDown={event => {
+    if (event.key === 'Escape') { event.stopPropagation(); setTracking(false); }
+  }}>
+    <button ref={trackingBack} class="tracking-back" onClick={() => setTracking(false)}><Icon name="arrow-left" /> Title details</button>
+    <h2>Rate &amp; track</h2>
+    <p>{name}</p>
+    <TitleJournal data={data} type={type} expanded />
+  </div>;
   return <>
     <div class="trailer-container" ref={trailerRef}>
       {trailer && <>

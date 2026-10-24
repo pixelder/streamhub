@@ -1,16 +1,20 @@
+import { activeProfileId } from '../../stores/profileStorage.js';
 import { getSettings } from '../settings/preferences.js';
 import { navigate } from '../../app/navigation.js';
-import { useEffect } from 'preact/hooks';
+import { useEffect, useRef } from 'preact/hooks';
 import { saveLog, removeLog, saveSource } from '../../stores/storage.js';
 import { nextEpisode } from '../../services/api.js';
 import { notify } from '../../stores/ui.js';
 import { playbackProgress } from './source.js';
 
-export function usePlaybackHistory({ iframe, src, loaded, id, type, season, episode, source }) {
+export function usePlaybackHistory({ iframe, src, loaded, id, type, season, episode, source, onAdvance }) {
+  const advance = useRef(onAdvance);
+  advance.current = onAdvance;
   useEffect(
     () => {
       if (!loaded || !src)
         return;
+      const owner = activeProfileId();
       let active = true,
         complete = false,
         advancing = false,
@@ -18,7 +22,7 @@ export function usePlaybackHistory({ iframe, src, loaded, id, type, season, epis
       // All progress updates from this playback session share one history index.
       const index = Date.now();
       const writeProgress = progress => {
-        if (!active || !getSettings().recordHistory)
+        if (!active || activeProfileId() !== owner || !getSettings().recordHistory)
           return;
         saveSource(id, source);
         saveLog('history', {
@@ -34,7 +38,7 @@ export function usePlaybackHistory({ iframe, src, loaded, id, type, season, epis
           if (type === 'tv')
             nextEpisode(id, season, episode).then(
               next => {
-                if (active && next && getSettings().recordHistory)
+                if (active && activeProfileId() === owner && next && getSettings().recordHistory)
                   saveLog('watching', {
                     id,
                     mediaType: type,
@@ -60,7 +64,7 @@ export function usePlaybackHistory({ iframe, src, loaded, id, type, season, epis
       const fallback = setTimeout(() => writeProgress(null), 120000);
       const message = e => {
         // Accept progress only from the currently embedded player.
-        if (e.source !== iframe.current?.contentWindow || e.origin !== new URL(src).origin)
+        if (activeProfileId() !== owner || e.source !== iframe.current?.contentWindow || e.origin !== new URL(src).origin)
           return;
         let data = e.data;
         if (typeof data === 'string') {
@@ -80,8 +84,10 @@ export function usePlaybackHistory({ iframe, src, loaded, id, type, season, epis
           advancing = true;
           nextEpisode(id, season, episode).then(
             next => {
-              if (active && next && getSettings().autoplay)
-                navigate(`/watch/tv/${id}/${next.season_number}/${next.episode_number}`);
+              if (active && activeProfileId() === owner && next && getSettings().autoplay) {
+                if (advance.current) advance.current(next);
+                else navigate(`/watch/tv/${id}/${next.season_number}/${next.episode_number}`);
+              }
             }
           ).catch(
             error => notify(error.message)

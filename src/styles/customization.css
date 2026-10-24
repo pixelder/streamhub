@@ -61,8 +61,7 @@
 /* The hero scrim follows the theme so the image, copy and content below it stay readable together. */
 
 #hero-carousel .overlay {
-  background: linear-gradient(to top, #0d0d1b 8%, #0d0d1b66 32%, #0d0d1b00 54%),
-    linear-gradient(to right, #0d0d1b 0%, #0d0d1be0 24%, #0d0d1bac 42%, #0d0d1b35 60%, transparent 76%);
+  background: linear-gradient( to top, #0d0d1b 8%, #0d0d1b66 26%, #0d0d1b00 38% ), linear-gradient( to right, #0d0d1b 15%, #0d0d1be0 24%, #0d0d1bac 37%, #0d0d1b7f 45%, #0d0d1b00 60% );
 }
 
 :root[data-theme="light"] #hero-carousel .overlay {

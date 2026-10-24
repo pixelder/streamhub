@@ -9,7 +9,7 @@
   --studio-muted: #a1a1b3;
   --studio-text: #eeeef5;
   width: min(1160px, 100%);
-  padding: 36px 32px 100px;
+  padding: 24px 24px 80px;
   margin: 0 auto;
   color: var(--studio-text);
   font-family: var(--font-style1), sans-serif;
@@ -125,8 +125,8 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 32px;
-  padding: 0 0 28px;
+  gap: 24px;
+  padding: 0 0 20px;
   border-bottom: 1px solid var(--studio-border);
 }
 
@@ -159,8 +159,8 @@
 #settings-page .studio-body {
   display: grid;
   grid-template-columns: 220px minmax(0,1fr);
-  gap: 44px;
-  padding-top: 28px;
+  gap: 24px;
+  padding-top: 18px;
   align-items: start;
 }
 
@@ -231,7 +231,7 @@
   justify-content: flex-start;
 }
 
-#settings-page .studio-mobile-category, #settings-page .studio-mobile-reset {
+#settings-page .studio-mobile-reset {
   display: none;
 }
 
@@ -260,7 +260,7 @@
 #settings-page .studio-section {
   display: block;
   padding: 0;
-  margin: 0 0 28px;
+  margin: 0 0 20px;
   width: 100%;
   min-height: 0;
   position: static;
@@ -270,7 +270,7 @@
 #settings-page .studio-section-heading {
   display: block;
   padding: 0;
-  margin: 0 0 26px;
+  margin: 0 0 14px;
 }
 
 #settings-page .studio-section-heading p {
@@ -282,11 +282,11 @@
 }
 
 #settings-page .studio-panel {
-  margin-bottom: 24px;
+  margin-bottom: 14px;
 }
 
 #settings-page .studio-panel-title {
-  margin: 0 0 10px;
+  margin: 0 0 8px;
 }
 
 #settings-page .studio-card {
@@ -301,8 +301,8 @@
   display: grid;
   grid-template-columns: minmax(0,1fr) auto;
   align-items: center;
-  gap: 24px;
-  padding: 22px 24px;
+  gap: 16px;
+  padding: 14px 16px;
   border-bottom: 1px solid var(--studio-border);
 }
 
@@ -338,7 +338,7 @@
 
 #settings-page .studio-setting-wide {
   grid-template-columns: minmax(0,1fr);
-  gap: 18px;
+  gap: 12px;
 }
 
 #settings-page .studio-setting-wide .studio-setting-copy > p {
@@ -493,48 +493,11 @@
   border-radius: 0 8px 8px 0;
 }
 
-#settings-page .studio-profile-edit {
-  display: grid;
-  grid-template-columns: 80px minmax(0,1fr);
-  gap: 24px;
-  align-items: start;
-}
 
-#settings-page .studio-avatar {
-  width: 80px;
-  height: 80px;
-  background: var(--studio-accent-bg);
-  border: 1px solid var(--studio-border);
-  border-radius: 50%;
-  display: grid;
-  place-items: center;
-  overflow: hidden;
-  font-size: 2em;
-  color: var(--studio-accent);
-}
 
-#settings-page .studio-avatar img {
-  height: 100%;
-  width: 100%;
-  object-fit: cover;
-}
 
-#settings-page .studio-profile-edit label {
-  display: block;
-  font-size: .85em;
-  margin-bottom: 7px;
-}
 
-#settings-page .studio-profile-edit input {
-  width: 100%;
-}
 
-#settings-page .studio-profile-edit small {
-  display: block;
-  font-size: .75em;
-  color: var(--studio-muted);
-  margin: 9px 0 14px;
-}
 
 #settings-page .studio-button-row {
   display: flex;
@@ -644,7 +607,7 @@
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  margin-bottom: 24px;
+  margin-bottom: 14px;
 }
 
 #settings-page .studio-empty {
@@ -786,8 +749,8 @@
     gap: 24px;
   }
   #settings-page .studio-setting {
-    gap: 16px;
-    padding: 20px;
+    gap: 12px;
+    padding: 14px 16px;
   }
   #settings-page .setting-type-select {
     grid-template-columns: minmax(0,1fr);
@@ -799,12 +762,15 @@
 
 @media (max-width: 700px) {
   #settings-page {
-    padding: 24px 16px calc(100px + env(safe-area-inset-bottom));
+    padding: 16px 12px calc(80px + env(safe-area-inset-bottom));
   }
   #settings-page .settings-heading {
     display: grid;
-    gap: 20px;
-    padding-bottom: 20px;
+    grid-template-columns: minmax(0, 1fr);
+    justify-content: stretch;
+    align-items: stretch;
+    gap: 12px;
+    padding-bottom: 12px;
   }
   #settings-page h1 {
     font-size: 1.85em;
@@ -814,7 +780,11 @@
   }
   #settings-page .studio-search {
     width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+    justify-self: stretch;
   }
+  #settings-page .studio-search input { flex: 1; min-width: 0; }
   #settings-page .studio-body {
     display: block;
     padding-top: 20px;
@@ -822,20 +792,8 @@
   #settings-page .studio-sidebar {
     display: none;
   }
-  #settings-page .studio-mobile-category {
-    display: grid;
-    gap: 7px;
-    margin-bottom: 16px;
-  }
-  #settings-page .studio-mobile-category label {
-    font-size: .8em;
-    color: var(--studio-muted);
-  }
-  #settings-page .studio-mobile-category select {
-    width: 100%;
-  }
   #settings-page .studio-save-status {
-    margin-bottom: 24px;
+    margin-bottom: 14px;
     font-size: .75em;
   }
   #settings-page .studio-section-heading {
@@ -845,8 +803,8 @@
     font-size: .9em;
   }
   #settings-page .studio-setting {
-    padding: 18px 16px;
-    gap: 16px;
+    padding: 12px;
+    gap: 12px;
   }
   #settings-page .studio-setting-copy > p {
     font-size: .85em;
@@ -871,17 +829,9 @@
     font-size: .8em;
     gap: 4px;
   }
-  #settings-page .studio-profile-edit {
-    grid-template-columns: minmax(0,1fr);
-    gap: 18px;
-  }
-  #settings-page .studio-avatar {
-    height: 64px;
-    width: 64px;
-  }
   #settings-page .studio-mobile-reset {
     display: flex;
-    margin-top: 28px;
+    margin-top: 20px;
     width: 100%;
     color: var(--studio-muted);
     background: transparent;
@@ -919,4 +869,86 @@
   #settings-page input.studio-switch::after {
     display: none;
   }
+}
+
+/* Mobile settings use a category list with ordinary history-backed child pages. */
+#settings-page .studio-category-list { display: grid; gap: 16px; position: static; width: 100%; background: none; }
+#settings-page .studio-category-group h2 { margin: 0 4px 8px; font-size: .8em; font-weight: 550; color: var(--studio-muted); letter-spacing: .02em; }
+#settings-page .studio-category-card { overflow: hidden; border: 1px solid var(--studio-border); border-radius: 16px; background: var(--studio-panel); }
+#settings-page .studio-category-card button { display: flex; width: 100%; min-height: 64px; padding: 12px 14px; gap: 12px; background: transparent; border: 0; border-bottom: 1px solid var(--studio-border); border-radius: 0; text-align: left; justify-content: flex-start; }
+#settings-page .studio-category-card button:last-child { border-bottom: 0; }
+#settings-page .studio-category-card button:hover { background: var(--studio-raised); }
+#settings-page .studio-category-card button > i:first-child { width: 22px; flex: 0 0 22px; text-align: center; font-size: 19px; color: var(--studio-muted); }
+#settings-page .studio-category-card button > i:last-child { margin-left: auto; font-size: 11px; color: var(--studio-muted); }
+#settings-page .studio-category-card button span { display: grid; gap: 4px; min-width: 0; }
+#settings-page .studio-category-card strong { font-size: 14px; font-weight: 550; }
+#settings-page .studio-category-card small { font-size: 12px; line-height: 1.4; font-weight: 400; color: var(--studio-muted); }
+#settings-page .studio-overview-note { color: var(--studio-muted); font-size: 12px; text-align: center; }
+#settings-page .studio-back { padding: 8px 0; margin-bottom: 8px; background: transparent; border: 0; color: var(--studio-accent); }
+@media (max-width: 700px) {
+  #settings-page.settings-child .settings-heading { display: none; }
+  #settings-page.settings-child .studio-body { padding-top: 0; }
+  #settings-page .settings-heading { border-bottom: 0; }
+  #settings-page .studio-body { padding-top: 6px; }
+  #settings-page .studio-section-heading { margin-bottom: 12px; }
+  #settings-page .studio-section-heading p { margin-top: 6px; line-height: 1.5; }
+}
+
+/* Small phones: compact child pages without removing descriptions or reducing
+   the 44px primary control targets. Relative type still follows text-size preferences. */
+@media (width < 400px) {
+  #settings-page {
+    padding: 12px 10px calc(76px + env(safe-area-inset-bottom));
+    font-size: max(14px, .875rem);
+    line-height: 1.45;
+  }
+
+  #settings-page h2 { font-size: 1.35em; }
+  #settings-page h3 { font-size: .95em; }
+  #settings-page .studio-back { margin-bottom: 4px; font-size: .93em; }
+  #settings-page .studio-section { margin-bottom: 14px; }
+  #settings-page .studio-panel { margin-bottom: 12px; }
+  #settings-page .studio-panel-title { margin-bottom: 6px; }
+  #settings-page .studio-section-heading { margin-bottom: 10px; }
+  #settings-page .studio-section-heading p { margin-top: 4px; font-size: .875em; line-height: 1.45; }
+  #settings-page .studio-card { border-radius: 10px; }
+  #settings-page .studio-setting { padding: 10px; gap: 10px; }
+  #settings-page .studio-setting-wide { gap: 10px; }
+  #settings-page .studio-setting-copy > label { font-size: .95em; line-height: 1.35; }
+  #settings-page .studio-setting-copy > p { margin-top: 3px; font-size: .875em; line-height: 1.45; }
+
+  #settings-page button { padding: 8px 10px; font-size: .93em; gap: 6px; }
+  #settings-page :is(input:not([type="checkbox"]), select) { padding: 8px; }
+  #settings-page select { font-size: max(13px, .8125rem); }
+  /* Keep editable fields at 16px to avoid focus zoom on small touch screens. */
+  #settings-page input:not([type="checkbox"]) { font-size: max(16px, 1em); }
+  #settings-page .studio-search input { padding-inline: 0; }
+  #settings-page .studio-stepper input { width: 42px; padding-inline: 0; }
+  #settings-page .studio-stepper button { padding: 0; }
+  #settings-page .studio-button-row, #settings-page .setting-chips { gap: 6px; }
+  #settings-page .setting-chips button { font-size: .875em; padding: 6px 8px; }
+  #settings-page .setting-option-editor, #settings-page .custom-sections-editor { gap: 8px; }
+  #settings-page .custom-section-editor { padding: 10px; gap: 10px; }
+  #settings-page .section-filters { gap: 8px; }
+
+  #settings-page .studio-themes { gap: 6px; }
+  #settings-page .studio-theme { padding: 5px; gap: 6px; }
+  #settings-page .studio-theme-preview { height: 48px; padding: 14px 4px 4px 14px; }
+  #settings-page .studio-theme > span:last-child { font-size: max(12px, .875em); padding-inline: 0; gap: 3px; }
+  #settings-page .studio-swatches button { padding: 0; }
+  #settings-page .image-settings-grid { gap: 10px; }
+  #settings-page .image-setting { padding: 10px; gap: 8px; }
+  #settings-page .image-preview { height: 120px; }
+  #settings-page .image-setting small { font-size: .875em; }
+  #settings-page .studio-callout { padding: 12px; gap: 10px; margin-bottom: 14px; }
+  #settings-page .studio-callout p { font-size: .875em; line-height: 1.45; }
+  #settings-page .studio-stats { gap: 6px; }
+  #settings-page .studio-stats > div { padding: 10px 8px; gap: 5px; }
+  #settings-page .studio-stats span { font-size: .875em; }
+  #settings-page .studio-save-status { margin: 12px 0; font-size: .875em; }
+  #settings-page .studio-mobile-reset { margin-top: 14px; }
+  #settings-page .studio-category-list { gap: 14px; }
+  #settings-page .studio-category-group h2 { font-size: max(12px, .8em); }
+  #settings-page .studio-category-card button { min-height: 60px; padding: 10px 12px; gap: 10px; }
+  #settings-page .studio-category-card button > i:first-child { font-size: 17px; }
 }

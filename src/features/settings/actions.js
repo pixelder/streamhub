@@ -1,3 +1,4 @@
+import { storageKey } from '../../stores/profileStorage.js';
 import { read, write, logs, notifyStorage } from '../../stores/storage.js';
 import { clearRequestCache, tmdb } from '../../services/api.js';
 import { API_BASE } from '../sports/service.js';
@@ -5,7 +6,7 @@ import { API_BASE } from '../sports/service.js';
 export function storageSummary() {
   let bytes = 0;
   try {
-    for (const key of ['history', 'watching', 'bookmarks', 'DEF_SRC', 'app_settings', 'sf_categories', 'sf_streams']) bytes += (localStorage.getItem(key) || '').length * 2;
+    for (const key of ['history', 'watching', 'bookmarks', 'DEF_SRC', 'app_settings', 'title_journal', 'custom_lists', 'sf_categories', 'sf_streams']) bytes += (localStorage.getItem(storageKey(key)) || '').length * 2;
   } catch { /* Counts still work through the safe storage reader. */ }
   return {
     bytes,
@@ -17,14 +18,14 @@ export function storageSummary() {
 
 export function clearActivity() {
   // Both keys must be writable before clearing is considered successful.
-  const previous = ['history', 'watching'].map(key => [key, localStorage.getItem(key)]);
+  const previous = ['history', 'watching'].map(key => [key, localStorage.getItem(storageKey(key))]);
   try {
     write('history', []);
     write('watching', []);
   }
   catch (error) {
     for (const [key, value] of previous) {
-      if (value === null) localStorage.removeItem(key); else localStorage.setItem(key, value);
+      if (value === null) localStorage.removeItem(storageKey(key)); else localStorage.setItem(storageKey(key), value);
     }
     notifyStorage();
     throw error;
@@ -39,7 +40,7 @@ export function forgetSources() {
     if (/^\d+$/.test(key) && [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 100, 101].includes(Number(value))) legacy.push(key);
   }
   write('DEF_SRC', []);
-  legacy.forEach(key => localStorage.removeItem(key));
+  legacy.forEach(key => localStorage.removeItem(storageKey(key)));
   notifyStorage();
 }
 

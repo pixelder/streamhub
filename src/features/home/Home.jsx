@@ -6,6 +6,7 @@ import { normalizePath } from '../../app/routes.js';
 import { usePage } from '../../hooks/usePage.js';
 import { usePaged } from '../../hooks/usePaged.js';
 import { tmdb } from '../../services/api.js';
+import { catalogBatch } from '../../services/catalogBatch.js';
 import { openDetails, closeDetails } from '../../stores/ui.js';
 import MediaSection from '../../components/media/MediaSection.jsx';
 import MediaCard from '../../components/media/MediaCard.jsx';
@@ -16,10 +17,10 @@ import Carousel from './Carousel.jsx';
 function Trending({ type, id, title }) {
   const data = usePaged(
     type,
-    async (page, signal) => {
-      const response = await tmdb(`trending/${type}/week`, { page }, { signal });
+    (page, signal) => catalogBatch(async upstreamPage => {
+      const response = await tmdb(`trending/${type}/week`, { page: upstreamPage }, { signal });
       return { ...response, results: response.results.map(i => ({ ...i, media_type: type })) };
-    }
+    }, page, { signal })
   );
   return <MediaSection
     id={id}

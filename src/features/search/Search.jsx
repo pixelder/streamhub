@@ -54,7 +54,7 @@ export default function Search() {
   const [term, setTerm] = useState(query),
     [counts, setCounts] = useState({}),
     [time, setTime] = useState(0);
-  usePage(`${query} - Pixelstream`, ['/search/styles.css']);
+  usePage(`${query} - Pixelstream`);
   useEffect(
     () => {
       if (query === term) return;

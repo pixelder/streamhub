@@ -72,8 +72,7 @@ export default function Navigation({ bottom = false }) {
           ['Explore', '/explore', 'explore', 'compass'],
           ['Sports', '/sports', 'sports', 'basketball'],
           ['Tools', '/tools', 'tools', 'toolbox'],
-          ['Library', '/library', 'library', 'folder-tree'],
-          ['Settings', '/settings', 'settings', 'gear']
+          ['Profile', '/profile', 'profile', 'user']
         ].map(
           ([label, href, id, icon]) => <li key={id}>
 
@@ -82,10 +81,11 @@ export default function Navigation({ bottom = false }) {
               aria-label={label}
               title={label}
               id={id}
-              class={path === href || path === href + '/' ? 'active' : ''}
+              class={path === href || id === 'profile' && ['/library', '/settings'].includes(path) ? 'active' : ''}
+              aria-current={path === href || id === 'profile' && ['/library', '/settings'].includes(path) ? 'page' : undefined}
             >
 
-              <Icon name={icon} />
+              {id === 'profile' && preferences.profile.avatar ? <img class="nav-profile-avatar" src={preferences.profile.avatar} alt="" /> : <Icon name={icon} />}
 
               <p>{label}</p>
 
@@ -176,27 +176,14 @@ export default function Navigation({ bottom = false }) {
       <li>
 
         <a
-          href="/library"
-          aria-label="Library"
-          title="Library"
+          href="/profile"
+          aria-label="Profile"
+          title="Profile"
         >
-          {preferences.navIcons && <Icon name="folder-tree" />}
-          <span class="nav-label">Library</span>
+          {preferences.navIcons && <Icon name="user" />}
+          <span class="nav-label">Profile</span>
         </a>
 
-      </li>
-
-      <li>
-        <a
-          href="/settings"
-          aria-label="Settings"
-          class="settings-link"
-          aria-current={path === '/settings' ? 'page' : undefined}
-          title={`Settings — ${preferences.profile.name || 'Guest'}`}
-        >
-          {preferences.navIcons && (preferences.profile.avatar ? <img src={preferences.profile.avatar} alt="" /> : <Icon name="gear" />)}
-          <span class="nav-label">Settings</span>
-        </a>
       </li>
       <form
         class="search-bar"

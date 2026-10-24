@@ -317,7 +317,7 @@ function LivePlayer({ selection, close, chooseSource, chooseStream }) {
 
 export default function Sports() {
   const preferences = usePreferences();
-  usePage('Sports | Pixelstream', ['/sports/styles.css'], { sports: true });
+  usePage('Sports | Pixelstream');
   const [categories, setCategories] = useState([]),
     [matches, setMatches] = useState([]),
     [category, setCategory] = useState('all');

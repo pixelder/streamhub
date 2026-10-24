@@ -1,8 +1,10 @@
+import { activeProfileId } from '../../stores/profileStorage.js';
 import { saveLog, removeLog, exportData, importData, validateBackup, clearData } from '../../stores/storage.js';
 import { nextEpisode } from '../../services/api.js';
 import { confirmAction, notify } from '../../stores/ui.js';
 
 export async function markRecord(record, watched, logType) {
+  const owner = activeProfileId();
   const { id, mediaType, data = {} } = record;
   const { sno, eno } = data;
   if (watched) {
@@ -17,7 +19,7 @@ export async function markRecord(record, watched, logType) {
     if (logType === 'watching' && mediaType === 'tv') {
       try {
         const next = await nextEpisode(id, sno, eno);
-        if (next)
+        if (next && activeProfileId() === owner)
           saveLog('watching', {
             id,
             mediaType,
@@ -58,6 +60,7 @@ export function downloadBackup(all = true) {
 }
 
 export async function restoreBackup(file, merge) {
+  const owner = activeProfileId();
   try {
     const data = validateBackup(JSON.parse(await file.text()));
     if (await confirmAction(
@@ -69,6 +72,7 @@ export async function restoreBackup(file, merge) {
         accept: 'Import'
       }
     )) {
+      if (owner !== activeProfileId()) throw new Error('Profile changed. Import the backup again in the intended profile.');
       importData(data, merge);
       notify('Backup restored successfully.');
     }
@@ -79,7 +83,9 @@ export async function restoreBackup(file, merge) {
 }
 
 export async function eraseData() {
-  if (await confirmAction({ message: 'This will erase your saved library and preferences.' })) {
+  const owner = activeProfileId();
+  if (await confirmAction({ message: 'This will erase the current profile’s saved library and preferences. Other profiles are kept.' })) {
+    if (owner !== activeProfileId()) return;
     clearData();
     notify('Data erased successfully.');
   }

@@ -19,4 +19,5 @@
 @import './components/people.css';
 @import './components/feedback.css';
 @import './responsive.css' (max-width: 767px);
+@import './components/action-menu.css';
 @import './customization.css';

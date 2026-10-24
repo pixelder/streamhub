@@ -34,6 +34,9 @@ export default function ProviderMenu({ source, mediaType, settings, select }) {
   return <div
     class="provider-menu"
     ref={ref}
+    onKeyDown={event => {
+      if (event.key === 'Escape') { event.stopPropagation(); setShow(false); setPinned(false); ref.current?.querySelector('button')?.focus(); }
+    }}
     onMouseEnter={() => {
       clearTimeout(timer.current);
       if (!closed.current)
@@ -49,6 +52,8 @@ export default function ProviderMenu({ source, mediaType, settings, select }) {
     <button
       class="provider-change"
       aria-label="Change provider"
+      aria-expanded={show}
+      aria-controls="watch-providers"
       style={{ backgroundColor: pinned ? 'var(--color1)' : '' }}
       onClick={() => {
         setShow(!pinned);
@@ -59,7 +64,7 @@ export default function ProviderMenu({ source, mediaType, settings, select }) {
       <Icon name="server" />
     </button>
 
-    <div class={`providers ${show ? 'show' : ''}`}>
+    <div id="watch-providers" class={`providers ${show ? 'show' : ''}`} inert={show ? undefined : ''}>
 
       <div class="pv-header">
         <div class="flow-row">
@@ -93,8 +98,10 @@ export default function ProviderMenu({ source, mediaType, settings, select }) {
             style={{ display: provider.hidden || provider.hiddenOn === mediaType ? 'none' : '' }}
             onClick={() => select(provider)}
             onKeyDown={event => {
-              if (event.key === 'Enter' && event.target === event.currentTarget)
+              if (['Enter', ' '].includes(event.key) && event.target === event.currentTarget) {
+                event.preventDefault();
                 select(provider);
+              }
             }}
           >
 

@@ -37,7 +37,7 @@ export function usePaged(key, fetchPage, { enabled = true } = {}) {
       // Filters may have changed while this page was loading.
       if (run.current.generation !== generation)
         return;
-      r.page++;
+      r.page = data.page ?? r.page + 1;
       set(
         s => ({
           ...s,
@@ -46,8 +46,9 @@ export function usePaged(key, fetchPage, { enabled = true } = {}) {
             ...new Map([...s.items, ...(data.results || [])].map(i => [`${i.media_type}-${i.id}`, i])).values()
           ],
           total: data.total_results || 0,
+          filtered: s.filtered || !!data.filtered,
           loading: false,
-          error: null,
+          error: data.batchError || null,
           hasMore: data.total_pages != null ? r.page < data.total_pages : (data.results || []).length >= 20
         })
       );

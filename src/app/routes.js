@@ -1,6 +1,6 @@
 // This registry is shared by Express and the client. Assets and server endpoints
 // are never treated as frontend routes.
-const pages = new Set(['explore', 'search', 'library', 'settings', 'sports', 'tools']);
+const pages = new Set(['explore', 'search', 'library', 'profile', 'settings', 'sports', 'tools']);
 
 export function normalizePath(pathname) {
   return pathname.replace(/\/index\.html$/, '/').replace(/\/+$/, '') || '/';

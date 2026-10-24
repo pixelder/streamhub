@@ -239,3 +239,10 @@ body:has(.error-page) #top-bar:not(.detach) {
 #bottom-bar {
   display: none;
 }
+
+#bottom-bar .nav-profile-avatar {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  object-fit: cover;
+}

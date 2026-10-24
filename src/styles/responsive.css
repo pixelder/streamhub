@@ -1240,12 +1240,15 @@
   .item-menu {
     right: 0;
     bottom: 36px;
+    padding: 4px !important;
+    min-width: max-content !important;
+    transform-origin: bottom right !important;
 
     .item {
-      font-size: 12px;
-      padding-inline: 6px;
-      gap: 6px;
-      height: 26px;
+      font-size: 12px !important;
+      padding: 3px !important;
+      height: 26px !important;
+      min-height: unset !important;
     }
   }
 

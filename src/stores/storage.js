@@ -1,5 +1,8 @@
+import { storageKey, activeProfileId, PROFILE_REGISTRY } from './profileStorage.js';
+import { JOURNAL_KEY, LISTS_KEY, validatePersonalBackup, mergePersonalRows } from '../features/personal/model.js';
+
 // Keep these keys compatible with data saved by the original public frontend.
-export const DATA_KEYS = ['history', 'watching', 'bookmarks', 'DEF_SRC', 'app_settings'];
+export const DATA_KEYS = ['history', 'watching', 'bookmarks', 'DEF_SRC', 'app_settings', JOURNAL_KEY, LISTS_KEY];
 const listeners = new Set();
 let revision = 0;
 export const subscribe = fn => {
@@ -19,7 +22,7 @@ if (typeof window !== 'undefined')
 
 export function read(key, fallback = []) {
   try {
-    const raw = localStorage.getItem(key);
+    const raw = localStorage.getItem(storageKey(key));
     return raw ? JSON.parse(raw) : fallback;
   }
   catch {
@@ -33,7 +36,7 @@ export function logs(key) {
 }
 
 export function write(key, value) {
-  localStorage.setItem(key, JSON.stringify(value));
+  localStorage.setItem(storageKey(key), JSON.stringify(value));
   notifyStorage();
 }
 
@@ -91,7 +94,7 @@ export function progressFor(type, id, sno, eno) {
 export function sourceFor(id) {
   if (read('app_settings', {})?.rememberSource === false) return Number(read('app_settings', {}).defaultSource) || 1;
   const saved = logs('DEF_SRC').find(l => String(l.id) === String(id))?.value;
-  const legacy = localStorage.getItem(String(id));
+  const legacy = localStorage.getItem(storageKey(String(id)));
   return Number(saved ?? legacy ?? read('app_settings', {}).defaultSource ?? 1) || 1;
 }
 
@@ -107,6 +110,7 @@ export function saveSource(id, value) {
 }
 
 export function migrateStorage() {
+  if (activeProfileId() !== 'default') return;
   // Only add a missing legacy-derived value. Never delete unknown keys or rewrite existing records.
   if (localStorage.getItem('watching') === null && localStorage.getItem('history')) {
     const value = read('history', null);
@@ -134,17 +138,18 @@ export function migrateStorage() {
 
 export function exportData(all = false) {
   const data = {};
-  for (let i = 0; i < localStorage.length; i++) {
-    const key = localStorage.key(i);
-    if (all || DATA_KEYS.includes(key)) {
-      const raw = localStorage.getItem(key);
-      try {
-        data[key] = JSON.parse(raw);
-      }
-      catch {
-        data[key] = raw;
-      }
+  // Backups belong to the selected profile; never expose another profile's keys.
+  const keys = new Set(DATA_KEYS);
+  if (all && activeProfileId() === 'default') {
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i);
+      if (key !== PROFILE_REGISTRY && !key.startsWith('streamhub_profile:')) keys.add(key);
     }
+  }
+  for (const key of keys) {
+    const raw = localStorage.getItem(storageKey(key));
+    if (raw === null) continue;
+    try { data[key] = JSON.parse(raw); } catch { data[key] = raw; }
   }
   return data;
 }
@@ -152,6 +157,7 @@ export function exportData(all = false) {
 export function validateBackup(value) {
   if (!value || Array.isArray(value) || typeof value !== 'object')
     throw new Error('Invalid backup file');
+  validatePersonalBackup(value);
   for (const key of DATA_KEYS)
     if (key in value && (key === 'app_settings'
       ? !value[key] || Array.isArray(value[key]) || typeof value[key] !== 'object'
@@ -191,26 +197,29 @@ export function importData(data, merge = true) {
   const updates = Object.entries(data).filter(([k]) => DATA_KEYS.includes(k)).map(
     ([k, v]) => [
       k,
-      merge && identity[k] ? [...new Map([...logs(k), ...v].map(l => [identity[k](l), l])).values()] : v
+      merge && [JOURNAL_KEY, LISTS_KEY].includes(k)
+        ? mergePersonalRows(k, JSON.parse(localStorage.getItem(storageKey(k)) ?? '[]'), v)
+        : merge && identity[k] ? [...new Map([...logs(k), ...v].map(l => [identity[k](l), l])).values()] : v
     ]
   );
+  validatePersonalBackup(Object.fromEntries(updates));
   // Save the raw values so a failed import can restore the previous data.
-  const previous = new Map(DATA_KEYS.map(k => [k, localStorage.getItem(k)]));
+  const previous = new Map(DATA_KEYS.map(k => [k, localStorage.getItem(storageKey(k))]));
   try {
     if (!merge)
-      DATA_KEYS.forEach(k => localStorage.removeItem(k));
+      DATA_KEYS.forEach(k => localStorage.removeItem(storageKey(k)));
     for (const [k, v] of updates)
-      localStorage.setItem(k, JSON.stringify(v));
+      localStorage.setItem(storageKey(k), JSON.stringify(v));
   }
   catch (e) {
     for (const [k, v] of previous)
-      v === null ? localStorage.removeItem(k) : localStorage.setItem(k, v);
+      v === null ? localStorage.removeItem(storageKey(k)) : localStorage.setItem(storageKey(k), v);
     throw e;
   }
   notifyStorage();
 }
 
 export function clearData() {
-  DATA_KEYS.forEach(k => localStorage.removeItem(k));
+  DATA_KEYS.forEach(k => localStorage.removeItem(storageKey(k)));
   notifyStorage();
 }

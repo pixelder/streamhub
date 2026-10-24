@@ -1,5 +1,8 @@
 import { OptionEditor, ImageEditor, BlocklistEditor, SourceEditor, SectionsEditor } from './SettingEditors.jsx';
-import { useEffect, useRef, useState } from 'preact/hooks';
+import { useEffect, useLayoutEffect, useRef, useState } from 'preact/hooks';
+import { useLocation } from 'preact-iso';
+import { navigate } from '../../app/navigation.js';
+import { useMediaQuery } from '../../hooks/useMediaQuery.js';
 import { usePage } from '../../hooks/usePage.js';
 import { usePreferences } from '../../hooks/usePreferences.js';
 import { useStorage } from '../../hooks/useStorage.js';
@@ -12,7 +15,6 @@ import Icon from '../../components/common/Icon.jsx';
 import './settings.css';
 
 const sections = [
-  'general',
   'appearance',
   'performance',
   'home',
@@ -24,7 +26,6 @@ const sections = [
   'data'
 ];
 const sectionDescriptions = {
-  general: 'Set the name and profile photo shown on this device.',
   appearance: 'Choose the colors, text and navigation details that make Streamhub comfortable to use.',
   performance: 'Tune artwork quality for your connection. Each image type can use its own resolution.',
   home: 'Choose which collections appear on Home and how the featured titles behave.',
@@ -35,8 +36,23 @@ const sectionDescriptions = {
   network: 'Manage catalog refresh behavior and check whether connected services are reachable.',
   data: 'Back up your library or manage the information saved on this device.',
 };
+const categoryGroups = [
+  ['Your experience', ['appearance', 'home']],
+  ['Browsing & playback', ['browsing', 'filters', 'performance', 'playback']],
+  ['Device & data', ['privacy', 'network', 'data']]
+];
+const categorySummaries = {
+  appearance: 'Theme, fonts and navigation',
+  home: 'Featured titles, sections and streaming services',
+  browsing: 'Catalog language and streaming region',
+  filters: 'Ratings, maturity, genres and blocked titles',
+  performance: 'Image quality and data usage',
+  playback: 'Default player, autoplay and sources',
+  privacy: 'History and remembered choices',
+  network: 'Caching, connections and tools',
+  data: 'Backups, imports and local storage'
+};
 const panelGroups = {
-  general: [['Your profile', ['profile']]],
   appearance: [
     ['Color & type', ['theme', 'accent', 'font', 'textSize']],
     [
@@ -96,15 +112,21 @@ export default function Settings() {
   usePage('Settings | Pixelstream');
   const values = usePreferences();
   useStorage();
-  const [group, setGroup] = useState('general'),
-    [query, setQuery] = useState(''),
+  const { url } = useLocation();
+  const smallScreen = useMediaQuery('(max-width: 700px)');
+  const category = new URL(url, location.origin).searchParams.get('category');
+  useLayoutEffect(() => {
+    if (category === 'general') navigate('/profile', true);
+  }, [category]);
+  const selectedCategory = sections.includes(category) ? category : null;
+  const group = selectedCategory || 'appearance';
+  const [query, setQuery] = useState(''),
     [merge, setMerge] = useState(true);
   const [status, setStatus] = useState('All changes save automatically'),
     [error, setError] = useState(false);
   const [checking, setChecking] = useState(false),
     [connections, setConnections] = useState([]);
   const file = useRef(),
-    avatar = useRef(),
     connection = useRef();
   useEffect(() => () => {
     connection.current?.abort();
@@ -137,7 +159,7 @@ export default function Settings() {
     if (!await confirmAction(
       {
         title: 'Restore default preferences?',
-        message: 'Your profile and preferences will reset. Your library, bookmarks and viewing history will be kept.',
+        message: 'Your preferences will reset. Your profile, library, bookmarks and viewing history will be kept.',
         accept: 'Restore defaults'
       }
     )) return;
@@ -200,17 +222,13 @@ export default function Settings() {
       if (connection.current === controller) setChecking(false);
     }
   };
-  const uploadAvatar = event => {
-    const selected = event.currentTarget.files[0];
-    event.currentTarget.value = '';
-    if (!selected) return;
-    if (!['image/png', 'image/jpeg', 'image/webp', 'image/gif'].includes(selected.type) || selected.size > 512 * 1024) return notify('Choose a PNG, JPEG, WebP or GIF image smaller than 512 KB.');
-    const reader = new FileReader();
-    reader.onerror = () => notify('Could not read that image.');
-    reader.onload = () => save('profile', { ...getSettings().profile, avatar: reader.result });
-    reader.readAsDataURL(selected);
-  };
   const term = query.trim().toLowerCase();
+  const mobileOverview = smallScreen && !selectedCategory && !term;
+  useLayoutEffect(() => {
+    if (!smallScreen) return;
+    document.body.scrollTop = 0;
+    if (selectedCategory) document.getElementById(`category-${selectedCategory}`)?.focus({ preventScroll: true });
+  }, [selectedCategory, smallScreen]);
   const groups = sections.filter(key => term || key === group).map(
     key => ({
       key,
@@ -243,28 +261,6 @@ export default function Settings() {
       save={value => save(key, value)}
       providers={values.homeProviders}
     />;
-    if (setting.type === 'profile') return <div class="studio-profile-edit">
-      <div class="studio-avatar">
-        {values.profile.avatar
-          ? <img src={values.profile.avatar} alt="" />
-          : <span>{(values.profile.name || 'G').slice(0, 1).toUpperCase()}</span>}
-      </div>
-      <div>
-        <label for={controlId}>Display name</label>
-        <input
-          {...accessibility}
-          maxLength={60}
-          value={values.profile.name}
-          placeholder="Your name"
-          onInput={event => save('profile', { ...values.profile, name: event.currentTarget.value })}
-        />
-        <small>PNG, JPG, WebP or GIF · Up to 512 KB</small>
-        <div class="studio-button-row">
-          <button onClick={() => avatar.current.click()}><Icon name="image" /> Change photo</button>
-          {values.profile.avatar && <button onClick={() => save('profile', { ...values.profile, avatar: null })}>Remove</button>}
-        </div>
-      </div>
-    </div>;
     if (key === 'theme') return <div
       class="studio-themes"
       role="group"
@@ -353,11 +349,11 @@ export default function Settings() {
     return <button class={setting.danger ? 'studio-danger' : ''} onClick={() => action(key)}><i class={setting.button.icon} aria-hidden="true" /> {setting.button.label}</button>;
   };
   const chooseGroup = key => {
-    setGroup(key);
     setQuery('');
+    navigate(`/settings?category=${key}`);
   };
   const renderSetting = ([key, setting]) => {
-    const wide = ['profile', 'theme'].includes(key) || !['select', 'number', 'boolean', 'action'].includes(setting.type);
+    const wide = key === 'theme' || !['select', 'number', 'boolean', 'action'].includes(setting.type);
     return <div
       class={`studio-setting ${wide ? 'studio-setting-wide' : ''} setting-type-${setting.type}`}
       key={key}
@@ -379,11 +375,10 @@ export default function Settings() {
       <div class="studio-control">{renderControl(key, setting)}</div>
     </div>;
   };
-  return <div id="settings-page" class="settings-studio">
+  return <div id="settings-page" class={`settings-studio ${mobileOverview ? 'settings-overview' : ''} ${selectedCategory && !term ? 'settings-child' : ''}`}>
     <header class="settings-heading">
       <div>
         <h1>Settings</h1>
-        <p>Personalize your viewing experience.</p>
       </div>
       <label class="studio-search">
         <Icon name="magnifying-glass" />
@@ -399,7 +394,7 @@ export default function Settings() {
     <div class="studio-body">
       <aside class="studio-sidebar">
         <nav aria-label="Settings categories">
-          {[['Your experience', sections.slice(0, 7)], ['Device & data', sections.slice(7)]].map(
+          {categoryGroups.map(
             ([title, keys]) => <div class="studio-nav-group" key={title}>
               <p class="studio-nav-title">{title}</p>
               {keys.map(
@@ -418,19 +413,19 @@ export default function Settings() {
         </nav>
         <button class="studio-reset" onClick={reset}><Icon name="rotate-left" /> Reset preferences</button>
       </aside>
-      <div class="studio-mobile-category">
-        <label for="settings-category">Category</label>
-        <select
-          id="settings-category"
-          value={term ? '' : group}
-          onChange={event => chooseGroup(event.currentTarget.value)}
-        >
-          {term && <option value="" disabled>Search results</option>}
-          {sections.map(key => <option value={key} key={key}>{SETTINGS_SCHEMA[key].label}</option>)}
-        </select>
-      </div>
-      <div class="studio-content">
-        <div class={`studio-save-status ${error ? 'error' : ''}`} role="status"><Icon name={error ? 'circle-exclamation' : 'circle-check'} /> {status}</div>
+      {mobileOverview && <nav class="studio-category-list" aria-label="Settings categories">
+        {categoryGroups.map(([title, keys]) => <div class="studio-category-group" key={title}>
+          <h2>{title}</h2>
+          <div class="studio-category-card">{keys.map(key => <button key={key} onClick={() => chooseGroup(key)}>
+            <i class={SETTINGS_SCHEMA[key].icon} aria-hidden="true" />
+            <span><strong>{SETTINGS_SCHEMA[key].label}</strong><small>{categorySummaries[key]}</small></span>
+            <Icon name="chevron-right" />
+          </button>)}</div>
+        </div>)}
+        <p class="studio-overview-note">Preferences save automatically on this device.</p>
+      </nav>}
+      {!mobileOverview && <div class="studio-content">
+        {smallScreen && <button class="studio-back" onClick={() => { setQuery(''); navigate('/settings'); }}><Icon name="arrow-left" /> All settings</button>}
         {term && <div class="studio-results-heading">
           <h2>Search results</h2>
           <button onClick={() => setQuery('')}>Clear search</button>
@@ -443,7 +438,7 @@ export default function Settings() {
               aria-labelledby={`category-${section.key}`}
             >
               <header class="studio-section-heading">
-                <h2 id={`category-${section.key}`}>{section.label}</h2>
+                <h2 id={`category-${section.key}`} tabIndex="-1">{section.label}</h2>
                 <p>{sectionDescriptions[section.key]}</p>
               </header>
               {panelsFor(section).map(
@@ -498,8 +493,9 @@ export default function Settings() {
             <p>Change resolution, subtitles, volume, playback speed and casting inside the player. Available controls depend on your source.</p>
           </div>
         </section>}
+        <div class={`studio-save-status ${error ? 'error' : ''}`} role="status"><Icon name={error ? 'circle-exclamation' : 'circle-check'} /> {status}</div>
         <button class="studio-mobile-reset" onClick={reset}><Icon name="rotate-left" /> Reset preferences</button>
-      </div>
+      </div>}
     </div>
     <input
       type="file"
@@ -511,13 +507,6 @@ export default function Settings() {
         event.currentTarget.value = '';
         if (selected) void restoreBackup(selected, merge);
       }}
-    />
-    <input
-      type="file"
-      hidden
-      ref={avatar}
-      accept="image/png,image/jpeg,image/webp,image/gif"
-      onChange={uploadAvatar}
     />
   </div>;
 }

@@ -5,7 +5,7 @@ import MediaCard from './MediaCard.jsx';
 import Loading from '../common/Loading.jsx';
 import Icon from '../common/Icon.jsx';
 
-export default function MediaSection({ id, title, items = [], loading, error, onMore, hasMore = true, children, gridChildren, headerActions, selectActions, user = false, logType, vertical = true, collapsible = false, profiles = false, empty }) {
+export default function MediaSection({ id, title, items = [], loading, error, onMore, hasMore = true, filtered = false, children, gridChildren, headerActions, selectActions, user = false, logType, vertical = true, collapsible = false, profiles = false, empty }) {
   const [expanded, setExpanded] = useState(false),
     [visible, setVisible] = useState(true);
   const ref = useRef(),
@@ -151,5 +151,11 @@ export default function MediaSection({ id, title, items = [], loading, error, on
         </div>
 
       </div>}</div>}
+    {error && onMore && <div class="catalog-filter-note"><button disabled={loading} onClick={onMore}>Retry loading titles</button></div>}
+    {filtered && !loading && !error && items.length < 20 && <div class="catalog-filter-note">
+      <span>{items.length ? 'Some titles are hidden by your content filters.' : 'No titles on these pages match your content filters.'}</span>
+      <a href="/settings?category=filters">Review filters</a>
+      {hasMore && onMore && <button onClick={onMore}>Load more titles</button>}
+    </div>}
   </section>;
 }

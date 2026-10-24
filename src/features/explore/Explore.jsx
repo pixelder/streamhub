@@ -410,7 +410,7 @@ function Browse({ params }) {
 }
 
 export default function Explore() {
-  usePage('Explore - Pixelstream', ['/explore/styles.css']);
+  usePage('Explore - Pixelstream');
   const { url } = useLocation();
   const query = new URL(url, location.origin).searchParams;
   const params = Object.fromEntries(query);

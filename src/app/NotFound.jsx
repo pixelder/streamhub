@@ -2,7 +2,7 @@ import { usePage } from '../hooks/usePage.js';
 import Icon from '../components/common/Icon.jsx';
 
 export default function NotFound() {
-  usePage('Page Not Found', ['/404/styles.css']);
+  usePage('Page Not Found');
   return <div class="container">
 
     <p class="code">404</p>

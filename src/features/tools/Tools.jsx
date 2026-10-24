@@ -119,13 +119,7 @@ function Status({ value }) {
 }
 
 export default function Tools() {
-  usePage(
-    'Tools - Pixelstream',
-    [
-      'https://cdn.jsdelivr.net/npm/@fontsource-variable/jetbrains-mono@5.2.8/index.min.css',
-      '/tools/styles.css'
-    ]
-  );
+  usePage('Tools - Pixelstream');
   const [form, setForm] = useState(defaults),
     [suggestions, setSuggestions] = useState([]),
     [suggest, setSuggest] = useState(false),

@@ -1,4 +1,7 @@
-import { useEffect } from 'preact/hooks';
+import { navigate } from './navigation.js';
+import { activeProfileId } from '../stores/profileStorage.js';
+import { useStorage } from '../hooks/useStorage.js';
+import { useEffect, useRef } from 'preact/hooks';
 import { loadImageConfiguration } from '../services/images.js';
 import { usePreferences } from '../hooks/usePreferences.js';
 import { useMediaQuery } from '../hooks/useMediaQuery.js';
@@ -11,6 +14,7 @@ import Overlays from '../components/common/Overlays.jsx';
 import { closeDetails, finishConfirmation } from '../stores/ui.js';
 import { matchRoute } from './routes.js';
 import Routes from './router.jsx';
+import WatchHost from '../features/watch/WatchHost.jsx';
 import { useScrollRestoration } from '../hooks/useScrollRestoration.js';
 
 class AppErrorBoundary extends Component {
@@ -41,6 +45,17 @@ class AppErrorBoundary extends Component {
 }
 
 function Shell() {
+  const profileId = useStorage(() => {
+    try { return activeProfileId(); } catch { return 'unavailable'; }
+  });
+  const previousProfile = useRef(profileId);
+  const profileChanged = previousProfile.current !== profileId;
+  useLayoutEffect(() => {
+    if (profileChanged) {
+      previousProfile.current = profileId;
+      navigate('/profile', true);
+    }
+  }, [profileId]);
   const preferences = usePreferences();
   useEffect(
     () => {
@@ -74,7 +89,7 @@ function Shell() {
       document.body.classList.remove('keyboard');
       document.querySelectorAll('#top-bar,#bottom-bar').forEach(el => el.classList.remove('hidden'));
     },
-    [path]
+    [path, profileId]
   );
   return <>
     <Navigation />
@@ -83,9 +98,8 @@ function Shell() {
       class={route.name === 'sports' ? 'main-container' : route.name === 'not-found' ? 'error-page' : undefined}
       aria-busy={loading}
     >
-
-
-      <AppErrorBoundary key={route.name}>
+      <AppErrorBoundary><WatchHost key={profileId} route={profileChanged ? { name: 'profile' } : route} /></AppErrorBoundary>
+      <AppErrorBoundary key={`${route.name}-${profileId}`}>
 
         <Routes onLoading={setLoading} onReady={ready} />
 
@@ -97,7 +111,7 @@ function Shell() {
 
     </main>
     <Navigation bottom />
-    {['home', 'explore', 'library'].includes(route.name) && <footer />}
+    {['home', 'explore', 'library', 'profile'].includes(route.name) && <footer />}
   </>;
 }
 
