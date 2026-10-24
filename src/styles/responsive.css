@@ -1238,17 +1238,16 @@
   } */
 
   .item-menu {
-    right: 0;
-    bottom: 36px;
     padding: 4px !important;
-    min-width: max-content !important;
-    transform-origin: bottom right !important;
+    right: 0 !important;
+    bottom: 36px !important;
 
     .item {
       font-size: 12px !important;
-      padding: 3px !important;
-      height: 26px !important;
-      min-height: unset !important;
+      padding-inline: 6px !important;
+      gap: 4px !important;
+      height: 28px !important;
+      transform-origin: bottom right;
     }
   }
 

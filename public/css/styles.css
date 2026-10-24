@@ -333,17 +333,17 @@ section:not(#hero-carousel) {
   inset: 0;
   background:
     linear-gradient( to top,
-      #0d0d1b 8%,
-      #0d0d1b66 26%,
-      #0d0d1b00 38%
+    #0d0d1b 8%,
+    #0d0d1b66 26%,
+    #0d0d1b00 38%
     ),
     linear-gradient( to right,
-      #0d0d1b 15%, 
-      #0d0d1be0 24%, 
-      #0d0d1bac 37%, 
-      #0d0d1b7f 45%, 
-      #0d0d1b00 60%
-  );
+    #0d0d1b 15%,
+    #0d0d1be0 24%,
+    #0d0d1bac 37%,
+    #0d0d1b7f 45%,
+    #0d0d1b00 60%
+    );
   height: 52vw;
   pointer-events: none;
   

@@ -193,14 +193,24 @@
 
     .options-icon,
     .options-x-icon {
+      display: flex;
+      height: 100%;
+      aspect-ratio: 1/1;
+      align-items: center;
+      justify-content: center;
       pointer-events: none;
       position: absolute;
-      transition: opacity 0.25s ease-in-out;
+      transition: opacity 0.15s, scale 0.15s ease-in-out;
+    }
+
+    .options-icon {
+      opacity: unset;
+      scale: unset;
     }
 
     .options-x-icon {
       opacity: 0;
-      display: flex;
+      scale: 0;
     }
   }
 
@@ -262,10 +272,12 @@
 
     .options-icon {
       opacity: 0;
+      scale: 0;
     }
 
     .options-x-icon {
       opacity: 1;
+      scale: unset;
     }
   }
 

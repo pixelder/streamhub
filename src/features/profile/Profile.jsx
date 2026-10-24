@@ -39,12 +39,12 @@ export default function Profile() {
     [lists.length, 'Collections', '/profile?view=collections']
   ];
   return <div id="profile-page">
+    <div class="profile-header-top"><h1 class="profile-eyebrow">Profile</h1><a href="/settings" class="settings-button" aria-label="Open settings" title="Settings"><Icon name="gear" /></a></div>
     <header class="profile-header">
-      <div class="profile-header-top"><p class="profile-eyebrow">Profile</p><a href="/settings" class="profile-icon-button" aria-label="Open settings" title="Settings"><Icon name="gear" /></a></div>
       <div class="profile-header-main">
       <div class="profile-identity">
         <div class="profile-avatar">{profile.avatar ? <img src={profile.avatar} alt="" /> : <span>{(profile.name || 'G').slice(0, 1).toUpperCase()}</span>}</div>
-        <div class="profile-intro"><h1>{profile.name || 'Guest'}</h1><p class="profile-note">Your movies, shows and collections.</p><button class="profile-edit-button" onClick={() => setEditing(true)}><Icon name="pen" />Edit profile</button></div>
+        <div class="profile-intro"><h1>{profile.name || 'Guest'}</h1><button class="profile-edit-button" onClick={() => setEditing(true)}><Icon name="pen" />Edit profile</button></div>
       </div>
       <ProfileSwitcher />
       </div>

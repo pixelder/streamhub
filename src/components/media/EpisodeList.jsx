@@ -33,7 +33,7 @@ export default function EpisodeList({ data, sno, eno, player = false, actions, o
     },
     [result.data, season, eno]
   );
-  useHorizontalScroll(ref, 3, [player, result.data]);
+  if (player) useHorizontalScroll(ref, 3, [player, result.data]);
   useEffect(
     () => {
       if (player && result.data) {
