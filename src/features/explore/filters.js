@@ -76,7 +76,6 @@ export function discoverParams(filters, page = 1) {
     'vote_average.gte': filters.rating,
     'vote_count.gte': filters.votes,
     watch_region: 'US',
-    include_adult: false,
     include_null_first_air_dates: false
   };
 }

@@ -762,7 +762,7 @@
 
 @media (max-width: 700px) {
   #settings-page {
-    padding: 16px 12px calc(80px + env(safe-area-inset-bottom));
+    padding: 16px 12px 80px;
   }
   #settings-page .settings-heading {
     display: grid;
@@ -898,7 +898,7 @@
    the 44px primary control targets. Relative type still follows text-size preferences. */
 @media (width < 400px) {
   #settings-page {
-    padding: 12px 10px calc(76px + env(safe-area-inset-bottom));
+    padding: 12px 10px 76px;
     font-size: max(14px, .875rem);
     line-height: 1.45;
   }

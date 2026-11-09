@@ -405,7 +405,7 @@ SETTINGS_SCHEMA.filters = {
     },
     minRating: {
       label: 'Minimum rating',
-      description: 'Applies to catalog lists and discovery. Saved library records are retained.',
+      description: 'Applies to discovery and trending, not search or your saved library.',
       type: 'number',
       min: 0,
       max: 10,
@@ -414,7 +414,7 @@ SETTINGS_SCHEMA.filters = {
     },
     minVotes: {
       label: 'Minimum vote count',
-      description: 'Default: 200. Applies to discovery, trending and search results.',
+      description: 'Default: 200. Applies to discovery and trending. Search includes titles with fewer votes.',
       type: 'number',
       min: 0,
       max: 100000,

@@ -14,6 +14,7 @@ import Overlays from '../components/common/Overlays.jsx';
 import { closeDetails, finishConfirmation } from '../stores/ui.js';
 import { matchRoute } from './routes.js';
 import Routes from './router.jsx';
+import { SportsPlayerProvider, SportsPlayerHost } from '../features/sports/SportsPlayer.jsx';
 import WatchHost from '../features/watch/WatchHost.jsx';
 import { useScrollRestoration } from '../hooks/useScrollRestoration.js';
 
@@ -93,11 +94,13 @@ function Shell() {
   );
   return <>
     <Navigation />
+    <SportsPlayerProvider key={profileId}>
     <main
       id={route.name === 'sports' ? 'main-layout' : 'main-content'}
       class={route.name === 'sports' ? 'main-container' : route.name === 'not-found' ? 'error-page' : undefined}
       aria-busy={loading}
     >
+      <AppErrorBoundary><SportsPlayerHost route={route} /></AppErrorBoundary>
       <AppErrorBoundary><WatchHost key={profileId} route={profileChanged ? { name: 'profile' } : route} /></AppErrorBoundary>
       <AppErrorBoundary key={`${route.name}-${profileId}`}>
 
@@ -110,6 +113,7 @@ function Shell() {
 
 
     </main>
+    </SportsPlayerProvider>
     <Navigation bottom />
     {['home', 'explore', 'library', 'profile'].includes(route.name) && <footer />}
   </>;

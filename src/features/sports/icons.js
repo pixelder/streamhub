@@ -1,6 +1,8 @@
 export const ICON_MAP = Object.freeze(
   {
-    "football": "fa-futbol",
+    "football": "fa-football",
+    "racing": "fa-flag-checkered",
+    "combat": "fa-hand-fist",
     "soccer": "fa-futbol",
     "basketball": "fa-basketball",
     "nba": "fa-basketball",

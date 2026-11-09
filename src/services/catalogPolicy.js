@@ -26,6 +26,7 @@ export function discoveryPolicy(type, params = {}, settings = getSettings()) {
   const excluded = type === 'movie' ? settings.excludedMovieGenres : settings.excludedTVGenres;
   return {
     ...params,
+    // Every Discover caller follows the active profile, even if it supplies a conflicting value.
     include_adult: !settings.excludeAdult,
     with_original_language: language,
     with_origin_country: country,
@@ -76,7 +77,9 @@ export function permitsCertification(data, type, settings = getSettings()) {
   return !mature && (usable.length > 0 || !settings.hideUnrated);
 }
 
-export async function filterCatalogResults(items, fallbackType, loadDetails, settings = getSettings(), signal) {
+export async function filterCatalogResults(items, fallbackType, loadDetails, settings = getSettings(), signal, { applyDiscovery = true } = {}) {
+  // Search honors explicit content restrictions, but not discovery preferences.
+  const filterCountries = applyDiscovery ? settings.filterCountries : [];
   const accepted = new Array(items.length);
   let cursor = 0;
   await Promise.all(
@@ -88,16 +91,16 @@ export async function filterCatalogResults(items, fallbackType, loadDetails, set
             item = items[index],
             type = item.media_type || fallbackType;
           signal?.throwIfAborted();
-          if (!permitsBasic(item, type, settings)) continue;
-          if (['movie', 'tv'].includes(type) && (settings.hideMature || settings.filterCountries.length)) {
+          if (!permitsBasic(item, type, settings, applyDiscovery)) continue;
+          if (['movie', 'tv'].includes(type) && (settings.hideMature || filterCountries.length)) {
             try {
               const data = await loadDetails(type, item.id);
               if (!permitsCertification(data, type, settings)) continue;
               const countries = data.origin_country || data.production_countries?.map(country => country.iso_3166_1) || [];
-              if (settings.filterCountries.length && !settings.filterCountries.some(country => countries.includes(country))) continue;
+              if (filterCountries.length && !filterCountries.some(country => countries.includes(country))) continue;
             } catch (error) {
               if (signal?.aborted) throw error;
-              if (settings.filterCountries.length || settings.hideUnrated) continue;
+              if (filterCountries.length || settings.hideUnrated) continue;
             }
           }
           accepted[index] = item;

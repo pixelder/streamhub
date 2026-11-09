@@ -22,11 +22,19 @@ export default function Navigation({ bottom = false }) {
       let last = document.body.scrollTop,
         timer;
       const el = ref.current;
+      let docked = !!document.querySelector('.watch-page.is-mini.is-docked');
       const scroll = () => {
         const y = document.body.scrollTop;
         document.querySelectorAll('.slide-backdrop').forEach(
           n => n.style.opacity = 1 - Math.min(y / 350, 1)
         );
+        if (bottom && docked) {
+          clearTimeout(timer);
+          el.classList.add('detach');
+          el.classList.remove('hidden');
+          last = y;
+          return;
+        }
         if (document.querySelector('.expandable.expanded'))
           return;
         const end = y + document.body.clientHeight + 16 >= document.body.scrollHeight;
@@ -45,10 +53,17 @@ export default function Navigation({ bottom = false }) {
         }
         last = y;
       };
+      const onDockChange = event => {
+        docked = event.detail === true;
+        if (bottom) scroll();
+      };
+      window.addEventListener('watch-dock-change', onDockChange);
       document.body.addEventListener('scroll', scroll, { passive: true });
+      if (bottom && docked) scroll();
       return () => {
         clearTimeout(timer);
         document.body.removeEventListener('scroll', scroll);
+        window.removeEventListener('watch-dock-change', onDockChange);
       };
     },
     [bottom]

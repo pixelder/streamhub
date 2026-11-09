@@ -61,7 +61,7 @@ function Credits({ data }) {
         ([name, items], i) => <CreditGroup
           key={name}
           name={name}
-          items={items.filter(c => !c.adult)}
+          items={items}
           initial={i === 0}
           profile={data.profile_path}
         />
@@ -72,8 +72,10 @@ function Credits({ data }) {
 }
 
 function CreditGroup({ name, items, initial, profile }) {
+  const preferences = usePreferences();
   const [expanded, set] = useState(initial);
-  items = items.filter(item => permitsBasic(item, item.media_type || item.mediaType || 'movie'));
+  // Filmographies are complete credit lists, not discovery recommendations.
+  items = items.filter(item => permitsBasic(item, item.media_type || item.mediaType || 'movie', preferences, false));
   if (!items.length)
     return null;
   return <div class={`credit-section ${expanded ? 'expanded' : ''}`}>

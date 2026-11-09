@@ -30,9 +30,9 @@ function Results({ type, term, onCount }) {
   );
   useEffect(
     () => {
-      if (!data.loading && !data.error) onCount(type, data.total, Date.now() - started.current);
+      if (!data.loading && !data.error) onCount(type, data.total, Date.now() - started.current, data.filtered);
     },
-    [data.total, data.loading]
+    [data.total, data.loading, data.error, data.filtered]
   );
   return <MediaSection
     id={`${type}-results`}
@@ -66,11 +66,12 @@ export default function Search() {
     },
     [query]
   );
-  const onCount = (type, count, ms) => {
-    setCounts(old => ({ ...old, [type]: count }));
+  const onCount = (type, count, ms, filtered) => {
+    setCounts(old => ({ ...old, [type]: { count, filtered } }));
     setTime(ms / 1000);
   };
-  const total = Object.values(counts).reduce((a, b) => a + b, 0);
+  const total = Object.values(counts).reduce((sum, result) => sum + result.count, 0);
+  const restricted = Object.values(counts).some(result => result.filtered);
   return <div id="search-results">
 
     <div class="search-title">
@@ -88,7 +89,8 @@ export default function Search() {
               <em>'{term}'</em>
 
             </b></p>
-            <p class="count">About {total.toLocaleString('en-IN')} catalog matches before local filters · {time.toFixed(1)}s</p>
+            <p class="count">About {total.toLocaleString('en-IN')} results in {time.toFixed(1)}s</p>
+            {restricted && <p class="count">Some matches are hidden by your content restrictions or blocked titles.</p>}
           </>}
     </div>
 

@@ -42,25 +42,31 @@ export async function tmdb(path, params = {}, options) {
   if (direct && isBlocked(direct[1], direct[2], settings)) throw new Error('This TMDB ID is blocked in Settings.');
   const discover = path.match(/^discover\/(movie|tv)$/);
   if (discover) params = discoveryPolicy(discover[1], params, settings);
-  if (/^search\//.test(path)) params = { ...params, include_adult: !settings.excludeAdult };
-  const query = new URLSearchParams({ language: getSettings().metadataLanguage });
+  const query = new URLSearchParams({ language: settings.metadataLanguage });
   for (const [key, value] of Object.entries(params))
     if (value !== '' && value != null)
       query.set(key, String(value));
+  // The active profile owns this flag for all TMDB calls, including metadata.
+  query.set('include_adult', String(!settings.excludeAdult));
   const data = await requestJSON(`${BASE}/${path}?${query}`, options);
   const listing = path.match(/^(?:discover|trending|search)\/(movie|tv|person|all|multi)(?:\/|$)/);
   if (listing && Array.isArray(data.results)) {
-    const detailQuery = new URLSearchParams({
-      language: getSettings().metadataLanguage,
-      append_to_response: listing[1] === 'movie' ? 'release_dates' : 'content_ratings'
-    });
-    // Fetch certification details directly so they do not re-enter catalog filtering.
+    // Detail requests bypass listing filters and use the title's actual type,
+    // including movie entries returned by multi-search.
     const results = await filterCatalogResults(
       data.results,
       listing[1],
-      (type, id) => requestJSON(`${BASE}/${type}/${id}?${detailQuery}`, options),
+      (type, id) => {
+        const detailQuery = new URLSearchParams({
+          language: settings.metadataLanguage,
+          include_adult: String(!settings.excludeAdult),
+          append_to_response: type === 'movie' ? 'release_dates' : 'content_ratings'
+        });
+        return requestJSON(`${BASE}/${type}/${id}?${detailQuery}`, options);
+      },
       settings,
-      options?.signal
+      options?.signal,
+      { applyDiscovery: !path.startsWith('search/') }
     );
     return {
       ...data,

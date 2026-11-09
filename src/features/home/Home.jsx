@@ -65,7 +65,6 @@ function Streaming() {
           with_watch_providers: provider.id,
           watch_region: preferences.watchRegion,
           sort_by: 'popularity.desc',
-          include_adult: false,
           include_null_first_air_dates: false
         },
         { signal }

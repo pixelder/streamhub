@@ -24,6 +24,13 @@ export default function Watch({ id, mediaType = 'movie', season = null, episode 
   const floating = useMiniPlayerDrag(shell, mini.width, minimized);
   const [theater, setTheater] = useState(false);
   useEffect(() => {
+    const updateNavigation = docked => window.dispatchEvent(
+      new CustomEvent('watch-dock-change', { detail: docked })
+    );
+    updateNavigation(minimized && floating.docked);
+    return () => updateNavigation(false);
+  }, [minimized, floating.docked]);
+  useEffect(() => {
     if (!minimized) return;
     document.body.style.setProperty('--mini-player-height', `${floating.docked ? 64 : mini.width * 9 / 16 + 54}px`);
     return () => document.body.style.removeProperty('--mini-player-height');
@@ -182,7 +189,7 @@ export default function Watch({ id, mediaType = 'movie', season = null, episode 
       onPointerDown={event => { floating.cancelTransition(); mini.handle.onPointerDown(event); }}
     ></button>}
     <div class="mini-player-heading">
-      <div class="mini-player-artwork" aria-hidden="true">{meta.data?.poster_path ? <img src={image(meta.data.poster_path)} alt="" /> : <Icon name="film" />}</div>
+      <div class="mini-player-artwork" aria-hidden="true">{meta.data?.backdrop_path ? <img src={image(meta.data.backdrop_path)} alt="" /> : <Icon name="film" />}</div>
       <span class="mini-player-title" role="button" tabIndex={minimized ? 0 : -1}
         aria-label={floating.docked ? 'Drag up to undock player, or press Enter' : 'Drag to move player. Arrow keys move; Enter docks.'}
         title={floating.docked ? 'Drag up to show video' : 'Drag near the bottom to dock'}

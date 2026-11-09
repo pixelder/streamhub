@@ -9,6 +9,7 @@
     --brad8: 6px;
     --padding1: 8px;
     --item-height: 220px;
+    --carousel-overlay-gradient: linear-gradient( to top, #0d0d1b 3%, #0d0d1b66 45%, #0d0d1b00 60% );
   }
 
   body.keyboard {

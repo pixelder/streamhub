@@ -48,6 +48,9 @@ export function clearCaches() {
   clearRequestCache();
   localStorage.removeItem('sf_categories');
   localStorage.removeItem('sf_streams');
+  for (const key of Object.keys(localStorage)) {
+    if (key.startsWith('sf_sources:')) localStorage.removeItem(key);
+  }
   notifyStorage();
 }
 
@@ -61,9 +64,9 @@ export async function checkConnections(signal) {
     [
       'Sports feeds',
       async () => {
-        const response = await fetch(`${API_BASE}/sports`, { signal, cache: 'no-store' });
+        const response = await fetch(`${API_BASE}/categories`, { signal, cache: 'no-store' });
         if (!response.ok) throw new Error(`HTTP ${response.status}`);
-        if (!Array.isArray(await response.json())) throw new Error('Unexpected response');
+        if (!Array.isArray((await response.json()).categories)) throw new Error('Unexpected response');
       }
     ],
   ];

@@ -100,7 +100,7 @@
 .profile-primary { background: var(--font-color1); color: var(--bg-color); }
 #profile-page input[hidden] { display: none; }
 @media (max-width: 700px) {
-  #profile-page { padding: 16px 12px calc(88px + env(safe-area-inset-bottom)); }
+  #profile-page { padding: 16px 12px 88px; }
   .profile-header { padding: 12px 16px 0; border-radius: 16px; }
   .profile-identity { gap: 16px; padding: 8px 0 20px; }
   .profile-avatar { width: 72px; height: 72px; font-size: 28px; }
