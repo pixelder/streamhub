@@ -6,6 +6,7 @@ import { image } from '../../utils/format.js';
 import { STATUSES, titleKey, encodeList, decodeList } from './model.js';
 import { personalSnapshot, createList, updateList, deleteList, removeEntry } from './store.js';
 import TitleJournal from './TitleJournal.jsx';
+import Icon from '../../components/common/Icon.jsx';
 import './personal.css';
 
 function sharedFromLocation() {
@@ -117,9 +118,9 @@ export default function PersonalLibrary({ view, onViewChange, embedded = false }
           <TitleLink item={item} />
           {item.watchedOn && <p class="personal-hint">Watched on {item.watchedOn}</p>}
           <TitleJournal data={item} type={item.mediaType} />
-          <button class="personal-remove" onClick={async () => {
+          <button class="personal-remove personal-record-delete delete-button" type="button" title="Remove tracking" aria-label={`Remove tracking for ${item.title}`} onClick={async () => {
             if (await confirmAction({ title: 'Remove tracking entry?', message: `Remove your status, rating and note for ${item.title}? Playback history and collections are kept.`, accept: 'Remove' })) run(() => removeEntry(item));
-          }}>Remove tracking</button>
+          }}><Icon name="trash-can" /></button>
         </article>)}</div>
       </div> : <div>
         <form class="personal-create" onSubmit={e => { e.preventDefault(); run(() => { setSelected(createList(name)); setName(''); }); }}>

@@ -1,3 +1,4 @@
+import { createUUID } from '../../utils/uuid.js';
 import { useEffect, useState } from 'preact/hooks';
 import { useAsync } from '../../hooks/useAsync.js';
 import { tmdb, metadata } from '../../services/api.js';
@@ -309,7 +310,7 @@ export function SectionsEditor({ value, save, providers }) {
         [
           ...value,
           {
-            id: crypto.randomUUID(),
+            id: createUUID(),
             title: 'New collection',
             type: 'movie',
             sort: 'popularity.desc',

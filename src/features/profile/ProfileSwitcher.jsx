@@ -35,7 +35,7 @@ export default function ProfileSwitcher() {
           <span class="profile-choice-name">{profile.name}</span>
           {profile.active && <Icon name="check" />}
         </button>
-        {managing && <button class="profile-choice-delete" disabled={profiles.length < 2} title={profiles.length < 2 ? 'Keep at least one profile' : `Delete ${profile.name}`} aria-label={`Delete ${profile.name}`} onClick={() => remove(profile)}><Icon name="trash-can" /></button>}
+        {managing && <button class="profile-choice-delete delete-button" disabled={profiles.length < 2} title={profiles.length < 2 ? 'Keep at least one profile' : `Delete ${profile.name}`} aria-label={`Delete ${profile.name}`} onClick={() => remove(profile)}><Icon name="trash-can" /></button>}
       </div>)}
       <button class="profile-add-choice" onClick={() => setCreating(true)}><Icon name="plus" />Add profile</button>
     </div>

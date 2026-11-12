@@ -26,12 +26,12 @@ const sections = [
   'data'
 ];
 const sectionDescriptions = {
-  appearance: 'Choose the colors, text and navigation details that make Streamhub comfortable to use.',
+  appearance: 'Choose the colors, text and navigation details that make PixelStream comfortable to use.',
   performance: 'Tune artwork quality for your connection. Each image type can use its own resolution.',
   home: 'Choose which collections appear on Home and how the featured titles behave.',
   browsing: 'Set the language for catalog details and the region used for streaming availability.',
   filters: 'Shape discovery results with rating, content, genre and title filters.',
-  playback: 'Set defaults for supported players and choose how Streamhub remembers sources.',
+  playback: 'Set defaults for supported players and choose how PixelStream remembers sources.',
   privacy: 'Control viewing activity and other choices saved in this browser.',
   network: 'Manage catalog refresh behavior and check whether connected services are reachable.',
   data: 'Back up your library or manage the information saved on this device.',
@@ -346,7 +346,7 @@ export default function Settings() {
         }
       )}
     </select>;
-    return <button class={setting.danger ? 'studio-danger' : ''} onClick={() => action(key)}><i class={setting.button.icon} aria-hidden="true" /> {setting.button.label}</button>;
+    return <button class={`${setting.danger ? 'studio-danger' : ''} ${setting.button.icon.includes('fa-trash') ? 'delete-button' : ''}`} onClick={() => action(key)}><i class={setting.button.icon} aria-hidden="true" /> {setting.button.label}</button>;
   };
   const chooseGroup = key => {
     setQuery('');

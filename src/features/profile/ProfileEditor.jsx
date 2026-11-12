@@ -49,7 +49,7 @@ export default function ProfileEditor({ profile, close, onSave, creating = false
         close();
       } catch (failure) { setError(failure.message); }
     }}>
-      <div class="profile-editor-heading"><h2 id="profile-editor-title">{creating ? 'Add profile' : 'Edit profile'}</h2><button type="button" class="profile-icon-button" aria-label="Close profile editor" onClick={close}><Icon name="xmark" /></button></div>
+      <div class="profile-editor-heading"><h2 id="profile-editor-title">{creating ? 'Add profile' : 'Edit profile'}</h2><button type="button" class="profile-icon-button" aria-label="Close profile editor" onClick={close}></button></div>
       <div class="profile-photo-editor">
         <div class="profile-avatar">{draft.avatar ? <img src={draft.avatar} alt="Profile preview" /> : <span>{(draft.name || 'G').slice(0, 1).toUpperCase()}</span>}</div>
         <div><button type="button" class="profile-button" disabled={reading} onClick={() => file.current.click()}>{reading ? 'Reading photo…' : 'Change photo'}</button>

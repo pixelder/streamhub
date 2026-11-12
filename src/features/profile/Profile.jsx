@@ -39,17 +39,19 @@ export default function Profile() {
     [lists.length, 'Collections', '/profile?view=collections']
   ];
   return <div id="profile-page">
-    <div class="profile-header-top"><h1 class="profile-eyebrow">Profile</h1><a href="/settings" class="settings-button" aria-label="Open settings" title="Settings"><Icon name="gear" /></a></div>
+
+    <div class="profile-header-top"><h2 class="profile-eyebrow">Profile</h2><a href="/settings" class="settings-button" aria-label="Open settings" title="Settings"><Icon name="gear" /></a></div>
     <header class="profile-header">
       <div class="profile-header-main">
       <div class="profile-identity">
         <div class="profile-avatar">{profile.avatar ? <img src={profile.avatar} alt="" /> : <span>{(profile.name || 'G').slice(0, 1).toUpperCase()}</span>}</div>
-        <div class="profile-intro"><h1>{profile.name || 'Guest'}</h1><button class="profile-edit-button" onClick={() => setEditing(true)}><Icon name="pen" />Edit profile</button></div>
+        <div class="profile-intro"><h2>{profile.name || 'Guest'}</h2><button class="profile-edit-button" onClick={() => setEditing(true)}><Icon name="pen" />Edit profile</button></div>
       </div>
       <ProfileSwitcher />
       </div>
       <div class="profile-stats" aria-label="Your activity">{stats.map(([count, label, href]) => <a key={label} href={href}><strong>{count}</strong><span>{label}</span></a>)}</div>
     </header>
+
     <nav class="profile-tabs" aria-label="Profile sections">
       {[['library', 'Library'], ['tracking', 'Tracking'], ['collections', 'Collections']].map(([key, label]) => <a key={key} href={`/profile?view=${key}`} aria-current={view === key ? 'page' : undefined}>{label}</a>)}
     </nav>

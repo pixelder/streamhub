@@ -200,6 +200,17 @@ export default function Navigation({ bottom = false }) {
         </a>
 
       </li>
+
+      <li>
+
+        <a 
+          href="/settings"
+          aria-label="Settings"
+          title="Settings"
+        >
+        Settings
+        </a>
+      </li>
       <form
         class="search-bar"
         onSubmit={submit}

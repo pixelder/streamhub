@@ -1,3 +1,4 @@
+import { createUUID } from '../../utils/uuid.js';
 import { profileRegistry, PROFILE_REGISTRY, PROFILE_KEYS, profileKeyFor } from '../../stores/profileStorage.js';
 import { normalizeSettings } from '../settings/preferences.js';
 import { notifyStorage } from '../../stores/storage.js';
@@ -15,7 +16,7 @@ export function createProfile(profile) {
   const registry = profileRegistry();
   const name = profile.name?.trim();
   if (!name) throw new Error('Enter a name for this profile.');
-  const id = crypto.randomUUID();
+  const id = createUUID();
   const key = profileKeyFor('app_settings', id);
   const identity = normalizeSettings({ profile: { ...profile, name } }).profile;
   localStorage.setItem(key, JSON.stringify({ profile: identity }));

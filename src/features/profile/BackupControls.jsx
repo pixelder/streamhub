@@ -15,7 +15,7 @@ export default function BackupControls() {
         <button class="profile-button" onClick={() => file.current.click()}><Icon name="file-import" />Import backup</button>
       </div>
       <label class="profile-merge"><input type="checkbox" checked={merge} onChange={event => setMerge(event.currentTarget.checked)} />Merge imports with existing data</label>
-      <button class="profile-text-button profile-danger" onClick={eraseData}><Icon name="trash-can" />Erase saved data</button>
+      <button class="profile-text-button profile-danger delete-button" onClick={eraseData}><Icon name="trash-can" />Erase saved data</button>
       <input type="file" hidden ref={file} accept=".json,application/json" onChange={event => {
         const selected = event.currentTarget.files[0];
         event.currentTarget.value = '';

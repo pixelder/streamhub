@@ -641,7 +641,7 @@
 .watch-page .player-toolbar button:is(:hover, :focus-visible) { background: var(--color3); }
 .watch-page .iframe-exit { display: none; }
 .watch-page .iframe-container:is(:fullscreen, :-webkit-full-screen) .iframe-exit { display: block; }
-.watch-page .providers { z-index: 5; }
+/* .watch-page .providers { z-index: 5; } */
 .watch-page .providers.show { box-shadow: 0 12px 32px #0005; }
 .watch-page .providers .provider.selected .provider-name,
 .watch-page .providers .provider:hover .provider-name,
@@ -668,7 +668,7 @@
 .watch-page.is-mini .player-toolbar,
 .watch-page.is-mini .now-playing,
 .watch-page.is-mini .player-episodes { display: none; }
-body.has-mini-player { padding-bottom: calc(var(--mini-player-height, 254px) + 36px); }
+/* body.has-mini-player { padding-bottom: calc(var(--mini-player-height, 254px) + 36px); } */
 @media (max-width: 767px) {
   .watch-page.is-mini .mini-player-title { font-size: 12px; }
   .watch-page.is-mini .mini-player-title small { font-size: 10px;}
@@ -678,7 +678,7 @@ body.has-mini-player { padding-bottom: calc(var(--mini-player-height, 254px) + 3
   .watch-page .player-toolbar { border-radius: 0; }
   .watch-page .now-playing { width: 100%; padding: 12px; }
   .watch-page.is-mini { bottom: 64px; right: 10px; width: min(var(--mini-width, 300px), calc(100vw - 24px)); }
-  body.has-mini-player { padding-bottom: calc(var(--mini-player-height, 224px) + 96px); }
+  body.has-mini-player { padding-bottom: calc(var(--mini-player-height, 224px) + -8px); }
 }
 
 /* Only theater mode changes full-page width; normal desktop/mobile geometry stays intact. */
@@ -718,7 +718,7 @@ body.has-mini-player { padding-bottom: calc(var(--mini-player-height, 254px) + 3
 .watch-page.is-dragging iframe { pointer-events: none; }
 .watch-page.is-mini .mini-player-heading button { flex-shrink: 0; }
 .watch-page.is-mini.is-docked {
-  left: 12px; right: 12px; bottom: 12px; top: auto;
+  left: 12px; right: 12px; bottom: 22px; top: auto;
   width: auto; max-width: 640px; margin-inline: auto;
   border-radius: 12px; overflow: hidden;
 }

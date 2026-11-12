@@ -225,7 +225,7 @@ function LogCard({ record, logType, editing, selected, onSelect, onHold }) {
 
             <div class="flow-row remove" onClick={remove}>
 
-              <button aria-label="Remove">
+              <button class="delete-button" aria-label="Remove">
 
                 <Icon name="trash-can" />
 

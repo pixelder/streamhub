@@ -1,3 +1,4 @@
+import { createUUID } from '../../utils/uuid.js';
 import { storageKey } from '../../stores/profileStorage.js';
 import { write } from '../../stores/storage.js';
 import { JOURNAL_KEY, LISTS_KEY, titleKey, titleRecord, validatePersonalBackup } from './model.js';
@@ -28,7 +29,7 @@ export function removeEntry(item) {
 
 export function createList(name, items = []) {
   const lists = records(LISTS_KEY);
-  const list = { id: crypto.randomUUID(), name: name.trim(), items: items.map(item => titleRecord(item)) };
+  const list = { id: createUUID(), name: name.trim(), items: items.map(item => titleRecord(item)) };
   const next = [...lists, list];
   validatePersonalBackup({ [LISTS_KEY]: next });
   write(LISTS_KEY, next);

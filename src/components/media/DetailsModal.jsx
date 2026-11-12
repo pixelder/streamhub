@@ -355,9 +355,8 @@ function MediaDetails({ data, type, nav, initial }) {
   if (tracking) return <div class="title-tracking-pane" onKeyDown={event => {
     if (event.key === 'Escape') { event.stopPropagation(); setTracking(false); }
   }}>
-    <button ref={trackingBack} class="tracking-back" onClick={() => setTracking(false)}><Icon name="arrow-left" /> Title details</button>
+    <button ref={trackingBack} class="tracking-back" onClick={() => setTracking(false)}><Icon name="arrow-left" />{name}</button>
     <h2>Rate &amp; track</h2>
-    <p>{name}</p>
     <TitleJournal data={data} type={type} expanded />
   </div>;
   return <>

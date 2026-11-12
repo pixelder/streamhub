@@ -94,9 +94,13 @@ section:has(.grid-item, .profile-item ) .actions {
   }
 }
 
+/* Shared trash-button appearance; toolbar visibility remains local to .actions. */
+:root button.delete-button {
+  background: var(--catalog-alert-surface) !important;
+  color: var(--catalog-alert-text) !important;
+}
+
 .actions .delete-button {
-  background: var(--catalog-alert-surface);
-  color: var(--catalog-alert-text);
   opacity: 0;
   scale: 0;
   transition: scale 0.2s, opacity 0.2s ease-in-out;

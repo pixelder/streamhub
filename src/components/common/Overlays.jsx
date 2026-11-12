@@ -65,7 +65,7 @@ function Confirmation({ data }) {
 
         <button id="decline" onClick={() => finishConfirmation(false)}>Cancel</button>
 
-        <button id="accept" onClick={() => finishConfirmation(true)}><Icon name={data.accept === 'Import' ? 'download' : 'trash-can'} />&nbsp;{data.accept || 'Delete'}</button>
+        <button class={data.accept === 'Import' ? '' : 'delete-button'} id="accept" onClick={() => finishConfirmation(true)}><Icon name={data.accept === 'Import' ? 'download' : 'trash-can'} />&nbsp;{data.accept || 'Delete'}</button>
 
       </div>
 

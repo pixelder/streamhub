@@ -136,11 +136,11 @@
   box-shadow: 0 3px 12px #25263a14;
 }
 
-:is(#continue-watching, #history) .history-item-info,
+/* :is(#continue-watching, #history) .history-item-info,
 :is(#continue-watching, #history) .history-item-info :is(h3, p) {
   color: #fff;
   text-shadow: 0 1px 4px #000, 0 1px 10px #000c;
-}
+} */
 
 :is(#continue-watching, #history) .history-item-info .grid-rating {
   color: #f5c451;
@@ -154,6 +154,11 @@
 :root[data-theme="light"] option {
   color: var(--font-color1);
   background-color: #f1f0f7;
+}
+
+:root[data-theme="light"] .tab.active {
+  color: lavender;
+
 }
 
 :root[data-theme="light"] #modal-parent {

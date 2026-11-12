@@ -1,3 +1,4 @@
+import { createUUID } from '../../utils/uuid.js';
 export const EXTRACTOR_URL = (import.meta.env?.VITE_EXTRACTOR_URL || 'http://localhost:3000').replace(/\/$/, '');
 
 export function buildPayload(form) {
@@ -202,7 +203,7 @@ export function upsertFile(rows, file, option = null) {
     ...(index >= 0 ? rows[index] : {}),
     ...file,
     option,
-    id: index >= 0 ? rows[index].id : file.id || `file-${globalThis.crypto.randomUUID()}`
+    id: index >= 0 ? rows[index].id : file.id || `file-${createUUID()}`
   };
   return index >= 0 ? rows.map((row, i) => i === index ? entry : row) : [...rows, entry];
 }

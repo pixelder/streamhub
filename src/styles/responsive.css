@@ -357,11 +357,11 @@
     padding: 4px 10px;
     margin: 2px 0 8px;
     min-height: 8rem;
-    gap: 0.4rem;
+    gap: 8px;
   }
 
   section h2 {
-    font-size: 22px;
+    font-size: 22px !important;
     transition: scale 0.2s, width 0.2s, opacity 0.2s;
   }
 
